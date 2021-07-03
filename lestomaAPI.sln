@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.Api", "lestoma.Api\lestoma.Api.csproj", "{AB3F7DFF-08F0-4BCF-B113-C34CCCF42066}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.CommonUtils", "lestoma.CommonUtils\lestoma.CommonUtils.csproj", "{9C971D0A-DF51-4294-AC66-68DD87864927}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.Data", "lestoma.Data\lestoma.Data.csproj", "{5CD90DAE-8FEA-4A59-98A1-67FA5BF15A93}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.Logica", "lestoma.Logica\lestoma.Logica.csproj", "{5E0AB134-E8CF-4C93-BFC1-AE2AF99F9358}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB3F7DFF-08F0-4BCF-B113-C34CCCF42066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB3F7DFF-08F0-4BCF-B113-C34CCCF42066}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB3F7DFF-08F0-4BCF-B113-C34CCCF42066}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB3F7DFF-08F0-4BCF-B113-C34CCCF42066}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C971D0A-DF51-4294-AC66-68DD87864927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C971D0A-DF51-4294-AC66-68DD87864927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C971D0A-DF51-4294-AC66-68DD87864927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C971D0A-DF51-4294-AC66-68DD87864927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CD90DAE-8FEA-4A59-98A1-67FA5BF15A93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CD90DAE-8FEA-4A59-98A1-67FA5BF15A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CD90DAE-8FEA-4A59-98A1-67FA5BF15A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CD90DAE-8FEA-4A59-98A1-67FA5BF15A93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E0AB134-E8CF-4C93-BFC1-AE2AF99F9358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E0AB134-E8CF-4C93-BFC1-AE2AF99F9358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E0AB134-E8CF-4C93-BFC1-AE2AF99F9358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E0AB134-E8CF-4C93-BFC1-AE2AF99F9358}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ED9F6ECA-6F92-45EC-8E31-03C1650A13FA}
+	EndGlobalSection
+EndGlobal
