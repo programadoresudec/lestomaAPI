@@ -26,7 +26,12 @@ namespace lestoma.CommonUtils.Entities
         public int RolId { get; set; }
         [Column("estado_id")]
         public int EstadoId { get; set; }
-
+        [Column("ip")]
+        public string Ip { get; set; }
+        [Column("session")]
+        public string Session { get; set; }
+        [Column("tipo_de_aplicacion")]
+        public string TipoDeAplicacion { get; set; }
         [NotMapped]
         public EEstadoUsuario EstadoUsuario { get; set; } = new EEstadoUsuario();
         [NotMapped]

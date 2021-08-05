@@ -7,6 +7,7 @@ namespace lestoma.CommonUtils.Enums
     public enum TipoRol
     {
         Anonimo,
+        SuperAdministrador,
         Administrador,
         Auxiliar
     }
