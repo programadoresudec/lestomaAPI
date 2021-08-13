@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
-namespace lestoma.CommonUtils.Entities
+namespace lestoma.Entidades.Models
 {
     [Table("auditoria", Schema = "seguridad")]
     public class EAuditoria
@@ -23,7 +21,7 @@ namespace lestoma.CommonUtils.Entities
         public string Accion { get; set; }
         [Column("user_bd")]
         public string UsuarioBD { get; set; }
-        [Column("data", TypeName ="jsonb")]
+        [Column("data", TypeName = "jsonb")]
         public string Data { get; set; }
         [Column("tipo_de_aplicacion")]
         public string TipoDeAplicacion { get; set; }

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace lestoma.CommonUtils.Entities
+namespace lestoma.Entidades.Models
 {
     [Table("upa", Schema = "superadmin")]
     public class EUpa

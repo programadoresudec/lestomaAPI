@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Entidades\lestoma.Entidades.csproj" />
     <ProjectReference Include="..\lestoma.CommonUtils\lestoma.CommonUtils.csproj" />
   </ItemGroup>
 

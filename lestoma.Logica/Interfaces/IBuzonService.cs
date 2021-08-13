@@ -1,7 +1,6 @@
-﻿using lestoma.CommonUtils.Entities;
-using lestoma.CommonUtils.Requests;
+﻿using lestoma.CommonUtils.Requests;
 using lestoma.CommonUtils.Responses;
-using System.Collections;
+using lestoma.Entidades.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace lestoma.CommonUtils.Helpers
+namespace lestoma.CommonUtils.Interfaces
 {
     public interface IFilesHelper
     {

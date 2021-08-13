@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using lestoma.CommonUtils.Entities;
 using lestoma.CommonUtils.Requests;
 using lestoma.CommonUtils.Responses;
+using lestoma.Entidades.Models;
 using System.Text.Json;
 
 namespace lestoma.Api.Helpers

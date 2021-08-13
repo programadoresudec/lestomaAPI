@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace lestoma.CommonUtils.Responses
 {
@@ -7,6 +8,8 @@ namespace lestoma.CommonUtils.Responses
         public string Token { get; set; }
         public DateTime Expiration { get; set; }
         public DateTime ExpirationLocal => Expiration.ToLocalTime();
+        [JsonIgnore]
+        public string RefreshToken { get; set; }
         public UserResponse User { get; set; }
     }
 }

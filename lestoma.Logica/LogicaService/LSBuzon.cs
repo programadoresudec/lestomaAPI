@@ -1,14 +1,11 @@
-﻿using lestoma.CommonUtils.Entities;
-using lestoma.CommonUtils.Requests;
+﻿using lestoma.CommonUtils.Requests;
 using lestoma.CommonUtils.Responses;
 using lestoma.Data;
 using lestoma.Data.DAO;
+using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 

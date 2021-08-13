@@ -1,15 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace lestoma.CommonUtils.Entities
+namespace lestoma.Entidades.Models
 {
     [Table("estado_usuario", Schema = "usuarios")]
     public class EEstadoUsuario
     {
+        public EEstadoUsuario()
+        {
+            Usuarios = new HashSet<EUsuario>();   
+        }
         [Key]
         [Column("id")]
         public int Id { get; set; }
         [Column("descripcion")]
         public string DescripcionEstado { get; set; }
+        public ICollection<EUsuario> Usuarios { get; set; }
     }
 }

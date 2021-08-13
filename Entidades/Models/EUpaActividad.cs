@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
-namespace lestoma.CommonUtils.Entities
+namespace lestoma.Entidades.Models
 {
     [Table("upa_actividad", Schema = "superadmin")]
-    public class EUpaActividad
+    public class EUpaActividad : ECamposAuditoria
     {
         [Column("upa_id")]
         public int UpaId { get; set; }
@@ -21,11 +18,5 @@ namespace lestoma.CommonUtils.Entities
         public DateTime FechaCreacion { get; set; }
         [Column("descripcion")]
         public string Descripcion { get; set; }
-        [Column("ip")]
-        public string Ip { get; set; }
-        [Column("session")]
-        public string Session { get; set; }
-        [Column("tipo_de_aplicacion")]
-        public string TipoDeAplicacion { get; set; }
     }
 }

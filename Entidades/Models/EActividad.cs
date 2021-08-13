@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
-namespace lestoma.CommonUtils.Entities
+namespace lestoma.Entidades.Models
 {
     [Table("actividad", Schema = "superadmin")]
     public class EActividad

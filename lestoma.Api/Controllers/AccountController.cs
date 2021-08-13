@@ -1,16 +1,20 @@
 ﻿using AutoMapper;
 using lestoma.Api.Helpers;
-using lestoma.CommonUtils.Entities;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
 using lestoma.CommonUtils.Responses;
+using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Net.Sockets;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,14 +53,64 @@ namespace lestoma.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Logeo(LoginRequest logeo)
         {
-            Respuesta = await _usuarioService.Login(logeo);
+            Respuesta = await _usuarioService.Login(logeo, ipAddress());
             if (Respuesta.Data == null)
             {
                 return Unauthorized(Respuesta);
             }
             TokenResponse usuario = GetToken((EUsuario)Respuesta.Data);
             Respuesta.Data = usuario;
+            setTokenCookie(usuario.RefreshToken);
             return Ok(Respuesta);
+        }
+        #endregion
+
+        #region refresh-token
+        [AllowAnonymous]
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            var response = await _usuarioService.RefreshToken(refreshToken, ipAddress());
+
+            if (response == null)
+                return Unauthorized(new { message = "Invalid token" });
+
+            TokenResponse usuario = GetToken(response);
+            setTokenCookie(response.RefreshToken);
+            Respuesta = new Response();
+            Respuesta.Data = usuario;
+            Respuesta.IsExito = true;
+            return Ok(Respuesta);
+        } 
+        #endregion
+
+        #region revoke-token
+
+        [HttpPost("revoke-token")]
+        public IActionResult RevokeToken([FromBody] RevokeTokenRequest model)
+        {
+            // accept token from request body or cookie
+            var token = model.Token ?? Request.Cookies["refreshToken"];
+
+            if (string.IsNullOrEmpty(token))
+                return BadRequest(new { message = "Token is required" });
+
+            var response = _usuarioService.RevokeToken(token, ipAddress());
+
+            if (!response)
+                return NotFound(new { message = "Token not found" });
+
+            return Ok(new { message = "Token revoked" });
+        }
+        private void setTokenCookie(string refreshToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
         #endregion
 
@@ -144,13 +198,15 @@ namespace lestoma.Api.Controllers
                     new Claim[]
                     {
                         new Claim(ClaimTypes.Role, user.Rol.NombreRol),
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        new Claim(ClaimTypes.Email, user.Email)
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(ClaimTypes.Authentication, user.TipoDeAplicacion)
                     }
                 ),
                 Audience = _appSettings.Audience,
                 Issuer = _appSettings.Issuer,
-                Expires = DateTime.UtcNow.AddDays(30),
+                Expires = user.AplicacionId == (int)TipoAplicacion.AppMovil ?
+                DateTime.UtcNow.AddDays(_usuarioService.GetExpiracionToken(user.AplicacionId)) : user.AplicacionId == (int)TipoAplicacion.Web ?
+                 DateTime.UtcNow.AddMinutes(_usuarioService.GetExpiracionToken(user.AplicacionId)) : DateTime.UtcNow.AddMinutes(15),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(llave), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -159,9 +215,28 @@ namespace lestoma.Api.Controllers
             {
                 Token = tokenHandler.WriteToken(token),
                 Expiration = token.ValidTo,
+                RefreshToken = user.RefreshToken,
                 User = Mapear<EUsuario, UserResponse>(user)
             };
             return userWithToken;
+        }
+        #endregion
+
+        #region Ip
+        private string ipAddress()
+        {
+            string IP4Address = String.Empty;
+
+            foreach (IPAddress IPA in Dns.GetHostAddresses(Dns.GetHostName()))
+            {
+                if (IPA.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    IP4Address = IPA.ToString();
+                    break;
+                }
+            }
+
+            return IP4Address;
         }
         #endregion
     }

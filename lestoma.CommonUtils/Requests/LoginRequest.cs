@@ -9,5 +9,7 @@ namespace lestoma.CommonUtils.Requests
         public string Email { get; set; }
         [Required]
         public string Clave { get; set; }
+        [Required]
+        public int TipoAplicacion { get; set; }
     }
 }

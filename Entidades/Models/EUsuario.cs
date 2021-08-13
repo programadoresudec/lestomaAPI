@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
-namespace lestoma.CommonUtils.Entities
+namespace lestoma.Entidades.Models
 {
     [Table("usuario", Schema = "usuarios")]
-    public class EUsuario
+    public class EUsuario : ECamposAuditoria
     {
         [Key]
         [Column("id")]
@@ -26,16 +28,17 @@ namespace lestoma.CommonUtils.Entities
         public int RolId { get; set; }
         [Column("estado_id")]
         public int EstadoId { get; set; }
-        [Column("ip")]
-        public string Ip { get; set; }
-        [Column("session")]
-        public string Session { get; set; }
-        [Column("tipo_de_aplicacion")]
-        public string TipoDeAplicacion { get; set; }
-        [NotMapped]
-        public EEstadoUsuario EstadoUsuario { get; set; } = new EEstadoUsuario();
-        [NotMapped]
-        public ERol Rol { get; set; } = new ERol();
+        [Column("semilla")]
+        public string Salt { get; set; }
+    
+        public EEstadoUsuario EstadoUsuario { get; set; } 
+        public ERol Rol { get; set; }
 
+        [NotMapped]
+        public string RefreshToken { get; set; }
+        [JsonIgnore]
+        public List<ETokensUsuarioByAplicacion> RefreshTokens { get; set; }
+        [NotMapped]
+        public int AplicacionId { get; set; }
     }
 }

@@ -4,12 +4,10 @@ using System.Text;
 
 namespace lestoma.CommonUtils.Enums
 {
-    public enum TipoEstadoUsuario
+    public enum TipoAplicacion
     {
         ninguno,
-        CheckCuenta,
-        Activado,
-        Inactivo,
-        Bloqueado
+        AppMovil,
+        Web,
     }
 }

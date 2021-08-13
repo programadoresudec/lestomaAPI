@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using lestoma.Api.Helpers;
-using lestoma.CommonUtils.Entities;
 using lestoma.CommonUtils.Requests;
 using lestoma.CommonUtils.Responses;
+using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

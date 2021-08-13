@@ -1,4 +1,6 @@
-﻿using lestoma.Data;
+﻿using lestoma.CommonUtils.Helpers;
+using lestoma.CommonUtils.Interfaces;
+using lestoma.Data;
 using lestoma.Logica.Interfaces;
 using lestoma.Logica.LogicaService;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +15,7 @@ namespace lestoma.Api.Helpers
             services.AddScoped<IBuzonService, LSBuzon>();
             services.AddScoped<IMailHelper, MailHelper>();
             services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
+            services.AddTransient<ICamposAuditoriaHelper, CamposAuditoriaHelper>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             return services;
         }
