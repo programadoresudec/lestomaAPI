@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace lestoma.CommonUtils.Responses
+namespace lestoma.CommonUtils.DTOs
 {
     public class RevokeTokenRequest
     {

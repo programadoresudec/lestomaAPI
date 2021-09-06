@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.Data", "lestoma.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.Logica", "lestoma.Logica\lestoma.Logica.csproj", "{5E0AB134-E8CF-4C93-BFC1-AE2AF99F9358}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lestoma.Entidades", "Entidades\lestoma.Entidades.csproj", "{1AF8FCDA-8847-4CBF-9EA4-0CD6F3C429D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.Entidades", "Entidades\lestoma.Entidades.csproj", "{1AF8FCDA-8847-4CBF-9EA4-0CD6F3C429D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,5 +1,5 @@
-﻿using lestoma.CommonUtils.Interfaces;
-using lestoma.CommonUtils.Responses;
+﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;

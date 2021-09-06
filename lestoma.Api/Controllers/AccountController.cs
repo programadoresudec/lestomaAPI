@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using lestoma.Api.Helpers;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
-using lestoma.CommonUtils.Responses;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -58,7 +58,9 @@ namespace lestoma.Api.Controllers
             {
                 return Unauthorized(Respuesta);
             }
-            TokenResponse usuario = GetToken((EUsuario)Respuesta.Data);
+            var data = (EUsuario)Respuesta.Data;
+            data.AplicacionId = logeo.TipoAplicacion;
+            TokenDTO usuario = GetToken(data);
             Respuesta.Data = usuario;
             setTokenCookie(usuario.RefreshToken);
             return Ok(Respuesta);
@@ -76,13 +78,13 @@ namespace lestoma.Api.Controllers
             if (response == null)
                 return Unauthorized(new { message = "Invalid token" });
 
-            TokenResponse usuario = GetToken(response);
+            TokenDTO usuario = GetToken(response);
             setTokenCookie(response.RefreshToken);
             Respuesta = new Response();
             Respuesta.Data = usuario;
             Respuesta.IsExito = true;
             return Ok(Respuesta);
-        } 
+        }
         #endregion
 
         #region revoke-token
@@ -187,7 +189,7 @@ namespace lestoma.Api.Controllers
         #endregion
 
         #region Generar token JWT
-        private TokenResponse GetToken(EUsuario user)
+        private TokenDTO GetToken(EUsuario user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var llave = Encoding.ASCII.GetBytes(_appSettings.Secreto);
@@ -211,12 +213,12 @@ namespace lestoma.Api.Controllers
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            TokenResponse userWithToken = new()
+            TokenDTO userWithToken = new()
             {
                 Token = tokenHandler.WriteToken(token),
                 Expiration = token.ValidTo,
                 RefreshToken = user.RefreshToken,
-                User = Mapear<EUsuario, UserResponse>(user)
+                User = Mapear<EUsuario, UserDTO>(user)
             };
             return userWithToken;
         }

@@ -12,7 +12,6 @@ namespace lestoma.Data
     public class Mapeo : DbContext
     {
         private readonly ICamposAuditoriaHelper _camposAuditoria;
-
         public Mapeo() { }
         public Mapeo(DbContextOptions<Mapeo> options, ICamposAuditoriaHelper camposAuditoria)
             : base(options)

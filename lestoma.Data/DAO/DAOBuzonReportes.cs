@@ -6,12 +6,17 @@ using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
 {
-    public class DAOBuzonReportes
+    public class DAOBuzonReportes : GenericRepository<EBuzon>
     {
-        public async Task<List<EBuzon>> ListarBuzonConUsuario(Mapeo db)
+        private readonly Mapeo _db;
+        public DAOBuzonReportes(Mapeo db) : base(db)
         {
-            var lista = (await (from buzon in db.TablaBuzonReportes
-                                join user in db.TablaUsuarios on buzon.UsuarioId equals user.Id
+            _db = db;
+        }
+        public async Task<List<EBuzon>> ListarBuzonConUsuario()
+        {
+            var lista = (await (from buzon in _db.TablaBuzonReportes
+                                join user in _db.TablaUsuarios on buzon.UsuarioId equals user.Id
                                 select new
                                 {
                                     buzon,

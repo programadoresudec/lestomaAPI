@@ -1,6 +1,5 @@
-﻿using lestoma.CommonUtils.Requests;
-using lestoma.CommonUtils.Responses;
-using lestoma.Data;
+﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Requests;
 using lestoma.Data.DAO;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
@@ -14,12 +13,11 @@ namespace lestoma.Logica.LogicaService
     public class LSBuzon : IBuzonService
     {
         private readonly Response _respuesta = new();
-        private readonly Mapeo _db;
-        private IGenericRepository<EBuzon> _buzonRepository;
 
-        public LSBuzon(IGenericRepository<EBuzon> buzonRepository, Mapeo db)
+        private DAOBuzonReportes _buzonRepository;
+
+        public LSBuzon(DAOBuzonReportes buzonRepository)
         {
-            _db = db;
             _buzonRepository = buzonRepository;
         }
 
@@ -46,7 +44,7 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<List<EBuzon>> Listado()
         {
-            return await new DAOBuzonReportes().ListarBuzonConUsuario(_db);
+            return await _buzonRepository.ListarBuzonConUsuario();
         }
     }
 }

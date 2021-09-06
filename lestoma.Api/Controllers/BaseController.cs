@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using lestoma.CommonUtils.Responses;
+using lestoma.CommonUtils.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lestoma.Api.Controllers

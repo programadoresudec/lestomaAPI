@@ -1,4 +1,4 @@
-﻿using lestoma.CommonUtils.Responses;
+﻿using lestoma.CommonUtils.DTOs;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,6 +19,6 @@ namespace lestoma.Entidades.Models
         [Column("usuario_id")]
         public int UsuarioId { get; set; }
         [NotMapped]
-        public UserResponse User { get; set; } = new UserResponse();
+        public UserDTO User { get; set; } = new UserDTO();
     }
 }

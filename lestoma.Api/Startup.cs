@@ -1,5 +1,6 @@
 using AutoMapper;
 using lestoma.Api.Helpers;
+using lestoma.Api.Middleware;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.Data;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -123,31 +125,54 @@ namespace lestoma.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Mapeo db)
         {
-            var existe = db.TablaUsuarios.Any(x => x.Email.Equals(EMAILSUPERADMIN));
-            if (!existe)
+            bool adminTabla = false;
+            int id = 0;
+            try
             {
-                var hash = HashHelper.Hash("superadmin1234");
+                var usuario = db.TablaUsuarios.FirstOrDefault(x => x.Email.Equals(EMAILSUPERADMIN));
+                if (usuario == null)
+                {
+                    var hash = HashHelper.Hash("superadmin1234");
+                    var superadmin = new EUsuario
+                    {
+                        Nombre = "Super Admin",
+                        Apellido = "Lestoma",
+                        Clave = hash.Password,
+                        Salt = hash.Salt,
+                        EstadoId = (int)TipoEstadoUsuario.Activado,
+                        RolId = (int)TipoRol.SuperAdministrador,
+                        Email = EMAILSUPERADMIN
+                    };
+                    db.Add(superadmin);
+                    db.SaveChanges();
+                }
 
-                var superadmin = new EUsuario
+                else
                 {
-                    Nombre = "Super Admin",
-                    Apellido = "Lestoma",
-                    Clave = hash.Password,
-                    Salt = hash.Salt,
-                    EstadoId = (int)TipoEstadoUsuario.Activado,
-                    RolId = (int)TipoRol.SuperAdministrador,
-                    Email = EMAILSUPERADMIN
-                };
-                db.Add(superadmin);
-                db.SaveChanges();
-                var idSuperAdmin = db.TablaUsuarios.FirstOrDefault(x => x.Email.Equals(EMAILSUPERADMIN)).Id;
-                var super = new ESuperAdministrador
+                    adminTabla = db.TablaSuperAdministradores.Any(x => x.UsuarioId == usuario.Id);
+                }
+
+                if (!adminTabla)
                 {
-                    UsuarioId = (short)idSuperAdmin
-                };
-                db.Add(super);
-                db.SaveChanges();
+
+                    if (usuario == null)
+                    {
+                        var existe = db.TablaUsuarios.FirstOrDefault(x => x.Email.Equals(EMAILSUPERADMIN));
+                        id = existe.Id;
+                    }
+                    var super = new ESuperAdministrador
+                    {
+                        UsuarioId = (short)(id == 0 ? usuario.Id : id)
+                    };
+                    db.Add(super);
+                    db.SaveChanges();
+                }
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
 
             if (env.IsDevelopment())
             {
@@ -156,6 +181,7 @@ namespace lestoma.Api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "lestoma.Api v1"));
             }
 
+            app.UseMiddleware<CustomExceptionMiddleware>();
 
             app.UseHttpsRedirection();
 
@@ -172,5 +198,6 @@ namespace lestoma.Api
                 endpoints.MapControllers();
             });
         }
+
     }
 }

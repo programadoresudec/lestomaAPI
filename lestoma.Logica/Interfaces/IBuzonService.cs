@@ -1,5 +1,5 @@
-﻿using lestoma.CommonUtils.Requests;
-using lestoma.CommonUtils.Responses;
+﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;

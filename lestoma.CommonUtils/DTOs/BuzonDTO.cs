@@ -1,14 +1,13 @@
 ﻿using lestoma.CommonUtils.Requests;
 using System;
-using System.Collections.Generic;
 
-namespace lestoma.CommonUtils.Responses
+namespace lestoma.CommonUtils.DTOs
 {
-    public class BuzonResponse
+    public class BuzonDTO
     {
         public int Id { get; set; }
         public DetalleBuzon Detalle { get; set; } = new DetalleBuzon();
-        public UserResponse User { get; set; } = new UserResponse();
+        public UserDTO User { get; set; } = new UserDTO();
         public DateTime FechaCreacion { get; set; }
 
     }

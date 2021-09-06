@@ -1,12 +1,10 @@
-﻿using lestoma.CommonUtils.Enums;
+﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
-using lestoma.CommonUtils.Responses;
-using lestoma.Data;
 using lestoma.Data.DAO;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Security.Cryptography;
@@ -17,20 +15,17 @@ namespace lestoma.Logica.LogicaService
     public class LSUsuario : IUsuarioService
     {
         private readonly Response _respuesta = new();
-        private readonly Mapeo _db;
-
-        private IGenericRepository<EUsuario> _usuarioRepository;
-        public LSUsuario(IGenericRepository<EUsuario> usuarioRepository, Mapeo db)
+        private DAOUsuario _usuarioRepository;
+        public LSUsuario(DAOUsuario usuarioRepository)
         {
-            _db = db;
             _usuarioRepository = usuarioRepository;
         }
 
         public async Task<Response> Login(LoginRequest login, string ip)
         {
-            var us = await _db.TablaUsuarios.FirstOrDefaultAsync(x => x.Email.Equals(login.Email));
+            var us = await _usuarioRepository.GetByEmail(login.Email);
 
-            var user = await new DAOUsuario().Logeo(login, _db);
+            var user = await _usuarioRepository.Logeo(login);
 
             if (user == null)
             {
@@ -76,7 +71,7 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<Response> Register(EUsuario usuario)
         {
-            EUsuario existe = await new DAOUsuario().ExisteCorreo(usuario.Email, _db);
+            EUsuario existe = await _usuarioRepository.GetByEmail(usuario.Email);
             if (existe != null)
             {
                 _respuesta.Mensaje = "El correo ya esta en uso.";
@@ -126,7 +121,7 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<Response> ForgotPassword(ForgotPasswordRequest email)
         {
-            var user = await new DAOUsuario().ExisteCorreo(email.Email, _db);
+            var user = await _usuarioRepository.GetByEmail(email.Email);
             if (user == null)
             {
                 _respuesta.Mensaje = "El correo no esta registrado.";
@@ -138,7 +133,7 @@ namespace lestoma.Logica.LogicaService
                 do
                 {
                     user.CodigoRecuperacion = Reutilizables.generarCodigoVerificacion();
-                    validar = await new DAOUsuario().ExisteCodigoVerificacion(user.CodigoRecuperacion, _db);
+                    validar = await _usuarioRepository.ExisteCodigoVerificacion(user.CodigoRecuperacion);
                 } while (validar != false);
                 user.FechaVencimientoCodigo = DateTime.Now.AddHours(2);
                 await _usuarioRepository.Update(user);
@@ -151,7 +146,7 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<Response> RecoverPassword(RecoverPasswordRequest recover)
         {
-            var user = await new DAOUsuario().UsuarioByCodigoVerificacion(recover.Codigo, _db);
+            var user = await _usuarioRepository.UsuarioByCodigoVerificacion(recover.Codigo);
             if (user == null)
             {
                 _respuesta.Mensaje = "codigo no valido.";
@@ -182,7 +177,7 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<EUsuario> RefreshToken(string token, string ipAddress)
         {
-            var user = _db.TablaUsuarios.Include(o => o.Rol).SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
+            var user = _usuarioRepository.UsuarioByToken(token);
 
             // return null if no user found with token
             if (user == null) return null;
@@ -205,7 +200,7 @@ namespace lestoma.Logica.LogicaService
 
         public short GetExpiracionToken(int aplicacionId)
         {
-            return _db.TablaAplicaciones.FirstOrDefault(x => x.Id == aplicacionId).TiempoExpiracionToken;
+            return _usuarioRepository.ExpiracionToken(aplicacionId);
         }
     }
 }

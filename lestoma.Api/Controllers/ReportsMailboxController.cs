@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using lestoma.Api.Helpers;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
-using lestoma.CommonUtils.Responses;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +31,7 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> Lista()
         {
             var lista = await _buzonService.Listado();
-            var listadobuzonDTO = Mapear<List<EBuzon>, List<BuzonResponse>>(lista);
+            var listadobuzonDTO = Mapear<List<EBuzon>, List<BuzonDTO>>(lista);
             return Ok(listadobuzonDTO);
         }
 
@@ -41,7 +41,7 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> GetBuzonById(int id)
         {
             var buzon = await _buzonService.GetBuzonById(id);
-            var buzonDTO = Mapear<EBuzon, BuzonResponse>(buzon);
+            var buzonDTO = Mapear<EBuzon, BuzonDTO>(buzon);
             return Ok(buzonDTO);
         }
 

@@ -1,15 +1,15 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace lestoma.CommonUtils.Responses
+namespace lestoma.CommonUtils.DTOs
 {
-    public class TokenResponse
+    public class TokenDTO
     {
         public string Token { get; set; }
         public DateTime Expiration { get; set; }
         public DateTime ExpirationLocal => Expiration.ToLocalTime();
         [JsonIgnore]
         public string RefreshToken { get; set; }
-        public UserResponse User { get; set; }
+        public UserDTO User { get; set; }
     }
 }

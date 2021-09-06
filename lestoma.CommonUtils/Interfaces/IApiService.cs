@@ -1,4 +1,4 @@
-﻿using lestoma.CommonUtils.Responses;
+﻿using lestoma.CommonUtils.DTOs;
 using System.Threading.Tasks;
 
 namespace lestoma.CommonUtils.Interfaces
