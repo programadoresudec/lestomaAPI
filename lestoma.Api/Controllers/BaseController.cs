@@ -9,7 +9,7 @@ namespace lestoma.Api.Controllers
     public class BaseController : ControllerBase
     {
         public readonly IMapper _mapper;
-        public Response Respuesta { get; set; }
+        public Response Respuesta { get; set; } = new Response();
         public BaseController(IMapper mapper)
         {
             this._mapper = mapper;

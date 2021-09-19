@@ -1,17 +1,19 @@
 ﻿using AutoMapper;
 using lestoma.Api.Helpers;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
 {
     [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
-    [Route("api/[controller]")]
+    [Route("api/upas")]
     [ApiController]
     public class UpaController : BaseController
     {
@@ -20,6 +22,16 @@ namespace lestoma.Api.Controllers
             : base(mapper)
         {
             _upaService = upaService;
+        }
+
+        [HttpGet("paginar")]
+        public async Task<IActionResult> GetUpasPaginado([FromQuery] Paginacion paginacion)
+        {
+            var queryable = _upaService.ListaUpasPaginado();
+            await HttpContext.InsertarParametrosPaginacionEnRespuesta(queryable, paginacion.PageSize);
+            var upas = await queryable.Paginar(paginacion).ToListAsync();
+            var upaspaginado = Mapear<List<EUpa>, List<UpaRequest>>(upas);
+            return Ok(upaspaginado);
         }
         [HttpGet("listado")]
         public async Task<IActionResult> GetUpas()
@@ -46,10 +58,6 @@ namespace lestoma.Api.Controllers
         {
             var upaDTO = Mapear<UpaRequest, EUpa>(upa);
             var response = await _upaService.CrearUpa(upaDTO);
-            if (response.Data == null)
-            {
-                return Conflict(response);
-            }
             var upaDTOSalida = Mapear<EUpa, UpaRequest>((EUpa)response.Data);
             response.Data = upaDTOSalida;
             return CreatedAtAction(nameof(GetUpa), new { id = ((EUpa)response.Data).Id }, response);

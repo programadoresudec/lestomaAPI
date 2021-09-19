@@ -8,8 +8,8 @@ namespace lestoma.Api.Helpers
         public static IQueryable<T> Paginar<T>(this IQueryable<T> queryable, Paginacion paginacion)
         {
             return queryable
-                .Skip((paginacion.Pagina - 1) * paginacion.CantidadAMostrar)
-                .Take(paginacion.CantidadAMostrar);
+                .Skip((paginacion.Page - 1) * paginacion.PageSize)
+                .Take(paginacion.PageSize);
         }
     }
 }

@@ -54,16 +54,12 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> Logeo(LoginRequest logeo)
         {
             Respuesta = await _usuarioService.Login(logeo, ipAddress());
-            if (Respuesta.Data == null)
-            {
-                return Unauthorized(Respuesta);
-            }
             var data = (EUsuario)Respuesta.Data;
             data.AplicacionId = logeo.TipoAplicacion;
             TokenDTO usuario = GetToken(data);
             Respuesta.Data = usuario;
             setTokenCookie(usuario.RefreshToken);
-            return Ok(Respuesta);
+            return Created(string.Empty, Respuesta);
         }
         #endregion
 
@@ -74,15 +70,11 @@ namespace lestoma.Api.Controllers
         {
             var refreshToken = Request.Cookies["refreshToken"];
             var response = await _usuarioService.RefreshToken(refreshToken, ipAddress());
-
-            if (response == null)
-                return Unauthorized(new { message = "Invalid token" });
-
             TokenDTO usuario = GetToken(response);
             setTokenCookie(response.RefreshToken);
-            Respuesta = new Response();
             Respuesta.Data = usuario;
             Respuesta.IsExito = true;
+            Respuesta.StatusCode = (int)HttpStatusCode.OK;
             return Ok(Respuesta);
         }
         #endregion
@@ -122,69 +114,52 @@ namespace lestoma.Api.Controllers
         {
             var entidad = Mapear<UsuarioRequest, EUsuario>(usuario);
             Respuesta = await _usuarioService.Register(entidad);
-            if (!Respuesta.IsExito)
-            {
-                return Conflict(Respuesta);
-            }
             Respuesta.Data = usuario;
+            Respuesta.StatusCode = (int)HttpStatusCode.Created;
             return Created(string.Empty, Respuesta);
         }
         #endregion
 
         #region olvido su contraseña
-        [HttpPost("forgotpassword")]
+        [HttpPut("forgotpassword")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest email)
         {
             Respuesta = await _usuarioService.ForgotPassword(email);
-            if (!Respuesta.IsExito && Respuesta.Data == null)
-            {
-                return Conflict(Respuesta);
-            }
             var from = ((EUsuario)Respuesta.Data).Email;
             var codigo = ((EUsuario)Respuesta.Data).CodigoRecuperacion;
-
             await _mailHelper.SendCorreo(from, codigo, "Recuperación contraseña");
-            return Created(string.Empty, Respuesta);
+            Respuesta.StatusCode = (int)HttpStatusCode.OK;
+            return Ok(Respuesta);
         }
         #endregion
 
         #region restablecer la contraseña
-        [HttpPost("recoverpassword")]
+        [HttpPut("recoverpassword")]
         public async Task<IActionResult> ForgotPassword(RecoverPasswordRequest recover)
         {
             Respuesta = await _usuarioService.RecoverPassword(recover);
-            if (!Respuesta.IsExito)
-            {
-                return Conflict(Respuesta);
-            }
-            return Created(string.Empty, Respuesta);
+            Respuesta.StatusCode = (int)HttpStatusCode.OK;
+            return Ok(Respuesta);
         }
         #endregion
 
         #region cambiar la contraseña
         [Authorize]
-        [HttpPost("changepassword")]
+        [HttpPut("changepassword")]
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest change)
         {
             Respuesta = await _usuarioService.ChangePassword(change);
-            if (!Respuesta.IsExito)
-            {
-                return Conflict(Respuesta);
-            }
-            return Created(string.Empty, Respuesta);
+            Respuesta.StatusCode = (int)HttpStatusCode.OK;
+            return Ok(Respuesta);
         }
         #endregion
 
         #region cambiar el perfil
-        [HttpPost("changeprofile")]
+        [HttpPut("changeprofile")]
         public async Task<IActionResult> ChangeProfile(ChangeProfileRequest change)
         {
             Respuesta = await _usuarioService.ChangeProfile(change);
-            if (!Respuesta.IsExito)
-            {
-                return Conflict(Respuesta);
-            }
-            return Created(string.Empty, Respuesta);
+            return Ok(Respuesta);
         }
         #endregion
 

@@ -55,13 +55,13 @@ namespace lestoma.Data
                 });
 
             modelBuilder.Entity<ERol>()
-                .HasMany<EUsuario>(g => g.Usuarios)
+                .HasMany(g => g.Usuarios)
                 .WithOne(s => s.Rol)
                 .HasForeignKey(s => s.RolId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<EEstadoUsuario>()
-                .HasMany<EUsuario>(g => g.Usuarios)
+                .HasMany(g => g.Usuarios)
                 .WithOne(s => s.EstadoUsuario)
                 .HasForeignKey(s => s.EstadoId)
                 .OnDelete(DeleteBehavior.Cascade);

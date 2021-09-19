@@ -1,6 +1,7 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.Entidades.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace lestoma.Logica.Interfaces
@@ -11,5 +12,6 @@ namespace lestoma.Logica.Interfaces
         Task<Response> EditarUpa(EUpa actividad);
         Task<List<EUpa>> ListaUpas();
         Task<Response> GetUpa(int id);
+        IQueryable<EUpa> ListaUpasPaginado();
     }
 }

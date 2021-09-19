@@ -5,6 +5,7 @@ using lestoma.Logica.Interfaces;
 using lestoma.Logica.MyException;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace lestoma.Logica.LogicaService
             }
             else
             {
-                _respuesta.Mensaje = "El nombre ya esta en uso.";
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El nombre ya esta en uso.");
             }
             return _respuesta;
         }
@@ -48,8 +49,6 @@ namespace lestoma.Logica.LogicaService
         {
             try
             {
-                int d = 0;
-                var w = 5 / d;
                 var query = await _upaRepository.GetByIdAsync(id);
                 if (query != null)
                 {
@@ -63,8 +62,9 @@ namespace lestoma.Logica.LogicaService
                 }
                 return _respuesta;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 throw;
             }
 
@@ -74,6 +74,11 @@ namespace lestoma.Logica.LogicaService
         {
             var listado = await _upaRepository.GetAll();
             return listado.ToList();
+        }
+
+        public IQueryable<EUpa> ListaUpasPaginado()
+        {
+            return _upaRepository.GetAllPaginado();
         }
     }
 }
