@@ -41,6 +41,7 @@ namespace lestoma.Api
 
             services.AddDbContext<Mapeo>(options =>
             {
+
                 options.UseNpgsql(Configuration.GetConnectionString("PostgresConnection"));
             });
 

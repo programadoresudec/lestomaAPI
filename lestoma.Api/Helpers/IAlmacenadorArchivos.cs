@@ -8,4 +8,5 @@ namespace lestoma.Api.Helpers
         Task BorrarArchivo(string ruta, string contenedor);
         Task<string> GuardarArchivo(byte[] contenido, string extension, string contenedor);
     }
+
 }

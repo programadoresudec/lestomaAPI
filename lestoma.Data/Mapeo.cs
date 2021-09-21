@@ -12,13 +12,36 @@ namespace lestoma.Data
     public class Mapeo : DbContext
     {
         private readonly ICamposAuditoriaHelper _camposAuditoria;
+        private readonly string _databasePath;
         public Mapeo() { }
+
+
+        #region Constructor conexion Postgres
         public Mapeo(DbContextOptions<Mapeo> options, ICamposAuditoriaHelper camposAuditoria)
-            : base(options)
+         : base(options)
         {
             _camposAuditoria = camposAuditoria ?? throw new ArgumentNullException(nameof(camposAuditoria));
         }
 
+        #endregion
+
+        #region Constructor conexion sqlite
+        public Mapeo(string dbPath)
+        {
+            _databasePath = dbPath;
+            Database.EnsureCreated();   
+        }
+        #endregion
+
+        #region instancia de sqlite
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!string.IsNullOrEmpty(_databasePath))
+            {
+                optionsBuilder.UseSqlite(string.Format("Filename={0}", _databasePath));
+            }
+        }
+        #endregion
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
             ProcesarSalvado();
@@ -37,7 +60,7 @@ namespace lestoma.Data
         public DbSet<EAplicacion> TablaAplicaciones { get; set; }
         public DbSet<ESuperAdministrador> TablaSuperAdministradores { get; set; }
         #endregion
-
+     
         #region Mapeo en la base de datos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
