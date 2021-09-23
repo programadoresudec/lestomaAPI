@@ -12,8 +12,9 @@ namespace lestoma.Api.Helpers
         {
             CreateMap<UsuarioRequest, EUsuario>();
             CreateMap<UpaRequest, EUpa>();
-            CreateMap<ActividadRequest, EActividad>();
             CreateMap<EUpa, UpaRequest>();
+            CreateMap<ActividadRequest, EActividad>();
+            CreateMap<EActividad, ActividadRequest>();
             CreateMap<EBuzon, BuzonDTO>().ForMember(d => d.Detalle, o => o.MapFrom(s => deserializarDetalleBuzon(s.Descripcion)));
             CreateMap<EUsuario, UserDTO>().ForMember(d => d.RolId, o => o.MapFrom(s => s.Rol.Id));
         }

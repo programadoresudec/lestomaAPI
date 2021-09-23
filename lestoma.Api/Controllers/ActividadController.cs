@@ -22,12 +22,22 @@ namespace lestoma.Api.Controllers
         {
             _actividadService = actividadService;
         }
-        [HttpGet("listadoactividades")]
+        [HttpGet("listado")]
         public async Task<IActionResult> ListaActividades()
         {
             var query = await _actividadService.ListaActividades();
             var actividades = Mapear<List<EActividad>, List<ActividadRequest>>(query);
             return Ok(actividades);
+        }
+
+        [HttpPost("crear")]
+        public async Task<IActionResult> Crear(ActividadRequest actividad)
+        {
+            var objeto = Mapear<ActividadRequest, EActividad>(actividad);
+
+            var response = await _actividadService.CrearActividad(objeto);
+
+            return Created(string.Empty, response);
         }
 
     }

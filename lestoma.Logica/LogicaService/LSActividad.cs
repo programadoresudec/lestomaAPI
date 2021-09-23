@@ -34,11 +34,12 @@ namespace lestoma.Logica.LogicaService
             {
                 await _actividadRepository.Create(actividad);
                 _respuesta.IsExito = true;
+                _respuesta.StatusCode = (int)HttpStatusCode.Created;
                 _respuesta.Mensaje = "se ha creado satisfactoriamente.";
             }
             else
             {
-                throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El nombre ya esta en uso utilice otro.");
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El nombre ya está en uso utilice otro.");
             }
             return _respuesta;
 

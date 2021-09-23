@@ -2,10 +2,12 @@
 using lestoma.CommonUtils.Interfaces;
 using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace lestoma.CommonUtils.Services
 {
@@ -14,13 +16,19 @@ namespace lestoma.CommonUtils.Services
         public HttpResponseMessage ResponseMessage { get; set; }
         public Response Respuesta { get; set; }
 
+        public bool CheckConnection()
+        {
+            return Connectivity.NetworkAccess == NetworkAccess.Internet;
+        }
+
         #region GetList Api service with token
-        public async Task<Response> GetListAsyncWithToken<T>(string urlBase, string controller, string token, bool isLogin)
+        public async Task<Response> GetListAsyncWithToken<T>(string urlBase, string controller, string token)
         {
             try
             {
                 HttpClient client = new HttpClient
                 {
+                    Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
                 };
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
@@ -63,9 +71,9 @@ namespace lestoma.CommonUtils.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
+                    Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
                 };
-
                 ResponseMessage = await client.PostAsync(controller, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 Respuesta = JsonConvert.DeserializeObject<Response>(jsonString);
@@ -92,7 +100,7 @@ namespace lestoma.CommonUtils.Services
         #endregion
 
         #region Post Api service with token
-        public async Task<Response> PostAsyncWithToken<T>(string urlBase, string controller, T model, string token, bool isLogin)
+        public async Task<Response> PostAsyncWithToken<T>(string urlBase, string controller, T model, string token)
         {
             try
             {
@@ -101,6 +109,7 @@ namespace lestoma.CommonUtils.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
+                    Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
                 };
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
@@ -115,16 +124,45 @@ namespace lestoma.CommonUtils.Services
                         Mensaje = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.Mensaje)
                     };
                 }
+                else if (ResponseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    await RefreshToken(urlBase);
+                    await PostAsyncWithToken(urlBase, controller, model, token);
+                }
 
                 return Respuesta;
             }
             catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 return new Response
                 {
                     IsExito = false,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 };
+            }
+        }
+
+        private async Task RefreshToken(string urlBase)
+        {
+            try
+            {
+                var content = new StringContent(null, Encoding.UTF8, "application/json");
+                HttpClient client = new HttpClient
+                {
+                    Timeout = TimeSpan.FromSeconds(45),
+                    BaseAddress = new Uri(urlBase),
+                };
+                ResponseMessage = await client.PostAsync("Account/refresh-token", content);
+                ResponseMessage.EnsureSuccessStatusCode();
+                if (!ResponseMessage.IsSuccessStatusCode)
+                {
+                    throw new Exception("ha ocurrido un error");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
         }
         #endregion
@@ -138,6 +176,7 @@ namespace lestoma.CommonUtils.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
+                    Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
                 };
 
@@ -167,7 +206,7 @@ namespace lestoma.CommonUtils.Services
         #endregion
 
         #region Put Api service with token
-        public async Task<Response> PutAsyncWithToken<T>(string urlBase, string controller, T model, string token, bool isLogin)
+        public async Task<Response> PutAsyncWithToken<T>(string urlBase, string controller, T model, string token)
         {
             try
             {
@@ -176,6 +215,7 @@ namespace lestoma.CommonUtils.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
+                    Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
                 };
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);

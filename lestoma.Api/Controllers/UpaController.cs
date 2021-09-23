@@ -62,7 +62,5 @@ namespace lestoma.Api.Controllers
             response.Data = upaDTOSalida;
             return CreatedAtAction(nameof(GetUpa), new { id = ((EUpa)response.Data).Id }, response);
         }
-
-
     }
 }
