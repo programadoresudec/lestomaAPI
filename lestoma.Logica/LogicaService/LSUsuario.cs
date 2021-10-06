@@ -1,11 +1,11 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
+using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
 using lestoma.Data.DAO;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
-using lestoma.Logica.MyException;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -113,7 +113,7 @@ namespace lestoma.Logica.LogicaService
         {
             try
             {
-                var user = await _usuarioRepository.GetByIdAsync(cambiar.IdUser);
+                var user = await _usuarioRepository.GetById(cambiar.IdUser);
                 if (user == null || !HashHelper.CheckHash(cambiar.OldPassword, user.Clave, user.Salt))
                 {
                     throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Verifique la contraseña actual.");
@@ -140,7 +140,6 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<Response> lista()
         {
-
             _respuesta.Data = await _usuarioRepository.GetAll();
             return _respuesta;
         }

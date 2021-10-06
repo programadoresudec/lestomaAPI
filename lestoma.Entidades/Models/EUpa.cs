@@ -1,14 +1,11 @@
-﻿using lestoma.CommonUtils.Enums;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace lestoma.Entidades.Models
 {
     [Table("upa", Schema = "superadmin")]
-    public class EUpa
+    public class EUpa : ECamposAuditoria
     {
         [Key]
         [Column("id")]
@@ -16,7 +13,7 @@ namespace lestoma.Entidades.Models
         [Column("nombre_upa")]
         public string Nombre { get; set; }
         [Column("superadmin_id")]
-        public int SuperAdminId { get; set; } = (int)TipoRol.SuperAdministrador;
+        public int SuperAdminId { get; set; }
         [Column("cantidad_actividades")]
         public short CantidadActividades { get; set; }
         public List<EUpaActividad> Upas { get; set; }

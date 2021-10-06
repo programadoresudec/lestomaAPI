@@ -29,7 +29,7 @@ namespace lestoma.Data
         public Mapeo(string dbPath)
         {
             _databasePath = dbPath;
-            Database.EnsureCreated();   
+            Database.EnsureCreated();
         }
         #endregion
 
@@ -42,6 +42,13 @@ namespace lestoma.Data
             }
         }
         #endregion
+
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            ProcesarSalvado();
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
             ProcesarSalvado();
@@ -60,7 +67,7 @@ namespace lestoma.Data
         public DbSet<EAplicacion> TablaAplicaciones { get; set; }
         public DbSet<ESuperAdministrador> TablaSuperAdministradores { get; set; }
         #endregion
-     
+
         #region Mapeo en la base de datos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -106,6 +113,7 @@ namespace lestoma.Data
                 entidad.Ip = _camposAuditoria.ObtenerIp();
                 entidad.Session = _camposAuditoria.ObtenerUsuarioActual();
                 entidad.TipoDeAplicacion = _camposAuditoria.ObtenerTipoDeAplicacion();
+                entidad.FechaCreacion = DateTime.Now;
             }
 
             foreach (var item in ChangeTracker.Entries()
@@ -115,6 +123,7 @@ namespace lestoma.Data
                 entidad.Ip = _camposAuditoria.ObtenerIp();
                 entidad.Session = _camposAuditoria.ObtenerUsuarioActual();
                 entidad.TipoDeAplicacion = _camposAuditoria.ObtenerTipoDeAplicacion();
+                entidad.FechaCreacion = DateTime.Now;
             }
         }
     }

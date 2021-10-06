@@ -7,17 +7,4 @@ namespace lestoma.Logica.Interfaces
 
 
     }
-    public class Auditoria
-    {
-
-        public Auditoria()
-        {
-            FechaGeneracion = DateTime.Now;
-        }
-        public string Tabla { get; set; }
-        public DateTime FechaGeneracion { get; set; }
-
-
-    }
-
 }

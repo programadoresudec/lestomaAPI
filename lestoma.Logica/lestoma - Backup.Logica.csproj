@@ -5,11 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="5.0.9" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\lestoma.CommonUtils\lestoma.CommonUtils.csproj" />
+    <ProjectReference Include="..\lestoma.Data\lestoma.Data.csproj" />
+    <ProjectReference Include="..\lestoma.Entidades\lestoma.Entidades.csproj" />
   </ItemGroup>
 
 </Project>

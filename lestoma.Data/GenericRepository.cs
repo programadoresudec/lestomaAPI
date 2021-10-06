@@ -2,7 +2,6 @@
 using Npgsql;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace lestoma.Data
@@ -24,11 +23,7 @@ namespace lestoma.Data
             return await _entities.ToListAsync();
         }
 
-        public IQueryable<T> GetAllPaginado()
-        {
-            return _entities.AsQueryable();
-        }
-        public async Task<T> GetByIdAsync(object id)
+        public async Task<T> GetById(object id)
         {
             return await _entities.FindAsync(id);
         }

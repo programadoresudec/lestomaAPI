@@ -16,8 +16,8 @@ namespace lestoma.Api.Controllers
     public class ActividadController : BaseController
     {
 
-        private readonly IActividadService _actividadService;
-        public ActividadController(IMapper mapper, IActividadService actividadService)
+        private readonly IGenericCRUD<EActividad> _actividadService;
+        public ActividadController(IMapper mapper, IGenericCRUD<EActividad> actividadService)
             : base(mapper)
         {
             _actividadService = actividadService;
@@ -25,19 +25,37 @@ namespace lestoma.Api.Controllers
         [HttpGet("listado")]
         public async Task<IActionResult> ListaActividades()
         {
-            var query = await _actividadService.ListaActividades();
+            var query = await _actividadService.GetAll();
             var actividades = Mapear<List<EActividad>, List<ActividadRequest>>(query);
             return Ok(actividades);
         }
-
+        [HttpGet("{id}")]
+        public async Task<IActionResult> getActividad(int id)
+        {
+            var response = await _actividadService.GetByIdAsync(id);
+            var actividadDTOSalida = Mapear<EActividad, ActividadRequest>((EActividad)response.Data);
+            response.Data = actividadDTOSalida;
+            return Ok(response);
+        }
         [HttpPost("crear")]
         public async Task<IActionResult> Crear(ActividadRequest actividad)
         {
             var objeto = Mapear<ActividadRequest, EActividad>(actividad);
-
-            var response = await _actividadService.CrearActividad(objeto);
-
+            var response = await _actividadService.CrearAsync(objeto);
             return Created(string.Empty, response);
+        }
+        [HttpPut("editar")]
+        public async Task<IActionResult> Editar(ActividadRequest actividad)
+        {
+            var objeto = Mapear<ActividadRequest, EActividad>(actividad);
+            var response = await _actividadService.ActualizarAsync(objeto);
+            return Ok(response);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            await _actividadService.EliminarAsync(id);
+            return NoContent();
         }
 
     }

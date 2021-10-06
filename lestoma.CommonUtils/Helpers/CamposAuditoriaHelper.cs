@@ -1,14 +1,22 @@
-﻿using lestoma.CommonUtils.Interfaces;
+﻿using lestoma.Api.Helpers;
+using lestoma.CommonUtils.Interfaces;
+using Microsoft.AspNetCore.Http;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Claims;
-using System.Threading;
 
 namespace lestoma.CommonUtils.Helpers
 {
-    public class CamposAuditoriaHelper : ICamposAuditoriaHelper
+    public class CamposAuditoriaHelper : ICamposAuditoriaHelper, IClaimsTransformation
     {
+        private HttpContext hcontext;
+
+        public CamposAuditoriaHelper(IHttpContextAccessor hacess)
+        {
+            hcontext = hacess.HttpContext;
+        }
         public string ObtenerIp()
         {
             string IP4Address = String.Empty;
@@ -26,19 +34,39 @@ namespace lestoma.CommonUtils.Helpers
 
         public string ObtenerTipoDeAplicacion()
         {
-            ClaimsPrincipal principal = new ClaimsPrincipal();
-            var identity = (ClaimsIdentity)principal.Identity;
-            var claim = identity == null ? null : identity.FindFirst(ClaimTypes.Authentication);
-            return claim == null ? "App Movil" : string.IsNullOrEmpty(claim.Value) ? "App Movil" : claim.Value; ;
+            try
+            {
+                var claimsIdentity = TransformAsync(hcontext.User);
+                var claim = claimsIdentity == null ? null : claimsIdentity.FindFirst(ClaimTypes.Authentication);
+                return claim == null ? "App Movil" : string.IsNullOrEmpty(claim.Value) ? "App Movil" : claim.Value; ;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return "Principal";
+            }
+
         }
 
         public string ObtenerUsuarioActual()
         {
-            ClaimsPrincipal principal = new ClaimsPrincipal();
-            var identity = (ClaimsIdentity)principal.Identity;
+            try
+            {
+                var claimsIdentity = TransformAsync(hcontext.User);
+                var claim = claimsIdentity == null ? null : claimsIdentity.FindFirst(ClaimTypes.Email);
+                return claim == null ? "Anonimo" : string.IsNullOrEmpty(claim.Value) ? "Anonimo" : claim.Value;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return "anonimo";
+            }
+        }
 
-            var claim = identity == null ? null : identity.FindFirst(ClaimTypes.Email);
-            return claim == null ? "Anonimo" : string.IsNullOrEmpty(claim.Value) ? "Anonimo" : claim.Value;
+        public ClaimsIdentity TransformAsync(ClaimsPrincipal principal)
+        {
+            var identity = (ClaimsIdentity)principal.Identity;
+            return identity;
         }
     }
 }

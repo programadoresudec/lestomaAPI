@@ -1,5 +1,5 @@
 ﻿using lestoma.CommonUtils.DTOs;
-using lestoma.Logica.MyException;
+using lestoma.CommonUtils.MyException;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -18,7 +18,7 @@ namespace lestoma.Api.Middleware
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task Invoke(HttpContext context /* other dependencies */)
+        public async Task Invoke(HttpContext context)
         {
             try
             {

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
@@ -17,8 +18,8 @@ namespace lestoma.Api.Controllers
     [ApiController]
     public class UpaController : BaseController
     {
-        private readonly IUpaService _upaService;
-        public UpaController(IMapper mapper, IUpaService upaService)
+        private readonly IGenericCRUD<EUpa> _upaService;
+        public UpaController(IMapper mapper, IGenericCRUD<EUpa> upaService)
             : base(mapper)
         {
             _upaService = upaService;
@@ -27,27 +28,23 @@ namespace lestoma.Api.Controllers
         [HttpGet("paginar")]
         public async Task<IActionResult> GetUpasPaginado([FromQuery] Paginacion paginacion)
         {
-            var queryable = _upaService.ListaUpasPaginado();
-            await HttpContext.InsertarParametrosPaginacionEnRespuesta(queryable, paginacion.PageSize);
-            var upas = await queryable.Paginar(paginacion).ToListAsync();
-            var upaspaginado = Mapear<List<EUpa>, List<UpaRequest>>(upas);
-            return Ok(upaspaginado);
+            var listado = await _upaService.GetAll();
+            var upas = Mapear<List<EUpa>, List<UpaRequest>>(listado);
+            var queryable = upas.Cast<UpaRequest>().AsQueryable();
+            var paginador = Paginador<UpaRequest>.CrearPaginador(queryable, paginacion);
+            return Ok(paginador);
         }
         [HttpGet("listado")]
         public async Task<IActionResult> GetUpas()
         {
-            var query = await _upaService.ListaUpas();
-            if (query.Count == 0)
-            {
-                return NoContent();
-            }
+            var query = await _upaService.GetAll();
             var upas = Mapear<List<EUpa>, List<UpaRequest>>(query);
             return Ok(upas);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUpa(int id)
         {
-            var response = await _upaService.GetUpa(id);
+            var response = await _upaService.GetByIdAsync(id);
             var upaDTOSalida = Mapear<EUpa, UpaRequest>((EUpa)response.Data);
             response.Data = upaDTOSalida;
             return Ok(response);
@@ -57,10 +54,25 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> CrearUpa(UpaRequest upa)
         {
             var upaDTO = Mapear<UpaRequest, EUpa>(upa);
-            var response = await _upaService.CrearUpa(upaDTO);
+            var response = await _upaService.CrearAsync(upaDTO);
+            var upaDTOSalida = Mapear<EUpa, UpaRequest>((EUpa)response.Data);
+                response.Data = upaDTOSalida;
+            return CreatedAtAction(nameof(GetUpa), new { id = ((UpaRequest)response.Data).Id }, response);
+        }
+        [HttpPut("editar")]
+        public async Task<IActionResult> EditarUpa(UpaRequest upa)
+        {
+            var upaDTO = Mapear<UpaRequest, EUpa>(upa);
+            var response = await _upaService.ActualizarAsync(upaDTO);
             var upaDTOSalida = Mapear<EUpa, UpaRequest>((EUpa)response.Data);
             response.Data = upaDTOSalida;
-            return CreatedAtAction(nameof(GetUpa), new { id = ((EUpa)response.Data).Id }, response);
+            return Ok(response);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarUpa(int id)
+        {
+            await _upaService.EliminarAsync(id);
+            return NoContent();
         }
     }
 }

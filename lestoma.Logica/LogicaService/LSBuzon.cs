@@ -39,7 +39,7 @@ namespace lestoma.Logica.LogicaService
 
         public Task<EBuzon> GetBuzonById(int id)
         {
-            return _buzonRepository.GetByIdAsync(id);
+            return _buzonRepository.GetById(id);
         }
 
         public async Task<List<EBuzon>> Listado()

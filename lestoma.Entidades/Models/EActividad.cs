@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace lestoma.Entidades.Models
 {
     [Table("actividad", Schema = "superadmin")]
-    public class EActividad
+    public class EActividad: ECamposAuditoria
     {
         [Key]
         [Column("id")]

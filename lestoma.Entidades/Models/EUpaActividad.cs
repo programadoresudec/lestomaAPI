@@ -14,8 +14,6 @@ namespace lestoma.Entidades.Models
         public int UsuarioId { get; set; }
         public EUpa Upa { get; set; }
         public EActividad Actividad { get; set; }
-        [Column("fecha_creacion")]
-        public DateTime FechaCreacion { get; set; }
         [Column("descripcion")]
         public string Descripcion { get; set; }
     }

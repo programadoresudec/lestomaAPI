@@ -1,24 +1,30 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using Newtonsoft.Json;
+using Plugin.Connectivity;
 using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 
 namespace lestoma.CommonUtils.Services
 {
     public class ApiService : IApiService
     {
         public HttpResponseMessage ResponseMessage { get; set; }
+        private string _tokenNuevo;
         public Response Respuesta { get; set; }
 
         public bool CheckConnection()
         {
-            return Connectivity.NetworkAccess == NetworkAccess.Internet;
+            if (CrossConnectivity.Current.IsConnected)
+            {
+                return true;
+            }
+            return false;
         }
 
         #region GetList Api service with token
@@ -42,8 +48,20 @@ namespace lestoma.CommonUtils.Services
                         Mensaje = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.Mensaje)
                     };
                 }
+                else if (ResponseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    await RefreshToken(urlBase);
+                    await GetListAsyncWithToken<T>(urlBase, controller, _tokenNuevo);
+                }
                 T item = JsonConvert.DeserializeObject<T>(jsonString);
-
+                if (item == null)
+                {
+                    return new Response
+                    {
+                        IsExito = true,
+                        Mensaje = "No hay contenido."
+                    };
+                }
                 return new Response
                 {
                     IsExito = true,
@@ -61,6 +79,57 @@ namespace lestoma.CommonUtils.Services
         }
 
         #endregion
+
+
+        public async Task<Response> GetPaginadoAsyncWithToken<T>(string urlBase, string controller, string token)
+        {
+            try
+            {
+                HttpClient client = new HttpClient
+                {
+                    Timeout = TimeSpan.FromSeconds(45),
+                    BaseAddress = new Uri(urlBase),
+                };
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                ResponseMessage = await client.GetAsync(controller);
+                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
+                if (!ResponseMessage.IsSuccessStatusCode)
+                {
+                    return new Response
+                    {
+                        IsExito = false,
+                        Mensaje = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.Mensaje)
+                    };
+                }
+                else if (ResponseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    await RefreshToken(urlBase);
+                    await GetListAsyncWithToken<T>(urlBase, controller, _tokenNuevo);
+                }
+                Paginador<T> item = JsonConvert.DeserializeObject<Paginador<T>>(jsonString);
+                if (item == null)
+                {
+                    return new Response
+                    {
+                        IsExito = true,
+                        Mensaje = "No hay contenido."
+                    };
+                }
+                return new Response
+                {
+                    IsExito = true,
+                    Data = item
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    IsExito = false,
+                    Mensaje = ex.Message
+                };
+            }
+        }
 
         #region Post Api service
         public async Task<Response> PostAsync<T>(string urlBase, string controller, T model)
@@ -127,7 +196,7 @@ namespace lestoma.CommonUtils.Services
                 else if (ResponseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
                     await RefreshToken(urlBase);
-                    await PostAsyncWithToken(urlBase, controller, model, token);
+                    await PostAsyncWithToken(urlBase, controller, model, _tokenNuevo);
                 }
 
                 return Respuesta;
@@ -140,29 +209,6 @@ namespace lestoma.CommonUtils.Services
                     IsExito = false,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 };
-            }
-        }
-
-        private async Task RefreshToken(string urlBase)
-        {
-            try
-            {
-                var content = new StringContent(null, Encoding.UTF8, "application/json");
-                HttpClient client = new HttpClient
-                {
-                    Timeout = TimeSpan.FromSeconds(45),
-                    BaseAddress = new Uri(urlBase),
-                };
-                ResponseMessage = await client.PostAsync("Account/refresh-token", content);
-                ResponseMessage.EnsureSuccessStatusCode();
-                if (!ResponseMessage.IsSuccessStatusCode)
-                {
-                    throw new Exception("ha ocurrido un error");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
             }
         }
         #endregion
@@ -240,6 +286,77 @@ namespace lestoma.CommonUtils.Services
                     IsExito = false,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 };
+            }
+        }
+        #endregion
+
+        #region Delete Api service with token
+        public async Task<Response> DeleteAsyncWithToken(string urlBase, string controller, int id, string token)
+        {
+            try
+            {
+                HttpClient client = new HttpClient
+                {
+                    Timeout = TimeSpan.FromSeconds(45),
+                    BaseAddress = new Uri(urlBase),
+                };
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                ResponseMessage = await client.DeleteAsync($"{controller}/{id}");
+                if (!ResponseMessage.IsSuccessStatusCode)
+                {
+                    return new Response
+                    {
+                        IsExito = false,
+                        Mensaje = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.Mensaje)
+                    };
+                }
+                else if (ResponseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    await RefreshToken(urlBase);
+                    await DeleteAsyncWithToken(urlBase, controller, id, _tokenNuevo);
+                }
+
+                return new Response
+                {
+                    IsExito = true,
+                    Mensaje = "se ha eliminado correctamente."
+                };
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return new Response
+                {
+                    IsExito = false,
+                    Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
+                };
+            }
+        }
+
+        #endregion
+
+        #region RefreshToken
+        private async Task RefreshToken(string urlBase)
+        {
+            try
+            {
+                var content = new StringContent(null, Encoding.UTF8, "application/json");
+                HttpClient client = new HttpClient
+                {
+                    Timeout = TimeSpan.FromSeconds(45),
+                    BaseAddress = new Uri(urlBase),
+                };
+                ResponseMessage = await client.PostAsync("Account/refresh-token", content);
+                ResponseMessage.EnsureSuccessStatusCode();
+                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
+                Respuesta = JsonConvert.DeserializeObject<Response>(jsonString);
+                TokenDTO tokenNuevo = (TokenDTO)Respuesta.Data;
+                MovilSettings.Token = JsonConvert.SerializeObject(tokenNuevo);
+                _tokenNuevo = tokenNuevo.Token;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
         }
         #endregion
@@ -387,6 +504,9 @@ namespace lestoma.CommonUtils.Services
             }
             return mensaje;
         }
+
+        
         #endregion
+
     }
 }

@@ -1,7 +1,7 @@
-﻿using lestoma.CommonUtils.Helpers;
-using System.Linq;
+﻿using System.Linq;
+using System.Threading.Tasks;
 
-namespace lestoma.Api.Helpers
+namespace lestoma.CommonUtils.Helpers
 {
     public static class QueryableExtensions
     {

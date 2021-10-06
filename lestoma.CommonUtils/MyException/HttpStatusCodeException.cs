@@ -2,7 +2,7 @@
 using System;
 using System.Net;
 
-namespace lestoma.Logica.MyException
+namespace lestoma.CommonUtils.MyException
 {
     public class HttpStatusCodeException : Exception
     {
