@@ -1,8 +1,13 @@
-﻿using lestoma.Entidades.Models;
+﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.MyException;
+using lestoma.CommonUtils.Requests;
+using lestoma.Entidades.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
@@ -14,5 +19,58 @@ namespace lestoma.Data.DAO
         {
             _db = db;
         }
+
+        public async Task<Response> CrearVarios(EUpaActividad entidad)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in entidad.Actividades)
+                    {
+                        entidad.ActividadId = item.Id;
+                        await Create(entidad);
+                    }
+                    transaction.Commit();
+                    return new Response
+                    {
+                        IsExito = true,
+                        Mensaje = "Se ha creado satisfactoriamente.",
+                        StatusCode = (int)HttpStatusCode.Created
+                    };
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"{ex.Message}");
+                }
+            }
+        }
+
+        public async Task<List<EUpaActividad>> GetDetalleUpaActividad()
+        {
+            var listaAgrupada = (await _db.TablaUpasConActividades.Include(a => a.Actividad).ToListAsync())
+                .GroupBy(p => new { p.UsuarioId, p.UpaId });
+
+
+            var query = listaAgrupada.Select(x => new EUpaActividad
+            {
+                UpaId = x.Key.UpaId,
+                UsuarioId = x.Key.UsuarioId,
+                Upa = _db.TablaUpas.Find(x.Key.UpaId),
+                Usuario = _db.TablaUsuarios.Include(r => r.Rol).FirstOrDefault(u => u.Id == x.Key.UsuarioId),
+                Actividades = x.ToList().Select(y => new ActividadRequest
+                {
+                    Nombre = y.Actividad.Nombre,
+                    Id = y.Actividad.Id
+                }).ToList()
+            }).ToList();
+
+            return query;
+        }
+
+
     }
+
 }
+

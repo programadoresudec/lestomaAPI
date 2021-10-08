@@ -1,4 +1,6 @@
-﻿using System;
+﻿using lestoma.CommonUtils.Requests;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace lestoma.Entidades.Models
@@ -14,7 +16,8 @@ namespace lestoma.Entidades.Models
         public int UsuarioId { get; set; }
         public EUpa Upa { get; set; }
         public EActividad Actividad { get; set; }
-        [Column("descripcion")]
-        public string Descripcion { get; set; }
+        public EUsuario Usuario { get; set; }
+        [NotMapped]
+        public List<ActividadRequest> Actividades { get; set; } = new List<ActividadRequest>();
     }
 }

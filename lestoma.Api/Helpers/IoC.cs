@@ -15,7 +15,7 @@ namespace lestoma.Api.Helpers
         {
             services.AddScoped<IUsuarioService, LSUsuario>();
             services.AddScoped<IBuzonService, LSBuzon>();
-            services.AddScoped<IUpasActividadesService, LSUpasActividades>();
+
             services.AddScoped<DAOUsuario>();
             services.AddScoped<DAOUpa>();
             services.AddScoped<DAOActividad>();
@@ -26,7 +26,7 @@ namespace lestoma.Api.Helpers
             services.AddTransient<ICamposAuditoriaHelper, CamposAuditoriaHelper>();
             services.AddScoped(typeof(IGenericCRUD<EUpa>), typeof(LSUpa));
             services.AddScoped(typeof(IGenericCRUD<EActividad>), typeof(LSActividad));
-
+            services.AddScoped(typeof(IGenericCRUD<EUpaActividad>), typeof(LSUpasActividades));
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             return services;
         }

@@ -16,6 +16,5 @@ namespace lestoma.Entidades.Models
         public int SuperAdminId { get; set; }
         [Column("cantidad_actividades")]
         public short CantidadActividades { get; set; }
-        public List<EUpaActividad> Upas { get; set; }
     }
 }
