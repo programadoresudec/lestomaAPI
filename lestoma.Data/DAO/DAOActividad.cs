@@ -14,11 +14,19 @@ namespace lestoma.Data.DAO
         public DAOActividad(Mapeo db)
             : base(db)
         {
-            _db =  db;
+            _db = db;
         }
-        public async Task<bool> ExisteActividad(string nombre)
+        public async Task<bool> ExisteActividad(string nombre, bool insertOrUpdate = false, int id = 0)
         {
-            return await _db.TablaActividades.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()));
+            if (insertOrUpdate)
+            {
+                return await _db.TablaActividades.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()));
+            }
+            else
+            {
+                return await _db.TablaActividades.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()) && x.Id != id);
+            }
+
         }
     }
 }

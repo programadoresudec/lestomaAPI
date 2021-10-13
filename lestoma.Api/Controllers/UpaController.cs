@@ -6,7 +6,6 @@ using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -56,7 +55,7 @@ namespace lestoma.Api.Controllers
             var upaDTO = Mapear<UpaRequest, EUpa>(upa);
             var response = await _upaService.CrearAsync(upaDTO);
             var upaDTOSalida = Mapear<EUpa, UpaRequest>((EUpa)response.Data);
-                response.Data = upaDTOSalida;
+            response.Data = upaDTOSalida;
             return CreatedAtAction(nameof(GetUpa), new { id = ((UpaRequest)response.Data).Id }, response);
         }
         [HttpPut("editar")]

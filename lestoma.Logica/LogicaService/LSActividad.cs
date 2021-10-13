@@ -21,15 +21,26 @@ namespace lestoma.Logica.LogicaService
         {
             _actividadRepository = actividadRepository;
         }
-        public LSActividad(string dbPath)
-        {
-            Mapeo _db = new Mapeo(dbPath);
-            _actividadRepository = new DAOActividad(_db);
-        }
 
-        public Task<Response> ActualizarAsync(EActividad entidad)
+        public async Task<Response> ActualizarAsync(EActividad entidad)
         {
-            throw new NotImplementedException();
+            var response = await GetByIdAsync(entidad.Id);
+            var actividad = (EActividad)response.Data;
+            bool existe = await _actividadRepository.ExisteActividad(entidad.Nombre, true, actividad.Id);
+            if (!existe)
+            {
+                actividad.Nombre = entidad.Nombre;
+                await _actividadRepository.Update(actividad);
+                _respuesta.IsExito = true;
+                _respuesta.StatusCode = (int)HttpStatusCode.OK;
+                _respuesta.Mensaje = "se ha editado satisfactoriamente.";
+            }
+            else
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El nombre ya está en uso utilice otro.");
+            }
+
+            return _respuesta;
         }
 
         public async Task<Response> CrearAsync(EActividad entidad)

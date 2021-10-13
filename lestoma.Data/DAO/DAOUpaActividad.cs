@@ -31,7 +31,6 @@ namespace lestoma.Data.DAO
                         entidad.ActividadId = item.Id;
                         await Create(entidad);
                     }
-                    transaction.Commit();
                     return new Response
                     {
                         IsExito = true,
@@ -43,6 +42,10 @@ namespace lestoma.Data.DAO
                 {
                     transaction.Rollback();
                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"{ex.Message}");
+                }
+                finally
+                {
+                    transaction.Commit();
                 }
             }
         }

@@ -24,25 +24,6 @@ namespace lestoma.Data
         }
 
         #endregion
-
-        #region Constructor conexion sqlite
-        public Mapeo(string dbPath)
-        {
-            _databasePath = dbPath;
-            Database.EnsureCreated();
-        }
-        #endregion
-
-        #region instancia de sqlite
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!string.IsNullOrEmpty(_databasePath))
-            {
-                optionsBuilder.UseSqlite(string.Format("Filename={0}", _databasePath));
-            }
-        }
-        #endregion
-
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             ProcesarSalvado();
