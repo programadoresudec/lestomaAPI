@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CRC
+namespace lestoma.CRC
 {
     public enum CrcAlgorithms
     {

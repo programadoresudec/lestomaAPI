@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace CRC
+namespace lestoma.CRC
 {
     public class Crc : HashAlgorithm
     {

@@ -1,8 +1,8 @@
-﻿namespace CRC
+﻿namespace lestoma.CRC
 {
-    internal static class CrcHelper
+    public static class CrcHelper
     {
-        internal static ulong ReverseBits(ulong ul, int valueLength)
+        public static ulong ReverseBits(ulong ul, int valueLength)
         {
             ulong newValue = 0;
 
