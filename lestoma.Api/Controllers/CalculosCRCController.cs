@@ -12,29 +12,23 @@ namespace lestoma.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CalculosCRCController : BaseController
+    public class CalculosCRCController : ControllerBase
     {
-        public CalculosCRCController(IMapper mapper) : base(mapper)
-        {
-
-        }
-
         [HttpPost("CRCModbus")]
-        public async Task<IActionResult> CalcularCRCModbus(string hexadecimal)
+        public IActionResult CalcularCRCModbus(string hexadecimal)
         {
             var crc = CalcularCRCHelper.CalculateCrc16Modbus(hexadecimal);
+            
+            var resultado = new List<byte>();
+            resultado.Add(crc.ElementAt(1));
+            resultado.Add(crc.ElementAt(0));
+
+            string hexaCRC = HexaToByteHelper.ByteArrayToHexString(resultado.ToArray());
             var response = new Response
             {
-                Data = crc,
+                Data = hexaCRC,
                 Mensaje = "crc"
             };
-            //byte[] bytesMOdbus = CalcularCRCHelper.CalculateCrc16Modbus(Trama);
-
-            //var resultado = new List<byte>();
-            //resultado.Add(bytesMOdbus.ElementAt(1));
-            //resultado.Add(bytesMOdbus.ElementAt(0));
-
-            //string hexa = HexaToByteHelper.ByteArrayToHexString(resultado.ToArray());
             return Created(string.Empty, response);
         }
     }
