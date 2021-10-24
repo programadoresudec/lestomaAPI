@@ -46,9 +46,24 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<Response> ActualizarAsync(EUpa entidad)
         {
-            await _upaRepository.Update(entidad);
-            _respuesta.IsExito = true;
-            _respuesta.Mensaje = "Se ha editado correctamente.";
+            var response = await GetByIdAsync(entidad.Id);
+            var upa = (EUpa)response.Data;
+            bool existe = await _upaRepository.ExisteUpa(entidad.Nombre, true, upa.Id);
+            if (!existe)
+            {
+                upa.Nombre = entidad.Nombre;
+                upa.CantidadActividades = entidad.CantidadActividades;
+                upa.Descripcion = entidad.Descripcion;
+                await _upaRepository.Update(upa);
+                _respuesta.IsExito = true;
+                _respuesta.StatusCode = (int)HttpStatusCode.OK;
+                _respuesta.Mensaje = "se ha editado satisfactoriamente.";
+            }
+            else
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El nombre ya está en uso.");
+            }
+
             return _respuesta;
         }
 
@@ -61,6 +76,7 @@ namespace lestoma.Logica.LogicaService
                 if (superadmin != null)
                 {
                     entidad.SuperAdminId = superadmin.Id;
+
                     await _upaRepository.Create(entidad);
                     _respuesta.IsExito = true;
                     _respuesta.Data = entidad;

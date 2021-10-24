@@ -3,6 +3,7 @@ using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
+using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
@@ -166,36 +167,43 @@ namespace lestoma.Api.Controllers
         #region Generar token JWT
         private TokenDTO GetToken(EUsuario user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var llave = Encoding.ASCII.GetBytes(_appSettings.Secreto);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            try
             {
-                Subject = new ClaimsIdentity
-                (
-                    new Claim[]
-                    {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var llave = Encoding.ASCII.GetBytes(_appSettings.Secreto);
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity
+                    (
+                        new Claim[]
+                        {
                         new Claim(ClaimTypes.Role, user.Rol.NombreRol),
                         new Claim(ClaimTypes.Email, user.Email),
                         new Claim(ClaimTypes.Authentication, user.TipoDeAplicacion)
-                    }
-                ),
-                Audience = _appSettings.Audience,
-                Issuer = _appSettings.Issuer,
-                Expires = user.AplicacionId == (int)TipoAplicacion.AppMovil ?
-                DateTime.UtcNow.AddDays(_usuarioService.GetExpiracionToken(user.AplicacionId)) : user.AplicacionId == (int)TipoAplicacion.Web ?
-                 DateTime.UtcNow.AddMinutes(_usuarioService.GetExpiracionToken(user.AplicacionId)) : DateTime.UtcNow.AddMinutes(15),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(llave), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+                        }
+                    ),
+                    Audience = _appSettings.Audience,
+                    Issuer = _appSettings.Issuer,
+                    Expires = user.AplicacionId == (int)TipoAplicacion.AppMovil ?
+                    DateTime.UtcNow.AddDays(_usuarioService.GetExpiracionToken(user.AplicacionId)) : user.AplicacionId == (int)TipoAplicacion.Web ?
+                     DateTime.UtcNow.AddMinutes(_usuarioService.GetExpiracionToken(user.AplicacionId)) : DateTime.UtcNow.AddMinutes(15),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(llave), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            TokenDTO userWithToken = new()
+                TokenDTO userWithToken = new()
+                {
+                    Token = tokenHandler.WriteToken(token),
+                    Expiration = token.ValidTo,
+                    RefreshToken = user.RefreshToken,
+                    User = Mapear<EUsuario, UserDTO>(user)
+                };
+                return userWithToken;
+            }
+            catch (Exception ex)
             {
-                Token = tokenHandler.WriteToken(token),
-                Expiration = token.ValidTo,
-                RefreshToken = user.RefreshToken,
-                User = Mapear<EUsuario, UserDTO>(user)
-            };
-            return userWithToken;
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"no se ha podido crear el token. {ex.Message}");
+            }
         }
         #endregion
 

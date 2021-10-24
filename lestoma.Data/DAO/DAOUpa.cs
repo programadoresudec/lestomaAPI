@@ -1,7 +1,6 @@
 ﻿using lestoma.CommonUtils.Enums;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
@@ -13,12 +12,18 @@ namespace lestoma.Data.DAO
         {
             _db = db;
         }
-
-        public async Task<bool> ExisteUpa(string nombre)
+        public async Task<bool> ExisteUpa(string nombre, bool insertOrUpdate = false, int id = 0)
         {
-            return await _db.TablaUpas.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()));
-        }
+            if (!insertOrUpdate)
+            {
+                return await _db.TablaUpas.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()));
+            }
+            else
+            {
+                return await _db.TablaUpas.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()) && x.Id != id);
+            }
 
+        }
         public async Task<ESuperAdministrador> GetSuperAdmin()
         {
             var user = await _db.TablaUsuarios.FirstOrDefaultAsync(x => x.RolId == (int)TipoRol.SuperAdministrador);

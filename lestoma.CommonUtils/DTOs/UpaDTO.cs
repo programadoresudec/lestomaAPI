@@ -1,8 +1,10 @@
-﻿using lestoma.CommonUtils.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace lestoma.CommonUtils.Requests
+namespace lestoma.CommonUtils.DTOs
 {
-    public class UpaRequest : IId
+    public class UpaDTO : AuditoriaDTO
     {
         public int Id { get; set; }
         public string Nombre { get; set; }

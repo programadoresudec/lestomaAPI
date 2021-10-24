@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using lestoma.Api.Helpers;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
@@ -28,16 +29,16 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> GetUpasPaginado([FromQuery] Paginacion paginacion)
         {
             var listado = await _upaService.GetAll();
-            var upas = Mapear<List<EUpa>, List<UpaRequest>>(listado);
-            var queryable = upas.Cast<UpaRequest>().AsQueryable();
-            var paginador = Paginador<UpaRequest>.CrearPaginador(queryable, paginacion);
+            var upas = Mapear<List<EUpa>, List<UpaDTO>>(listado);
+            var queryable = upas.Cast<UpaDTO>().AsQueryable();
+            var paginador = Paginador<UpaDTO>.CrearPaginador(queryable, paginacion);
             return Ok(paginador);
         }
         [HttpGet("listado")]
         public async Task<IActionResult> GetUpas()
         {
             var query = await _upaService.GetAll();
-            var upas = Mapear<List<EUpa>, List<UpaRequest>>(query);
+            var upas = Mapear<List<EUpa>, List<UpaDTO>>(query);
             return Ok(upas);
         }
         [HttpGet("{id}")]

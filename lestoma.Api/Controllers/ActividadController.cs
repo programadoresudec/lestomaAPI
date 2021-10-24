@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace lestoma.Api.Controllers
 {
     [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
-    [Route("api/[controller]")]
+    [Route("api/actividades")]
     [ApiController]
     public class ActividadController : BaseController
     {

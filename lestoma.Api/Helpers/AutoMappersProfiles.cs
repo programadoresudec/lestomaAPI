@@ -11,10 +11,9 @@ namespace lestoma.Api.Helpers
         public AutoMappersProfiles()
         {
             CreateMap<UsuarioRequest, EUsuario>();
-            CreateMap<UpaRequest, EUpa>();
-            CreateMap<EUpa, UpaRequest>();
-            CreateMap<ActividadRequest, EActividad>();
-            CreateMap<EActividad, ActividadRequest>();
+            CreateMap<UpaRequest, EUpa>().ReverseMap();
+            CreateMap<ActividadRequest, EActividad>().ReverseMap();
+            CreateMap<EUpa, UpaDTO>();
             CreateMap<EUpaActividad, DetalleUpaActividadDTO>().ForMember(d => d.User, o => o.MapFrom(s => s.Usuario)).
                 ForMember(u => u.Upa, x => x.MapFrom(s => s.Upa));
 
