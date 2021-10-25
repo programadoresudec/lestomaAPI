@@ -43,13 +43,6 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
-        [Authorize(Roles = "Administrador")]
-        [HttpGet("Usuarios")]
-        public async Task<IActionResult> Lista()
-        {
-            Respuesta = await _usuarioService.lista();
-            return Ok(Respuesta);
-        }
         #region logeo
         [HttpPost("login")]
         public async Task<IActionResult> Logeo(LoginRequest logeo)

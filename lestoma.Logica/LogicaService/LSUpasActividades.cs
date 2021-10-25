@@ -2,14 +2,13 @@
 using lestoma.Data.DAO;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
-using Microsoft.EntityFrameworkCore.Storage;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
 {
-    public class LSUpasActividades : IGenericCRUD<EUpaActividad>
-    
+    public class LSUpasActividades : IDetalleUpaActividadService
+
     {
         private readonly Response _respuesta = new();
 
@@ -19,31 +18,28 @@ namespace lestoma.Logica.LogicaService
             _upasActividadesRepository = upasActividadesRepository;
         }
 
-        public Task<Response> ActualizarAsync(EUpaActividad entidad)
+        public Task<Response> ActualizarEnCascada(EUpaActividad entidad)
         {
             throw new System.NotImplementedException();
         }
 
-        public async Task<Response> CrearAsync(EUpaActividad entidad)
+        public async Task<Response> CrearEnCascada(EUpaActividad entidad)
         {
             return await _upasActividadesRepository.CrearVarios(entidad);
         }
 
-        public Task EliminarAsync(object id)
+        public Task EliminarEnCascada(int IdUsuario)
         {
             throw new System.NotImplementedException();
         }
 
         public async Task<List<EUpaActividad>> GetAll()
         {
-           var query =  await _upasActividadesRepository.GetDetalleUpaActividad();
+            var query = await _upasActividadesRepository.GetDetalleUpaActividad();
 
             return query;
         }
 
-        public Task<Response> GetByIdAsync(object id)
-        {
-            throw new System.NotImplementedException();
-        }
+       
     }
 }

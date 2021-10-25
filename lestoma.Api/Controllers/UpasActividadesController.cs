@@ -3,13 +3,10 @@ using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
-using lestoma.Data;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +14,7 @@ using System.Threading.Tasks;
 namespace lestoma.Api.Controllers
 {
     [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
-    [Route("api/[controller]")]
+    [Route("api/detalle-upas-actividades")]
     [ApiController]
     public class UpasActividadesController : BaseController
     {

@@ -61,6 +61,10 @@ namespace lestoma.Data.DAO
                 UpaId = x.Key.UpaId,
                 UsuarioId = x.Key.UsuarioId,
                 Upa = _db.TablaUpas.Find(x.Key.UpaId),
+                FechaCreacion = x.Select(f => f.FechaCreacion).FirstOrDefault(),
+                Ip = x.Select(i => i.Ip).FirstOrDefault(),
+                Session = x.Select(s => s.Session).FirstOrDefault(),
+                TipoDeAplicacion = x.Select(a => a.TipoDeAplicacion).FirstOrDefault(),
                 Usuario = _db.TablaUsuarios.Include(r => r.Rol).FirstOrDefault(u => u.Id == x.Key.UsuarioId),
                 Actividades = x.ToList().Select(y => new ActividadRequest
                 {

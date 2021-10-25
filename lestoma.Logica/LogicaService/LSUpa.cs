@@ -1,5 +1,6 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.MyException;
+using lestoma.CommonUtils.Requests;
 using lestoma.Data.DAO;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
 {
-    public class LSUpa : IGenericCRUD<EUpa>
+    public class LSUpa : IUpaService
     {
         private readonly Response _respuesta = new();
         private readonly DAOUpa _upaRepository;
@@ -95,6 +96,11 @@ namespace lestoma.Logica.LogicaService
         {
             var entidad = await GetByIdAsync(id);
             await _upaRepository.Delete((EUpa)entidad.Data);
+        }
+
+        public List<NameDTO> GetUpasJustNames()
+        {
+            return _upaRepository.GetUpasJustNames();
         }
     }
 }

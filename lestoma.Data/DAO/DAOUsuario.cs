@@ -1,7 +1,10 @@
 ﻿
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,7 +13,7 @@ namespace lestoma.Data.DAO
     public class DAOUsuario : GenericRepository<EUsuario>
     {
         private readonly Mapeo _db;
-        public DAOUsuario(Mapeo db) 
+        public DAOUsuario(Mapeo db)
             : base(db)
         {
             _db = db;
@@ -32,7 +35,7 @@ namespace lestoma.Data.DAO
             return await _db.TablaUsuarios.AnyAsync(x => x.CodigoRecuperacion.Equals(codigoRecuperacion));
         }
 
-        public async Task<EUsuario> UsuarioByCodigoVerificacion(string codigo) => 
+        public async Task<EUsuario> UsuarioByCodigoVerificacion(string codigo) =>
             await _db.TablaUsuarios.Where(x => x.CodigoRecuperacion.Equals(codigo))
             .FirstOrDefaultAsync();
 
@@ -41,7 +44,20 @@ namespace lestoma.Data.DAO
             return _db.TablaUsuarios.Include(o => o.Rol).SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
         }
 
-        public short ExpiracionToken(int aplicacionId) => 
+        public short ExpiracionToken(int aplicacionId) =>
             _db.TablaAplicaciones.FirstOrDefault(x => x.Id == aplicacionId).TiempoExpiracionToken;
+
+        public List<UserDTO> GetUsersJustNames()
+        {
+            var users =  _db.TablaUsuarios.FromSqlRaw("SELECT id, nombre, apellido FROM usuarios.usuario").OrderBy(x => x.Nombre);
+            var query = users.Select(x => new UserDTO
+            {
+              Id = x.Id,
+              Nombre = x.Nombre,
+              Apellido = x.Apellido
+            }).ToList();
+
+            return query;
+        }
     }
 }

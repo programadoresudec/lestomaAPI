@@ -18,8 +18,8 @@ namespace lestoma.Api.Controllers
     [ApiController]
     public class UpaController : BaseController
     {
-        private readonly IGenericCRUD<EUpa> _upaService;
-        public UpaController(IMapper mapper, IGenericCRUD<EUpa> upaService)
+        private readonly IUpaService _upaService;
+        public UpaController(IMapper mapper, IUpaService upaService)
             : base(mapper)
         {
             _upaService = upaService;
@@ -41,6 +41,13 @@ namespace lestoma.Api.Controllers
             var upas = Mapear<List<EUpa>, List<UpaDTO>>(query);
             return Ok(upas);
         }
+        [HttpGet("listado-nombres")]
+        public IActionResult GetUpasNombres()
+        {
+            var query = _upaService.GetUpasJustNames();
+            return Ok(query);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUpa(int id)
         {

@@ -7,6 +7,7 @@ using lestoma.Data.DAO;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -136,14 +137,6 @@ namespace lestoma.Logica.LogicaService
             }
 
         }
-
-
-        public async Task<Response> lista()
-        {
-            _respuesta.Data = await _usuarioRepository.GetAll();
-            return _respuesta;
-        }
-
         public async Task<Response> ForgotPassword(ForgotPasswordRequest email)
         {
             try
@@ -242,6 +235,11 @@ namespace lestoma.Logica.LogicaService
         public short GetExpiracionToken(int aplicacionId)
         {
             return _usuarioRepository.ExpiracionToken(aplicacionId);
+        }
+
+        public List<UserDTO> GetUsersJustNames()
+        {
+            return _usuarioRepository.GetUsersJustNames();
         }
     }
 }

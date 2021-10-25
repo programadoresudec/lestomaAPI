@@ -16,8 +16,8 @@ namespace lestoma.Api.Controllers
     public class ActividadController : BaseController
     {
 
-        private readonly IGenericCRUD<EActividad> _actividadService;
-        public ActividadController(IMapper mapper, IGenericCRUD<EActividad> actividadService)
+        private readonly IActividadService _actividadService;
+        public ActividadController(IMapper mapper, IActividadService actividadService)
             : base(mapper)
         {
             _actividadService = actividadService;
@@ -29,6 +29,15 @@ namespace lestoma.Api.Controllers
             var actividades = Mapear<List<EActividad>, List<ActividadRequest>>(query);
             return Ok(actividades);
         }
+
+        [HttpGet("listado-nombres")]
+        public IActionResult GetActividadesNombres()
+        {
+            var query = _actividadService.GetActividadesJustNames();
+            return Ok(query);
+        }
+
+
         [HttpGet("{id}")]
         public async Task<IActionResult> getActividad(int id)
         {

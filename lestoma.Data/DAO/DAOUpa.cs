@@ -1,6 +1,9 @@
-﻿using lestoma.CommonUtils.Enums;
+﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
@@ -32,6 +35,17 @@ namespace lestoma.Data.DAO
                 return null;
             }
             return await _db.TablaSuperAdministradores.FirstOrDefaultAsync(x => x.UsuarioId == user.Id);
+        }
+
+        public List<NameDTO> GetUpasJustNames()
+        {
+            var users = _db.TablaUpas.FromSqlRaw("SELECT id, nombre_upa FROM superadmin.upa").OrderBy(x => x.Nombre);
+            var query = users.Select(x => new NameDTO
+            {
+                Id = x.Id,
+                Nombre = x.Nombre,
+            }).ToList();
+            return query;
         }
     }
 }

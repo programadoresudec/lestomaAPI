@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
 {
-    public class LSActividad : IGenericCRUD<EActividad>
+    public class LSActividad : IActividadService
     {
         private readonly Response _respuesta = new();
 
@@ -86,6 +86,11 @@ namespace lestoma.Logica.LogicaService
         {
             var entidad = await GetByIdAsync(id);
             await _actividadRepository.Delete((EActividad)entidad.Data);
+        }
+
+        public List<NameDTO> GetActividadesJustNames()
+        {
+            return _actividadRepository.GetActividadesJustNames();
         }
     }
 }
