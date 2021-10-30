@@ -14,6 +14,7 @@ namespace lestoma.Entidades.Models
         [Key]
         [Column("id")]
         public int Id { get; set; }
+        [Required]
         [Column("nombre_rol")]
         public string NombreRol { get; set; }
         public ICollection<EUsuario> Usuarios { get; set; }

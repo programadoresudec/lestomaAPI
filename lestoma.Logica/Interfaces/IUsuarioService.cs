@@ -17,6 +17,7 @@ namespace lestoma.Logica.Interfaces
         bool RevokeToken(string token, string ipAddress);
         Task<EUsuario> RefreshToken(string refreshToken, string ipAddress);
         List<UserDTO> GetUsersJustNames();
-        short GetExpiracionToken(int aplicacionId);
+        short GetExpirationToken(int aplicacionId);
+        Task<string> GetApplicationType(int tipoAplicacion);
     }
 }

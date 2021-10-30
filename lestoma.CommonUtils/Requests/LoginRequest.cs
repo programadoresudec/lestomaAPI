@@ -12,4 +12,9 @@ namespace lestoma.CommonUtils.Requests
         [Required]
         public int TipoAplicacion { get; set; }
     }
+    public class TipoAplicacionRequest
+    {
+        [Required]
+        public int TipoAplicacion { get; set; }
+    }
 }

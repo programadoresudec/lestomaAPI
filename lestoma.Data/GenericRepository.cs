@@ -2,6 +2,7 @@
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace lestoma.Data
@@ -107,6 +108,52 @@ namespace lestoma.Data
 
             }
             return null;
+        }
+
+        public async Task Merge(List<T> ListadoEntidad)
+        {
+            CancellationTokenSource tcs = new CancellationTokenSource();
+            CancellationToken token = new CancellationToken();
+            try
+            {
+                List<T> listadoNuevo = new List<T>();
+                foreach (var item in ListadoEntidad)
+                {
+                    var Property = item.GetType().GetProperty("Id");
+                    var entidad = await GetById(Property.GetValue(item, null));
+                    if (entidad == null)
+                    {
+                        _context.Entry(item).State = EntityState.Added;
+                        _context.ProcesarAuditoria();
+                        listadoNuevo.Add(item);
+                    }
+                    else
+                    {
+                        _context.Entry(entidad).State = EntityState.Modified;
+                        _context.ProcesarAuditoria();
+                        listadoNuevo.Add(entidad);
+                    }   
+                }
+                await _context.BulkSynchronizeAsync(listadoNuevo, token);
+
+            }
+            catch (Exception ex)
+            {
+
+                var SQLiteException = GetInnerException<PostgresException>(ex);
+                if (SQLiteException != null)
+                {
+                    throw new Exception($"{nameof(ListadoEntidad)} no se ha podido mezclar: {SQLiteException}");
+                }
+                else
+                {
+                    throw new Exception($"{nameof(ListadoEntidad)} no se ha podido mezclar: {ex.Message}");
+                }
+            }
+            finally
+            {
+                tcs.Cancel();
+            }
         }
     }
 }

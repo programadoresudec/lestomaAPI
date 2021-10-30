@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace lestoma.Logica.Interfaces
 {
-    public interface IActividadService : IGenericCRUD<EActividad>
+    public interface IActividadService : IGenericCRUD<EActividad, Guid>
     {
         List<NameDTO> GetActividadesJustNames();
     }

@@ -7,7 +7,7 @@ namespace lestoma.CommonUtils.DTOs
 {
     public class DetalleUpaActividadDTO : AuditoriaDTO
     {
-        public int UpaId { get; set; }
+        public Guid UpaId { get; set; }
         public int UsuarioId { get; set; }
         public UserDTO User { get; set; } = new UserDTO();
         public UpaRequest Upa { get; set; } = new UpaRequest();

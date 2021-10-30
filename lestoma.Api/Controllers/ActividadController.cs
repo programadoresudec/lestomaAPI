@@ -5,6 +5,7 @@ using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -39,7 +40,7 @@ namespace lestoma.Api.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> getActividad(int id)
+        public async Task<IActionResult> getActividad(Guid id)
         {
             var response = await _actividadService.GetByIdAsync(id);
             var actividadDTOSalida = Mapear<EActividad, ActividadRequest>((EActividad)response.Data);
@@ -53,6 +54,15 @@ namespace lestoma.Api.Controllers
             var response = await _actividadService.CrearAsync(objeto);
             return Created(string.Empty, response);
         }
+
+        [HttpPost("merge")]
+        public async Task<IActionResult> Merge(List<ActividadRequest> actividades)
+        {
+            var listado = Mapear<List<ActividadRequest>, List<EActividad>>(actividades);
+            var response = await _actividadService.Merge(listado);
+            return Created(string.Empty, response);
+        }
+
         [HttpPut("editar")]
         public async Task<IActionResult> Editar(ActividadRequest actividad)
         {
@@ -61,7 +71,7 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Eliminar(int id)
+        public async Task<IActionResult> Eliminar(Guid id)
         {
             await _actividadService.EliminarAsync(id);
             return NoContent();

@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace lestoma.Data.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -25,9 +25,12 @@ namespace lestoma.Data.Migrations
                 schema: "superadmin",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    nombre_actividad = table.Column<string>(type: "text", nullable: true)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    nombre_actividad = table.Column<string>(type: "text", nullable: true),
+                    ip = table.Column<string>(type: "text", nullable: true),
+                    session = table.Column<string>(type: "text", nullable: true),
+                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
+                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -79,9 +82,12 @@ namespace lestoma.Data.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     descripcion = table.Column<string>(type: "json", nullable: true),
-                    usuario_id = table.Column<int>(type: "integer", nullable: false)
+                    usuario_id = table.Column<int>(type: "integer", nullable: false),
+                    ip = table.Column<string>(type: "text", nullable: true),
+                    session = table.Column<string>(type: "text", nullable: true),
+                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
+                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -135,11 +141,15 @@ namespace lestoma.Data.Migrations
                 schema: "superadmin",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     nombre_upa = table.Column<string>(type: "text", nullable: true),
                     superadmin_id = table.Column<int>(type: "integer", nullable: false),
-                    cantidad_actividades = table.Column<string>(type: "text", nullable: true)
+                    descripcion = table.Column<string>(type: "text", nullable: true),
+                    cantidad_actividades = table.Column<short>(type: "smallint", nullable: false),
+                    ip = table.Column<string>(type: "text", nullable: true),
+                    session = table.Column<string>(type: "text", nullable: true),
+                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
+                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -164,7 +174,8 @@ namespace lestoma.Data.Migrations
                     semilla = table.Column<string>(type: "text", nullable: true),
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
-                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true)
+                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
+                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -181,39 +192,6 @@ namespace lestoma.Data.Migrations
                         column: x => x.rol_id,
                         principalSchema: "usuarios",
                         principalTable: "rol",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "upa_actividad",
-                schema: "superadmin",
-                columns: table => new
-                {
-                    upa_id = table.Column<int>(type: "integer", nullable: false),
-                    actividad_id = table.Column<int>(type: "integer", nullable: false),
-                    usuario_id = table.Column<int>(type: "integer", nullable: false),
-                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    descripcion = table.Column<string>(type: "text", nullable: true),
-                    ip = table.Column<string>(type: "text", nullable: true),
-                    session = table.Column<string>(type: "text", nullable: true),
-                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_upa_actividad", x => new { x.upa_id, x.actividad_id });
-                    table.ForeignKey(
-                        name: "FK_upa_actividad_actividad_actividad_id",
-                        column: x => x.actividad_id,
-                        principalSchema: "superadmin",
-                        principalTable: "actividad",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_upa_actividad_upa_upa_id",
-                        column: x => x.upa_id,
-                        principalSchema: "superadmin",
-                        principalTable: "upa",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -247,6 +225,45 @@ namespace lestoma.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "upa_actividad",
+                schema: "superadmin",
+                columns: table => new
+                {
+                    upa_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    actividad_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    usuario_id = table.Column<int>(type: "integer", nullable: false),
+                    ip = table.Column<string>(type: "text", nullable: true),
+                    session = table.Column<string>(type: "text", nullable: true),
+                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
+                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_upa_actividad", x => new { x.upa_id, x.actividad_id, x.usuario_id });
+                    table.ForeignKey(
+                        name: "FK_upa_actividad_actividad_actividad_id",
+                        column: x => x.actividad_id,
+                        principalSchema: "superadmin",
+                        principalTable: "actividad",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_upa_actividad_upa_upa_id",
+                        column: x => x.upa_id,
+                        principalSchema: "superadmin",
+                        principalTable: "upa",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_upa_actividad_usuario_usuario_id",
+                        column: x => x.usuario_id,
+                        principalSchema: "usuarios",
+                        principalTable: "usuario",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_tokens_usuario_por_aplicacion_usuario_id",
                 schema: "seguridad",
@@ -258,6 +275,12 @@ namespace lestoma.Data.Migrations
                 schema: "superadmin",
                 table: "upa_actividad",
                 column: "actividad_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_upa_actividad_usuario_id",
+                schema: "superadmin",
+                table: "upa_actividad",
+                column: "usuario_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_usuario_estado_id",
@@ -299,16 +322,16 @@ namespace lestoma.Data.Migrations
                 schema: "superadmin");
 
             migrationBuilder.DropTable(
-                name: "usuario",
-                schema: "usuarios");
-
-            migrationBuilder.DropTable(
                 name: "actividad",
                 schema: "superadmin");
 
             migrationBuilder.DropTable(
                 name: "upa",
                 schema: "superadmin");
+
+            migrationBuilder.DropTable(
+                name: "usuario",
+                schema: "usuarios");
 
             migrationBuilder.DropTable(
                 name: "estado_usuario",

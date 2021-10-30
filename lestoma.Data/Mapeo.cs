@@ -3,6 +3,7 @@ using lestoma.CommonUtils.Interfaces;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +13,6 @@ namespace lestoma.Data
     public class Mapeo : DbContext
     {
         private readonly ICamposAuditoriaHelper _camposAuditoria;
-        private readonly string _databasePath;
         public Mapeo() { }
 
 
@@ -26,13 +26,13 @@ namespace lestoma.Data
         #endregion
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
-            ProcesarSalvado();
+            ProcesarAuditoria();
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            ProcesarSalvado();
+            ProcesarAuditoria();
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 
@@ -55,7 +55,7 @@ namespace lestoma.Data
             modelBuilder.Entity<EActividad>().ToTable("actividad", "superadmin");
             modelBuilder.Entity<EUpa>().ToTable("upa", "superadmin");
             modelBuilder.Entity<EUpaActividad>().ToTable("upa_actividad", "superadmin")
-           .HasKey(x => new { x.UpaId, x.ActividadId });
+           .HasKey(x => new { x.UpaId, x.ActividadId, x.UsuarioId });
             modelBuilder.Entity<EUsuario>().ToTable("usuario", "usuarios");
             modelBuilder.Entity<EUsuario>().OwnsMany(
                 p => p.RefreshTokens, a =>
@@ -77,15 +77,14 @@ namespace lestoma.Data
                 .HasForeignKey(s => s.EstadoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<EAuditoria>().ToTable("auditoria", "seguridad");
-            modelBuilder.Entity<ERol>().ToTable("rol", "usuarios");
+            modelBuilder.Entity<EAuditoria>().ToTable("auditoria", "seguridad");  
             modelBuilder.Entity<EEstadoUsuario>().ToTable("estado_usuario", "usuarios");
             modelBuilder.Entity<EAplicacion>().ToTable("aplicacion", "seguridad");
             modelBuilder.Entity<EBuzon>().ToTable("buzon", "reportes");
             base.OnModelCreating(modelBuilder);
         }
         #endregion
-        private void ProcesarSalvado()
+        public void ProcesarAuditoria()
         {
             foreach (var item in ChangeTracker.Entries()
                 .Where(e => e.State == EntityState.Added && e.Entity is ECamposAuditoria))

@@ -1,10 +1,14 @@
 ﻿
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -49,15 +53,33 @@ namespace lestoma.Data.DAO
 
         public List<UserDTO> GetUsersJustNames()
         {
-            var users =  _db.TablaUsuarios.FromSqlRaw("SELECT id, nombre, apellido FROM usuarios.usuario").OrderBy(x => x.Nombre);
-            var query = users.Select(x => new UserDTO
+            try
             {
-              Id = x.Id,
-              Nombre = x.Nombre,
-              Apellido = x.Apellido
-            }).ToList();
+                var id = new NpgsqlParameter("id", (int)TipoRol.SuperAdministrador);
+                string consulta = "SELECT uu.id, uu.nombre, uu.apellido FROM usuarios.usuario uu" +
+                    $" INNER JOIN usuarios.rol ur on uu.rol_id = ur.id WHERE ur.id != @id";
+                var users = _db.TablaUsuarios.FromSqlRaw(consulta, id).OrderBy(x => x.Nombre);
+                var query = users.Select(x => new UserDTO
+                {
+                    Id = x.Id,
+                    Nombre = x.Nombre,
+                    Apellido = x.Apellido
+                }).ToList();
 
-            return query;
+                return query;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        public async Task<string> GetApplicationType(int tipoAplicacion)
+        {
+            var query = await _db.TablaAplicaciones.FindAsync(tipoAplicacion);
+
+            return query == null ? "Local" : query.NombreAplicacion;
         }
     }
 }

@@ -7,6 +7,7 @@ using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUpa(int id)
+        public async Task<IActionResult> GetUpa(Guid id)
         {
             var response = await _upaService.GetByIdAsync(id);
             var upaDTOSalida = Mapear<EUpa, UpaRequest>((EUpa)response.Data);
@@ -76,7 +77,7 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> EliminarUpa(int id)
+        public async Task<IActionResult> EliminarUpa(Guid id)
         {
             await _upaService.EliminarAsync(id);
             return NoContent();

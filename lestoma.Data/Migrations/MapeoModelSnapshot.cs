@@ -21,15 +21,30 @@ namespace lestoma.Data.Migrations
 
             modelBuilder.Entity("lestoma.Entidades.Models.EActividad", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("fecha_creacion");
+
+                    b.Property<string>("Ip")
+                        .HasColumnType("text")
+                        .HasColumnName("ip");
 
                     b.Property<string>("Nombre")
                         .HasColumnType("text")
                         .HasColumnName("nombre_actividad");
+
+                    b.Property<string>("Session")
+                        .HasColumnType("text")
+                        .HasColumnName("session");
+
+                    b.Property<string>("TipoDeAplicacion")
+                        .HasColumnType("text")
+                        .HasColumnName("tipo_de_aplicacion");
 
                     b.HasKey("Id");
 
@@ -126,6 +141,18 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("fecha_creacion");
 
+                    b.Property<string>("Ip")
+                        .HasColumnType("text")
+                        .HasColumnName("ip");
+
+                    b.Property<string>("Session")
+                        .HasColumnType("text")
+                        .HasColumnName("session");
+
+                    b.Property<string>("TipoDeAplicacion")
+                        .HasColumnType("text")
+                        .HasColumnName("tipo_de_aplicacion");
+
                     b.Property<int>("UsuarioId")
                         .HasColumnType("integer")
                         .HasColumnName("usuario_id");
@@ -188,23 +215,42 @@ namespace lestoma.Data.Migrations
 
             modelBuilder.Entity("lestoma.Entidades.Models.EUpa", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
-                    b.Property<string>("CantidadActividades")
-                        .HasColumnType("text")
+                    b.Property<short>("CantidadActividades")
+                        .HasColumnType("smallint")
                         .HasColumnName("cantidad_actividades");
+
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("text")
+                        .HasColumnName("descripcion");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("fecha_creacion");
+
+                    b.Property<string>("Ip")
+                        .HasColumnType("text")
+                        .HasColumnName("ip");
 
                     b.Property<string>("Nombre")
                         .HasColumnType("text")
                         .HasColumnName("nombre_upa");
 
+                    b.Property<string>("Session")
+                        .HasColumnType("text")
+                        .HasColumnName("session");
+
                     b.Property<int>("SuperAdminId")
                         .HasColumnType("integer")
                         .HasColumnName("superadmin_id");
+
+                    b.Property<string>("TipoDeAplicacion")
+                        .HasColumnType("text")
+                        .HasColumnName("tipo_de_aplicacion");
 
                     b.HasKey("Id");
 
@@ -213,17 +259,17 @@ namespace lestoma.Data.Migrations
 
             modelBuilder.Entity("lestoma.Entidades.Models.EUpaActividad", b =>
                 {
-                    b.Property<int>("UpaId")
-                        .HasColumnType("integer")
+                    b.Property<Guid>("UpaId")
+                        .HasColumnType("uuid")
                         .HasColumnName("upa_id");
 
-                    b.Property<int>("ActividadId")
-                        .HasColumnType("integer")
+                    b.Property<Guid>("ActividadId")
+                        .HasColumnType("uuid")
                         .HasColumnName("actividad_id");
 
-                    b.Property<string>("Descripcion")
-                        .HasColumnType("text")
-                        .HasColumnName("descripcion");
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("integer")
+                        .HasColumnName("usuario_id");
 
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("timestamp without time zone")
@@ -241,13 +287,11 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("tipo_de_aplicacion");
 
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("integer")
-                        .HasColumnName("usuario_id");
-
-                    b.HasKey("UpaId", "ActividadId");
+                    b.HasKey("UpaId", "ActividadId", "UsuarioId");
 
                     b.HasIndex("ActividadId");
+
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("upa_actividad", "superadmin");
                 });
@@ -279,6 +323,10 @@ namespace lestoma.Data.Migrations
                     b.Property<int>("EstadoId")
                         .HasColumnType("integer")
                         .HasColumnName("estado_id");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime?>("FechaVencimientoCodigo")
                         .HasColumnType("timestamp without time zone")
@@ -320,20 +368,28 @@ namespace lestoma.Data.Migrations
             modelBuilder.Entity("lestoma.Entidades.Models.EUpaActividad", b =>
                 {
                     b.HasOne("lestoma.Entidades.Models.EActividad", "Actividad")
-                        .WithMany("Actividades")
+                        .WithMany()
                         .HasForeignKey("ActividadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("lestoma.Entidades.Models.EUpa", "Upa")
-                        .WithMany("Upas")
+                        .WithMany()
                         .HasForeignKey("UpaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lestoma.Entidades.Models.EUsuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Actividad");
 
                     b.Navigation("Upa");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("lestoma.Entidades.Models.EUsuario", b =>
@@ -410,11 +466,6 @@ namespace lestoma.Data.Migrations
                     b.Navigation("Rol");
                 });
 
-            modelBuilder.Entity("lestoma.Entidades.Models.EActividad", b =>
-                {
-                    b.Navigation("Actividades");
-                });
-
             modelBuilder.Entity("lestoma.Entidades.Models.EEstadoUsuario", b =>
                 {
                     b.Navigation("Usuarios");
@@ -423,11 +474,6 @@ namespace lestoma.Data.Migrations
             modelBuilder.Entity("lestoma.Entidades.Models.ERol", b =>
                 {
                     b.Navigation("Usuarios");
-                });
-
-            modelBuilder.Entity("lestoma.Entidades.Models.EUpa", b =>
-                {
-                    b.Navigation("Upas");
                 });
 #pragma warning restore 612, 618
         }

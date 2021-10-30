@@ -36,9 +36,14 @@ namespace lestoma.CommonUtils.Helpers
         {
             try
             {
-                var claimsIdentity = TransformAsync(hcontext.User);
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity();
+                if (hcontext != null)
+                {
+                    claimsIdentity = TransformAsync(hcontext.User);
+
+                }
                 var claim = claimsIdentity == null ? null : claimsIdentity.FindFirst(ClaimTypes.Authentication);
-                return claim == null ? "App Movil" : string.IsNullOrEmpty(claim.Value) ? "App Movil" : claim.Value; ;
+                return claim == null ? "Local" : string.IsNullOrEmpty(claim.Value) ? "Local" : claim.Value; ;
             }
             catch (Exception ex)
             {
@@ -52,7 +57,12 @@ namespace lestoma.CommonUtils.Helpers
         {
             try
             {
-                var claimsIdentity = TransformAsync(hcontext.User);
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity();
+                if (hcontext != null)
+                {
+                    claimsIdentity = TransformAsync(hcontext.User);
+
+                }
                 var claim = claimsIdentity == null ? null : claimsIdentity.FindFirst(ClaimTypes.Email);
                 return claim == null ? "Anonimo" : string.IsNullOrEmpty(claim.Value) ? "Anonimo" : claim.Value;
             }

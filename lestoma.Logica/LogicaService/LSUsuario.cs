@@ -214,12 +214,12 @@ namespace lestoma.Logica.LogicaService
             var user = _usuarioRepository.UsuarioByToken(token);
 
             // return null if no user found with token
-            if (user == null) return null;
+            if (user == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el usuario actual con token.");
 
             var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
 
             // return null if token is no longer active
-            if (!refreshToken.IsActive) return null;
+            if (!refreshToken.IsActive) throw new HttpStatusCodeException(HttpStatusCode.Conflict, "No se encuentra activo el token del usuario actual.");
 
             // replace old refresh token with a new one and save
             var newRefreshToken = generateRefreshToken(refreshToken.AplicacionId, refreshToken.UsuarioId, ipAddress);
@@ -232,14 +232,20 @@ namespace lestoma.Logica.LogicaService
             return user;
         }
 
-        public short GetExpiracionToken(int aplicacionId)
-        {
-            return _usuarioRepository.ExpiracionToken(aplicacionId);
-        }
 
         public List<UserDTO> GetUsersJustNames()
         {
             return _usuarioRepository.GetUsersJustNames();
+        }
+
+        public short GetExpirationToken(int aplicacionId)
+        {
+            return _usuarioRepository.ExpiracionToken(aplicacionId);
+        }
+
+        public async Task<string> GetApplicationType(int tipoAplicacion)
+        {
+            return await _usuarioRepository.GetApplicationType(tipoAplicacion);
         }
     }
 }

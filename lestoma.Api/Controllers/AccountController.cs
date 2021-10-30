@@ -50,6 +50,7 @@ namespace lestoma.Api.Controllers
             Respuesta = await _usuarioService.Login(logeo, ipAddress());
             var data = (EUsuario)Respuesta.Data;
             data.AplicacionId = logeo.TipoAplicacion;
+            data.TipoDeAplicacion = await _usuarioService.GetApplicationType(logeo.TipoAplicacion);
             TokenDTO usuario = GetToken(data);
             Respuesta.Data = usuario;
             setTokenCookie(usuario.RefreshToken);
@@ -60,10 +61,11 @@ namespace lestoma.Api.Controllers
         #region refresh-token
         [AllowAnonymous]
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken()
+        public async Task<IActionResult> RefreshToken(TipoAplicacionRequest tipoAplicacion)
         {
             var refreshToken = Request.Cookies["refreshToken"];
             var response = await _usuarioService.RefreshToken(refreshToken, ipAddress());
+            response.TipoDeAplicacion = await _usuarioService.GetApplicationType(tipoAplicacion.TipoAplicacion);
             TokenDTO usuario = GetToken(response);
             setTokenCookie(response.RefreshToken);
             Respuesta.Data = usuario;
@@ -178,8 +180,8 @@ namespace lestoma.Api.Controllers
                     Audience = _appSettings.Audience,
                     Issuer = _appSettings.Issuer,
                     Expires = user.AplicacionId == (int)TipoAplicacion.AppMovil ?
-                    DateTime.UtcNow.AddDays(_usuarioService.GetExpiracionToken(user.AplicacionId)) : user.AplicacionId == (int)TipoAplicacion.Web ?
-                     DateTime.UtcNow.AddMinutes(_usuarioService.GetExpiracionToken(user.AplicacionId)) : DateTime.UtcNow.AddMinutes(15),
+                    DateTime.UtcNow.AddDays(_usuarioService.GetExpirationToken(user.AplicacionId)) : user.AplicacionId == (int)TipoAplicacion.Web ?
+                     DateTime.UtcNow.AddMinutes(_usuarioService.GetExpirationToken(user.AplicacionId)) : DateTime.UtcNow.AddMinutes(15),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(llave), SecurityAlgorithms.HmacSha256Signature)
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);

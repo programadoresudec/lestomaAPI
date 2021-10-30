@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 
 namespace lestoma.Logica.Interfaces
 {
-    public interface IGenericCRUD<T> where T : class
+    public interface IGenericCRUD<T, TID> where T : class
     {
         Task<Response> CrearAsync(T entidad);
-        Task<Response> GetByIdAsync(object id);
+        Task<Response> Merge(List<T> listadoEntidad);
+        Task<Response> GetByIdAsync(TID id);
         Task<Response> ActualizarAsync(T entidad);
-        Task EliminarAsync(object id);
+        Task EliminarAsync(TID id);
         Task<List<T>> GetAll();
     }
 }

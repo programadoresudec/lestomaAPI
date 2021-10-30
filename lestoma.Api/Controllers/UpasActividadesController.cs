@@ -18,14 +18,14 @@ namespace lestoma.Api.Controllers
     [ApiController]
     public class UpasActividadesController : BaseController
     {
-        private readonly IGenericCRUD<EUpaActividad> _service;
-        public UpasActividadesController(IMapper mapper, IGenericCRUD<EUpaActividad> upasActividadesService)
+        private readonly IDetalleUpaActividadService _service;
+        public UpasActividadesController(IMapper mapper, IDetalleUpaActividadService upasActividadesService)
             : base(mapper)
         {
             _service = upasActividadesService;
         }
         [HttpGet("paginar")]
-        public async Task<IActionResult> GetUpasPaginado([FromQuery] Paginacion paginacion)
+        public async Task<IActionResult> GetDetallePaginado([FromQuery] Paginacion paginacion)
         {
             var listado = await _service.GetAll();
             List<DetalleUpaActividadDTO> detalleDTO = Mapear<List<EUpaActividad>, List<DetalleUpaActividadDTO>>(listado);
@@ -38,7 +38,7 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> CrearUpa(CrearDetalleUpaActividadRequest entidad)
         {
             var upaActividadDTO = Mapear<CrearDetalleUpaActividadRequest, EUpaActividad>(entidad);
-            var response = await _service.CrearAsync(upaActividadDTO);
+            var response = await _service.CrearEnCascada(upaActividadDTO);
 
             return CreatedAtAction(null, response);
         }

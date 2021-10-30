@@ -12,15 +12,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.7" />
+    <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="5.2.16" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\lestoma.CommonUtils\lestoma.CommonUtils.csproj" />
     <ProjectReference Include="..\lestoma.Entidades\lestoma.Entidades.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

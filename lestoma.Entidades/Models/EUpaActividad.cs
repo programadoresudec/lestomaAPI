@@ -9,9 +9,9 @@ namespace lestoma.Entidades.Models
     public class EUpaActividad : ECamposAuditoria
     {
         [Column("upa_id")]
-        public int UpaId { get; set; }
+        public Guid UpaId { get; set; }
         [Column("actividad_id")]
-        public int ActividadId { get; set; }
+        public Guid ActividadId { get; set; }
         [Column("usuario_id")]
         public int UsuarioId { get; set; }
         public EUpa Upa { get; set; }

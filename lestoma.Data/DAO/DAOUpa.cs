@@ -2,6 +2,7 @@
 using lestoma.CommonUtils.Enums;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace lestoma.Data.DAO
         {
             _db = db;
         }
-        public async Task<bool> ExisteUpa(string nombre, bool insertOrUpdate = false, int id = 0)
+        public async Task<bool> ExisteUpa(string nombre, Guid id, bool insertOrUpdate = false)
         {
             if (!insertOrUpdate)
             {

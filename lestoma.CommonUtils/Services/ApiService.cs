@@ -1,6 +1,8 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
+using lestoma.CommonUtils.Requests;
 using Newtonsoft.Json;
 using Plugin.Connectivity;
 using System;
@@ -80,7 +82,7 @@ namespace lestoma.CommonUtils.Services
 
         #endregion
 
-
+        #region Get paginado Api service with token
         public async Task<Response> GetPaginadoAsyncWithToken<T>(string urlBase, string controller, string token)
         {
             try
@@ -130,6 +132,7 @@ namespace lestoma.CommonUtils.Services
                 };
             }
         }
+        #endregion
 
         #region Post Api service
         public async Task<Response> PostAsync<T>(string urlBase, string controller, T model)
@@ -291,7 +294,7 @@ namespace lestoma.CommonUtils.Services
         #endregion
 
         #region Delete Api service with token
-        public async Task<Response> DeleteAsyncWithToken(string urlBase, string controller, int id, string token)
+        public async Task<Response> DeleteAsyncWithToken(string urlBase, string controller, Guid id, string token)
         {
             try
             {
@@ -340,7 +343,12 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                var content = new StringContent(null, Encoding.UTF8, "application/json");
+                TipoAplicacionRequest tipoAplicacionRequest = new TipoAplicacionRequest
+                {
+                    TipoAplicacion = (int)TipoAplicacion.AppMovil
+                };
+                var json = JsonConvert.SerializeObject(tipoAplicacionRequest);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
                     Timeout = TimeSpan.FromSeconds(45),
@@ -505,7 +513,7 @@ namespace lestoma.CommonUtils.Services
             return mensaje;
         }
 
-        
+
         #endregion
 
     }

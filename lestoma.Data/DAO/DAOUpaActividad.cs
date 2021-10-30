@@ -55,7 +55,10 @@ namespace lestoma.Data.DAO
             var listaAgrupada = (await _db.TablaUpasConActividades.Include(a => a.Actividad).ToListAsync())
                 .GroupBy(p => new { p.UsuarioId, p.UpaId });
 
-
+            if (listaAgrupada.ToList().Count == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
+            }
             var query = listaAgrupada.Select(x => new EUpaActividad
             {
                 UpaId = x.Key.UpaId,
