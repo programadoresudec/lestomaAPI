@@ -14,7 +14,7 @@ namespace lestoma.Entidades.Models
     {
         [Key]
         [Column("id")]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Column("tipo_estado_componente_id")]
         public int TipoEstadoComponenteId{ get; set;}
         [Column("componente_laboratorio_id")] 
@@ -25,14 +25,7 @@ namespace lestoma.Entidades.Models
         public int ActividadId{ get; set;}
         [Column("trama_enviada")]
         public String TramaEnviada{ get; set;}
-        [Column("ip")]
-        public String ip { get; set;}
-        [Column("session")]
-        public String Sesion{ get; set;}
-        [Column("tipo_aplicacion")]
-        public String TipoAplicacion{ get; set;}
-        [Column("fecha_creacion")]
-        public DateTime? FechaDeCreacion{ get; set;}
+        
         [Column("estado_internet")]
         public Boolean EstadoDelInternet{ get; set;}
 
