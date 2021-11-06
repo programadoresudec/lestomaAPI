@@ -13,13 +13,14 @@ using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
 {
-    public class DAOLaboratorio : GenericRepository<Elaboratorio>
+    public class DAOLaboratorio : GenericRepository<ELaboratorio>
     {
         private readonly Mapeo _db;
         public DAOLaboratorio(Mapeo db) : base(db)
         {
-             _db = db;
+            _db = db;
         }
     }
+}
 
     

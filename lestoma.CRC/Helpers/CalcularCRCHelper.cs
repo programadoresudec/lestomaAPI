@@ -1,4 +1,5 @@
-﻿using System;
+﻿using lestoma.CommonUtils.Helpers;
+using System;
 
 namespace lestoma.CRC.Helpers
 {
@@ -6,7 +7,7 @@ namespace lestoma.CRC.Helpers
     {
         public static byte[] CalculateCrc16Modbus(string Hexadecimal)
         {
-            byte[] bytes = HexaToByteHelper.StringToByteArray(Hexadecimal);
+            byte[] bytes = Reutilizables.StringToByteArray(Hexadecimal);
 
             CrcStdParams.StandartParameters.TryGetValue(CrcAlgorithms.Crc16Modbus, out Parameters crc_p);
             Crc crc = new Crc(crc_p);
