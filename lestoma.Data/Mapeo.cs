@@ -3,7 +3,6 @@ using lestoma.CommonUtils.Interfaces;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,7 +76,7 @@ namespace lestoma.Data
                 .HasForeignKey(s => s.EstadoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<EAuditoria>().ToTable("auditoria", "seguridad");  
+            modelBuilder.Entity<EAuditoria>().ToTable("auditoria", "seguridad");
             modelBuilder.Entity<EEstadoUsuario>().ToTable("estado_usuario", "usuarios");
             modelBuilder.Entity<EAplicacion>().ToTable("aplicacion", "seguridad");
             modelBuilder.Entity<EBuzon>().ToTable("buzon", "reportes");

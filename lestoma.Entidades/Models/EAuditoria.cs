@@ -10,7 +10,7 @@ namespace lestoma.Entidades.Models
 
         [Key]
         [Column("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
         [Column("schema")]
         public string Schema { get; set; }
         [Column("tabla")]

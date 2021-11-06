@@ -1,10 +1,16 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Json;
 using System.Text;
 
 namespace lestoma.CommonUtils.Helpers
 {
-    public static class Reutilizables
+    public class Reutilizables
     {
         public const int LONGITUD_CODIGO = 6;
         public static string generarCodigoVerificacion()
@@ -27,6 +33,7 @@ namespace lestoma.CommonUtils.Helpers
                 {
                     codigo += NumeroAleatorio.ToString();
                 }
+
             }
             return codigo;
         }
@@ -64,6 +71,30 @@ namespace lestoma.CommonUtils.Helpers
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(bytes);
             return bytes;
+        }
+        public T ReadJSON<T>(string filePath)
+        {
+            try
+            {
+                var assembly = this.GetType().Assembly;
+                var recursos = this.GetType().Assembly.GetManifestResourceNames();
+                string rutaCompleta = recursos.SingleOrDefault(x => x.Contains(filePath));
+                T data;
+                using (var stream = assembly.GetManifestResourceStream(rutaCompleta))
+                {
+                    using (var reader = new StreamReader(stream, Encoding.UTF8))
+                    {
+                        string json = reader.ReadToEnd();
+                        data = JsonConvert.DeserializeObject<T>(json);
+                    }
+                }
+                return data;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return default;
+            }
         }
     }
 }

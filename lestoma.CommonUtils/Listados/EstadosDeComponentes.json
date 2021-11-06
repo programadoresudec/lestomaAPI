@@ -1,0 +1,26 @@
+[
+  {
+    "id": "b1f9c428-baa0-4988-9e52-0ed9977e282e",
+    "tipoEstado": "ENCENDIDO",
+    "tercerByteTrama": "F0",
+    "cuartoByteTrama": "00"
+  },
+  {
+    "id": "daaa7ebb-135f-48a8-95b5-e9099a3a83ea",
+    "tipoEstado": "APAGADO",
+    "tercerByteTrama": "F0",
+    "cuartoByteTrama": "00"
+  },
+  {
+    "id": "0996cfa0-c56b-4a2a-80e8-7161e1e938d4",
+    "tipoEstado": "TODOS LOS ESTADOS",
+    "tercerByteTrama": "3C",
+    "cuartoByteTrama": "00"
+  },
+  {
+    "id": "b0ae1474-7334-43a6-a6c3-25cdca1a3d5d",
+    "tipoEstado": "LECTURA",
+    "tercerByteTrama": "0F",
+    "cuartoByteTrama": "00"
+  }
+]
