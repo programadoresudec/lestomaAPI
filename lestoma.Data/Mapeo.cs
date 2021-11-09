@@ -1,6 +1,7 @@
 ﻿
 using lestoma.CommonUtils.Interfaces;
 using lestoma.Entidades.Models;
+using lestoma.Entidades.ModelsReports;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -46,40 +47,75 @@ namespace lestoma.Data
         public DbSet<EUpaActividad> TablaUpasConActividades { get; set; }
         public DbSet<EAplicacion> TablaAplicaciones { get; set; }
         public DbSet<ESuperAdministrador> TablaSuperAdministradores { get; set; }
+        public DbSet<ELaboratorio> TablaDetalleLaboratorio { get; set; }
+        public DbSet<EModuloComponente> TablaModuloComponentes { get; set; }
+        public DbSet<EProtocoloCOM> TablaProtocoloCOM { get; set; }
+        public DbSet<EComponentesLaboratorio> TablaComponentesLaboratorio { get; set; }
+        public DbSet<EAlimentarPeces> TablaReporteAlimentarPeces { get; set; }
+        public DbSet<EControlAgua> TablaReporteControlAgua { get; set; }
+        public DbSet<EControlElectrico> TablaReporteControlElectrico { get; set; }
+        public DbSet<EControlEntorno> TablaReporteControlEntorno { get; set; }
+        public DbSet<EControlHidroponico> TablaReporteControlHidroponico { get; set; }
+        public DbSet<ERecirculacionAgua> TablaReporteRecirculacionAgua { get; set; }
+
         #endregion
 
         #region Mapeo en la base de datos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+
+            #region Schema superadmin
             modelBuilder.Entity<EActividad>().ToTable("actividad", "superadmin");
             modelBuilder.Entity<EUpa>().ToTable("upa", "superadmin");
             modelBuilder.Entity<EUpaActividad>().ToTable("upa_actividad", "superadmin")
-           .HasKey(x => new { x.UpaId, x.ActividadId, x.UsuarioId });
-            modelBuilder.Entity<EUsuario>().ToTable("usuario", "usuarios");
-            modelBuilder.Entity<EUsuario>().OwnsMany(
-                p => p.RefreshTokens, a =>
-                {
-                    a.WithOwner().HasForeignKey("usuario_id");
-                    a.Property<int>("Id");
-                    a.HasKey("Id");
-                });
+           .HasKey(x => new { x.UpaId, x.ActividadId, x.UsuarioId }); 
+            #endregion
 
+            #region Schema usuarios
+            modelBuilder.Entity<EUsuario>().ToTable("usuario", "usuarios");
             modelBuilder.Entity<ERol>()
                 .HasMany(g => g.Usuarios)
                 .WithOne(s => s.Rol)
                 .HasForeignKey(s => s.RolId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<EEstadoUsuario>()
                 .HasMany(g => g.Usuarios)
                 .WithOne(s => s.EstadoUsuario)
                 .HasForeignKey(s => s.EstadoId)
                 .OnDelete(DeleteBehavior.Cascade);
-
+            #endregion
+            #region Schema Seguridad
+            modelBuilder.Entity<EUsuario>().OwnsMany(
+            p => p.RefreshTokens, a =>
+            {
+                a.WithOwner().HasForeignKey("usuario_id");
+                a.Property<int>("Id");
+                a.HasKey("Id");
+            });
             modelBuilder.Entity<EAuditoria>().ToTable("auditoria", "seguridad");
-            modelBuilder.Entity<EEstadoUsuario>().ToTable("estado_usuario", "usuarios");
             modelBuilder.Entity<EAplicacion>().ToTable("aplicacion", "seguridad");
+            #endregion
+
+            #region Schema laboratorio
+            modelBuilder.Entity<EComponentesLaboratorio>().ToTable("componente_laboratorio", "laboratorio_lestoma");
+            modelBuilder.Entity<ELaboratorio>().ToTable("detalle_laboratorio", "laboratorio_lestoma");
+            modelBuilder.Entity<EModuloComponente>().ToTable("modulo_componente", "laboratorio_lestoma");
+            modelBuilder.Entity<EProtocoloCOM>().ToTable("protocolo_com", "laboratorio_lestoma");
+            #endregion
+
+            #region Schema laboratorio
             modelBuilder.Entity<EBuzon>().ToTable("buzon", "reportes");
+            modelBuilder.Entity<EAlimentarPeces>().ToTable("alimentar_peces", "reportes");
+            modelBuilder.Entity<EControlAgua>().ToTable("control_de_agua", "reportes");
+            modelBuilder.Entity<EControlElectrico>().ToTable("control_electrico", "reportes");
+            modelBuilder.Entity<EControlEntorno>().ToTable("control_de_entorno", "reportes");
+            modelBuilder.Entity<EControlHidroponico>().ToTable("control_hidroponico", "reportes");
+            modelBuilder.Entity<ERecirculacionAgua>().ToTable("recirculacion_de_agua", "reportes");
+
+            #endregion
+
+
             base.OnModelCreating(modelBuilder);
         }
         #endregion

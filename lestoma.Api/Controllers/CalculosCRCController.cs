@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CRC.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ namespace lestoma.Api.Controllers
             resultado.Add(crc.ElementAt(1));
             resultado.Add(crc.ElementAt(0));
 
-            string hexaCRC = HexaToByteHelper.ByteArrayToHexString(resultado.ToArray());
+            string hexaCRC = Reutilizables.ByteArrayToHexString(resultado.ToArray());
             var response = new Response
             {
                 Data = hexaCRC,

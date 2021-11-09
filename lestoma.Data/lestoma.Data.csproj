@@ -20,4 +20,8 @@
     <ProjectReference Include="..\lestoma.Entidades\lestoma.Entidades.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="BD\" />
+  </ItemGroup>
+
 </Project>

@@ -23,4 +23,10 @@
     "tercerByteTrama": "0F",
     "cuartoByteTrama": "00"
   }
+  {
+    "id": "b0ae1474-7334-43a6-a6c3-25cdca1a3d5d",
+    "tipoEstado": "AJUSTE",
+    "tercerByteTrama": "F0",
+    "cuartoByteTrama": "00"
+  }
 ]

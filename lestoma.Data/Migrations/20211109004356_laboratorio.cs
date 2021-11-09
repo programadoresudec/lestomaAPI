@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace lestoma.Data.Migrations
 {
-    public partial class Initial : Migration
+    public partial class laboratorio : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,10 +12,13 @@ namespace lestoma.Data.Migrations
                 name: "superadmin");
 
             migrationBuilder.EnsureSchema(
+                name: "reportes");
+
+            migrationBuilder.EnsureSchema(
                 name: "seguridad");
 
             migrationBuilder.EnsureSchema(
-                name: "reportes");
+                name: "laboratorio_lestoma");
 
             migrationBuilder.EnsureSchema(
                 name: "usuarios");
@@ -38,6 +41,21 @@ namespace lestoma.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "alimentar_peces",
+                schema: "reportes",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    detalle = table.Column<string>(type: "Json", nullable: true),
+                    detalle_laboratorio_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    anterior_registro_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_alimentar_peces", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "aplicacion",
                 schema: "seguridad",
                 columns: table => new
@@ -57,7 +75,7 @@ namespace lestoma.Data.Migrations
                 schema: "seguridad",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     schema = table.Column<string>(type: "text", nullable: true),
                     tabla = table.Column<string>(type: "text", nullable: true),
@@ -95,6 +113,109 @@ namespace lestoma.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "componente_laboratorio",
+                schema: "laboratorio_lestoma",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    modulo_componente_id = table.Column<int>(type: "integer", nullable: false),
+                    actividad_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    nombre = table.Column<string>(type: "text", nullable: true),
+                    tipos_estado_componente = table.Column<string>(type: "Json", nullable: true),
+                    ip = table.Column<string>(type: "text", nullable: true),
+                    session = table.Column<string>(type: "text", nullable: true),
+                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
+                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_componente_laboratorio", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "control_de_agua",
+                schema: "reportes",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    detalle = table.Column<string>(type: "Json", nullable: true),
+                    detalle_laboratorio_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    anterior_registro_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_control_de_agua", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "control_de_entorno",
+                schema: "reportes",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    detalle = table.Column<string>(type: "Json", nullable: true),
+                    detalle_laboratorio_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    anterior_registro_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_control_de_entorno", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "control_electrico",
+                schema: "reportes",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    detalle = table.Column<string>(type: "Json", nullable: true),
+                    detalle_laboratorio_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    anterior_registro_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_control_electrico", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "control_hidroponico",
+                schema: "reportes",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    detalle = table.Column<string>(type: "Json", nullable: true),
+                    detalle_laboratorio_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    anterior_registro_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_control_hidroponico", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "detalle_laboratorio",
+                schema: "laboratorio_lestoma",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    tipo_estado_componente_id = table.Column<int>(type: "integer", nullable: false),
+                    componente_laboratorio_id = table.Column<int>(type: "integer", nullable: false),
+                    tipo_com_id = table.Column<int>(type: "integer", nullable: false),
+                    actividad_id = table.Column<int>(type: "integer", nullable: false),
+                    trama_enviada = table.Column<string>(type: "text", nullable: true),
+                    estado_internet = table.Column<bool>(type: "boolean", nullable: false),
+                    ip = table.Column<string>(type: "text", nullable: true),
+                    session = table.Column<string>(type: "text", nullable: true),
+                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
+                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_detalle_laboratorio", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "estado_usuario",
                 schema: "usuarios",
                 columns: table => new
@@ -109,13 +230,56 @@ namespace lestoma.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "modulo_componente",
+                schema: "laboratorio_lestoma",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    nombre = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_modulo_componente", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "protocolo_com",
+                schema: "laboratorio_lestoma",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    nombre = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_protocolo_com", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "recirculacion_de_agua",
+                schema: "reportes",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    detalle = table.Column<string>(type: "Json", nullable: true),
+                    detalle_laboratorio_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    anterior_registro_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_recirculacion_de_agua", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "rol",
                 schema: "usuarios",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    nombre_rol = table.Column<string>(type: "text", nullable: true)
+                    nombre_rol = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -298,6 +462,10 @@ namespace lestoma.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "alimentar_peces",
+                schema: "reportes");
+
+            migrationBuilder.DropTable(
                 name: "aplicacion",
                 schema: "seguridad");
 
@@ -307,6 +475,42 @@ namespace lestoma.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "buzon",
+                schema: "reportes");
+
+            migrationBuilder.DropTable(
+                name: "componente_laboratorio",
+                schema: "laboratorio_lestoma");
+
+            migrationBuilder.DropTable(
+                name: "control_de_agua",
+                schema: "reportes");
+
+            migrationBuilder.DropTable(
+                name: "control_de_entorno",
+                schema: "reportes");
+
+            migrationBuilder.DropTable(
+                name: "control_electrico",
+                schema: "reportes");
+
+            migrationBuilder.DropTable(
+                name: "control_hidroponico",
+                schema: "reportes");
+
+            migrationBuilder.DropTable(
+                name: "detalle_laboratorio",
+                schema: "laboratorio_lestoma");
+
+            migrationBuilder.DropTable(
+                name: "modulo_componente",
+                schema: "laboratorio_lestoma");
+
+            migrationBuilder.DropTable(
+                name: "protocolo_com",
+                schema: "laboratorio_lestoma");
+
+            migrationBuilder.DropTable(
+                name: "recirculacion_de_agua",
                 schema: "reportes");
 
             migrationBuilder.DropTable(

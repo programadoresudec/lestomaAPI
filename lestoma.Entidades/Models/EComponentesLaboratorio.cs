@@ -10,7 +10,7 @@ namespace lestoma.Entidades.Models
     public class EComponentesLaboratorio : ECamposAuditoria
     {
         [Column("id")]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Column("modulo_componente_id")]
         public int ModuloComponenteId { get; set; }
         [Column("actividad_id")]

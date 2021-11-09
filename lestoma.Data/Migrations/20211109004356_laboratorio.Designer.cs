@@ -10,8 +10,8 @@ using lestoma.Data;
 namespace lestoma.Data.Migrations
 {
     [DbContext(typeof(Mapeo))]
-    [Migration("20211028203347_Initial")]
-    partial class Initial
+    [Migration("20211109004356_laboratorio")]
+    partial class laboratorio
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -76,9 +76,9 @@ namespace lestoma.Data.Migrations
 
             modelBuilder.Entity("lestoma.Entidades.Models.EAuditoria", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("bigint")
                         .HasColumnName("id")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
@@ -164,6 +164,51 @@ namespace lestoma.Data.Migrations
                     b.ToTable("buzon", "reportes");
                 });
 
+            modelBuilder.Entity("lestoma.Entidades.Models.EComponentesLaboratorio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<Guid>("ActividadId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("actividad_id");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("fecha_creacion");
+
+                    b.Property<string>("Ip")
+                        .HasColumnType("text")
+                        .HasColumnName("ip");
+
+                    b.Property<int>("ModuloComponenteId")
+                        .HasColumnType("integer")
+                        .HasColumnName("modulo_componente_id");
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("text")
+                        .HasColumnName("nombre");
+
+                    b.Property<string>("Session")
+                        .HasColumnType("text")
+                        .HasColumnName("session");
+
+                    b.Property<string>("TipoDeAplicacion")
+                        .HasColumnType("text")
+                        .HasColumnName("tipo_de_aplicacion");
+
+                    b.Property<string>("TiposEstadoComponente")
+                        .HasColumnType("Json")
+                        .HasColumnName("tipos_estado_componente");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("componente_laboratorio", "laboratorio_lestoma");
+                });
+
             modelBuilder.Entity("lestoma.Entidades.Models.EEstadoUsuario", b =>
                 {
                     b.Property<int>("Id")
@@ -181,6 +226,92 @@ namespace lestoma.Data.Migrations
                     b.ToTable("estado_usuario", "usuarios");
                 });
 
+            modelBuilder.Entity("lestoma.Entidades.Models.ELaboratorio", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ActividadId")
+                        .HasColumnType("integer")
+                        .HasColumnName("actividad_id");
+
+                    b.Property<int>("ComponenteLaboratorioId")
+                        .HasColumnType("integer")
+                        .HasColumnName("componente_laboratorio_id");
+
+                    b.Property<bool>("EstadoInternet")
+                        .HasColumnType("boolean")
+                        .HasColumnName("estado_internet");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("fecha_creacion");
+
+                    b.Property<string>("Ip")
+                        .HasColumnType("text")
+                        .HasColumnName("ip");
+
+                    b.Property<string>("Session")
+                        .HasColumnType("text")
+                        .HasColumnName("session");
+
+                    b.Property<string>("TipoDeAplicacion")
+                        .HasColumnType("text")
+                        .HasColumnName("tipo_de_aplicacion");
+
+                    b.Property<int>("TipoDeComunicacionId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tipo_com_id");
+
+                    b.Property<int>("TipoEstadoComponenteId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tipo_estado_componente_id");
+
+                    b.Property<string>("TramaEnviada")
+                        .HasColumnType("text")
+                        .HasColumnName("trama_enviada");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("detalle_laboratorio", "laboratorio_lestoma");
+                });
+
+            modelBuilder.Entity("lestoma.Entidades.Models.EModuloComponente", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("text")
+                        .HasColumnName("nombre");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("modulo_componente", "laboratorio_lestoma");
+                });
+
+            modelBuilder.Entity("lestoma.Entidades.Models.EProtocoloCOM", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("text")
+                        .HasColumnName("nombre");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("protocolo_com", "laboratorio_lestoma");
+                });
+
             modelBuilder.Entity("lestoma.Entidades.Models.ERol", b =>
                 {
                     b.Property<int>("Id")
@@ -190,6 +321,7 @@ namespace lestoma.Data.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("NombreRol")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("nombre_rol");
 
@@ -365,6 +497,150 @@ namespace lestoma.Data.Migrations
                     b.HasIndex("RolId");
 
                     b.ToTable("usuario", "usuarios");
+                });
+
+            modelBuilder.Entity("lestoma.Entidades.ModelsReports.EAlimentarPeces", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AnteriorRegistroId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("anterior_registro_id");
+
+                    b.Property<string>("DetalleJson")
+                        .HasColumnType("Json")
+                        .HasColumnName("detalle");
+
+                    b.Property<Guid>("DetalleLaboratorioId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("detalle_laboratorio_id");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("alimentar_peces", "reportes");
+                });
+
+            modelBuilder.Entity("lestoma.Entidades.ModelsReports.EControlAgua", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AnteriorRegistroId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("anterior_registro_id");
+
+                    b.Property<string>("DetalleJson")
+                        .HasColumnType("Json")
+                        .HasColumnName("detalle");
+
+                    b.Property<Guid>("DetalleLaboratorioId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("detalle_laboratorio_id");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("control_de_agua", "reportes");
+                });
+
+            modelBuilder.Entity("lestoma.Entidades.ModelsReports.EControlElectrico", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AnteriorRegistroId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("anterior_registro_id");
+
+                    b.Property<string>("DetalleJson")
+                        .HasColumnType("Json")
+                        .HasColumnName("detalle");
+
+                    b.Property<Guid>("DetalleLaboratorioId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("detalle_laboratorio_id");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("control_electrico", "reportes");
+                });
+
+            modelBuilder.Entity("lestoma.Entidades.ModelsReports.EControlEntorno", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AnteriorRegistroId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("anterior_registro_id");
+
+                    b.Property<string>("DetalleJson")
+                        .HasColumnType("Json")
+                        .HasColumnName("detalle");
+
+                    b.Property<Guid>("DetalleLaboratorioId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("detalle_laboratorio_id");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("control_de_entorno", "reportes");
+                });
+
+            modelBuilder.Entity("lestoma.Entidades.ModelsReports.EControlHidroponico", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AnteriorRegistroId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("anterior_registro_id");
+
+                    b.Property<string>("DetalleJson")
+                        .HasColumnType("Json")
+                        .HasColumnName("detalle");
+
+                    b.Property<Guid>("DetalleLaboratorioId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("detalle_laboratorio_id");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("control_hidroponico", "reportes");
+                });
+
+            modelBuilder.Entity("lestoma.Entidades.ModelsReports.ERecirculacionAgua", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AnteriorRegistroId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("anterior_registro_id");
+
+                    b.Property<string>("DetalleJson")
+                        .HasColumnType("Json")
+                        .HasColumnName("detalle");
+
+                    b.Property<Guid>("DetalleLaboratorioId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("detalle_laboratorio_id");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("recirculacion_de_agua", "reportes");
                 });
 
             modelBuilder.Entity("lestoma.Entidades.Models.EUpaActividad", b =>

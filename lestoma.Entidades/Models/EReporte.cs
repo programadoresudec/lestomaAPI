@@ -13,7 +13,7 @@ namespace lestoma.Entidades.Models
         public string DetalleJson { get; set; }
         [Column("detalle_laboratorio_id")]
         public Guid DetalleLaboratorioId { get; set; }
-        [Column("anterior_cambio_id")]
-        public Guid AnteriorCambioId { get; set; }
+        [Column("anterior_registro_id")]
+        public Guid AnteriorRegistroId { get; set; }
     }
 }
