@@ -90,10 +90,13 @@ namespace lestoma.Logica.LogicaService
                 }
                 else
                 {
+                    if (usuario.RolId == 0)
+                    {
+                        usuario.RolId = (int)TipoRol.Auxiliar;
+                    }
                     var hash = HashHelper.Hash(usuario.Clave);
                     usuario.Apellido = usuario.Apellido.Trim();
                     usuario.Nombre = usuario.Nombre.Trim();
-                    usuario.RolId = (int)TipoRol.Auxiliar;
                     usuario.Clave = hash.Password;
                     usuario.Salt = hash.Salt;
                     usuario.EstadoId = (int)TipoEstadoUsuario.CheckCuenta;
