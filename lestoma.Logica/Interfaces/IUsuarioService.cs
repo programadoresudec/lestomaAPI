@@ -19,5 +19,6 @@ namespace lestoma.Logica.Interfaces
         List<UserDTO> GetUsersJustNames();
         short GetExpirationToken(int aplicacionId);
         Task<string> GetApplicationType(int tipoAplicacion);
+        Task<Response> EditRol(RolRequest user);
     }
 }

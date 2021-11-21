@@ -45,7 +45,7 @@ namespace lestoma.Logica.LogicaService
                         user.RefreshTokens.Add(refreshToken);
                         await _usuarioRepository.Update(user);
                         _respuesta.IsExito = true;
-                        _respuesta.StatusCode = (int)HttpStatusCode.Created;
+                        _respuesta.StatusCode = (int)HttpStatusCode.OK;
                     }
                     else
                     {
@@ -103,6 +103,7 @@ namespace lestoma.Logica.LogicaService
                     await _usuarioRepository.Create(usuario);
                     _respuesta.Mensaje = "Se ha registrado satisfactoriamente.";
                     _respuesta.IsExito = true;
+                    _respuesta.StatusCode = (int)HttpStatusCode.Created;
                 }
                 return _respuesta;
             }
@@ -130,6 +131,7 @@ namespace lestoma.Logica.LogicaService
                     await _usuarioRepository.Update(user);
                     _respuesta.Mensaje = "Se actualizo satisfactoriamente.";
                     _respuesta.IsExito = true;
+                    _respuesta.StatusCode = (int)HttpStatusCode.OK;
                 }
                 return _respuesta;
             }
@@ -162,6 +164,7 @@ namespace lestoma.Logica.LogicaService
                     _respuesta.Data = user;
                     _respuesta.IsExito = true;
                     _respuesta.Mensaje = "Revise su correo eléctronico.";
+                    _respuesta.StatusCode = (int)HttpStatusCode.OK;
                 }
                 return _respuesta;
             }
@@ -191,6 +194,7 @@ namespace lestoma.Logica.LogicaService
                     await _usuarioRepository.Update(user);
                     _respuesta.IsExito = true;
                     _respuesta.Mensaje = "la contraseña ha sido restablecida.";
+                    _respuesta.StatusCode = (int)HttpStatusCode.OK;
                 }
                 return _respuesta;
             }
@@ -249,6 +253,22 @@ namespace lestoma.Logica.LogicaService
         public async Task<string> GetApplicationType(int tipoAplicacion)
         {
             return await _usuarioRepository.GetApplicationType(tipoAplicacion);
+        }
+
+        public async Task<Response> EditRol(RolRequest usuarioDTO)
+        {
+            var existe = await _usuarioRepository.GetById(usuarioDTO.IdUser);
+            if (existe == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "usuario no encontrado");
+            }
+            existe.RolId = usuarioDTO.RolUser;
+            await _usuarioRepository.Update(existe);
+            _respuesta.IsExito = true;
+            _respuesta.Mensaje = "El rol ha sido editado.";
+            _respuesta.StatusCode = (int)HttpStatusCode.OK;
+            return _respuesta;
+           
         }
     }
 }

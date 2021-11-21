@@ -22,7 +22,9 @@ namespace lestoma.Api.Helpers
 
             CreateMap<EBuzon, BuzonDTO>().ForMember(d => d.Detalle, o => o.MapFrom(s => deserializarDetalleBuzon(s.Descripcion)));
             CreateMap<EUsuario, UserDTO>().ForMember(d => d.RolId, o => o.MapFrom(s => s.Rol.Id));
+            CreateMap<RolRequest, EUsuario>();
         }
+
 
         private DetalleBuzon deserializarDetalleBuzon(string descripcion)
         {
