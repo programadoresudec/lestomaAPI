@@ -40,6 +40,14 @@ namespace lestoma.Api.Controllers
             Respuesta.StatusCode = (int)HttpStatusCode.Created;
             return Created(string.Empty, Respuesta);
         }
+        [HttpPut("editar")]
+        public async Task<IActionResult> EditarUpa(RolRequest user)
+        {
+           
+            var response = await _service.EditRol(user);
+          
+            return Ok(response);
+        }
 
     }
 }
