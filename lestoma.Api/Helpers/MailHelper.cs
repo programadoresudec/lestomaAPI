@@ -38,7 +38,7 @@ namespace lestoma.Api.Helpers
                 MailMessage mail = new MailMessage();
                 SmtpClient SmtpServer = new SmtpClient(smtp);
                 //Especificamos el correo desde el que se enviará el Email y el nombre de la persona que lo envía
-                mail.From = new MailAddress("vasborsas@gmail.com", "Lestoma");
+                mail.From = new MailAddress("tudec2020@gmail.com", "Lestoma");
                 SmtpServer.Host = smtp;
                 //Aquí ponemos el asunto del correo
                 mail.Subject = mensaje;
@@ -50,6 +50,8 @@ namespace lestoma.Api.Helpers
                 //Si queremos enviar archivos adjuntos tenemos que especificar la ruta en donde se encuentran
                 //mail.Attachments.Add(new Attachment(@"C:\Documentos\carta.docx"));
                 mail.IsBodyHtml = true;
+                SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
+                SmtpServer.UseDefaultCredentials = false;
                 mail.Priority = MailPriority.Normal;
                 //Configuracion del SMTP
                 SmtpServer.Port = int.Parse(port); //Puerto que utiliza Gmail para sus servicios

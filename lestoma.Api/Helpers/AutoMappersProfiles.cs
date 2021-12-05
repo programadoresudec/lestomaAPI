@@ -15,6 +15,8 @@ namespace lestoma.Api.Helpers
             CreateMap<RegistroRequest, EUsuario>();
             CreateMap<ActividadRequest, EActividad>().ReverseMap();
             CreateMap<EUpa, UpaDTO>();
+            CreateMap<EActividad, ActividadDTO>();
+
             CreateMap<EUpaActividad, DetalleUpaActividadDTO>().ForMember(d => d.User, o => o.MapFrom(s => s.Usuario)).
                 ForMember(u => u.Upa, x => x.MapFrom(s => s.Upa));
 
