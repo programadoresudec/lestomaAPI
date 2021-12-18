@@ -192,8 +192,6 @@ namespace lestoma.Api
 
             app.UseHttpsRedirection();
 
-
-
             app.UseStaticFiles();
 
             app.UseRouting();

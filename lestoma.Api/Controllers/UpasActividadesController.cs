@@ -35,7 +35,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpPost("crear")]
-        public async Task<IActionResult> CrearUpa(CrearDetalleUpaActividadRequest entidad)
+        public async Task<IActionResult> CrearDetalle(CrearDetalleUpaActividadRequest entidad)
         {
             var upaActividadDTO = Mapear<CrearDetalleUpaActividadRequest, EUpaActividad>(entidad);
             var response = await _service.CrearEnCascada(upaActividadDTO);

@@ -31,7 +31,7 @@ namespace lestoma.Api.Controllers
             return Ok(listado);
         }
 
-        [HttpPost("registroUsuarios")]
+        [HttpPost("registro")]
         public async Task<IActionResult> Registrarse(RegistroRequest registro)
         {
             var entidad = Mapear<RegistroRequest, EUsuario>(registro);

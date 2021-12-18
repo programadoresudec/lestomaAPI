@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using lestoma.Api.Helpers;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
@@ -27,7 +28,7 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> ListaActividades()
         {
             var query = await _actividadService.GetAll();
-            var actividades = Mapear<List<EActividad>, List<ActividadRequest>>(query);
+            var actividades = Mapear<List<EActividad>, List<ActividadDTO>>(query);
             return Ok(actividades);
         }
 
