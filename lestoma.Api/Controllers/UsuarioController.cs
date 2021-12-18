@@ -23,7 +23,7 @@ namespace lestoma.Api.Controllers
             _service = usuarioService;
         }
 
-        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
+        //[Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
         [HttpGet("listado-nombres")]
         public IActionResult GetUsuarios()
         {

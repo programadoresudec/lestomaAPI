@@ -56,14 +56,15 @@ namespace lestoma.Data.DAO
             try
             {
                 var id = new NpgsqlParameter("id", (int)TipoRol.SuperAdministrador);
-                string consulta = "SELECT uu.id, uu.nombre, uu.apellido FROM usuarios.usuario uu" +
+                string consulta = "SELECT uu.id, uu.nombre, uu.apellido, uu.rol_id FROM usuarios.usuario uu" +
                     $" INNER JOIN usuarios.rol ur on uu.rol_id = ur.id WHERE ur.id != @id";
                 var users = _db.TablaUsuarios.FromSqlRaw(consulta, id).OrderBy(x => x.Nombre);
                 var query = users.Select(x => new UserDTO
                 {
                     Id = x.Id,
                     Nombre = x.Nombre,
-                    Apellido = x.Apellido
+                    Apellido = x.Apellido,
+                    RolId = x.RolId
                 }).ToList();
 
                 return query;
