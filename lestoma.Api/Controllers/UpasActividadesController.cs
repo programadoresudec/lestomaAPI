@@ -18,19 +18,19 @@ namespace lestoma.Api.Controllers
     [ApiController]
     public class UpasActividadesController : BaseController
     {
-        private readonly IDetalleUpaActividadService _service;
+        private readonly IDetalleUpaActividadService _detalleService;
         public UpasActividadesController(IMapper mapper, IDetalleUpaActividadService upasActividadesService)
             : base(mapper)
         {
-            _service = upasActividadesService;
+            _detalleService = upasActividadesService;
         }
+       
         [HttpGet("paginar")]
         public async Task<IActionResult> GetDetallePaginado([FromQuery] Paginacion paginacion)
         {
-            var listado = await _service.GetAll();
-            List<DetalleUpaActividadDTO> detalleDTO = Mapear<List<EUpaActividad>, List<DetalleUpaActividadDTO>>(listado);
-            var queryable = detalleDTO.Cast<DetalleUpaActividadDTO>().AsQueryable();
-            var paginador = Paginador<DetalleUpaActividadDTO>.CrearPaginador(queryable, paginacion);
+            var queryable = _detalleService.GetAllAsQueryable();
+            var listado = await GetPaginacion<EUpaActividad, DetalleUpaActividadDTO>(paginacion, queryable);
+            var paginador = Paginador<DetalleUpaActividadDTO>.CrearPaginador(listado.Count, listado, paginacion);
             return Ok(paginador);
         }
 
@@ -38,7 +38,7 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> CrearDetalle(CrearDetalleUpaActividadRequest entidad)
         {
             var upaActividadDTO = Mapear<CrearDetalleUpaActividadRequest, EUpaActividad>(entidad);
-            var response = await _service.CrearEnCascada(upaActividadDTO);
+            var response = await _detalleService.CrearEnCascada(upaActividadDTO);
 
             return CreatedAtAction(null, response);
         }

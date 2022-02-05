@@ -20,16 +20,26 @@ namespace lestoma.Logica.LogicaService
         {
             _actividadRepository = actividadRepository;
         }
-        public async Task<List<EActividad>> GetAll()
+        public async Task<IEnumerable<EActividad>> GetAllAsync()
         {
             var query = await _actividadRepository.GetAll();
-            if (query.ToList().Count == 0)
+            if (query.Count() == 0)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay actividades.");
             }
-            return query.ToList();
+            return query;
         }
 
+        public IQueryable<EActividad> GetAllAsQueryable()
+        {
+            var query = _actividadRepository.GetAllAsQueryable();
+            int variable = query.Count();
+            if (variable == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay actividades.");
+            }
+            return query;
+        }
         public async Task<Response> GetByIdAsync(Guid id)
         {
             var query = await _actividadRepository.GetById(id);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -63,7 +64,7 @@ namespace lestoma.Api.Helpers
             }
             catch (Exception ex)
             {
-                throw ex;
+                Debug.WriteLine(ex.Message);
             }
         }
     }

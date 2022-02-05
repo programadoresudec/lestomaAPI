@@ -10,6 +10,7 @@ namespace lestoma.Logica.Interfaces
 {
     public interface IActividadService : IGenericCRUD<EActividad, Guid>
     {
+        Task<Response> Merge(List<EActividad> listadoEntidad);
         List<NameDTO> GetActividadesJustNames();
     }
 }

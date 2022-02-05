@@ -2,6 +2,7 @@
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,7 +24,10 @@ namespace lestoma.Data
         {
             return await _entities.ToListAsync();
         }
-
+        public IQueryable<T> GetAllAsQueryable()
+        {
+            return _entities.AsQueryable();
+        }
         public async Task<T> GetById(object id)
         {
             return await _entities.FindAsync(id);
@@ -132,7 +136,7 @@ namespace lestoma.Data
                         _context.Entry(entidad).State = EntityState.Modified;
                         _context.ProcesarAuditoria();
                         listadoNuevo.Add(entidad);
-                    }   
+                    }
                 }
                 await _context.BulkSynchronizeAsync(listadoNuevo, token);
 

@@ -20,6 +20,26 @@ namespace lestoma.Logica.LogicaService
             _upaRepository = upaRepository;
         }
 
+        public async Task<IEnumerable<EUpa>> GetAllAsync()
+        {
+            var listado = await _upaRepository.GetAll();
+            if (listado.Count() == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
+            }
+            return listado;
+        }
+
+        public IQueryable<EUpa> GetAllAsQueryable()
+        {
+            var listado = _upaRepository.GetAllAsQueryable();
+            if (listado.Count() == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
+            }
+            return listado;
+        }
+
         public async Task<Response> GetByIdAsync(Guid id)
         {
             var query = await _upaRepository.GetById(id);
@@ -34,15 +54,6 @@ namespace lestoma.Logica.LogicaService
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la upa.");
             }
             return _respuesta;
-        }
-        public async Task<List<EUpa>> GetAll()
-        {
-            var listado = await _upaRepository.GetAll();
-            if (listado.ToList().Count == 0)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
-            }
-            return listado.ToList();
         }
         public async Task<Response> CrearAsync(EUpa entidad)
         {
@@ -89,9 +100,6 @@ namespace lestoma.Logica.LogicaService
 
             return _respuesta;
         }
-
-
-
         public async Task EliminarAsync(Guid id)
         {
             var entidad = await GetByIdAsync(id);
@@ -101,11 +109,6 @@ namespace lestoma.Logica.LogicaService
         public List<NameDTO> GetUpasJustNames()
         {
             return _upaRepository.GetUpasJustNames();
-        }
-
-        public Task<Response> Merge(List<EUpa> entidad)
-        {
-            throw new NotImplementedException();
         }
     }
 }

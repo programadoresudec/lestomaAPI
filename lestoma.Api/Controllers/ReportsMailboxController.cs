@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
@@ -34,7 +36,14 @@ namespace lestoma.Api.Controllers
             var listadobuzonDTO = Mapear<List<EBuzon>, List<BuzonDTO>>(lista);
             return Ok(listadobuzonDTO);
         }
-
+        [HttpGet("paginar")]
+        public async Task<IActionResult> GetReportesBuzonPaginado([FromQuery] Paginacion paginacion)
+        {
+            var queryable = _buzonService.GetAllAsQueryable();
+            var listado = await GetPaginacion<EBuzon, BuzonDTO>(paginacion, queryable);
+            var paginador = Paginador<BuzonDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
+            return Ok(paginador);
+        }
 
         [Authorize]
         [HttpGet("{id:int}")]

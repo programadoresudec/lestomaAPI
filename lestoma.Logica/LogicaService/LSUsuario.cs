@@ -242,7 +242,9 @@ namespace lestoma.Logica.LogicaService
 
         public List<UserDTO> GetUsersJustNames()
         {
+
             return _usuarioRepository.GetUsersJustNames();
+
         }
 
         public short GetExpirationToken(int aplicacionId)
@@ -268,7 +270,7 @@ namespace lestoma.Logica.LogicaService
             _respuesta.Mensaje = "El rol ha sido editado.";
             _respuesta.StatusCode = (int)HttpStatusCode.OK;
             return _respuesta;
-           
+
         }
     }
 }
