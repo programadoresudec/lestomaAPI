@@ -39,7 +39,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("listado")]
         public async Task<IActionResult> ListaActividades()
         {
-            var query = await _actividadService.GetAll();
+            var query = await _actividadService.GetAllAsync();
             var actividades = Mapear<List<EActividad>, List<ActividadDTO>>(query.ToList());
             return Ok(actividades);
         }

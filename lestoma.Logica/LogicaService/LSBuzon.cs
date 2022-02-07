@@ -5,6 +5,7 @@ using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -19,6 +20,14 @@ namespace lestoma.Logica.LogicaService
         public LSBuzon(DAOBuzonReportes buzonRepository)
         {
             _buzonRepository = buzonRepository;
+        }
+        public async Task<List<EBuzon>> Listado()
+        {
+            return await _buzonRepository.ListarBuzonConUsuario();
+        }
+        public IQueryable<EBuzon> GetAllAsQueryable()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<Response> AgregarReporte(BuzonCreacionRequest buzonCreacion)
@@ -37,14 +46,12 @@ namespace lestoma.Logica.LogicaService
             return _respuesta;
         }
 
+     
         public Task<EBuzon> GetBuzonById(int id)
         {
             return _buzonRepository.GetById(id);
         }
 
-        public async Task<List<EBuzon>> Listado()
-        {
-            return await _buzonRepository.ListarBuzonConUsuario();
-        }
+      
     }
 }

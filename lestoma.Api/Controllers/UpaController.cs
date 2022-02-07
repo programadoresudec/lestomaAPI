@@ -36,7 +36,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("listado")]
         public async Task<IActionResult> GetUpas()
         {
-            var query = await _upaService.GetAll();
+            var query = await _upaService.GetAllAsync();
             var upas = Mapear<List<EUpa>, List<UpaDTO>>(query.ToList());
             return Ok(upas);
         }
