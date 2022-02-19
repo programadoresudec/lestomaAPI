@@ -18,7 +18,7 @@ namespace lestoma.Api.Controllers
     {
         private readonly IUsuarioService _service;
 
-        public UsuarioController(IUsuarioService usuarioService, IMapper mapper):base(mapper)
+        public UsuarioController(IUsuarioService usuarioService, IMapper mapper) : base(mapper)
         {
             _service = usuarioService;
         }
@@ -43,9 +43,9 @@ namespace lestoma.Api.Controllers
         [HttpPut("editar")]
         public async Task<IActionResult> EditarUpa(RolRequest user)
         {
-           
+
             var response = await _service.EditRol(user);
-          
+
             return Ok(response);
         }
 

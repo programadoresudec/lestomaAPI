@@ -57,7 +57,7 @@ namespace lestoma.Logica.LogicaService
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                throw;
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"Error:{ex.Message}");
             }
         }
 
@@ -110,7 +110,7 @@ namespace lestoma.Logica.LogicaService
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                throw;
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"Error:{ex.Message}");
             }
         }
 
@@ -138,7 +138,7 @@ namespace lestoma.Logica.LogicaService
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                throw;
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"Error:{ex.Message}");
             }
 
         }
@@ -161,7 +161,6 @@ namespace lestoma.Logica.LogicaService
                     } while (validar != false);
                     user.FechaVencimientoCodigo = DateTime.Now.AddHours(2);
                     await _usuarioRepository.Update(user);
-                    _respuesta.Data = user;
                     _respuesta.IsExito = true;
                     _respuesta.Mensaje = "Revise su correo eléctronico.";
                     _respuesta.StatusCode = (int)HttpStatusCode.OK;
@@ -171,7 +170,7 @@ namespace lestoma.Logica.LogicaService
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                throw;
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"Error:{ex.Message}");
             }
         }
 
@@ -201,7 +200,7 @@ namespace lestoma.Logica.LogicaService
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                throw;
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"Error:{ex.Message}");
             }
 
         }
@@ -268,7 +267,7 @@ namespace lestoma.Logica.LogicaService
             _respuesta.Mensaje = "El rol ha sido editado.";
             _respuesta.StatusCode = (int)HttpStatusCode.OK;
             return _respuesta;
-           
+
         }
     }
 }
