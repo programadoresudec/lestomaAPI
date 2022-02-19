@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
 {
-    [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
     [Route("api/upas")]
     [ApiController]
     public class UpaController : BaseController
@@ -29,17 +28,16 @@ namespace lestoma.Api.Controllers
         [HttpGet("paginar")]
         public async Task<IActionResult> GetUpasPaginado([FromQuery] Paginacion paginacion)
         {
-            var listado = await _upaService.GetAll();
-            var upas = Mapear<List<EUpa>, List<UpaDTO>>(listado);
-            var queryable = upas.Cast<UpaDTO>().AsQueryable();
-            var paginador = Paginador<UpaDTO>.CrearPaginador(queryable, paginacion);
+            var queryable = _upaService.GetAllAsQueryable();
+            var listado = await GetPaginacion<EUpa, UpaDTO>(paginacion, queryable);
+            var paginador = Paginador<UpaDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
             return Ok(paginador);
         }
         [HttpGet("listado")]
         public async Task<IActionResult> GetUpas()
         {
-            var query = await _upaService.GetAll();
-            var upas = Mapear<List<EUpa>, List<UpaDTO>>(query);
+            var query = await _upaService.GetAllAsync();
+            var upas = Mapear<List<EUpa>, List<UpaDTO>>(query.ToList());
             return Ok(upas);
         }
         [HttpGet("listado-nombres")]

@@ -18,6 +18,6 @@ namespace lestoma.Entidades.Models
         public EActividad Actividad { get; set; }
         public EUsuario Usuario { get; set; }
         [NotMapped]
-        public List<ActividadRequest> Actividades { get; set; } = new List<ActividadRequest>();
+        public IList<ActividadRequest> Actividades { get; set; } = new List<ActividadRequest>();
     }
 }

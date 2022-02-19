@@ -2,6 +2,7 @@
 using lestoma.Entidades.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace lestoma.Logica.Interfaces
@@ -11,6 +12,7 @@ namespace lestoma.Logica.Interfaces
         Task<List<EUpaActividad>> GetAll();
         Task<Response> CrearEnCascada(EUpaActividad entidad);
         Task<Response> ActualizarEnCascada(EUpaActividad entidad);
-        Task EliminarEnCascada(int IdUsuario);  
+        Task EliminarEnCascada(int IdUsuario);
+        IQueryable<EUpaActividad> GetAllAsQueryable();
     }
 }

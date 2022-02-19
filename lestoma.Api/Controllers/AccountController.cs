@@ -3,6 +3,7 @@ using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
+using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
@@ -78,10 +79,10 @@ namespace lestoma.Api.Controllers
         #region revoke-token
 
         [HttpPost("revoke-token")]
-        public IActionResult RevokeToken([FromBody] RevokeTokenRequest model)
+        public IActionResult RevokeToken([FromBody] string model)
         {
             // accept token from request body or cookie
-            var token = model.Token ?? Request.Cookies["refreshToken"];
+            var token = model ?? Request.Cookies["refreshToken"];
 
             if (string.IsNullOrEmpty(token))
                 return BadRequest(new { message = "Token is required" });
@@ -121,10 +122,6 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest email)
         {
             Respuesta = await _usuarioService.ForgotPassword(email);
-            var from = ((EUsuario)Respuesta.Data).Email;
-            var codigo = ((EUsuario)Respuesta.Data).CodigoRecuperacion;
-            await _mailHelper.SendCorreo(from, codigo, "Recuperación contraseña");
-            Respuesta.StatusCode = (int)HttpStatusCode.OK;
             return Ok(Respuesta);
         }
         #endregion

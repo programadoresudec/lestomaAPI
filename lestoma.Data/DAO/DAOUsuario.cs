@@ -1,14 +1,10 @@
-﻿
-using lestoma.CommonUtils.DTOs;
+﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -53,28 +49,21 @@ namespace lestoma.Data.DAO
 
         public List<UserDTO> GetUsersJustNames()
         {
-            try
-            {
-                var id = new NpgsqlParameter("id", (int)TipoRol.SuperAdministrador);
-                string consulta = "SELECT uu.id, uu.nombre, uu.apellido, uu.rol_id FROM usuarios.usuario uu" +
-                    $" INNER JOIN usuarios.rol ur on uu.rol_id = ur.id WHERE ur.id != @id";
-                var users = _db.TablaUsuarios.FromSqlRaw(consulta, id).OrderBy(x => x.Nombre);
-                var query = users.Select(x => new UserDTO
-                {
-                    Id = x.Id,
-                    Nombre = x.Nombre,
-                    Apellido = x.Apellido,
-                    RolId = x.RolId
-                }).ToList();
 
-                return query;
-            }
-            catch (Exception ex)
+            var id = new NpgsqlParameter("id", (int)TipoRol.SuperAdministrador);
+            string consulta = @"SELECT uu.id, uu.nombre, uu.apellido, uu.rol_id FROM usuarios.usuario uu
+                                INNER JOIN usuarios.rol ur on uu.rol_id = ur.id WHERE ur.id != @id";
+            var users = _db.TablaUsuarios.FromSqlRaw(consulta, id).OrderBy(x => x.Nombre);
+            var query = users.Select(x => new UserDTO
             {
-                Debug.WriteLine(ex.Message);
-                return null;
-            }
+                Id = x.Id,
+                Nombre = x.Nombre,
+                Apellido = x.Apellido,
+                RolId = x.RolId
+            }).ToList();
+            return query;
         }
+
 
         public async Task<string> GetApplicationType(int tipoAplicacion)
         {

@@ -1,6 +1,7 @@
 using AutoMapper;
 using lestoma.Api.Helpers;
 using lestoma.Api.Middleware;
+using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.Data;
@@ -23,7 +24,6 @@ namespace lestoma.Api
 {
     public class Startup
     {
-        private const string EMAILSUPERADMIN = "superadminlestoma@gmail.com";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -136,10 +136,10 @@ namespace lestoma.Api
             int id = 0;
             try
             {
-                var usuario = db.TablaUsuarios.FirstOrDefault(x => x.Email.Equals(EMAILSUPERADMIN));
+                var usuario = db.TablaUsuarios.FirstOrDefault(x => x.Email.Equals(Constants.EMAIL_SUPER_ADMIN));
                 if (usuario == null)
                 {
-                    var hash = HashHelper.Hash("superadmin1234");
+                    var hash = HashHelper.Hash(Constants.PASSWORD_SUPER_ADMIN);
                     var superadmin = new EUsuario
                     {
                         Nombre = "Super Admin",
@@ -148,7 +148,7 @@ namespace lestoma.Api
                         Salt = hash.Salt,
                         EstadoId = (int)TipoEstadoUsuario.Activado,
                         RolId = (int)TipoRol.SuperAdministrador,
-                        Email = EMAILSUPERADMIN
+                        Email = Constants.EMAIL_SUPER_ADMIN
                     };
                     db.Add(superadmin);
                     db.SaveChanges();
@@ -164,7 +164,7 @@ namespace lestoma.Api
 
                     if (usuario == null)
                     {
-                        var existe = db.TablaUsuarios.FirstOrDefault(x => x.Email.Equals(EMAILSUPERADMIN));
+                        var existe = db.TablaUsuarios.FirstOrDefault(x => x.Email.Equals(Constants.EMAIL_SUPER_ADMIN));
                         id = existe.Id;
                     }
                     var super = new ESuperAdministrador

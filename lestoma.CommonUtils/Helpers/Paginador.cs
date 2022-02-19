@@ -42,13 +42,9 @@ namespace lestoma.CommonUtils.Helpers
             }
         }
 
-        public static Paginador<T> CrearPaginador(IQueryable<T> source, Paginacion paginacion)
+        public static Paginador<T> CrearPaginador(int count, IEnumerable<T> source, Paginacion paginacion)
         {
-
-            var count = source.Count();
-            var items = source
-                .Skip((paginacion.Page - 1) * paginacion.PageSize)
-                .Take(paginacion.PageSize).ToList();
+            var items = source.ToList();
             return new Paginador<T>(items, count, paginacion);
         }
     }
