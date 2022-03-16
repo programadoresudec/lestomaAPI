@@ -52,7 +52,7 @@ namespace lestoma.Logica.LogicaService
                     _respuesta.IsExito = true;
                     _respuesta.StatusCode = (int)HttpStatusCode.OK;
 
-            
+
                 }
                 else
                 {
@@ -148,7 +148,7 @@ namespace lestoma.Logica.LogicaService
                 _respuesta.Data = new ForgotPasswordDTO { Email = user.Email, CodigoVerificacion = user.CodigoRecuperacion };
                 _respuesta.IsExito = true;
                 _respuesta.Mensaje = "Revise su correo eléctronico.";
-                await _mailHelper.SendCorreo(user.Email, "Recuperación de contraseña", user.CodigoRecuperacion,
+                await _mailHelper.SendMail(user.Email, "Recuperación de contraseña", user.CodigoRecuperacion,
                     "Hola: ¡Cambia Tu Contraseña!",
                     "Verifica con el codigo tu cuenta para reestablecer la contraseña. el codigo tiene una duración de 2 horas.",
                     string.Empty, "Si no has intentado cambiar la contraseña con esta dirección de email recientemente, puedes ignorar este mensaje.");
@@ -185,9 +185,35 @@ namespace lestoma.Logica.LogicaService
             throw new NotImplementedException();
         }
 
-        public bool RevokeToken(string token, string ipAddress)
+
+        public async Task<IEnumerable<EUpaActividad>> GetActivitiesByUserId(int id)
         {
-            throw new NotImplementedException();
+            return await _usuarioRepository.GetActivitiesByUserId(id);
+        }
+
+        public async Task<Response> RevokeToken(string token, string ipAddress)
+        {
+            var user = _usuarioRepository.UsuarioByToken(token);
+
+            // return false if no user found with token
+            if (user == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el usuario actual con token.");
+
+            var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
+
+            // return false if token is not active
+            if (!refreshToken.IsActive)
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, "No se encuentra activo el token del usuario actual.");
+
+            // revoke token and save
+            refreshToken.Revoked = DateTime.UtcNow;
+            refreshToken.RevokedByIp = ipAddress;
+            await _usuarioRepository.Update(user);
+            return new Response
+            {
+                Mensaje = "Token Revoked",
+                IsExito = true,
+                StatusCode = (int)HttpStatusCode.OK,
+            };
         }
 
         public async Task<EUsuario> RefreshToken(string token, string ipAddress)
@@ -195,12 +221,14 @@ namespace lestoma.Logica.LogicaService
             var user = _usuarioRepository.UsuarioByToken(token);
 
             // return null if no user found with token
-            if (user == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el usuario actual con token.");
+            if (user == null)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el usuario actual con token.");
 
             var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
 
             // return null if token is no longer active
-            if (!refreshToken.IsActive) throw new HttpStatusCodeException(HttpStatusCode.Conflict, "No se encuentra activo el token del usuario actual.");
+            if (!refreshToken.IsActive)
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, "No se encuentra activo el token del usuario actual.");
 
             // replace old refresh token with a new one and save
             var newRefreshToken = generateRefreshToken(refreshToken.AplicacionId, refreshToken.UsuarioId, ipAddress);

@@ -4,6 +4,7 @@ using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,6 +71,14 @@ namespace lestoma.Data.DAO
             var query = await _db.TablaAplicaciones.FindAsync(tipoAplicacion);
 
             return query == null ? "Local" : query.NombreAplicacion;
+        }
+
+        public async Task<IEnumerable<EUpaActividad>> GetActivitiesByUserId(int id)
+        {
+
+            return await _context.TablaUpasConActividades.Include(x => x.Actividad)
+                .Where(x => x.UsuarioId == id).ToListAsync();
+
         }
     }
 }

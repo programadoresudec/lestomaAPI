@@ -20,8 +20,9 @@ namespace lestoma.Api.Helpers
             _env = env;
             _configuration = configuration;
         }
-        public async Task SendCorreo(string correoDestino, string mensaje, string MensajeBoton = "",
-          string title = "Lestoma", string body = "", string botonRuta = "", string footer = "por favor comuniquese con el administrador.")
+        #region Enviar correos
+        public async Task SendMail(string correoDestino, string mensaje, string MensajeBoton = "",
+         string title = "Lestoma", string body = "", string botonRuta = "", string footer = "por favor comuniquese con el administrador.")
         {
 
             try
@@ -68,7 +69,10 @@ namespace lestoma.Api.Helpers
             }
         }
 
-        public async Task SendCorreoWithArchives(string correoDestino, string folder, string archivo, string mensaje, string MIME, string MensajeBoton = "",
+        #endregion
+
+        #region Enviar correos con archivos
+        public async Task SendMailWithArchives(string correoDestino, string folder, string archivo, string mensaje, string MIME, string MensajeBoton = "",
           string title = "Lestoma", string body = "", string botonRuta = "", string footer = "por favor comuniquese con el administrador.")
         {
             try
@@ -128,6 +132,7 @@ namespace lestoma.Api.Helpers
             {
                 throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"Error: No se pudo enviar el correo, {ex.Message}");
             }
-        }
+        } 
+        #endregion
     }
 }

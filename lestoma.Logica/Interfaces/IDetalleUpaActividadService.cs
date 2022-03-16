@@ -9,7 +9,7 @@ namespace lestoma.Logica.Interfaces
 {
     public interface IDetalleUpaActividadService
     {
-        Task<List<EUpaActividad>> GetAll();
+        Task<IEnumerable<EUpaActividad>> GetAll();
         Task<Response> CrearEnCascada(EUpaActividad entidad);
         Task<Response> ActualizarEnCascada(EUpaActividad entidad);
         Task EliminarEnCascada(int IdUsuario);

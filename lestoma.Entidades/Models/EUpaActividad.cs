@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace lestoma.Entidades.Models
 {
     [Table("upa_actividad", Schema = "superadmin")]
-    public class EUpaActividad : ECamposAuditoria
+    public partial class EUpaActividad : ECamposAuditoria
     {
         [Column("upa_id")]
         public Guid UpaId { get; set; }
@@ -17,7 +17,5 @@ namespace lestoma.Entidades.Models
         public EUpa Upa { get; set; }
         public EActividad Actividad { get; set; }
         public EUsuario Usuario { get; set; }
-        [NotMapped]
-        public IList<ActividadRequest> Actividades { get; set; } = new List<ActividadRequest>();
     }
 }

@@ -31,37 +31,37 @@ namespace lestoma.Data.DAO
                         entidad.ActividadId = item.Id;
                         await Create(entidad);
                     }
+                    transaction.Commit();
                     return new Response
                     {
                         IsExito = true,
                         Mensaje = "Se ha creado satisfactoriamente.",
                         StatusCode = (int)HttpStatusCode.Created
-                    };
+                    };      
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"{ex.Message}");
-                }
-                finally
-                {
-                    transaction.Commit();
-                }
+                    throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"{ex.Message}");
+                }    
             }
         }
 
-        public async Task<List<EUpaActividad>> GetDetalleUpaActividad()
+        public IQueryable<EUpaActividad> GetDetalleUpaActividad()
         {
-            var listaAgrupada = (await _db.TablaUpasConActividades.Include(a => a.Actividad).ToListAsync())
-                .GroupBy(p => new { p.UsuarioId, p.UpaId });
+  
+            var listaAgrupada = _db.TablaUpasConActividades.Include(a => a.Actividad).GroupBy(p => new { p.UsuarioId, p.UpaId });
 
-            if (listaAgrupada.ToList().Count == 0)
+            //var listaAgrupada = (await _db.TablaUpasConActividades.Include(a => a.Actividad).ToListAsync())
+            //    .GroupBy(p => new { p.UsuarioId, p.UpaId });
+
+            if (listaAgrupada.Count() == 0)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
             }
             var query = listaAgrupada.Select(x => new EUpaActividad
             {
-                UpaId = x.Key.UpaId,
+                UpaId = x.Key.UpaId,    
                 UsuarioId = x.Key.UsuarioId,
                 Upa = _db.TablaUpas.Find(x.Key.UpaId),
                 FechaCreacion = x.Select(f => f.FechaCreacion).FirstOrDefault(),
@@ -74,13 +74,9 @@ namespace lestoma.Data.DAO
                     Nombre = y.Actividad.Nombre,
                     Id = y.Actividad.Id
                 }).ToList()
-            }).ToList();
-
+            });
             return query;
         }
-
-
     }
-
 }
 

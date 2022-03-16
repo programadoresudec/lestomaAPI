@@ -15,6 +15,7 @@ namespace lestoma.Api.Helpers
             #region Injection de helpers
             services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
             services.AddScoped<IMailHelper, MailHelper>();
+            services.AddScoped<IJWT, JWT>();
             services.AddTransient<ICamposAuditoriaHelper, CamposAuditoriaHelper>();
             #endregion
 

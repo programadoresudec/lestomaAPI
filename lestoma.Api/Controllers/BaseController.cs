@@ -1,10 +1,15 @@
 ﻿using AutoMapper;
+using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
@@ -20,18 +25,63 @@ namespace lestoma.Api.Controllers
             _mapper = mapper;
         }
 
-        protected TEntidad Mapear<TCreacion, TEntidad>(TCreacion creacionDTO) where TEntidad : class
+        #region GET Ip
+        protected string ipAddress()
         {
-            return _mapper.Map<TEntidad>(creacionDTO);
+            string IP4Address = String.Empty;
+
+            foreach (IPAddress IPA in Dns.GetHostAddresses(Dns.GetHostName()))
+            {
+                if (IPA.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    IP4Address = IPA.ToString();
+                    break;
+                }
+            }
+            return IP4Address;
+        }
+        #endregion
+
+        #region Claims token
+        protected List<Claim> ClaimsToken()
+        {
+            List<Claim> claims = new List<Claim>();
+            if (User.Identity.IsAuthenticated)
+            {
+                var identity = (ClaimsIdentity)User.Identity;
+                claims = identity.Claims.ToList();
+            }
+            return claims;
         }
 
+        protected int AplicacionId()
+        {
+            int sIdAplicacion = 0;
+            var id = ClaimsToken().Where(x => x.Type == ClaimsConfig.ID_APLICACION).Select(c => c.Value).SingleOrDefault();
+            if (int.TryParse(id, out int idAplicacion))
+            {
+                sIdAplicacion = idAplicacion;
+            }
+            return sIdAplicacion;
+        }
+        #endregion
+
+        #region Automapper generic
+        protected TOutputEntity Mapear<TInputEntity, TOutputEntity>(TInputEntity InputEntity) where TOutputEntity : class
+        {
+            return _mapper.Map<TOutputEntity>(InputEntity);
+        }
+        #endregion
+
+        #region Paginacion de listados
         protected async Task<List<TDTO>> GetPaginacion<TEntidad, TDTO>(Paginacion paginacionDTO,
-            IQueryable<TEntidad> queryable)
-            where TEntidad : class
+           IQueryable<TEntidad> queryable)
+           where TEntidad : class
         {
             var entidades = await queryable.Paginar(paginacionDTO).ToListAsync();
             return _mapper.Map<List<TDTO>>(entidades);
         }
+        #endregion
 
     }
 }
