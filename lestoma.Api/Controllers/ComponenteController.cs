@@ -12,7 +12,7 @@ using lestoma.CommonUtils.Requests;
 
 namespace lestoma.Api.Controllers
 {
-    [Route("api/controler")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ComponenteController : BaseController
     {

@@ -1,10 +1,8 @@
-﻿using lestoma.CommonUtils.Interfaces;
-using lestoma.CommonUtils.Listados;
+﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Interfaces;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace lestoma.CommonUtils.Requests
 {

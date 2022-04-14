@@ -1,20 +1,16 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
 {
     public class DAOComponente : GenericRepository<EComponentesLaboratorio>
     {
-        private readonly Mapeo _db;
+        private readonly LestomaContext _db;
 
-        public DAOComponente(Mapeo db) : base(db)
+        public DAOComponente(LestomaContext db) : base(db)
         {
             _db = db;
         }

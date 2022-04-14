@@ -13,6 +13,10 @@ namespace lestoma.Pruebas
             {
                 Console.WriteLine(item.TipoEstado);
             }
+            string i = Guid.NewGuid().ToString();
+            Console.WriteLine(i);
         }
+
+
     }
 }
