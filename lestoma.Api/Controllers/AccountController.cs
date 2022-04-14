@@ -122,7 +122,6 @@ namespace lestoma.Api.Controllers
             var entidad = Mapear<UsuarioRequest, EUsuario>(usuario);
             Respuesta = await _usuarioService.Register(entidad);
             Respuesta.Data = usuario;
-            Respuesta.StatusCode = (int)HttpStatusCode.Created;
             return Created(string.Empty, Respuesta);
         }
         #endregion

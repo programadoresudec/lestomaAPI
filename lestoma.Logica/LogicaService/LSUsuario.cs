@@ -1,4 +1,5 @@
-﻿using lestoma.CommonUtils.DTOs;
+﻿using lestoma.CommonUtils.Constants;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
@@ -11,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -41,6 +41,7 @@ namespace lestoma.Logica.LogicaService
             }
             else
             {
+                CheckStatusOfUser(user.EstadoId);
                 if (HashHelper.CheckHash(login.Clave, user.Clave, user.Salt))
                 {
                     _respuesta.Mensaje = "Ha iniciado satisfactoriamente.";
@@ -51,8 +52,6 @@ namespace lestoma.Logica.LogicaService
                     await _usuarioRepository.Update(user);
                     _respuesta.IsExito = true;
                     _respuesta.StatusCode = (int)HttpStatusCode.OK;
-
-
                 }
                 else
                 {
@@ -60,6 +59,22 @@ namespace lestoma.Logica.LogicaService
                 }
             }
             return _respuesta;
+        }
+
+        private void CheckStatusOfUser(int estadoId)
+        {
+            if (estadoId == (int)TipoEstadoUsuario.CheckCuenta)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta esta en proceso de activación.");
+            }
+            else if (estadoId == (int)TipoEstadoUsuario.Inactivo)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta esta Inactiva, debe comunicarse con el administrador.");
+            }
+            else if (estadoId == (int)TipoEstadoUsuario.Bloqueado)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta esta bloqueada, debe comunicarse con el administrador.");
+            }
         }
 
         private ETokensUsuarioByAplicacion generateRefreshToken(int tipoAplicacion, int id, string ipAddress)
@@ -101,9 +116,22 @@ namespace lestoma.Logica.LogicaService
                 usuario.Salt = hash.Salt;
                 usuario.EstadoId = (int)TipoEstadoUsuario.CheckCuenta;
                 await _usuarioRepository.Create(usuario);
-                _respuesta.Mensaje = "Se ha registrado satisfactoriamente.";
                 _respuesta.IsExito = true;
                 _respuesta.StatusCode = (int)HttpStatusCode.Created;
+                _respuesta.Mensaje = "Se ha registrado satisfactoriamente.";
+                if (usuario.RolId == (int)TipoRol.Auxiliar)
+                {
+                    await _mailHelper.SendMail(usuario.Email, "Activación de Cuenta", String.Empty,
+                         "Hola: ¡Su activación de la cuenta será pronto!",
+                         "Su usuario se activará de acuerdo al administrador.",
+                         string.Empty, $"Enviamos este correo electrónico a {usuario.Email} porque te registraste en LESTOMA APP.");
+
+                    await _mailHelper.SendMail(Constants.EMAIL_SUPER_ADMIN, $"Activación de cuenta: de {usuario.Email}", String.Empty,
+                       "Hola: ¡Administrador!",
+                       $"Debe activar la cuenta del auxiliar con correo: {usuario.Email} que se registro el dia: " +
+                       $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
+                       string.Empty, $"LESTOMA APP");
+                }
             }
             return _respuesta;
         }

@@ -10,8 +10,8 @@ namespace lestoma.Data.DAO
 {
     public class DAOActividad : GenericRepository<EActividad>
     {
-        private readonly Mapeo _db;
-        public DAOActividad(Mapeo db)
+        private readonly LestomaContext _db;
+        public DAOActividad(LestomaContext db)
             : base(db)
         {
             _db = db;

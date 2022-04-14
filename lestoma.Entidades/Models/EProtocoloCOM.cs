@@ -11,5 +11,7 @@ namespace lestoma.Entidades.Models
         public int Id { get; set; }
         [Column("nombre")]
         public string Nombre { get; set; }
+        [Column("primer_byte_trama")]
+        public string PrimerByteTrama { get; set; }
     }
 }

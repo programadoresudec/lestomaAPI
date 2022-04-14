@@ -17,9 +17,14 @@ namespace lestoma.Entidades.Models
         public int ComponenteLaboratorioId { get; set; }
         [Column("tipo_com_id")]
         public int TipoDeComunicacionId { get; set; }
+
+        [Column("valor_componente")]
+        public double ValorTramaComponente { get; set; }
         [Column("trama_enviada")]
         public string TramaEnviada { get; set; }
         [Column("estado_internet")]
         public bool EstadoInternet { get; set; }
+
+        public EComponentesLaboratorio Componentes { get; set; }
     }
 }

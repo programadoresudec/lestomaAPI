@@ -8,7 +8,7 @@ using lestoma.Data;
 
 namespace lestoma.Data.Migrations
 {
-    [DbContext(typeof(Mapeo))]
+    [DbContext(typeof(LestomaContext))]
     partial class MapeoModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

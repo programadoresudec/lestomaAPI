@@ -7,7 +7,7 @@ namespace lestoma.Entidades.Models
 {
 
     [Table("componente_laboratorio", Schema = "laboratorio_lestoma")]
-    public class EComponentesLaboratorio : ECamposAuditoria
+    public partial class EComponentesLaboratorio : ECamposAuditoria
     {
         [Column("id")]
         public Guid Id { get; set; }

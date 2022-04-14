@@ -13,8 +13,8 @@ namespace lestoma.Data.DAO
 {
     public class DAOUsuario : GenericRepository<EUsuario>
     {
-        private readonly Mapeo _db;
-        public DAOUsuario(Mapeo db)
+        private readonly LestomaContext _db;
+        public DAOUsuario(LestomaContext db)
             : base(db)
         {
             _db = db;

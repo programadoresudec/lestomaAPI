@@ -11,8 +11,8 @@ namespace lestoma.Data.DAO
 {
     public class DAOUpa : GenericRepository<EUpa>
     {
-        private readonly Mapeo _db;
-        public DAOUpa(Mapeo db) : base(db)
+        private readonly LestomaContext _db;
+        public DAOUpa(LestomaContext db) : base(db)
         {
             _db = db;
         }

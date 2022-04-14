@@ -39,7 +39,7 @@ namespace lestoma.Api
                 .AddNewtonsoftJson();
 
 
-            services.AddDbContext<Mapeo>(options =>
+            services.AddDbContext<LestomaContext>(options =>
             {
 
                 options.UseNpgsql(Configuration.GetConnectionString("PostgresConnection"));
@@ -124,7 +124,7 @@ namespace lestoma.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Mapeo db)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LestomaContext db)
         {
             app.UseCors(options =>
             {

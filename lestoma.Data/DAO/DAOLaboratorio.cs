@@ -15,8 +15,8 @@ namespace lestoma.Data.DAO
 {
     public class DAOLaboratorio : GenericRepository<ELaboratorio>
     {
-        private readonly Mapeo _db;
-        public DAOLaboratorio(Mapeo db) : base(db)
+        private readonly LestomaContext _db;
+        public DAOLaboratorio(LestomaContext db) : base(db)
         {
             _db = db;
         }
