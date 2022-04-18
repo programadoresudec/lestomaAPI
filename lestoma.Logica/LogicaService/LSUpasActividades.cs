@@ -1,8 +1,12 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.MyException;
 using lestoma.Data.DAO;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
@@ -33,13 +37,20 @@ namespace lestoma.Logica.LogicaService
             throw new System.NotImplementedException();
         }
 
-        public async Task<List<EUpaActividad>> GetAll()
+        public async Task<IEnumerable<EUpaActividad>> GetAll()
         {
-            var query = await _upasActividadesRepository.GetDetalleUpaActividad();
-
-            return query;
+           return  await _upasActividadesRepository.GetAll();
         }
 
-       
+        public IQueryable<EUpaActividad> GetAllAsQueryable()
+        {
+            var query = _upasActividadesRepository.GetDetalleUpaActividad();
+            int variable = query.Count();
+            if (variable == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay actividades.");
+            }
+            return query;
+        }
     }
 }

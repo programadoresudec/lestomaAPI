@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
@@ -7,8 +8,9 @@ namespace lestoma.Entidades.Models
 {
 
     [Table("componente_laboratorio", Schema = "laboratorio_lestoma")]
-    public class EComponentesLaboratorio : ECamposAuditoria
+    public partial class EComponentesLaboratorio : ECamposAuditoria
     {
+ 
         [Column("id")]
         public Guid Id { get; set; }
         [Column("modulo_componente_id")]

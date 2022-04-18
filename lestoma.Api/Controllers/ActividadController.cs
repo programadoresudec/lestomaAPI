@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
@@ -24,11 +26,21 @@ namespace lestoma.Api.Controllers
         {
             _actividadService = actividadService;
         }
+
+        [HttpGet("paginar")]
+        public async Task<IActionResult> GetActividadesPaginado([FromQuery] Paginacion paginacion)
+        {
+            var queryable = _actividadService.GetAllAsQueryable();
+            var listado = await GetPaginacion<EActividad, ActividadDTO>(paginacion, queryable);
+            var paginador = Paginador<ActividadDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
+            return Ok(paginador);
+        }
+
         [HttpGet("listado")]
         public async Task<IActionResult> ListaActividades()
         {
-            var query = await _actividadService.GetAll();
-            var actividades = Mapear<List<EActividad>, List<ActividadDTO>>(query);
+            var query = await _actividadService.GetAllAsync();
+            var actividades = Mapear<IEnumerable<EActividad>, IEnumerable<ActividadDTO>>(query);
             return Ok(actividades);
         }
 

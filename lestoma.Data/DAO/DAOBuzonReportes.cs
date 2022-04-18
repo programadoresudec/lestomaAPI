@@ -8,8 +8,8 @@ namespace lestoma.Data.DAO
 {
     public class DAOBuzonReportes : GenericRepository<EBuzon>
     {
-        private readonly Mapeo _db;
-        public DAOBuzonReportes(Mapeo db) : base(db)
+        private readonly LestomaContext _db;
+        public DAOBuzonReportes(LestomaContext db) : base(db)
         {
             _db = db;
         }

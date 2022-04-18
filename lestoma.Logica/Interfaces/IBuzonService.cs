@@ -2,6 +2,7 @@
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace lestoma.Logica.Interfaces
@@ -11,5 +12,6 @@ namespace lestoma.Logica.Interfaces
         Task<List<EBuzon>> Listado();
         Task<Response> AgregarReporte(BuzonCreacionRequest buzonCreacion);
         Task<EBuzon> GetBuzonById(int id);
+        IQueryable<EBuzon> GetAllAsQueryable();
     }
 }

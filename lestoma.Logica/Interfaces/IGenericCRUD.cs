@@ -10,10 +10,10 @@ namespace lestoma.Logica.Interfaces
     public interface IGenericCRUD<T, TID> where T : class
     {
         Task<Response> CrearAsync(T entidad);
-        Task<Response> Merge(List<T> listadoEntidad);
         Task<Response> GetByIdAsync(TID id);
         Task<Response> ActualizarAsync(T entidad);
         Task EliminarAsync(TID id);
-        Task<List<T>> GetAll();
+        Task<IEnumerable<T>> GetAllAsync();
+        IQueryable<T> GetAllAsQueryable();
     }
 }

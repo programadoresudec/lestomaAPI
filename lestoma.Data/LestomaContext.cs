@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace lestoma.Data
 {
-    public class Mapeo : DbContext
+    public class LestomaContext : DbContext
     {
         private readonly ICamposAuditoriaHelper _camposAuditoria;
-        public Mapeo() { }
+        public LestomaContext() { }
 
 
         #region Constructor conexion Postgres
-        public Mapeo(DbContextOptions<Mapeo> options, ICamposAuditoriaHelper camposAuditoria)
+        public LestomaContext(DbContextOptions<LestomaContext> options, ICamposAuditoriaHelper camposAuditoria)
          : base(options)
         {
             _camposAuditoria = camposAuditoria ?? throw new ArgumentNullException(nameof(camposAuditoria));
