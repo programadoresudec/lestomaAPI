@@ -40,5 +40,9 @@ namespace lestoma.Entidades.Models
         public List<ETokensUsuarioByAplicacion> RefreshTokens { get; set; }
         [NotMapped]
         public int AplicacionId { get; set; }
+
+
+        [NotMapped]
+        public string Nombre_rol { get; set; }
     }
 }

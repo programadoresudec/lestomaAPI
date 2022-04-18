@@ -270,5 +270,19 @@ namespace lestoma.Logica.LogicaService
             return _respuesta;
            
         }
+
+        public async Task<Response> GetByIdAsync(int id)
+        {
+            var existe = await _usuarioRepository.GetById(id);
+            if (existe == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "usuario no encontrado");
+            }
+            _respuesta.IsExito = true;
+            _respuesta.Mensaje = "Usuario encontrado.";
+            _respuesta.StatusCode = (int)HttpStatusCode.OK;
+            _respuesta.Data = existe;
+            return _respuesta;
+        }
     }
 }

@@ -3,6 +3,7 @@ using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace lestoma.Logica.Interfaces
 {
@@ -20,5 +21,6 @@ namespace lestoma.Logica.Interfaces
         short GetExpirationToken(int aplicacionId);
         Task<string> GetApplicationType(int tipoAplicacion);
         Task<Response> EditRol(RolRequest user);
+        Task<Response> GetByIdAsync(int id);
     }
 }
