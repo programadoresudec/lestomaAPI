@@ -9,7 +9,7 @@ using lestoma.Data;
 
 namespace lestoma.Data.Migrations
 {
-    [DbContext(typeof(Mapeo))]
+    [DbContext(typeof(LestomaContext))]
     [Migration("20211109004356_laboratorio")]
     partial class laboratorio
     {

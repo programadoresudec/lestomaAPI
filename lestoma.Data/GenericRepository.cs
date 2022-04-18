@@ -10,10 +10,10 @@ namespace lestoma.Data
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        protected readonly Mapeo _context;
+        protected readonly LestomaContext _context;
         private DbSet<T> _entities;
 
-        public GenericRepository(Mapeo context)
+        public GenericRepository(LestomaContext context)
         {
             this._context = context;
             _entities = context.Set<T>();
@@ -149,13 +149,11 @@ namespace lestoma.Data
                     if (entidad == null)
                     {
                         _context.Entry(item).State = EntityState.Added;
-                        _context.ProcesarAuditoria();
                         listadoNuevo.Add(item);
                     }
                     else
                     {
                         _context.Entry(entidad).State = EntityState.Modified;
-                        _context.ProcesarAuditoria();
                         listadoNuevo.Add(entidad);
                     }
                 }

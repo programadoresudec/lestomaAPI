@@ -17,9 +17,11 @@ namespace lestoma.CommonUtils.Services
     public class ApiService : IApiService
     {
         public HttpResponseMessage ResponseMessage { get; set; }
+
         private string _tokenNuevo;
         public Response Respuesta { get; set; }
 
+        #region Check conexion para consumo de servicios por internet
         public bool CheckConnection()
         {
             if (CrossConnectivity.Current.IsConnected)
@@ -27,7 +29,8 @@ namespace lestoma.CommonUtils.Services
                 return true;
             }
             return false;
-        }
+        } 
+        #endregion
 
         #region GetList Api service with token
         public async Task<Response> GetListAsyncWithToken<T>(string urlBase, string controller, string token)
@@ -154,6 +157,7 @@ namespace lestoma.CommonUtils.Services
                     return new Response
                     {
                         IsExito = false,
+                        StatusCode = (int)ResponseMessage.StatusCode,
                         Mensaje = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.Mensaje)
                     };
                 }
@@ -165,6 +169,7 @@ namespace lestoma.CommonUtils.Services
                 return new Response
                 {
                     IsExito = false,
+                    StatusCode = (int)ResponseMessage.StatusCode,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 };
             }
@@ -210,6 +215,7 @@ namespace lestoma.CommonUtils.Services
                 return new Response
                 {
                     IsExito = false,
+                    StatusCode = (int)ResponseMessage.StatusCode,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 };
             }
@@ -237,6 +243,7 @@ namespace lestoma.CommonUtils.Services
                     return new Response
                     {
                         IsExito = false,
+                        StatusCode = (int)ResponseMessage.StatusCode,
                         Mensaje = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.Mensaje)
                     };
                 }
@@ -248,6 +255,7 @@ namespace lestoma.CommonUtils.Services
                 return new Response
                 {
                     IsExito = false,
+                    StatusCode = (int)ResponseMessage.StatusCode,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 };
             }
@@ -279,7 +287,6 @@ namespace lestoma.CommonUtils.Services
                         Mensaje = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.Mensaje)
                     };
                 }
-
                 return Respuesta;
             }
             catch (Exception ex)
@@ -310,6 +317,7 @@ namespace lestoma.CommonUtils.Services
                     return new Response
                     {
                         IsExito = false,
+                        StatusCode = (int)ResponseMessage.StatusCode,
                         Mensaje = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.Mensaje)
                     };
                 }
@@ -331,6 +339,7 @@ namespace lestoma.CommonUtils.Services
                 return new Response
                 {
                     IsExito = false,
+                    StatusCode = (int)ResponseMessage.StatusCode,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 };
             }
