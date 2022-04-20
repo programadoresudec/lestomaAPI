@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -74,19 +75,6 @@ namespace lestoma.Data.DAO
             }
         }
 
-            var id = new NpgsqlParameter("id", (int)TipoRol.SuperAdministrador);
-            string consulta = @"SELECT uu.id, uu.nombre, uu.apellido, uu.rol_id FROM usuarios.usuario uu
-                                INNER JOIN usuarios.rol ur on uu.rol_id = ur.id WHERE ur.id != @id";
-            var users = _db.TablaUsuarios.FromSqlRaw(consulta, id).OrderBy(x => x.Nombre);
-            var query = users.Select(x => new UserDTO
-            {
-                Id = x.Id,
-                Nombre = x.Nombre,
-                Apellido = x.Apellido,
-                RolId = x.RolId
-            }).ToList();
-            return query;
-        }
 
 
         public async Task<string> GetApplicationType(int tipoAplicacion)
