@@ -23,6 +23,15 @@ namespace lestoma.Logica.LogicaService
             _componentR = componente;
 
         }
+        public async Task<IEnumerable<EComponentesLaboratorio>> GetAllAsync()
+        {
+            var listado = await _componentR.GetAll();
+            if(listado.Count() == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido");
+            }
+            return listado;
+        }
         public async Task<Response> CrearAsync(EComponentesLaboratorio entidad)
         {
             entidad.Id = Guid.NewGuid();
@@ -73,15 +82,7 @@ namespace lestoma.Logica.LogicaService
             await _componentR.Delete((EComponentesLaboratorio)entidad.Data);
         }
 
-        public async Task<IEnumerable<EComponentesLaboratorio>> GetAllAsync()
-        {
-            var listado = await _componentR.GetAll();
-            if (listado.Count() == 0)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
-            }
-            return listado;
-        }
+ 
 
         public IQueryable<EComponentesLaboratorio> GetAllAsQueryable()
         {

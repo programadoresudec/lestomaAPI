@@ -8,6 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
 
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
+
 namespace lestoma.Api.Controllers
 {
 
@@ -30,6 +36,17 @@ namespace lestoma.Api.Controllers
             var listado = _service.GetUsersJustNames();
             return Ok(listado);
         }
+
+        [HttpGet("search/{id}")]
+        public async Task<IActionResult> getUsuario(int id)
+        {
+            var response = await _service.GetByIdAsync(id);
+            var usuarioDTOSalida = Mapear<EUsuario, InfoUserDTO>((EUsuario)response.Data);
+            response.Data = usuarioDTOSalida;
+            return Ok(response);
+        }
+
+
 
         [HttpPost("registro")]
         public async Task<IActionResult> Registrarse(RegistroRequest registro)

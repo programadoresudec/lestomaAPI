@@ -10,7 +10,7 @@ namespace lestoma.Api.Helpers
     {
         public AutoMappersProfiles()
         {
-            CreateMap<UsuarioRequest, EUsuario>();
+            CreateMap<UsuarioRequest, EUsuario>().ReverseMap();
             CreateMap<UpaRequest, EUpa>().ReverseMap();
             CreateMap<RegistroRequest, EUsuario>();
             CreateMap<ActividadRequest, EActividad>().ReverseMap();
@@ -27,7 +27,7 @@ namespace lestoma.Api.Helpers
             CreateMap<EBuzon, BuzonDTO>().ForMember(d => d.Detalle, o => o.MapFrom(s => deserializarDetalleBuzon(s.Descripcion)));
             CreateMap<EUsuario, UserDTO>().ForMember(d => d.RolId, o => o.MapFrom(s => s.Rol.Id));
             CreateMap<RolRequest, EUsuario>();
-
+            CreateMap<EUsuario, InfoUserDTO>();
         }
 
 

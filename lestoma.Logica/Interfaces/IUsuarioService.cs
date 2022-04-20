@@ -3,6 +3,7 @@ using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace lestoma.Logica.Interfaces
 {
@@ -21,5 +22,6 @@ namespace lestoma.Logica.Interfaces
         Task<Response> EditRol(RolRequest user);
         Task<Response> RevokeToken(string token, string ipAddress);
         Task <IEnumerable<EUpaActividad>> GetActivitiesByUserId(int id);
+        Task<Response> GetByIdAsync(int id);
     }
 }
