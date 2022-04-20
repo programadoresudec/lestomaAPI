@@ -18,7 +18,6 @@ namespace lestoma.Api.Controllers
         {
             _context = context;
         }
-
         #endregion
 
         [HttpGet("listado")]
