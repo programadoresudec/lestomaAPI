@@ -24,28 +24,47 @@ namespace lestoma.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _environment = env;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment _environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                var frontendURL = Configuration.GetValue<string>("frontend_web_url");
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins(frontendURL).AllowAnyMethod().AllowAnyHeader()
+                    .WithExposedHeaders(new string[] { "cantidadTotalRegistros" });
+                });
+            });
+
             services.AddControllers()
                 .AddNewtonsoftJson();
 
-
-            services.AddDbContext<LestomaContext>(options =>
+            if (_environment.IsProduction())
             {
+                services.AddDbContext<LestomaContext>(options =>
+                {
 
-                options.UseNpgsql(Configuration.GetConnectionString("PostgresConnection"));
-            });
+                    options.UseNpgsql(Configuration.GetConnectionString("PostgresConnectionProduction"));
+                });
+            }
+            else if (_environment.IsDevelopment())
+            {
+                services.AddDbContext<LestomaContext>(options =>
+                {
 
-
+                    options.UseNpgsql(Configuration.GetConnectionString("PostgresConnection"));
+                });
+            }
 
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
@@ -66,7 +85,8 @@ namespace lestoma.Api
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Copia y pega el Token en el campo 'Value:' así: Bearer {Token JWT}.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+                    Description = "Copia y pega el Token en el campo 'Value:' así: Bearer " +
+                    "{Token JWT}.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
                 });
                 swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
@@ -126,12 +146,6 @@ namespace lestoma.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LestomaContext db)
         {
-            app.UseCors(options =>
-            {
-                options.WithOrigins("http://localhost:4200");
-                options.AllowAnyMethod();
-                options.AllowAnyHeader();
-            });
             bool adminTabla = false;
             int id = 0;
             try
@@ -184,9 +198,10 @@ namespace lestoma.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "lestoma.Api v1"));
+
             }
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "lestoma.Api v1"));
 
             app.UseMiddleware<CustomExceptionMiddleware>();
 

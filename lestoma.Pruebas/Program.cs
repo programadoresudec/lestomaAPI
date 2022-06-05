@@ -15,6 +15,14 @@ namespace lestoma.Pruebas
             }
             string i = Guid.NewGuid().ToString();
             Console.WriteLine(i);
+
+
+            byte[] byteArray = { 73, 111, 240, 0, 0, 0, 0, 0, 15};
+
+            string hexString = BitConverter.ToString(byteArray);
+
+            Console.WriteLine(hexString);
+            Console.WriteLine(hexString.Replace('-', ' '));
         }
 
 

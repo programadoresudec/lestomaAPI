@@ -35,7 +35,7 @@ namespace lestoma.Logica.LogicaService
             var reporte = new EBuzon
             {
                 Descripcion = JsonSerializer.Serialize(buzonCreacion.Detalle),
-                FechaCreacion = DateTime.Now,
+                FechaCreacionServer = DateTime.Now,
                 UsuarioId = buzonCreacion.UsuarioId
             };
 

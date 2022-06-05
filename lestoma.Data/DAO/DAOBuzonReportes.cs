@@ -27,7 +27,7 @@ namespace lestoma.Data.DAO
 
             {
                 Descripcion = m.buzon.Descripcion,
-                FechaCreacion = m.buzon.FechaCreacion,
+                FechaCreacionServer = m.buzon.FechaCreacionServer,
                 Id = m.buzon.Id,
                 User =
                 {

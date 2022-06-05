@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace lestoma.Data.Migrations
 {
-    public partial class laboratorio : Migration
+    public partial class InitialDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -33,7 +33,7 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -105,7 +105,7 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -117,8 +117,7 @@ namespace lestoma.Data.Migrations
                 schema: "laboratorio_lestoma",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     modulo_componente_id = table.Column<int>(type: "integer", nullable: false),
                     actividad_id = table.Column<Guid>(type: "uuid", nullable: false),
                     nombre = table.Column<string>(type: "text", nullable: true),
@@ -126,7 +125,7 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -194,28 +193,6 @@ namespace lestoma.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "detalle_laboratorio",
-                schema: "laboratorio_lestoma",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    tipo_estado_componente_id = table.Column<int>(type: "integer", nullable: false),
-                    componente_laboratorio_id = table.Column<int>(type: "integer", nullable: false),
-                    tipo_com_id = table.Column<int>(type: "integer", nullable: false),
-                    actividad_id = table.Column<int>(type: "integer", nullable: false),
-                    trama_enviada = table.Column<string>(type: "text", nullable: true),
-                    estado_internet = table.Column<bool>(type: "boolean", nullable: false),
-                    ip = table.Column<string>(type: "text", nullable: true),
-                    session = table.Column<string>(type: "text", nullable: true),
-                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_detalle_laboratorio", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "estado_usuario",
                 schema: "usuarios",
                 columns: table => new
@@ -250,7 +227,9 @@ namespace lestoma.Data.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    nombre = table.Column<string>(type: "text", nullable: true)
+                    nombre = table.Column<string>(type: "text", nullable: true),
+                    primer_byte_trama = table.Column<string>(type: "text", nullable: true),
+                    sigla = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -313,11 +292,47 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_upa", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "detalle_laboratorio",
+                schema: "laboratorio_lestoma",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    componente_laboratorio_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    tipo_com_id = table.Column<int>(type: "integer", nullable: false),
+                    valor_componente = table.Column<double>(type: "double precision", nullable: false),
+                    trama_enviada = table.Column<string>(type: "text", nullable: true),
+                    estado_internet = table.Column<bool>(type: "boolean", nullable: false),
+                    fecha_creacion_dispositivo = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    ip = table.Column<string>(type: "text", nullable: true),
+                    session = table.Column<string>(type: "text", nullable: true),
+                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_detalle_laboratorio", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_detalle_laboratorio_componente_laboratorio_componente_labor~",
+                        column: x => x.componente_laboratorio_id,
+                        principalSchema: "laboratorio_lestoma",
+                        principalTable: "componente_laboratorio",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_detalle_laboratorio_protocolo_com_tipo_com_id",
+                        column: x => x.tipo_com_id,
+                        principalSchema: "laboratorio_lestoma",
+                        principalTable: "protocolo_com",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -339,7 +354,7 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -400,7 +415,7 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -427,6 +442,61 @@ namespace lestoma.Data.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                schema: "laboratorio_lestoma",
+                table: "protocolo_com",
+                columns: new[] { "id", "nombre", "primer_byte_trama", "sigla" },
+                values: new object[,]
+                {
+                    { 1, "Peer to Peer", "49", "PP" },
+                    { 2, "Broad Cast", "6F", "BS" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "seguridad",
+                table: "aplicacion",
+                columns: new[] { "id", "nombre", "tiempo_expiracion_token" },
+                values: new object[,]
+                {
+                    { 1, "App Movil", (short)31 },
+                    { 2, "Web", (short)45 }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "usuarios",
+                table: "estado_usuario",
+                columns: new[] { "id", "descripcion" },
+                values: new object[,]
+                {
+                    { 1, "verificar cuenta" },
+                    { 3, "Activado" },
+                    { 4, "Inactivo" },
+                    { 5, "Bloqueado" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "usuarios",
+                table: "rol",
+                columns: new[] { "id", "nombre_rol" },
+                values: new object[,]
+                {
+                    { 1, "Super Administrador" },
+                    { 2, "Administrador" },
+                    { 3, "Auxiliar" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_detalle_laboratorio_componente_laboratorio_id",
+                schema: "laboratorio_lestoma",
+                table: "detalle_laboratorio",
+                column: "componente_laboratorio_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_detalle_laboratorio_tipo_com_id",
+                schema: "laboratorio_lestoma",
+                table: "detalle_laboratorio",
+                column: "tipo_com_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tokens_usuario_por_aplicacion_usuario_id",
@@ -478,10 +548,6 @@ namespace lestoma.Data.Migrations
                 schema: "reportes");
 
             migrationBuilder.DropTable(
-                name: "componente_laboratorio",
-                schema: "laboratorio_lestoma");
-
-            migrationBuilder.DropTable(
                 name: "control_de_agua",
                 schema: "reportes");
 
@@ -506,10 +572,6 @@ namespace lestoma.Data.Migrations
                 schema: "laboratorio_lestoma");
 
             migrationBuilder.DropTable(
-                name: "protocolo_com",
-                schema: "laboratorio_lestoma");
-
-            migrationBuilder.DropTable(
                 name: "recirculacion_de_agua",
                 schema: "reportes");
 
@@ -524,6 +586,14 @@ namespace lestoma.Data.Migrations
             migrationBuilder.DropTable(
                 name: "upa_actividad",
                 schema: "superadmin");
+
+            migrationBuilder.DropTable(
+                name: "componente_laboratorio",
+                schema: "laboratorio_lestoma");
+
+            migrationBuilder.DropTable(
+                name: "protocolo_com",
+                schema: "laboratorio_lestoma");
 
             migrationBuilder.DropTable(
                 name: "actividad",

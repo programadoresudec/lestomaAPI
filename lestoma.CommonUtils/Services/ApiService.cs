@@ -39,7 +39,6 @@ namespace lestoma.CommonUtils.Services
             {
                 HttpClient client = new HttpClient
                 {
-                    Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
                 };
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
@@ -186,7 +185,6 @@ namespace lestoma.CommonUtils.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
-                    Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
                 };
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
@@ -231,7 +229,6 @@ namespace lestoma.CommonUtils.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
-                    Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
                 };
 
@@ -272,7 +269,6 @@ namespace lestoma.CommonUtils.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
-                    Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
                 };
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);

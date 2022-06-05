@@ -1,14 +1,13 @@
-﻿using System;
+﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.MyException;
+using lestoma.Data.DAO;
+using lestoma.Entidades.Models;
+using lestoma.Logica.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using lestoma.Data.DAO;
-using System.Threading.Tasks;
-using lestoma.Entidades.Models;
-using lestoma.CommonUtils.DTOs;
 using System.Net;
-using lestoma.Logica.Interfaces;
-using lestoma.CommonUtils.MyException;
+using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
 {
@@ -26,7 +25,7 @@ namespace lestoma.Logica.LogicaService
         public async Task<IEnumerable<EComponentesLaboratorio>> GetAllAsync()
         {
             var listado = await _componentR.GetAll();
-            if(listado.Count() == 0)
+            if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido");
             }
@@ -82,21 +81,21 @@ namespace lestoma.Logica.LogicaService
             await _componentR.Delete((EComponentesLaboratorio)entidad.Data);
         }
 
- 
+
 
         public IQueryable<EComponentesLaboratorio> GetAllAsQueryable()
         {
             var listado = _componentR.GetAllAsQueryable();
-            if (listado.Count() == 0)
+            if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
             }
             return listado;
         }
     }
-   
+
 
 }
- 
+
 
 

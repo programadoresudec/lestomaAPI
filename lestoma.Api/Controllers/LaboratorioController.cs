@@ -18,12 +18,13 @@ namespace lestoma.Api.Controllers
         {
             _context = context;
         }
-        #endregion
-
+        #endregion        
+        
         [HttpGet("listado")]
         public async Task<IActionResult> GetDetalle()
         {
-            var listado = await _context.TablaDetalleLaboratorio.Include(x => x.ComponenteLaboratorio).Include(x => x.TipoDeComunicacion).ToListAsync();
+            var listado = await _context.TablaDetalleLaboratorio
+                .Include(x => x.ComponenteLaboratorio).Include(x => x.TipoDeComunicacion).ToListAsync();
             return Ok(listado);
         }
 

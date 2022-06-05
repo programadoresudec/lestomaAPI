@@ -20,7 +20,7 @@ namespace lestoma.Data.DAO
             _db = db;
         }
 
-        public async Task<Response> CrearVarios(EUpaActividad entidad)
+        public async Task CreateRelation(EUpaActividad entidad)
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
@@ -32,24 +32,18 @@ namespace lestoma.Data.DAO
                         await Create(entidad);
                     }
                     transaction.Commit();
-                    return new Response
-                    {
-                        IsExito = true,
-                        Mensaje = "Se ha creado satisfactoriamente.",
-                        StatusCode = (int)HttpStatusCode.Created
-                    };      
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"{ex.Message}");
-                }    
+                    ObtenerException(ex, entidad);
+                }
             }
         }
 
-        public IQueryable<EUpaActividad> GetDetalleUpaActividad()
+
+        public IQueryable<EUpaActividad> GetAllRelation()
         {
-  
             var listaAgrupada = _db.TablaUpasConActividades.Include(a => a.Actividad).GroupBy(p => new { p.UsuarioId, p.UpaId });
 
             //var listaAgrupada = (await _db.TablaUpasConActividades.Include(a => a.Actividad).ToListAsync())
@@ -61,10 +55,10 @@ namespace lestoma.Data.DAO
             }
             var query = listaAgrupada.Select(x => new EUpaActividad
             {
-                UpaId = x.Key.UpaId,    
+                UpaId = x.Key.UpaId,
                 UsuarioId = x.Key.UsuarioId,
                 Upa = _db.TablaUpas.Find(x.Key.UpaId),
-                FechaCreacion = x.Select(f => f.FechaCreacion).FirstOrDefault(),
+                FechaCreacionServer = x.Select(f => f.FechaCreacionServer).FirstOrDefault(),
                 Ip = x.Select(i => i.Ip).FirstOrDefault(),
                 Session = x.Select(s => s.Session).FirstOrDefault(),
                 TipoDeAplicacion = x.Select(a => a.TipoDeAplicacion).FirstOrDefault(),

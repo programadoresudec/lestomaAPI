@@ -5,9 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace lestoma.Entidades.Models
 
 {
-
     [Table("detalle_laboratorio", Schema = "laboratorio_lestoma")]
-
     public class ELaboratorio : ECamposAuditoria
     {
         [Key]
@@ -24,6 +22,9 @@ namespace lestoma.Entidades.Models
         public string TramaEnviada { get; set; }
         [Column("estado_internet")]
         public bool EstadoInternet { get; set; }
+
+        [Column("fecha_creacion_dispositivo")]
+        public DateTime? FechaCreacionDevice { get; set; }
 
         public EComponentesLaboratorio ComponenteLaboratorio { get; set; }
         public EProtocoloCOM TipoDeComunicacion { get; set; }

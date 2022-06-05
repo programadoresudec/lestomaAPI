@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using lestoma.Data;
@@ -9,9 +10,10 @@ using lestoma.Data;
 namespace lestoma.Data.Migrations
 {
     [DbContext(typeof(LestomaContext))]
-    partial class MapeoModelSnapshot : ModelSnapshot
+    [Migration("20220604225432_Initial DB")]
+    partial class InitialDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,9 +28,9 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("FechaCreacion")
+                    b.Property<DateTime?>("FechaCreacionServer")
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnName("fecha_creacion");
+                        .HasColumnName("fecha_creacion_server");
 
                     b.Property<string>("Ip")
                         .HasColumnType("text")
@@ -70,6 +72,20 @@ namespace lestoma.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("aplicacion", "seguridad");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            NombreAplicacion = "App Movil",
+                            TiempoExpiracionToken = (short)31
+                        },
+                        new
+                        {
+                            Id = 2,
+                            NombreAplicacion = "Web",
+                            TiempoExpiracionToken = (short)45
+                        });
                 });
 
             modelBuilder.Entity("lestoma.Entidades.Models.EAuditoria", b =>
@@ -137,9 +153,9 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("json")
                         .HasColumnName("descripcion");
 
-                    b.Property<DateTime>("FechaCreacion")
+                    b.Property<DateTime?>("FechaCreacionServer")
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnName("fecha_creacion");
+                        .HasColumnName("fecha_creacion_server");
 
                     b.Property<string>("Ip")
                         .HasColumnType("text")
@@ -164,19 +180,18 @@ namespace lestoma.Data.Migrations
 
             modelBuilder.Entity("lestoma.Entidades.Models.EComponentesLaboratorio", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<Guid>("ActividadId")
                         .HasColumnType("uuid")
                         .HasColumnName("actividad_id");
 
-                    b.Property<DateTime>("FechaCreacion")
+                    b.Property<DateTime?>("FechaCreacionServer")
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnName("fecha_creacion");
+                        .HasColumnName("fecha_creacion_server");
 
                     b.Property<string>("Ip")
                         .HasColumnType("text")
@@ -222,6 +237,28 @@ namespace lestoma.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("estado_usuario", "usuarios");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DescripcionEstado = "verificar cuenta"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DescripcionEstado = "Activado"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DescripcionEstado = "Inactivo"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DescripcionEstado = "Bloqueado"
+                        });
                 });
 
             modelBuilder.Entity("lestoma.Entidades.Models.ELaboratorio", b =>
@@ -231,21 +268,21 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<int>("ActividadId")
-                        .HasColumnType("integer")
-                        .HasColumnName("actividad_id");
-
-                    b.Property<int>("ComponenteLaboratorioId")
-                        .HasColumnType("integer")
+                    b.Property<Guid>("ComponenteLaboratorioId")
+                        .HasColumnType("uuid")
                         .HasColumnName("componente_laboratorio_id");
 
                     b.Property<bool>("EstadoInternet")
                         .HasColumnType("boolean")
                         .HasColumnName("estado_internet");
 
-                    b.Property<DateTime>("FechaCreacion")
+                    b.Property<DateTime?>("FechaCreacionDevice")
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnName("fecha_creacion");
+                        .HasColumnName("fecha_creacion_dispositivo");
+
+                    b.Property<DateTime?>("FechaCreacionServer")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("fecha_creacion_server");
 
                     b.Property<string>("Ip")
                         .HasColumnType("text")
@@ -263,15 +300,19 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("tipo_com_id");
 
-                    b.Property<int>("TipoEstadoComponenteId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tipo_estado_componente_id");
-
                     b.Property<string>("TramaEnviada")
                         .HasColumnType("text")
                         .HasColumnName("trama_enviada");
 
+                    b.Property<double>("ValorTramaComponente")
+                        .HasColumnType("double precision")
+                        .HasColumnName("valor_componente");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ComponenteLaboratorioId");
+
+                    b.HasIndex("TipoDeComunicacionId");
 
                     b.ToTable("detalle_laboratorio", "laboratorio_lestoma");
                 });
@@ -305,9 +346,33 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("nombre");
 
+                    b.Property<string>("PrimerByteTrama")
+                        .HasColumnType("text")
+                        .HasColumnName("primer_byte_trama");
+
+                    b.Property<string>("Sigla")
+                        .HasColumnType("text")
+                        .HasColumnName("sigla");
+
                     b.HasKey("Id");
 
                     b.ToTable("protocolo_com", "laboratorio_lestoma");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nombre = "Peer to Peer",
+                            PrimerByteTrama = "49",
+                            Sigla = "PP"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nombre = "Broad Cast",
+                            PrimerByteTrama = "6F",
+                            Sigla = "BS"
+                        });
                 });
 
             modelBuilder.Entity("lestoma.Entidades.Models.ERol", b =>
@@ -326,6 +391,23 @@ namespace lestoma.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("rol", "usuarios");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            NombreRol = "Super Administrador"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            NombreRol = "Administrador"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            NombreRol = "Auxiliar"
+                        });
                 });
 
             modelBuilder.Entity("lestoma.Entidades.Models.ESuperAdministrador", b =>
@@ -360,9 +442,9 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("descripcion");
 
-                    b.Property<DateTime>("FechaCreacion")
+                    b.Property<DateTime?>("FechaCreacionServer")
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnName("fecha_creacion");
+                        .HasColumnName("fecha_creacion_server");
 
                     b.Property<string>("Ip")
                         .HasColumnType("text")
@@ -403,9 +485,9 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("usuario_id");
 
-                    b.Property<DateTime>("FechaCreacion")
+                    b.Property<DateTime?>("FechaCreacionServer")
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnName("fecha_creacion");
+                        .HasColumnName("fecha_creacion_server");
 
                     b.Property<string>("Ip")
                         .HasColumnType("text")
@@ -456,9 +538,9 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("estado_id");
 
-                    b.Property<DateTime>("FechaCreacion")
+                    b.Property<DateTime?>("FechaCreacionServer")
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnName("fecha_creacion");
+                        .HasColumnName("fecha_creacion_server");
 
                     b.Property<DateTime?>("FechaVencimientoCodigo")
                         .HasColumnType("timestamp without time zone")
@@ -639,6 +721,25 @@ namespace lestoma.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("recirculacion_de_agua", "reportes");
+                });
+
+            modelBuilder.Entity("lestoma.Entidades.Models.ELaboratorio", b =>
+                {
+                    b.HasOne("lestoma.Entidades.Models.EComponentesLaboratorio", "ComponenteLaboratorio")
+                        .WithMany()
+                        .HasForeignKey("ComponenteLaboratorioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lestoma.Entidades.Models.EProtocoloCOM", "TipoDeComunicacion")
+                        .WithMany()
+                        .HasForeignKey("TipoDeComunicacionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ComponenteLaboratorio");
+
+                    b.Navigation("TipoDeComunicacion");
                 });
 
             modelBuilder.Entity("lestoma.Entidades.Models.EUpaActividad", b =>

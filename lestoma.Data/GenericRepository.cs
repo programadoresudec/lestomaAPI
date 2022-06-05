@@ -20,7 +20,7 @@ namespace lestoma.Data
         }
 
         #region Listado IEnumerable In BD
-        public async Task<IEnumerable<T>> GetAll()
+        public virtual async Task<IEnumerable<T>> GetAll()
         {
             return await _entities.ToListAsync();
         }
@@ -59,7 +59,7 @@ namespace lestoma.Data
         #endregion
 
         #region Update In BD
-        public async Task Update(T entidad)
+        public virtual async Task Update(T entidad)
         {
             if (entidad == null) throw new ArgumentNullException($"{nameof(entidad)} no debe ser nula");
             try
@@ -76,7 +76,7 @@ namespace lestoma.Data
 
         #region Delete In BD
 
-        public async Task Delete(T entidad)
+        public virtual async Task Delete(T entidad)
         {
             if (entidad == null) throw new ArgumentNullException($"{nameof(entidad)} no debe ser nula");
             try
@@ -115,7 +115,7 @@ namespace lestoma.Data
             return null;
         }
 
-        private void ObtenerException(Exception ex, T entidad)
+        public void ObtenerException(Exception ex, T entidad)
         {
             var udpateException = GetInnerException<DbUpdateException>(ex);
             var pgsqlException = GetInnerException<PostgresException>(ex);
@@ -129,7 +129,7 @@ namespace lestoma.Data
             }
             else
             {
-                throw new Exception($"{nameof(entidad)} no se ha podido crear: {ex.Message}");
+                throw new Exception($"{nameof(entidad)} {ex.Message}");
             }
         }
         #endregion
@@ -137,11 +137,11 @@ namespace lestoma.Data
         #region Merge
         public async Task Merge(List<T> ListadoEntidad)
         {
-            CancellationTokenSource tcs = new CancellationTokenSource();
-            CancellationToken token = new CancellationToken();
+            CancellationTokenSource tcs = new();
+            CancellationToken token = new();
             try
             {
-                List<T> listadoNuevo = new List<T>();
+                List<T> listadoNuevo = new();
                 foreach (var item in ListadoEntidad)
                 {
                     var Property = item.GetType().GetProperty("Id");

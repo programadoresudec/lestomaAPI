@@ -4,6 +4,7 @@ using lestoma.Data.DAO;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -29,7 +30,14 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<Response> CrearEnCascada(EUpaActividad entidad)
         {
-            return await _upasActividadesRepository.CrearVarios(entidad);
+
+            await _upasActividadesRepository.CreateRelation(entidad);
+            return new Response
+            {
+                IsExito = true,
+                Mensaje = "Se ha creado satisfactoriamente.",
+                StatusCode = (int)HttpStatusCode.Created
+            };
         }
 
         public Task EliminarEnCascada(int IdUsuario)
@@ -39,14 +47,13 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<IEnumerable<EUpaActividad>> GetAll()
         {
-           return  await _upasActividadesRepository.GetAll();
+            return await _upasActividadesRepository.GetAll();
         }
 
         public IQueryable<EUpaActividad> GetAllAsQueryable()
         {
-            var query = _upasActividadesRepository.GetDetalleUpaActividad();
-            int variable = query.Count();
-            if (variable == 0)
+            var query = _upasActividadesRepository.GetAllRelation();
+            if (!query.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay actividades.");
             }

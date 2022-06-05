@@ -114,7 +114,7 @@ namespace lestoma.Logica.LogicaService
                 usuario.Nombre = usuario.Nombre.Trim();
                 usuario.Clave = hash.Password;
                 usuario.Salt = hash.Salt;
-                usuario.EstadoId = usuario.RolId == (int)TipoRol.Auxiliar? (int)TipoEstadoUsuario.CheckCuenta: (int)TipoEstadoUsuario.Activado;
+                usuario.EstadoId = usuario.RolId == (int)TipoRol.Auxiliar ? (int)TipoEstadoUsuario.CheckCuenta : (int)TipoEstadoUsuario.Activado;
                 await _usuarioRepository.Create(usuario);
                 _respuesta.IsExito = true;
                 _respuesta.StatusCode = (int)HttpStatusCode.Created;

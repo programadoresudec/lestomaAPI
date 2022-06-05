@@ -4,6 +4,7 @@ using lestoma.Entidades.Models;
 using lestoma.Entidades.ModelsReports;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -69,7 +70,7 @@ namespace lestoma.Data
             modelBuilder.Entity<EActividad>().ToTable("actividad", "superadmin");
             modelBuilder.Entity<EUpa>().ToTable("upa", "superadmin");
             modelBuilder.Entity<EUpaActividad>().ToTable("upa_actividad", "superadmin")
-           .HasKey(x => new { x.UpaId, x.ActividadId, x.UsuarioId }); 
+           .HasKey(x => new { x.UpaId, x.ActividadId, x.UsuarioId });
             #endregion
 
             #region Schema usuarios
@@ -85,6 +86,7 @@ namespace lestoma.Data
                 .HasForeignKey(s => s.EstadoId)
                 .OnDelete(DeleteBehavior.Cascade);
             #endregion
+
             #region Schema Seguridad
             modelBuilder.Entity<EUsuario>().OwnsMany(
             p => p.RefreshTokens, a =>
@@ -104,7 +106,7 @@ namespace lestoma.Data
             modelBuilder.Entity<EProtocoloCOM>().ToTable("protocolo_com", "laboratorio_lestoma");
             #endregion
 
-            #region Schema laboratorio
+            #region Schema Reportes
             modelBuilder.Entity<EBuzon>().ToTable("buzon", "reportes");
             modelBuilder.Entity<EAlimentarPeces>().ToTable("alimentar_peces", "reportes");
             modelBuilder.Entity<EControlAgua>().ToTable("control_de_agua", "reportes");
@@ -115,8 +117,58 @@ namespace lestoma.Data
 
             #endregion
 
-
+            SeeData(modelBuilder);
             base.OnModelCreating(modelBuilder);
+        }
+
+        private static void SeeData(ModelBuilder modelBuilder)
+        {
+            #region data roles
+            var superAdmin = new ERol() { Id = 1, NombreRol = "Super Administrador" };
+            var admin = new ERol() { Id = 2, NombreRol = "Administrador" };
+            var auxiliar = new ERol() { Id = 3, NombreRol = "Auxiliar" };
+
+            modelBuilder.Entity<ERol>()
+                .HasData(new List<ERol>
+                {
+                    superAdmin,admin,auxiliar
+                });
+            #endregion
+
+            #region data estados usuario
+            var checkCuenta = new EEstadoUsuario() { Id = 1, DescripcionEstado = "verificar cuenta" };
+            var Activado = new EEstadoUsuario() { Id = 2, DescripcionEstado = "Activado" };
+            var Inactivo = new EEstadoUsuario() { Id = 3, DescripcionEstado = "Inactivo" };
+            var Bloqueado = new EEstadoUsuario() { Id = 4, DescripcionEstado = "Bloqueado" };
+
+            modelBuilder.Entity<EEstadoUsuario>()
+                .HasData(new List<EEstadoUsuario>
+                {
+                   checkCuenta, Activado, Inactivo,Bloqueado
+                });
+            #endregion
+
+            #region data aplicaciones
+            var app = new EAplicacion() { Id = 1, NombreAplicacion = "App Movil", TiempoExpiracionToken = 31 };
+            var web = new EAplicacion() { Id = 2, NombreAplicacion = "Web", TiempoExpiracionToken = 45 };
+
+            modelBuilder.Entity<EAplicacion>()
+                .HasData(new List<EAplicacion>
+                {
+                    app,web
+                });
+            #endregion
+
+            #region data protocolo
+            var peerToPeer = new EProtocoloCOM() { Id = 1, Nombre = "Peer to Peer", Sigla = "PP", PrimerByteTrama = "49" };
+            var broadCast = new EProtocoloCOM() { Id = 2, Nombre = "Broad Cast", Sigla = "BS", PrimerByteTrama = "6F" };
+
+            modelBuilder.Entity<EProtocoloCOM>()
+                .HasData(new List<EProtocoloCOM>
+                {
+                    peerToPeer,broadCast
+                });
+            #endregion
         }
         #endregion
         public void ProcesarAuditoria()
@@ -128,7 +180,7 @@ namespace lestoma.Data
                 entidad.Ip = _camposAuditoria.ObtenerIp();
                 entidad.Session = _camposAuditoria.ObtenerUsuarioActual();
                 entidad.TipoDeAplicacion = _camposAuditoria.ObtenerTipoDeAplicacion();
-                entidad.FechaCreacion = DateTime.Now;
+                entidad.FechaCreacionServer = DateTime.Now;
             }
 
             foreach (var item in ChangeTracker.Entries()
@@ -138,7 +190,7 @@ namespace lestoma.Data
                 entidad.Ip = _camposAuditoria.ObtenerIp();
                 entidad.Session = _camposAuditoria.ObtenerUsuarioActual();
                 entidad.TipoDeAplicacion = _camposAuditoria.ObtenerTipoDeAplicacion();
-                entidad.FechaCreacion = DateTime.Now;
+                entidad.FechaCreacionServer = DateTime.Now;
             }
         }
     }
