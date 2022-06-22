@@ -17,16 +17,16 @@ using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
 {
-    public class LSUsuario : IUsuarioService
+    public class UsuarioService : IUsuarioService
     {
 
         ////ENVIAR CORREOS CON ARCHIVOS 
         //await _mailHelper.SendCorreoWithArchives("diegop177@hotmail.com", "", "cedula.pdf", "activar cuenta", 
         //    MediaTypeNames.Application.Pdf, "cedula.pdf");
         private readonly Response _respuesta = new();
-        private DAOUsuario _usuarioRepository;
+        private UsuarioRepository _usuarioRepository;
         private IMailHelper _mailHelper;
-        public LSUsuario(DAOUsuario usuarioRepository, IMailHelper mailHelper)
+        public UsuarioService(UsuarioRepository usuarioRepository, IMailHelper mailHelper)
         {
             _usuarioRepository = usuarioRepository;
             _mailHelper = mailHelper;

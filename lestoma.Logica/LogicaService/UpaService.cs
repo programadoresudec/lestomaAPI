@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
 {
-    public class LSUpa : IUpaService
+    public class UpaService : IUpaService
     {
         private readonly Response _respuesta = new();
-        private readonly DAOUpa _upaRepository;
-        public LSUpa(DAOUpa upaRepository)
+        private readonly UpaRepository _upaRepository;
+        public UpaService(UpaRepository upaRepository)
         {
             _upaRepository = upaRepository;
         }

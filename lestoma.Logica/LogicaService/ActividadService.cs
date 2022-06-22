@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
 {
-    public class LSActividad : IActividadService
+    public class ActividadService : IActividadService
     {
         private readonly Response _respuesta = new();
 
-        private readonly DAOActividad _actividadRepository;
-        public LSActividad(DAOActividad actividadRepository)
+        private readonly ActividadRepository _actividadRepository;
+        public ActividadService(ActividadRepository actividadRepository)
         {
             _actividadRepository = actividadRepository;
         }

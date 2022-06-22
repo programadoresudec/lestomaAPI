@@ -1,21 +1,19 @@
-﻿using lestoma.CommonUtils.DTOs;
-using lestoma.CommonUtils.MyException;
+﻿using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
 {
-    public class DAOUpaActividad : GenericRepository<EUpaActividad>
+    public class UpaActividadRepository : GenericRepository<EUpaActividad>
     {
         private readonly LestomaContext _db;
-        public DAOUpaActividad(LestomaContext db) : base(db)
+        public UpaActividadRepository(LestomaContext db) : base(db)
         {
             _db = db;
         }

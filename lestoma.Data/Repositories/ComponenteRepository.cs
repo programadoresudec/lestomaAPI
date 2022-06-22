@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
 {
-    public class DAOComponente : GenericRepository<EComponenteLaboratorio>
+    public class ComponenteRepository : GenericRepository<EComponenteLaboratorio>
     {
         private readonly LestomaContext _db;
 
-        public DAOComponente(LestomaContext db) : base(db)
+        public ComponenteRepository(LestomaContext db) : base(db)
         {
             _db = db;
         }

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
 {
-    public class DAOBuzonReportes : GenericRepository<EBuzon>
+    public class BuzonRepository : GenericRepository<EBuzon>
     {
         private readonly LestomaContext _db;
-        public DAOBuzonReportes(LestomaContext db) : base(db)
+        public BuzonRepository(LestomaContext db) : base(db)
         {
             _db = db;
         }

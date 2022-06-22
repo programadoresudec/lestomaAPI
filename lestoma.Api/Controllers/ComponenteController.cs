@@ -51,7 +51,6 @@ namespace lestoma.Api.Controllers
             var compDTOSalida = Mapear<EComponenteLaboratorio, CrearComponenteRequest>((EComponenteLaboratorio)response.Data);
             response.Data = compDTOSalida;
             return Ok(response);
-
         }
 
         [HttpPost("crear")]

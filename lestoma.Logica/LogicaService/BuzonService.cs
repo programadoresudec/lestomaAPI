@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
 {
-    public class LSBuzon : IBuzonService
+    public class BuzonService : IBuzonService
     {
         private readonly Response _respuesta = new();
 
-        private DAOBuzonReportes _buzonRepository;
+        private BuzonRepository _buzonRepository;
 
-        public LSBuzon(DAOBuzonReportes buzonRepository)
+        public BuzonService(BuzonRepository buzonRepository)
         {
             _buzonRepository = buzonRepository;
         }

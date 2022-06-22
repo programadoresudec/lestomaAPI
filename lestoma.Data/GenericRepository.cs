@@ -3,6 +3,7 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -88,6 +89,13 @@ namespace lestoma.Data
             {
                 ObtenerException(ex, entidad);
             }
+        }
+        #endregion
+
+        #region Exist with condition
+        public async Task<bool> AnyWithCondition(Expression<Func<T, bool>> whereCondition)
+        {
+            return await _entities.AnyAsync(whereCondition);
         }
         #endregion
 

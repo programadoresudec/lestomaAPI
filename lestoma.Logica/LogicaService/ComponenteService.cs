@@ -11,20 +11,23 @@ using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
 {
-    public class LSComponentes : IComponenteService
+    public class ComponenteService : IComponenteService
     {
-        private DAOComponente _componentR;
+        private ComponenteRepository _componenteRepo;
+        private ActividadRepository _actividadRepo;
+        private UpaRepository _upaRepo;
         private readonly Response _respuesta = new();
 
-        public LSComponentes(DAOComponente componente)
+        public ComponenteService(ComponenteRepository componente, ActividadRepository _actividadRepository,
+            UpaRepository upaRepository)
         {
-
-            _componentR = componente;
-
+            _componenteRepo = componente;
+            _actividadRepo = _actividadRepository;
+            _upaRepo = upaRepository;
         }
         public async Task<IEnumerable<EComponenteLaboratorio>> GetAllAsync()
         {
-            var listado = await _componentR.GetAll();
+            var listado = await _componenteRepo.GetAll();
             if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido");
@@ -33,33 +36,49 @@ namespace lestoma.Logica.LogicaService
         }
         public async Task<Response> CrearAsync(EComponenteLaboratorio entidad)
         {
+            await Validaciones(entidad);
             entidad.Id = Guid.NewGuid();
-            await _componentR.Create(entidad);
+            await _componenteRepo.Create(entidad);
             _respuesta.IsExito = true;
             _respuesta.Data = entidad;
             _respuesta.StatusCode = (int)HttpStatusCode.Created;
             _respuesta.Mensaje = "Se ha creado";
             return _respuesta;
         }
+
+        private async Task Validaciones(EComponenteLaboratorio entidad)
+        {
+            var existeActividad = await _actividadRepo.AnyWithCondition(x => x.Id == entidad.ActividadId);
+            if (!existeActividad)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la actividad.");
+            }
+            var existeUpa = await _upaRepo.AnyWithCondition(x => x.Id == entidad.UpaId);
+            if (!existeUpa)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la upa.");
+            }
+            var existeModulo = await _actividadRepo.AnyWithCondition(x => x.Id == entidad.ActividadId);
+            if (!existeModulo)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el modulo.");
+            }
+        }
+
         public List<NameDTO> GetComponentesJustNames()
         {
-            return _componentR.GetComponentesJustNames();
+            return _componenteRepo.GetComponentesJustNames();
 
         }
 
         public async Task<Response> GetByIdAsync(Guid id)
         {
-            var query = await _componentR.GetById(id);
-            if (query != null)
-            {
-                _respuesta.Data = query;
-                _respuesta.IsExito = true;
-                _respuesta.Mensaje = "Encontrado";
-            }
-            else
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la upa.");
-            }
+            var query = await _componenteRepo.GetById(id);
+            if (query == null)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el componente.");
+            _respuesta.Data = query;
+            _respuesta.IsExito = true;
+            _respuesta.Mensaje = "Encontrado";
             return _respuesta;
         }
 
@@ -68,7 +87,7 @@ namespace lestoma.Logica.LogicaService
             var response = await GetByIdAsync(entidad.Id);
             var comp = (EComponenteLaboratorio)response.Data;
             comp.NombreComponente = entidad.NombreComponente;
-            await _componentR.Update(comp);
+            await _componenteRepo.Update(comp);
             _respuesta.IsExito = true;
             _respuesta.StatusCode = (int)HttpStatusCode.OK;
             _respuesta.Mensaje = "se ha editado satisfactoriamente.";
@@ -78,14 +97,14 @@ namespace lestoma.Logica.LogicaService
         public async Task EliminarAsync(Guid id)
         {
             var entidad = await GetByIdAsync(id);
-            await _componentR.Delete((EComponenteLaboratorio)entidad.Data);
+            await _componenteRepo.Delete((EComponenteLaboratorio)entidad.Data);
         }
 
 
 
         public IQueryable<EComponenteLaboratorio> GetAllAsQueryable()
         {
-            var listado = _componentR.GetAllAsQueryable();
+            var listado = _componenteRepo.GetAllAsQueryable();
             if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");

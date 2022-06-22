@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
 {
-    public class DAOUsuario : GenericRepository<EUsuario>
+    public class UsuarioRepository : GenericRepository<EUsuario>
     {
         private readonly LestomaContext _db;
-        public DAOUsuario(LestomaContext db)
+        public UsuarioRepository(LestomaContext db)
             : base(db)
         {
             _db = db;

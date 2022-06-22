@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
 {
-    public class DAOActividad : GenericRepository<EActividad>
+    public class ActividadRepository : GenericRepository<EActividad>
     {
         private readonly LestomaContext _db;
-        public DAOActividad(LestomaContext db)
+        public ActividadRepository(LestomaContext db)
             : base(db)
         {
             _db = db;

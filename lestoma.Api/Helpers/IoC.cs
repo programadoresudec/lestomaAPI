@@ -20,21 +20,21 @@ namespace lestoma.Api.Helpers
             #endregion
 
             #region Injection de logica de negocio
-            services.AddScoped<IUsuarioService, LSUsuario>();
-            services.AddScoped<IBuzonService, LSBuzon>();
-            services.AddScoped<IUpaService, LSUpa>();
-            services.AddScoped<IActividadService, LSActividad>();
-            services.AddScoped<IDetalleUpaActividadService, LSUpasActividades>();
-            services.AddScoped<IComponenteService, LSComponentes>();
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IBuzonService, BuzonService>();
+            services.AddScoped<IUpaService, UpaService>();
+            services.AddScoped<IActividadService, ActividadService>();
+            services.AddScoped<IDetalleUpaActividadService, DetalleUpaActividadService>();
+            services.AddScoped<IComponenteService, ComponenteService>();
             #endregion
 
             #region Injection de repositorios
-            services.AddScoped<DAOUsuario>();
-            services.AddScoped<DAOUpa>();
-            services.AddScoped<DAOActividad>();
-            services.AddScoped<DAOUpaActividad>();
-            services.AddScoped<DAOBuzonReportes>();
-            services.AddScoped<DAOComponente>();
+            services.AddScoped<UsuarioRepository>();
+            services.AddScoped<UpaRepository>();
+            services.AddScoped<ActividadRepository>();
+            services.AddScoped<UpaActividadRepository>();
+            services.AddScoped<BuzonRepository>();
+            services.AddScoped<ComponenteRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             #endregion
 

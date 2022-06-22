@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
 {
-    public class DAOUpa : GenericRepository<EUpa>
+    public class UpaRepository : GenericRepository<EUpa>
     {
         private readonly LestomaContext _db;
-        public DAOUpa(LestomaContext db) : base(db)
+        public UpaRepository(LestomaContext db) : base(db)
         {
             _db = db;
         }
