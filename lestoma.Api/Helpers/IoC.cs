@@ -1,7 +1,7 @@
 ﻿using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.Data;
-using lestoma.Data.DAO;
+using lestoma.Data.Repositories;
 using lestoma.Logica.Interfaces;
 using lestoma.Logica.LogicaService;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +12,7 @@ namespace lestoma.Api.Helpers
     {
         public static IServiceCollection AddDependency(this IServiceCollection services)
         {
+
             #region Injection de helpers
             services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
             services.AddScoped<IMailHelper, MailHelper>();
@@ -35,6 +36,7 @@ namespace lestoma.Api.Helpers
             services.AddScoped<UpaActividadRepository>();
             services.AddScoped<BuzonRepository>();
             services.AddScoped<ComponenteRepository>();
+            services.AddScoped<AplicacionRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             #endregion
 

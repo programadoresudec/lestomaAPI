@@ -21,10 +21,8 @@ namespace lestoma.Entidades.Models
         public string TramaEnviada { get; set; }
         [Column("estado_internet")]
         public bool EstadoInternet { get; set; }
-
         [Column("fecha_creacion_dispositivo")]
         public DateTime? FechaCreacionDispositivo { get; set; }
-
         public EComponenteLaboratorio ComponenteLaboratorio { get; set; }
         public EProtocoloCOM TipoDeComunicacion { get; set; }
     }

@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace lestoma.Data.DAO
+namespace lestoma.Data.Repositories
 {
     public class LaboratorioRepository : GenericRepository<ELaboratorio>
     {

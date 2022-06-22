@@ -5,7 +5,7 @@ using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
-using lestoma.Data.DAO;
+using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using System;
@@ -25,15 +25,24 @@ namespace lestoma.Logica.LogicaService
         //    MediaTypeNames.Application.Pdf, "cedula.pdf");
         private readonly Response _respuesta = new();
         private UsuarioRepository _usuarioRepository;
+        private AplicacionRepository _aplicacionRepository;
         private IMailHelper _mailHelper;
-        public UsuarioService(UsuarioRepository usuarioRepository, IMailHelper mailHelper)
+        public UsuarioService(UsuarioRepository usuarioRepository, IMailHelper mailHelper,
+            AplicacionRepository aplicacionRepository)
         {
             _usuarioRepository = usuarioRepository;
             _mailHelper = mailHelper;
+            _aplicacionRepository = aplicacionRepository;
         }
 
         public async Task<Response> Login(LoginRequest login, string ip)
         {
+            var aplication = await _aplicacionRepository.AnyWithCondition(x => x.Id == login.TipoAplicacion);
+            if (!aplication)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la aplicación registrada.");
+
+            }
             var user = await _usuarioRepository.Logeo(login);
             if (user == null)
             {

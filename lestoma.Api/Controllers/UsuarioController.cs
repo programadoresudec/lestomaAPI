@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using lestoma.Api.Helpers;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
@@ -8,17 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using lestoma.CommonUtils.DTOs;
-using lestoma.CommonUtils.Helpers;
-
 namespace lestoma.Api.Controllers
 {
-
+    [AllowAnonymous]
     [Route("api/usuarios")]
-
     [ApiController]
     public class UsuarioController : BaseController
     {
@@ -46,8 +39,6 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
 
-
-
         [HttpPost("registro")]
         public async Task<IActionResult> Registrarse(RegistroRequest registro)
         {
@@ -57,12 +48,10 @@ namespace lestoma.Api.Controllers
             Respuesta.StatusCode = (int)HttpStatusCode.Created;
             return Created(string.Empty, Respuesta);
         }
-        [HttpPut("editar")]
-        public async Task<IActionResult> EditarUpa(RolRequest user)
+        [HttpPut("editar-rol")]
+        public async Task<IActionResult> EditarRol(RolRequest user)
         {
-
             var response = await _service.EditRol(user);
-
             return Ok(response);
         }
 

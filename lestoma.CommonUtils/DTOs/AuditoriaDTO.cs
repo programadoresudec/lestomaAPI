@@ -9,6 +9,6 @@ namespace lestoma.CommonUtils.DTOs
         public string Ip { get; set; }
         public string Session { get; set; }
         public string TipoDeAplicacion { get; set; }
-        public DateTime FechaCreacion { get; set; }
+        public DateTime FechaCreacionServer { get; set; }
     }
 }

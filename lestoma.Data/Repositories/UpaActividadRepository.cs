@@ -8,7 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace lestoma.Data.DAO
+namespace lestoma.Data.Repositories
 {
     public class UpaActividadRepository : GenericRepository<EUpaActividad>
     {

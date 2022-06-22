@@ -10,6 +10,6 @@ namespace lestoma.CommonUtils.DTOs
         public string Apellido { get; set; }
         public int RolId { get; set; }
         public string FullName => $"{Nombre} {Apellido}";
-        public string Nombre_rol { get; set; }
+        public string NombreRol { get; set; }
     }
 }

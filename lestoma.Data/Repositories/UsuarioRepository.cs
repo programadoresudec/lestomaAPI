@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace lestoma.Data.DAO
+namespace lestoma.Data.Repositories
 {
     public class UsuarioRepository : GenericRepository<EUsuario>
     {
@@ -54,7 +54,7 @@ namespace lestoma.Data.DAO
             try
             {
                 var id = new NpgsqlParameter("id", (int)TipoRol.SuperAdministrador);
-                string consulta = "SELECT uu.id, uu.nombre, uu.apellido, uu.rol_id FROM usuarios.usuario uu" +
+                string consulta = "SELECT uu.id, uu.nombre, uu.apellido, uu.rol_id, ur.nombre_rol FROM usuarios.usuario uu" +
                     $" INNER JOIN usuarios.rol ur on uu.rol_id = ur.id WHERE ur.id != @id";
                 var users = _db.TablaUsuarios.FromSqlRaw(consulta, id).OrderBy(x => x.Nombre);
 
@@ -63,7 +63,8 @@ namespace lestoma.Data.DAO
                     Id = x.Id,
                     Nombre = x.Nombre,
                     Apellido = x.Apellido,
-                    RolId = x.RolId
+                    RolId = x.RolId,
+                    NombreRol = x.Rol.NombreRol
                 }).ToList();
 
                 return query;
