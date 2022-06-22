@@ -157,7 +157,7 @@ namespace lestoma.Data
                         listadoNuevo.Add(entidad);
                     }
                 }
-                await _context.BulkSynchronizeAsync(listadoNuevo, token);
+                await _context.SaveChangesAsync(true, token);
 
             }
             catch (Exception ex)

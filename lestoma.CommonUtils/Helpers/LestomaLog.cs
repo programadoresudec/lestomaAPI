@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace lestoma.CommonUtils.Helpers
 {
@@ -15,7 +14,7 @@ namespace lestoma.CommonUtils.Helpers
             // Create Log file
             Directory.CreateDirectory(logfolderpath);
             int fileCount = Directory.GetFiles(logfolderpath, "*.*", SearchOption.TopDirectoryOnly).Length;
-            logPath = Path.Combine(logfolderpath, $"Assist_Log_{++fileCount}.txt");
+            logPath = Path.Combine(logfolderpath, $"Lestoma_Log_{++fileCount}.txt");
             File.CreateText(logPath).Dispose();
         }
 
@@ -35,10 +34,13 @@ namespace lestoma.CommonUtils.Helpers
 
         private static void WriteToLog(string message)
         {
-            using (StreamWriter sw = new StreamWriter(logPath, append: true))
+            _ = Task.Run(() =>
             {
-                sw.WriteLine($"[{DateTime.Now}] : {message}");
-            }
+                using (StreamWriter sw = new StreamWriter(logPath, append: true))
+                {
+                    sw.WriteLine($"[{DateTime.Now}] : {message}");
+                }
+            });
         }
     }
 }

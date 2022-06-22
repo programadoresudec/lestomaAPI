@@ -16,39 +16,39 @@ namespace lestoma.Api.Controllers
     [ApiController]
     public class ComponenteController : BaseController
     {
-        private readonly IComponenteService _componentS;
+        private readonly IComponenteService _componentService;
         public ComponenteController(IMapper mapper, IComponenteService componenteService)
          : base(mapper)
         {
-            _componentS = componenteService;
+            _componentService = componenteService;
 
         }
         [HttpGet("paginar")]
         public async Task<IActionResult> GetCompPag([FromQuery] Paginacion pag)
         {
-            var query = _componentS.GetAllAsQueryable();
-            var list = await GetPaginacion<EComponentesLaboratorio, ComponentesDTO>(pag, query);
+            var query = _componentService.GetAllAsQueryable();
+            var list = await GetPaginacion<EComponenteLaboratorio, ComponentesDTO>(pag, query);
             var paginador = Paginador<ComponentesDTO>.CrearPaginador(query.Count(), list, pag);
             return Ok(pag);
         }
         [HttpGet("listado")]
         public async Task<IActionResult> GetComponente()
         {
-            var query = await _componentS.GetAllAsync();
-            var comp = Mapear<List<EComponentesLaboratorio>, List<ComponentesDTO>>(query.ToList());
+            var query = await _componentService.GetAllAsync();
+            var comp = Mapear<List<EComponenteLaboratorio>, List<ComponentesDTO>>(query.ToList());
             return Ok(comp);
         }
         [HttpGet("listado-nombres")]
         public IActionResult GetComponentesNombres()
         {
-            var query = _componentS.GetComponentesJustNames();
+            var query = _componentService.GetComponentesJustNames();
             return Ok(query);
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCompo(Guid id)
+        public async Task<IActionResult> GetComponente(Guid id)
         {
-            var response = await _componentS.GetByIdAsync(id);
-            var compDTOSalida = Mapear<EComponentesLaboratorio, CrearComponenteRequest>((EComponentesLaboratorio)response.Data);
+            var response = await _componentService.GetByIdAsync(id);
+            var compDTOSalida = Mapear<EComponenteLaboratorio, CrearComponenteRequest>((EComponenteLaboratorio)response.Data);
             response.Data = compDTOSalida;
             return Ok(response);
 
@@ -58,24 +58,24 @@ namespace lestoma.Api.Controllers
 
         public async Task<IActionResult> CrearComponente(CrearComponenteRequest comp)
         {
-            var compDTO = Mapear<CrearComponenteRequest, EComponentesLaboratorio>(comp);
-            var response = await _componentS.CrearAsync(compDTO);
+            var compDTO = Mapear<CrearComponenteRequest, EComponenteLaboratorio>(comp);
+            var response = await _componentService.CrearAsync(compDTO);
             return Ok(response);
         }
         [HttpPut("editar")]
 
         public async Task<IActionResult> EditarComponente(CrearComponenteRequest comp)
         {
-            var compDTO = Mapear<CrearComponenteRequest, EComponentesLaboratorio>(comp);
-            var response = await _componentS.ActualizarAsync(compDTO);
-            var comDTOSalida = Mapear<EComponentesLaboratorio, CrearComponenteRequest>((EComponentesLaboratorio)response.Data);
+            var compDTO = Mapear<CrearComponenteRequest, EComponenteLaboratorio>(comp);
+            var response = await _componentService.ActualizarAsync(compDTO);
+            var comDTOSalida = Mapear<EComponenteLaboratorio, CrearComponenteRequest>((EComponenteLaboratorio)response.Data);
             response.Data = comDTOSalida;
             return Ok(response);
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> EliminarComponent(Guid id)
         {
-            await _componentS.EliminarAsync(id);
+            await _componentService.EliminarAsync(id);
             return NoContent();
         }
     }

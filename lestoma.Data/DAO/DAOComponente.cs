@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace lestoma.Data.DAO
 {
-    public class DAOComponente : GenericRepository<EComponentesLaboratorio>
+    public class DAOComponente : GenericRepository<EComponenteLaboratorio>
     {
         private readonly LestomaContext _db;
 
@@ -21,12 +21,12 @@ namespace lestoma.Data.DAO
         {
             if (!insertOrUpdate)
             {
-                return await _db.TablaComponentesLaboratorio.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()));
+                return await _db.TablaComponentesLaboratorio.AnyAsync(x => x.NombreComponente.ToLower().Equals(nombre.ToLower()));
 
             }
             else
             {
-                return await _db.TablaComponentesLaboratorio.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()) && x.Id != id);
+                return await _db.TablaComponentesLaboratorio.AnyAsync(x => x.NombreComponente.ToLower().Equals(nombre.ToLower()) && x.Id != id);
 
             }
         }
@@ -43,11 +43,11 @@ namespace lestoma.Data.DAO
 
         public List<NameDTO> GetComponentesJustNames()
         {
-            var comp = _db.TablaComponentesLaboratorio.FromSqlRaw("SELECT id, nombre FROM laboratorio_lestoma.componente_laboratorio").OrderBy(x => x.Nombre);
+            var comp = _db.TablaComponentesLaboratorio.FromSqlRaw("SELECT id, nombre FROM laboratorio_lestoma.componente_laboratorio").OrderBy(x => x.NombreComponente);
             var query = comp.Select(x => new NameDTO
             {
                 Id = x.Id,
-                Nombre = x.Nombre,
+                Nombre = x.NombreComponente,
 
             }).ToList();
             return query;

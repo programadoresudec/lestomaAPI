@@ -29,7 +29,7 @@ namespace lestoma.Entidades.Models
         public string Ip { get; set; }
         [Column("session")]
         public string Session { get; set; }
-        [Column("PK")]
+        [Column("pk")]
         public string PKTabla { get; set; }
 
     }

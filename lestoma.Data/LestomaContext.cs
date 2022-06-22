@@ -1,4 +1,7 @@
 ﻿
+using lestoma.CommonUtils.Constants;
+using lestoma.CommonUtils.Enums;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.Entidades.Models;
 using lestoma.Entidades.ModelsReports;
@@ -51,7 +54,7 @@ namespace lestoma.Data
         public DbSet<ELaboratorio> TablaDetalleLaboratorio { get; set; }
         public DbSet<EModuloComponente> TablaModuloComponentes { get; set; }
         public DbSet<EProtocoloCOM> TablaProtocoloCOM { get; set; }
-        public DbSet<EComponentesLaboratorio> TablaComponentesLaboratorio { get; set; }
+        public DbSet<EComponenteLaboratorio> TablaComponentesLaboratorio { get; set; }
         public DbSet<EAlimentarPeces> TablaReporteAlimentarPeces { get; set; }
         public DbSet<EControlAgua> TablaReporteControlAgua { get; set; }
         public DbSet<EControlElectrico> TablaReporteControlElectrico { get; set; }
@@ -100,7 +103,7 @@ namespace lestoma.Data
             #endregion
 
             #region Schema laboratorio
-            modelBuilder.Entity<EComponentesLaboratorio>().ToTable("componente_laboratorio", "laboratorio_lestoma");
+            modelBuilder.Entity<EComponenteLaboratorio>().ToTable("componente_laboratorio", "laboratorio_lestoma");
             modelBuilder.Entity<ELaboratorio>().ToTable("detalle_laboratorio", "laboratorio_lestoma");
             modelBuilder.Entity<EModuloComponente>().ToTable("modulo_componente", "laboratorio_lestoma");
             modelBuilder.Entity<EProtocoloCOM>().ToTable("protocolo_com", "laboratorio_lestoma");
@@ -169,8 +172,83 @@ namespace lestoma.Data
                     peerToPeer,broadCast
                 });
             #endregion
+
+            #region data usuarios
+            var hashSuper = HashHelper.Hash(Constants.PASSWORD_SUPER_ADMIN);
+            var superadmin = new EUsuario
+            {
+                Id = 1,
+                FechaCreacionServer = DateTime.Now,
+                Nombre = "Super Admin",
+                Apellido = "Lestoma",
+                Clave = hashSuper.Password,
+                Salt = hashSuper.Salt,
+                EstadoId = (int)TipoEstadoUsuario.Activado,
+                RolId = (int)TipoRol.SuperAdministrador,
+                Email = Constants.EMAIL_SUPER_ADMIN
+            };
+
+            var hashAdmin = HashHelper.Hash(Constants.PASSWORD_ADMIN);
+            var administrador = new EUsuario
+            {
+                Id = 2,
+                Nombre = "Administrador",
+                FechaCreacionServer = DateTime.Now,
+                Apellido = "Lestoma",
+                Clave = hashAdmin.Password,
+                Salt = hashAdmin.Salt,
+                EstadoId = (int)TipoEstadoUsuario.Activado,
+                RolId = (int)TipoRol.Administrador,
+                Email = Constants.EMAIL_ADMIN
+            };
+
+            var hashAuxiliar = HashHelper.Hash(Constants.PASSWORD_AUXILIAR);
+            var auxiliar1 = new EUsuario
+            {
+                Id = 3,
+                Nombre = "Auxiliar 1",
+                Apellido = "Lestoma",
+                Clave = hashAuxiliar.Password,
+                FechaCreacionServer = DateTime.Now,
+                Salt = hashAuxiliar.Salt,
+                EstadoId = (int)TipoEstadoUsuario.Activado,
+                RolId = (int)TipoRol.SuperAdministrador,
+                Email = Constants.EMAIL_AUXILIAR
+            };
+            var auxiliar2 = new EUsuario
+            {
+                Id = 4,
+                Nombre = "Auxiliar 2",
+                Apellido = "Lestoma",
+                Clave = hashAuxiliar.Password,
+                FechaCreacionServer = DateTime.Now,
+                Salt = hashAuxiliar.Salt,
+                EstadoId = (int)TipoEstadoUsuario.Activado,
+                RolId = (int)TipoRol.Auxiliar,
+                Email = "auxiliar2@gmail.com"
+            };
+
+            modelBuilder.Entity<EUsuario>()
+                .HasData(new List<EUsuario>
+                {
+                    superadmin, administrador, auxiliar1, auxiliar2
+                });
+
+            var super = new ESuperAdministrador
+            {
+                Id = 1,
+                UsuarioId = 1,
+            };
+            modelBuilder.Entity<ESuperAdministrador>()
+             .HasData(new List<ESuperAdministrador>
+             {
+                    super
+             });
+            #endregion
         }
         #endregion
+
+        #region Auditoria de tablas
         public void ProcesarAuditoria()
         {
             foreach (var item in ChangeTracker.Entries()
@@ -193,5 +271,6 @@ namespace lestoma.Data
                 entidad.FechaCreacionServer = DateTime.Now;
             }
         }
+        #endregion
     }
 }

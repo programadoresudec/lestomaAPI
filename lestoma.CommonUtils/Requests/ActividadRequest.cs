@@ -6,7 +6,7 @@ namespace lestoma.CommonUtils.Requests
 {
     public class ActividadRequest : IId
     {
-        [Required]
+        [Required(ErrorMessage = "El nombre es requerido")]
         public string Nombre { get; set; }
         public Guid Id { get; set; }
     }

@@ -8,7 +8,7 @@ using lestoma.CommonUtils.DTOs;
 
 namespace lestoma.Logica.Interfaces
 {
-    public interface IComponenteService : IGenericCRUD<EComponentesLaboratorio, Guid>
+    public interface IComponenteService : IGenericCRUD<EComponenteLaboratorio, Guid>
     {
         List<NameDTO> GetComponentesJustNames();
     }

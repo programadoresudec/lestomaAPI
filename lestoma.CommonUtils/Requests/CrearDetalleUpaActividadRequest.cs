@@ -7,11 +7,11 @@ namespace lestoma.CommonUtils.Requests
 {
     public class CrearDetalleUpaActividadRequest
     {
-        [Required]
+        [Required(ErrorMessage = "El id de la upa es requerido")]
         public Guid UpaId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "El id del usuario es requerido.")]
         public int UsuarioId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Una actividad es requerida.")]
         public List<ActividadRequest> Actividades { get; set; } = new List<ActividadRequest>();
     }
 }

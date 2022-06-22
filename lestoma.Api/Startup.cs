@@ -146,55 +146,6 @@ namespace lestoma.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LestomaContext db)
         {
-            bool adminTabla = false;
-            int id = 0;
-            try
-            {
-                var usuario = db.TablaUsuarios.FirstOrDefault(x => x.Email.Equals(Constants.EMAIL_SUPER_ADMIN));
-                if (usuario == null)
-                {
-                    var hash = HashHelper.Hash(Constants.PASSWORD_SUPER_ADMIN);
-                    var superadmin = new EUsuario
-                    {
-                        Nombre = "Super Admin",
-                        Apellido = "Lestoma",
-                        Clave = hash.Password,
-                        Salt = hash.Salt,
-                        EstadoId = (int)TipoEstadoUsuario.Activado,
-                        RolId = (int)TipoRol.SuperAdministrador,
-                        Email = Constants.EMAIL_SUPER_ADMIN
-                    };
-                    db.Add(superadmin);
-                    db.SaveChanges();
-                }
-
-                else
-                {
-                    adminTabla = db.TablaSuperAdministradores.Any(x => x.UsuarioId == usuario.Id);
-                }
-
-                if (!adminTabla)
-                {
-
-                    if (usuario == null)
-                    {
-                        var existe = db.TablaUsuarios.FirstOrDefault(x => x.Email.Equals(Constants.EMAIL_SUPER_ADMIN));
-                        id = existe.Id;
-                    }
-                    var super = new ESuperAdministrador
-                    {
-                        UsuarioId = (short)(id == 0 ? usuario.Id : id)
-                    };
-                    db.Add(super);
-                    db.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

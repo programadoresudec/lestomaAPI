@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace lestoma.Entidades.Models
 {
-    public partial class EComponentesLaboratorio
+    public partial class EComponenteLaboratorio
     {
         [NotMapped]
         public EstadosComponentes Descripcion => JsonConvert.DeserializeObject<EstadosComponentes>(this.TiposEstadoComponente);

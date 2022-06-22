@@ -32,9 +32,8 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/lestoma.Api/lestoma.Api.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "--project",
+                "${workspaceFolder}/lestoma.Api/lestoma.Api.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

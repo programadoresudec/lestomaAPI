@@ -11,15 +11,19 @@ namespace lestoma.CommonUtils.Requests
         [Required]
         public string Nombre { get; set; }
         public Guid Id { get; set; }
-        public EstadosComponentesDTO componentes { get; set; }
-        public string TiposEstadoComponente => ConvertirJson();
+        public EstadosComponentesDTO TipoEstadoComponente { get; set; }
+        public string JsonEstadoComponente => ConvertirJson();
+        [Required]
         public Guid ActividadId { get; set; }
+        [Required]
+        public Guid UpaId { get; set; }
+        [Required]
         public int ModuloComponenteId { get; set; }
 
         public string ConvertirJson()
         {
-            this.componentes.Id = Guid.NewGuid().ToString();
-            return JsonConvert.SerializeObject(this.componentes);
+            this.TipoEstadoComponente.Id = Guid.NewGuid().ToString();
+            return JsonConvert.SerializeObject(this.TipoEstadoComponente);
         }
     }
 }

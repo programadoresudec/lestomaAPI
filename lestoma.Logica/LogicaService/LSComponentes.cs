@@ -22,7 +22,7 @@ namespace lestoma.Logica.LogicaService
             _componentR = componente;
 
         }
-        public async Task<IEnumerable<EComponentesLaboratorio>> GetAllAsync()
+        public async Task<IEnumerable<EComponenteLaboratorio>> GetAllAsync()
         {
             var listado = await _componentR.GetAll();
             if (!listado.Any())
@@ -31,7 +31,7 @@ namespace lestoma.Logica.LogicaService
             }
             return listado;
         }
-        public async Task<Response> CrearAsync(EComponentesLaboratorio entidad)
+        public async Task<Response> CrearAsync(EComponenteLaboratorio entidad)
         {
             entidad.Id = Guid.NewGuid();
             await _componentR.Create(entidad);
@@ -63,11 +63,11 @@ namespace lestoma.Logica.LogicaService
             return _respuesta;
         }
 
-        public async Task<Response> ActualizarAsync(EComponentesLaboratorio entidad)
+        public async Task<Response> ActualizarAsync(EComponenteLaboratorio entidad)
         {
             var response = await GetByIdAsync(entidad.Id);
-            var comp = (EComponentesLaboratorio)response.Data;
-            comp.Nombre = entidad.Nombre;
+            var comp = (EComponenteLaboratorio)response.Data;
+            comp.NombreComponente = entidad.NombreComponente;
             await _componentR.Update(comp);
             _respuesta.IsExito = true;
             _respuesta.StatusCode = (int)HttpStatusCode.OK;
@@ -78,12 +78,12 @@ namespace lestoma.Logica.LogicaService
         public async Task EliminarAsync(Guid id)
         {
             var entidad = await GetByIdAsync(id);
-            await _componentR.Delete((EComponentesLaboratorio)entidad.Data);
+            await _componentR.Delete((EComponenteLaboratorio)entidad.Data);
         }
 
 
 
-        public IQueryable<EComponentesLaboratorio> GetAllAsQueryable()
+        public IQueryable<EComponenteLaboratorio> GetAllAsQueryable()
         {
             var listado = _componentR.GetAllAsQueryable();
             if (!listado.Any())

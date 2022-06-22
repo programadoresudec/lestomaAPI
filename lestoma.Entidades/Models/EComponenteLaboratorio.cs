@@ -1,25 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace lestoma.Entidades.Models
 {
 
     [Table("componente_laboratorio", Schema = "laboratorio_lestoma")]
-    public partial class EComponentesLaboratorio : ECamposAuditoria
+    public partial class EComponenteLaboratorio : ECamposAuditoria
     {
- 
+
         [Column("id")]
         public Guid Id { get; set; }
         [Column("modulo_componente_id")]
         public int ModuloComponenteId { get; set; }
         [Column("actividad_id")]
         public Guid ActividadId { get; set; }
-        [Column("nombre")]
-        public string Nombre { get; set; }
-        [Column("tipos_estado_componente", TypeName = "Json")]
-        public string TiposEstadoComponente { get; set; }
+        [Column("upa_id")]
+        public Guid UpaId { get; set; }
+        [Column("nombre_componente")]
+        public string NombreComponente { get; set; }
+        [Column("descripcion_estado", TypeName = "Json")]
+        public string JsonEstadoComponente { get; set; }
     }
 }
