@@ -58,7 +58,7 @@ namespace lestoma.Api.Controllers
             return CreatedAtAction(nameof(GetModulo), new { id = ((ModuloRequest)response.Data).Id }, response);
         }
         [HttpPut("editar")]
-        public async Task<IActionResult> EditarUpa(ModuloRequest modulo)
+        public async Task<IActionResult> EditarModulo(ModuloRequest modulo)
         {
             var moduloDTO = Mapear<ModuloRequest, EModuloComponente>(modulo);
             var response = await _moduloService.ActualizarAsync(moduloDTO);
@@ -67,7 +67,7 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> EliminarUpa(Guid id)
+        public async Task<IActionResult> EliminarModulo(Guid id)
         {
             await _moduloService.EliminarAsync(id);
             return NoContent();
