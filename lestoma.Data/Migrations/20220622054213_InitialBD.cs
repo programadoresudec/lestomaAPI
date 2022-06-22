@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace lestoma.Data.Migrations
 {
-    public partial class InitialDB : Migration
+    public partial class InitialBD : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -86,7 +86,7 @@ namespace lestoma.Data.Migrations
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
-                    PK = table.Column<string>(type: "text", nullable: true)
+                    pk = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -120,8 +120,9 @@ namespace lestoma.Data.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     modulo_componente_id = table.Column<int>(type: "integer", nullable: false),
                     actividad_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    nombre = table.Column<string>(type: "text", nullable: true),
-                    tipos_estado_componente = table.Column<string>(type: "Json", nullable: true),
+                    upa_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    nombre_componente = table.Column<string>(type: "text", nullable: true),
+                    descripcion_estado = table.Column<string>(type: "Json", nullable: true),
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
@@ -213,7 +214,11 @@ namespace lestoma.Data.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    nombre = table.Column<string>(type: "text", nullable: true)
+                    nombre_modulo = table.Column<string>(type: "text", nullable: true),
+                    ip = table.Column<string>(type: "text", nullable: true),
+                    session = table.Column<string>(type: "text", nullable: true),
+                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -307,7 +312,7 @@ namespace lestoma.Data.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     componente_laboratorio_id = table.Column<Guid>(type: "uuid", nullable: false),
                     tipo_com_id = table.Column<int>(type: "integer", nullable: false),
-                    valor_componente = table.Column<double>(type: "double precision", nullable: false),
+                    resultado_trama = table.Column<double>(type: "double precision", nullable: false),
                     trama_enviada = table.Column<string>(type: "text", nullable: true),
                     estado_internet = table.Column<bool>(type: "boolean", nullable: false),
                     fecha_creacion_dispositivo = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -464,15 +469,21 @@ namespace lestoma.Data.Migrations
                 });
 
             migrationBuilder.InsertData(
+                schema: "superadmin",
+                table: "super_administrador",
+                columns: new[] { "id", "usuario_id" },
+                values: new object[] { (short)1, (short)1 });
+
+            migrationBuilder.InsertData(
                 schema: "usuarios",
                 table: "estado_usuario",
                 columns: new[] { "id", "descripcion" },
                 values: new object[,]
                 {
                     { 1, "verificar cuenta" },
-                    { 3, "Activado" },
-                    { 4, "Inactivo" },
-                    { 5, "Bloqueado" }
+                    { 2, "Activado" },
+                    { 3, "Inactivo" },
+                    { 4, "Bloqueado" }
                 });
 
             migrationBuilder.InsertData(
@@ -484,6 +495,18 @@ namespace lestoma.Data.Migrations
                     { 1, "Super Administrador" },
                     { 2, "Administrador" },
                     { 3, "Auxiliar" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "usuarios",
+                table: "usuario",
+                columns: new[] { "id", "apellido", "clave", "codigo_recuperacion", "email", "estado_id", "fecha_creacion_server", "vencimiento_codigo_recuperacion", "ip", "nombre", "rol_id", "semilla", "session", "tipo_de_aplicacion" },
+                values: new object[,]
+                {
+                    { 1, "Lestoma", "YL6po68r4B1CAnfpEs33npvM9MDW3RtppO+bKHCrXV4=", null, "diegop177@hotmail.com", 2, new DateTime(2022, 6, 22, 0, 42, 12, 208, DateTimeKind.Local).AddTicks(8896), null, null, "Super Admin", 1, "KnFylMxBlb3unNORYCodNg==", null, null },
+                    { 3, "Lestoma", "5r5/GXi5BeNiIsz7X7W2VMkm3/vlh8NWQtDv6r1+0yg=", null, "programadoresuc@outlook.com", 2, new DateTime(2022, 6, 22, 0, 42, 12, 240, DateTimeKind.Local).AddTicks(1671), null, null, "Auxiliar 1", 1, "8/ZabtDHLHIToMfyKU0xfQ==", null, null },
+                    { 2, "Lestoma", "TU0uGiTBodRj7kj2eHuh7qNELXm9N3bDx8YsaXjOOsE=", null, "diegoarturo1598@hotmail.com", 2, new DateTime(2022, 6, 22, 0, 42, 12, 231, DateTimeKind.Local).AddTicks(500), null, null, "Administrador", 2, "oBIrvoYax1YWBupe6J+KXA==", null, null },
+                    { 4, "Lestoma", "5r5/GXi5BeNiIsz7X7W2VMkm3/vlh8NWQtDv6r1+0yg=", null, "auxiliar2@gmail.com", 2, new DateTime(2022, 6, 22, 0, 42, 12, 240, DateTimeKind.Local).AddTicks(1687), null, null, "Auxiliar 2", 3, "8/ZabtDHLHIToMfyKU0xfQ==", null, null }
                 });
 
             migrationBuilder.CreateIndex(
