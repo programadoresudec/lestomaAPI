@@ -1,6 +1,11 @@
-using System;
+using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.MyException;
+using lestoma.Data.DAO;
+using lestoma.Entidades.Models;
+using lestoma.Logica.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
@@ -8,8 +13,8 @@ namespace lestoma.Logica.LogicaService
     public class ModuloService : IModuloService
     {
         private readonly Response _respuesta = new();
-        private readonly ModuloRepository _ModuloRepository;
-        public ModuloService(ModuloRepository ModuloRepository)
+        private readonly ModuloRepository _moduloRepository;
+        public ModuloService(ModuloRepository moduloRepository)
         {
             _moduloRepository = moduloRepository;
         }
@@ -51,18 +56,14 @@ namespace lestoma.Logica.LogicaService
         }
         public async Task<Response> CrearAsync(EModuloComponente entidad)
         {
-            bool existe = await _moduloRepository.ExisteModulo(entidad.Nombre, entidad.Id);
+            bool existe = await _moduloRepository.ExisteModulo(entidad.NombreModulo, entidad.Id);
             if (!existe)
             {
-                var superadmin = await _moduloRepository.GetSuperAdmin();
-                if (superadmin != null)
-                {
-                    await _moduloRepository.Create(entidad);
-                    _respuesta.IsExito = true;
-                    _respuesta.Data = entidad;
-                    _respuesta.StatusCode = (int)HttpStatusCode.Created;
-                    _respuesta.Mensaje = "se ha creado satisfactoriamente.";
-                }
+                await _moduloRepository.Create(entidad);
+                _respuesta.IsExito = true;
+                _respuesta.Data = entidad;
+                _respuesta.StatusCode = (int)HttpStatusCode.Created;
+                _respuesta.Mensaje = "se ha creado satisfactoriamente.";
             }
             else
             {
@@ -74,13 +75,11 @@ namespace lestoma.Logica.LogicaService
         {
             var response = await GetByIdAsync(entidad.Id);
             var Modulo = (EModuloComponente)response.Data;
-            bool existe = await __moduloRepository.ExisteModulo(entidad.Nombre, Modulo.Id, true);
+            bool existe = await _moduloRepository.ExisteModulo(entidad.NombreModulo, Modulo.Id, true);
             if (!existe)
             {
-                Modulo.Nombre = entidad.Nombre;
-                Modulo.CantidadActividades = entidad.CantidadActividades;
-                Modulo.Descripcion = entidad.Descripcion;
-                await _ModuloRepository.Update(Modulo);
+                Modulo.NombreModulo = entidad.NombreModulo;
+                await _moduloRepository.Update(Modulo);
                 _respuesta.IsExito = true;
                 _respuesta.StatusCode = (int)HttpStatusCode.OK;
                 _respuesta.Mensaje = "se ha editado satisfactoriamente.";
@@ -95,12 +94,7 @@ namespace lestoma.Logica.LogicaService
         public async Task EliminarAsync(int id)
         {
             var entidad = await GetByIdAsync(id);
-            await _ModuloRepository.Delete((EModuloComponente)entidad.Data);
-        }
-
-        public List<NameDTO> GetmoduloJustNames()
-        {
-            return _upaRepository.GetModuloJustNames();
+            await _moduloRepository.Delete((EModuloComponente)entidad.Data);
         }
     }
 }
