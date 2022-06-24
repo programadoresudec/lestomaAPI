@@ -8,6 +8,5 @@ namespace lestoma.Logica.Interfaces
     public interface IUpaService : IGenericCRUD<EUpa, Guid>
     {
         List<NameDTO> GetUpasJustNames();
-
     }
 }

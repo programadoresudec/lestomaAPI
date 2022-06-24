@@ -27,11 +27,11 @@ namespace lestoma.Api
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
-            _environment = env;
+            Environment = env;
         }
 
         public IConfiguration Configuration { get; }
-        public IWebHostEnvironment _environment { get; }
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -49,7 +49,7 @@ namespace lestoma.Api
             services.AddControllers()
                 .AddNewtonsoftJson();
 
-            if (_environment.IsProduction())
+            if (Environment.IsProduction())
             {
                 services.AddDbContext<LestomaContext>(options =>
                 {
@@ -57,7 +57,7 @@ namespace lestoma.Api
                     options.UseNpgsql(Configuration.GetConnectionString("PostgresConnectionProduction"));
                 });
             }
-            else if (_environment.IsDevelopment())
+            else if (Environment.IsDevelopment())
             {
                 services.AddDbContext<LestomaContext>(options =>
                 {
@@ -144,7 +144,7 @@ namespace lestoma.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LestomaContext db)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

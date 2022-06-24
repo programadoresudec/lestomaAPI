@@ -27,6 +27,7 @@ namespace lestoma.Api.Helpers
             services.AddScoped<IActividadService, ActividadService>();
             services.AddScoped<IDetalleUpaActividadService, DetalleUpaActividadService>();
             services.AddScoped<IComponenteService, ComponenteService>();
+            services.AddScoped<IModuloService, ModuloService>();
             #endregion
 
             #region Injection de repositorios
@@ -36,6 +37,7 @@ namespace lestoma.Api.Helpers
             services.AddScoped<UpaActividadRepository>();
             services.AddScoped<BuzonRepository>();
             services.AddScoped<ComponenteRepository>();
+            services.AddScoped<ModuloRepository>();
             services.AddScoped<AplicacionRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             #endregion

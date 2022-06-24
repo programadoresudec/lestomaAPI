@@ -188,7 +188,8 @@ namespace lestoma.Logica.LogicaService
                 await _mailHelper.SendMail(user.Email, "Recuperación de contraseña", user.CodigoRecuperacion,
                     "Hola: ¡Cambia Tu Contraseña!",
                     "Verifica con el codigo tu cuenta para reestablecer la contraseña. el codigo tiene una duración de 2 horas.",
-                    string.Empty, "Si no has intentado cambiar la contraseña con esta dirección de email recientemente, puedes ignorar este mensaje.");
+                    string.Empty, "Si no has intentado cambiar la contraseña con esta dirección de email recientemente," +
+                    " puedes ignorar este mensaje.");
                 _respuesta.StatusCode = (int)HttpStatusCode.OK;
             }
             return _respuesta;

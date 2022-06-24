@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
@@ -22,7 +23,7 @@ namespace lestoma.Api.Controllers
             _service = usuarioService;
         }
 
-        //[Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
         [HttpGet("listado-nombres")]
         public IActionResult GetUsuarios()
         {
@@ -39,6 +40,8 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
 
+
+
         [HttpPost("registro")]
         public async Task<IActionResult> Registrarse(RegistroRequest registro)
         {
@@ -48,6 +51,8 @@ namespace lestoma.Api.Controllers
             Respuesta.StatusCode = (int)HttpStatusCode.Created;
             return Created(string.Empty, Respuesta);
         }
+
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
         [HttpPut("editar-rol")]
         public async Task<IActionResult> EditarRol(RolRequest user)
         {
