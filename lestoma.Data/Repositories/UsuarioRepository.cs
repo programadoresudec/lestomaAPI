@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace lestoma.Data.DAO
+namespace lestoma.Data.Repositories
 {
     public class UsuarioRepository : GenericRepository<EUsuario>
     {

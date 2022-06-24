@@ -1,7 +1,7 @@
 ﻿using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.Data;
-using lestoma.Data.DAO;
+using lestoma.Data.Repositories;
 using lestoma.Logica.Interfaces;
 using lestoma.Logica.LogicaService;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +26,7 @@ namespace lestoma.Api.Helpers
             services.AddScoped<IActividadService, ActividadService>();
             services.AddScoped<IDetalleUpaActividadService, DetalleUpaActividadService>();
             services.AddScoped<IComponenteService, ComponenteService>();
+            services.AddScoped<IModuloService, ModuloService>();
             #endregion
 
             #region Injection de repositorios
@@ -35,6 +36,7 @@ namespace lestoma.Api.Helpers
             services.AddScoped<UpaActividadRepository>();
             services.AddScoped<BuzonRepository>();
             services.AddScoped<ComponenteRepository>();
+            services.AddScoped<ModuloRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             #endregion
 

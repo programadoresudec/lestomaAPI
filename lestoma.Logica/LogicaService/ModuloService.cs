@@ -1,6 +1,6 @@
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.MyException;
-using lestoma.Data.DAO;
+using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using System.Collections.Generic;
@@ -45,6 +45,7 @@ namespace lestoma.Logica.LogicaService
             if (query != null)
             {
                 _respuesta.Data = query;
+                _respuesta.StatusCode = (int)HttpStatusCode.OK;
                 _respuesta.IsExito = true;
                 _respuesta.Mensaje = "Encontrado";
             }
@@ -56,7 +57,7 @@ namespace lestoma.Logica.LogicaService
         }
         public async Task<Response> CrearAsync(EModuloComponente entidad)
         {
-            bool existe = await _moduloRepository.ExisteModulo(entidad.NombreModulo, entidad.Id);
+            bool existe = await _moduloRepository.ExisteModulo(entidad.Nombre, entidad.Id);
             if (!existe)
             {
                 await _moduloRepository.Create(entidad);
@@ -75,10 +76,10 @@ namespace lestoma.Logica.LogicaService
         {
             var response = await GetByIdAsync(entidad.Id);
             var Modulo = (EModuloComponente)response.Data;
-            bool existe = await _moduloRepository.ExisteModulo(entidad.NombreModulo, Modulo.Id, true);
+            bool existe = await _moduloRepository.ExisteModulo(entidad.Nombre, Modulo.Id, true);
             if (!existe)
             {
-                Modulo.NombreModulo = entidad.NombreModulo;
+                Modulo.Nombre = entidad.Nombre;
                 await _moduloRepository.Update(Modulo);
                 _respuesta.IsExito = true;
                 _respuesta.StatusCode = (int)HttpStatusCode.OK;

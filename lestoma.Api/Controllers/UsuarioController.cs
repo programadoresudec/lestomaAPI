@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using lestoma.Api.Helpers;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
@@ -8,17 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using lestoma.CommonUtils.DTOs;
-using lestoma.CommonUtils.Helpers;
-
 namespace lestoma.Api.Controllers
 {
 
     [Route("api/usuarios")]
-
     [ApiController]
     public class UsuarioController : BaseController
     {
@@ -29,7 +23,7 @@ namespace lestoma.Api.Controllers
             _service = usuarioService;
         }
 
-        //[Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
         [HttpGet("listado-nombres")]
         public IActionResult GetUsuarios()
         {
@@ -47,7 +41,7 @@ namespace lestoma.Api.Controllers
         }
 
 
-
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
         [HttpPost("registro")]
         public async Task<IActionResult> Registrarse(RegistroRequest registro)
         {
@@ -57,6 +51,8 @@ namespace lestoma.Api.Controllers
             Respuesta.StatusCode = (int)HttpStatusCode.Created;
             return Created(string.Empty, Respuesta);
         }
+
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
         [HttpPut("editar")]
         public async Task<IActionResult> EditarUpa(RolRequest user)
         {

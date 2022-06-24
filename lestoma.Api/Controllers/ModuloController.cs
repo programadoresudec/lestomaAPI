@@ -1,14 +1,20 @@
-using System;
+using AutoMapper;
+using lestoma.Api.Helpers;
+using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
+using lestoma.CommonUtils.Requests;
+using lestoma.Entidades.Models;
+using lestoma.Logica.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using lestoma.Logica.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 
 namespace lestoma.Api.Controllers
 {
-    [Route("api/modulo")]
+    [Route("api/modulos")]
+    //[Authorize(Roles = RolesEstaticos.SUPERADMIN)]
     [ApiController]
     public class ModuloController : BaseController
     {
@@ -20,7 +26,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpGet("paginar")]
-        public async Task<IActionResult> GetModuloPaginado([FromQuery] Paginacion paginacion)
+        public async Task<IActionResult> GetModulosPaginado([FromQuery] Paginacion paginacion)
         {
             var queryable = _moduloService.GetAllAsQueryable();
             var listado = await GetPaginacion<EModuloComponente, ModuloDTO>(paginacion, queryable);
@@ -28,24 +34,18 @@ namespace lestoma.Api.Controllers
             return Ok(paginador);
         }
         [HttpGet("listado")]
-        public async Task<IActionResult> GetModulo()
+        public async Task<IActionResult> GetModulos()
         {
             var query = await _moduloService.GetAllAsync();
-            var upas = Mapear<List<EModuloComponente>, List<ModuloDTO>>(query.ToList());
-            return Ok(modulo);
-        }
-        [HttpGet("listado-nombres")]
-        public IActionResult GetModuloNombres()
-        {
-            var query = _moduloService.GetModuloJustNames();
-            return Ok(query);
+            var modulos = Mapear<List<EModuloComponente>, List<ModuloDTO>>(query.ToList());
+            return Ok(modulos);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetModulo(int id)
         {
             var response = await _moduloService.GetByIdAsync(id);
-            var moduloDTOSalida = Mapear<EModuloComponente, ModuloRequest>((EModuloComponente)response.Data);
+            var moduloDTOSalida = Mapear<EModuloComponente, ModuloDTO>((EModuloComponente)response.Data);
             response.Data = moduloDTOSalida;
             return Ok(response);
         }
@@ -64,12 +64,12 @@ namespace lestoma.Api.Controllers
         {
             var moduloDTO = Mapear<ModuloRequest, EModuloComponente>(modulo);
             var response = await _moduloService.ActualizarAsync(moduloDTO);
-            var upaDTOSalida = Mapear<EModuloComponente, ModuloRequest>((EModuloComponente)response.Data);
+            var moduloDTOSalida = Mapear<EModuloComponente, ModuloRequest>((EModuloComponente)response.Data);
             response.Data = moduloDTOSalida;
             return Ok(response);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> EliminarModulo(Guid id)
+        public async Task<IActionResult> EliminarModulo(int id)
         {
             await _moduloService.EliminarAsync(id);
             return NoContent();

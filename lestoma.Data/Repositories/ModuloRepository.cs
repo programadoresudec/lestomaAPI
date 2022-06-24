@@ -1,12 +1,8 @@
-using lestoma.CommonUtils.DTOs;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace lestoma.Data.DAO
+namespace lestoma.Data.Repositories
 {
     public class ModuloRepository : GenericRepository<EModuloComponente>
     {
@@ -19,11 +15,11 @@ namespace lestoma.Data.DAO
         {
             if (!insertOrUpdate)
             {
-                return await _db.TablaModuloComponentes.AnyAsync(x => x.NombreModulo.ToLower().Trim().Equals(nombre.ToLower().Trim()));
+                return await _db.TablaModuloComponentes.AnyAsync(x => x.Nombre.ToLower().Trim().Equals(nombre.ToLower().Trim()));
             }
             else
             {
-                return await _db.TablaModuloComponentes.AnyAsync(x => x.NombreModulo.ToLower().Trim().
+                return await _db.TablaModuloComponentes.AnyAsync(x => x.Nombre.ToLower().Trim().
                 Equals(nombre.ToLower().Trim()) && x.Id != id);
             }
 

@@ -1,6 +1,6 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.MyException;
-using lestoma.Data.DAO;
+using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.EntityFrameworkCore;
