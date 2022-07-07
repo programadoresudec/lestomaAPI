@@ -1,7 +1,7 @@
 ﻿
+using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
-using System.Text.Json;
 
 namespace lestoma.CommonUtils.MyException
 {
@@ -24,7 +24,7 @@ namespace lestoma.CommonUtils.MyException
         public HttpStatusCodeException(HttpStatusCode statusCode, Exception inner)
             : this(statusCode, inner.ToString()) { }
 
-        public HttpStatusCodeException(HttpStatusCode statusCode, JsonElement errorObject)
+        public HttpStatusCodeException(HttpStatusCode statusCode, JObject errorObject)
             : this(statusCode, errorObject.ToString())
         {
             this.ContentType = @"application/json";

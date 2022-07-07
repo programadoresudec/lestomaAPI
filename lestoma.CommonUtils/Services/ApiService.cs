@@ -3,14 +3,13 @@ using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.Requests;
+using Newtonsoft.Json;
 using Plugin.Connectivity;
 using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace lestoma.CommonUtils.Services
@@ -58,7 +57,7 @@ namespace lestoma.CommonUtils.Services
                     await RefreshToken(urlBase);
                     await GetListAsyncWithToken<T>(urlBase, controller, _tokenNuevo);
                 }
-                T item = JsonSerializer.Deserialize<T>(jsonString);
+                T item = JsonConvert.DeserializeObject<T>(jsonString);
                 if (item == null)
                 {
                     return new Response
@@ -111,7 +110,7 @@ namespace lestoma.CommonUtils.Services
                     await RefreshToken(urlBase);
                     await GetListAsyncWithToken<T>(urlBase, controller, _tokenNuevo);
                 }
-                Paginador<T> item = JsonSerializer.Deserialize<Paginador<T>>(jsonString);
+                Paginador<T> item = JsonConvert.DeserializeObject<Paginador<T>>(jsonString);
                 if (item == null)
                 {
                     return new Response
@@ -142,7 +141,7 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                string json = JsonSerializer.Serialize(model);
+                string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
@@ -151,12 +150,7 @@ namespace lestoma.CommonUtils.Services
                 };
                 ResponseMessage = await client.PostAsync(controller, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions
-                {
-                    NumberHandling = JsonNumberHandling.AllowReadingFromString
-                };
-                var objeto = JsonSerializer.Deserialize<Response>(jsonString);
-                Respuesta = objeto;
+                Respuesta = JsonConvert.DeserializeObject<Response>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
                     return new Response
@@ -187,7 +181,7 @@ namespace lestoma.CommonUtils.Services
             try
             {
 
-                string json = JsonSerializer.Serialize(model);
+                string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
@@ -196,7 +190,7 @@ namespace lestoma.CommonUtils.Services
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
                 ResponseMessage = await client.PostAsync(controller, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                Respuesta = JsonSerializer.Deserialize<Response>(jsonString);
+                Respuesta = JsonConvert.DeserializeObject<Response>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
                     return new Response
@@ -231,7 +225,7 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                string json = JsonSerializer.Serialize(model);
+                string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
@@ -240,7 +234,7 @@ namespace lestoma.CommonUtils.Services
 
                 ResponseMessage = await client.PutAsync(controller, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                Respuesta = JsonSerializer.Deserialize<Response>(jsonString);
+                Respuesta = JsonConvert.DeserializeObject<Response>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
                     return new Response
@@ -271,7 +265,7 @@ namespace lestoma.CommonUtils.Services
             try
             {
 
-                string json = JsonSerializer.Serialize(model);
+                string json =  JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
@@ -280,7 +274,7 @@ namespace lestoma.CommonUtils.Services
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
                 ResponseMessage = await client.PutAsync(controller, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                Respuesta = JsonSerializer.Deserialize<Response>(jsonString);
+                Respuesta =  JsonConvert.DeserializeObject<Response>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
                     return new Response
@@ -358,7 +352,7 @@ namespace lestoma.CommonUtils.Services
                 {
                     TipoAplicacion = (int)TipoAplicacion.AppMovil
                 };
-                var json = JsonSerializer.Serialize(tipoAplicacionRequest);
+                var json =  JsonConvert.SerializeObject(tipoAplicacionRequest);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
@@ -368,9 +362,9 @@ namespace lestoma.CommonUtils.Services
                 ResponseMessage = await client.PostAsync("Account/refresh-token", content);
                 ResponseMessage.EnsureSuccessStatusCode();
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                Respuesta = JsonSerializer.Deserialize<Response>(jsonString);
+                Respuesta =  JsonConvert.DeserializeObject<Response>(jsonString);
                 TokenDTO tokenNuevo = (TokenDTO)Respuesta.Data;
-                MovilSettings.Token = JsonSerializer.Serialize(tokenNuevo);
+                MovilSettings.Token =  JsonConvert.SerializeObject(tokenNuevo);
                 _tokenNuevo = tokenNuevo.Token;
             }
             catch (Exception ex)

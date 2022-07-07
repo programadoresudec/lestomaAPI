@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿using Newtonsoft.Json;
 
 namespace lestoma.CommonUtils.DTOs
 {
@@ -10,7 +10,7 @@ namespace lestoma.CommonUtils.DTOs
         public object Data { get; set; }
         public override string ToString()
         {
-            return JsonSerializer.Serialize(this);
+            return JsonConvert.SerializeObject(this);
         }
     }
 }
