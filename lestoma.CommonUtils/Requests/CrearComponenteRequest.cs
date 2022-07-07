@@ -1,8 +1,8 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 
 namespace lestoma.CommonUtils.Requests
 {
@@ -23,7 +23,7 @@ namespace lestoma.CommonUtils.Requests
         public string ConvertirJson()
         {
             this.TipoEstadoComponente.Id = Guid.NewGuid().ToString();
-            return JsonConvert.SerializeObject(this.TipoEstadoComponente);
+            return JsonSerializer.Serialize(this.TipoEstadoComponente);
         }
     }
 }

@@ -14,6 +14,7 @@ namespace lestoma.Api.Controllers
     [AllowAnonymous]
     [Route("api/usuarios")]
     [ApiController]
+
     public class UsuarioController : BaseController
     {
         private readonly IUsuarioService _service;
@@ -39,8 +40,6 @@ namespace lestoma.Api.Controllers
             response.Data = usuarioDTOSalida;
             return Ok(response);
         }
-
-
 
         [HttpPost("registro")]
         public async Task<IActionResult> Registrarse(RegistroRequest registro)

@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace lestoma.Entidades.Models
 {
@@ -30,8 +30,8 @@ namespace lestoma.Entidades.Models
         public int EstadoId { get; set; }
         [Column("semilla")]
         public string Salt { get; set; }
-    
-        public EEstadoUsuario EstadoUsuario { get; set; } 
+
+        public EEstadoUsuario EstadoUsuario { get; set; }
         public ERol Rol { get; set; }
 
         [NotMapped]

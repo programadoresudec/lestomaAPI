@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace lestoma.Entidades.Models
 {
     public partial class EComponenteLaboratorio
     {
         [NotMapped]
-        public EstadosComponentes Descripcion => JsonConvert.DeserializeObject<EstadosComponentes>(this.JsonEstadoComponente);
+        public EstadosComponentes Descripcion => JsonSerializer.Deserialize<EstadosComponentes>(this.JsonEstadoComponente);
     }
     public class EstadosComponentes
     {

@@ -212,7 +212,7 @@ namespace lestoma.Data
                 FechaCreacionServer = DateTime.Now,
                 Salt = hashAuxiliar.Salt,
                 EstadoId = (int)TipoEstadoUsuario.Activado,
-                RolId = (int)TipoRol.SuperAdministrador,
+                RolId = (int)TipoRol.Auxiliar,
                 Email = Constants.EMAIL_AUXILIAR
             };
             var auxiliar2 = new EUsuario

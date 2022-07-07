@@ -36,8 +36,8 @@ namespace lestoma.Api.Middleware
 
         private Task HandleExceptionAsync(HttpContext context, HttpStatusCodeException exception)
         {
-            string result = string.Empty;
             context.Response.ContentType = "application/json";
+            string result;
             if (exception is HttpStatusCodeException)
             {
                 result = new Response()

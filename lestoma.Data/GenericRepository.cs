@@ -123,7 +123,7 @@ namespace lestoma.Data
             return null;
         }
 
-        public void ObtenerException(Exception ex, T entidad)
+        public void ObtenerException(Exception ex,  T entidad)
         {
             var udpateException = GetInnerException<DbUpdateException>(ex);
             var pgsqlException = GetInnerException<PostgresException>(ex);

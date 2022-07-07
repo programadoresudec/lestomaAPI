@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
 {
-    [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
+    //[Authorize(Roles = RolesEstaticos.SUPERADMIN)]
     [Route("api/actividades")]
     [ApiController]
     public class ActividadController : BaseController
@@ -49,6 +49,15 @@ namespace lestoma.Api.Controllers
             var query = _actividadService.GetActividadesJustNames();
             return Ok(query);
         }
+
+
+        [HttpGet("listado-by-upa/{upaId}")]
+        public async Task<IActionResult> GetActividadesByUpa(Guid upaId)
+        {
+            var query = await _actividadService.GetActividadesByUpa(upaId);
+            return Ok(query);
+        }
+
 
 
         [HttpGet("{id}")]

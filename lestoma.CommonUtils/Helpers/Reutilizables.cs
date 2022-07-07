@@ -1,12 +1,9 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Text.Json;
 
 namespace lestoma.CommonUtils.Helpers
 {
@@ -85,7 +82,7 @@ namespace lestoma.CommonUtils.Helpers
                     using (var reader = new StreamReader(stream, Encoding.UTF8))
                     {
                         string json = reader.ReadToEnd();
-                        data = JsonConvert.DeserializeObject<T>(json);
+                        data = JsonSerializer.Deserialize<T>(json);
                     }
                 }
                 return data;

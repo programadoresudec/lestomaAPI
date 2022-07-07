@@ -11,7 +11,7 @@ namespace lestoma.CommonUtils.Interfaces
         Task<Response> GetListAsyncWithToken<T>(string urlBase, string controller, string token);
         Task<Response> PostAsync<T>(string urlBase, string controller, T model);
         Task<Response> PutAsync<T>(string urlBase, string controller, T model);
-        Task<Response> DeleteAsyncWithToken(string urlBase, string controller, Guid id, string token);
+        Task<Response> DeleteAsyncWithToken(string urlBase, string controller, object id, string token);
         Task<Response> PostAsyncWithToken<T>(string urlBase, string controller, T model, string token);
         Task<Response> PutAsyncWithToken<T>(string urlBase, string controller, T model, string token);
         bool CheckConnection();

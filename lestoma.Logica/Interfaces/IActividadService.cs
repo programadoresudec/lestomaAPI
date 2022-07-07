@@ -12,5 +12,6 @@ namespace lestoma.Logica.Interfaces
     {
         Task<Response> Merge(List<EActividad> listadoEntidad);
         List<NameDTO> GetActividadesJustNames();
+        Task<List<NameDTO>> GetActividadesByUpa(Guid upaId);
     }
 }

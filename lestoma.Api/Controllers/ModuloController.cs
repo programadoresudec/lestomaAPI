@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace lestoma.Api.Controllers
 {
     [Route("api/modulos")]
-    //[Authorize(Roles = RolesEstaticos.SUPERADMIN)]
+    [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
     [ApiController]
     public class ModuloController : BaseController
     {
@@ -33,11 +33,12 @@ namespace lestoma.Api.Controllers
             var paginador = Paginador<ModuloDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
             return Ok(paginador);
         }
+
         [HttpGet("listado")]
         public async Task<IActionResult> GetModulos()
         {
             var query = await _moduloService.GetAllAsync();
-            var modulos = Mapear<List<EModuloComponente>, List<ModuloDTO>>(query.ToList());
+            var modulos = Mapear<IEnumerable<EModuloComponente>, IEnumerable<ModuloDTO>>(query);
             return Ok(modulos);
         }
 

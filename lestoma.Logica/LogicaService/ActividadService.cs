@@ -124,5 +124,10 @@ namespace lestoma.Logica.LogicaService
                 StatusCode = (int)HttpStatusCode.OK
             };
         }
+
+        public async Task<List<NameDTO>> GetActividadesByUpa(Guid upaId)
+        {
+           return  await _actividadRepository.GetActividadesByUpa(upaId);
+        }
     }
 }

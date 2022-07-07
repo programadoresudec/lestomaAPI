@@ -23,7 +23,7 @@ namespace lestoma.Logica.LogicaService
         public async Task<IEnumerable<EUpa>> GetAllAsync()
         {
             var listado = await _upaRepository.GetAll();
-            if (listado.Count() == 0)
+            if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
             }
@@ -33,7 +33,7 @@ namespace lestoma.Logica.LogicaService
         public IQueryable<EUpa> GetAllAsQueryable()
         {
             var listado = _upaRepository.GetAllAsQueryable();
-            if (listado.Count() == 0)
+            if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
             }
@@ -58,24 +58,18 @@ namespace lestoma.Logica.LogicaService
         public async Task<Response> CrearAsync(EUpa entidad)
         {
             bool existe = await _upaRepository.ExisteUpa(entidad.Nombre, entidad.Id);
-            if (!existe)
-            {
-                var superadmin = await _upaRepository.GetSuperAdmin();
-                if (superadmin != null)
-                {
-                    entidad.SuperAdminId = superadmin.Id;
-                    entidad.Id = Guid.NewGuid();
-                    await _upaRepository.Create(entidad);
-                    _respuesta.IsExito = true;
-                    _respuesta.Data = entidad;
-                    _respuesta.StatusCode = (int)HttpStatusCode.Created;
-                    _respuesta.Mensaje = "se ha creado satisfactoriamente.";
-                }
-            }
-            else
-            {
+            if (existe)
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El nombre ya esta en uso.");
-            }
+            var superadmin = await _upaRepository.GetSuperAdmin();
+            if (superadmin == null)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "no hay Super Administradores.");
+            entidad.SuperAdminId = superadmin.Id;
+            entidad.Id = Guid.NewGuid();
+            await _upaRepository.Create(entidad);
+            _respuesta.IsExito = true;
+            _respuesta.Data = entidad;
+            _respuesta.StatusCode = (int)HttpStatusCode.Created;
+            _respuesta.Mensaje = "se ha creado satisfactoriamente.";
             return _respuesta;
         }
         public async Task<Response> ActualizarAsync(EUpa entidad)
