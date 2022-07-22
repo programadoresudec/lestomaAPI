@@ -60,7 +60,7 @@ namespace lestoma.Data
         #endregion
 
         #region Update In BD
-        public virtual async Task Update(T entidad)
+        public async Task Update(T entidad)
         {
             if (entidad == null) throw new ArgumentNullException($"{nameof(entidad)} no debe ser nula");
             try
@@ -77,7 +77,7 @@ namespace lestoma.Data
 
         #region Delete In BD
 
-        public virtual async Task Delete(T entidad)
+        public async Task Delete(T entidad)
         {
             if (entidad == null) throw new ArgumentNullException($"{nameof(entidad)} no debe ser nula");
             try
@@ -96,6 +96,13 @@ namespace lestoma.Data
         public async Task<bool> AnyWithCondition(Expression<Func<T, bool>> whereCondition)
         {
             return await _entities.AnyAsync(whereCondition);
+        }
+        #endregion
+
+        #region Find with condition
+        public async Task<T> FindWithCondition(Expression<Func<T, bool>> whereCondition)
+        {
+            return await _entities.FirstOrDefaultAsync(whereCondition);
         }
         #endregion
 
@@ -123,7 +130,7 @@ namespace lestoma.Data
             return null;
         }
 
-        public void ObtenerException(Exception ex,  T entidad)
+        public void ObtenerException(Exception ex, T entidad)
         {
             var udpateException = GetInnerException<DbUpdateException>(ex);
             var pgsqlException = GetInnerException<PostgresException>(ex);

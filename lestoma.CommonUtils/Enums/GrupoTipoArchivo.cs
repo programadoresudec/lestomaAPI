@@ -2,6 +2,8 @@
 {
     public enum GrupoTipoArchivo
     {
-        Imagen
+        Imagen,
+        PDF,
+        EXCEL
     }
 }

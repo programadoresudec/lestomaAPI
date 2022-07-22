@@ -22,7 +22,6 @@ namespace lestoma.Data.Repositories
         }
         public async Task<EUsuario> Logeo(LoginRequest login)
         {
-
             return await _db.TablaUsuarios.Include(o => o.EstadoUsuario).
                 Include(e => e.Rol).Where(x => x.Email.Equals(login.Email)).FirstOrDefaultAsync();
         }
@@ -87,10 +86,8 @@ namespace lestoma.Data.Repositories
 
         public async Task<IEnumerable<EUpaActividad>> GetActivitiesByUserId(int id)
         {
-
             return await _context.TablaUpasConActividades.Include(x => x.Actividad)
                 .Where(x => x.UsuarioId == id).ToListAsync();
-
         }
     }
 }

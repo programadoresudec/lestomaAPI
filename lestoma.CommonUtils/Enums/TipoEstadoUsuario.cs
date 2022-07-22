@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel;
 
 namespace lestoma.CommonUtils.Enums
 {
     public enum TipoEstadoUsuario
     {
-        ninguno,
-        CheckCuenta,
-        Activado,
-        Inactivo,
-        Bloqueado
+        [Description("verificar cuenta")]
+        CheckCuenta = 1,
+        [Description("Activado")]
+        Activado = 2,
+        [Description("Inactivo")]
+        Inactivo = 3,
+        [Description("Bloqueado")]
+        Bloqueado = 4,
     }
 }

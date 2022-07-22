@@ -63,7 +63,7 @@ namespace lestoma.CommonUtils.Helpers
                     claimsIdentity = TransformAsync(hcontext.User);
 
                 }
-                var claim = claimsIdentity == null ? null : claimsIdentity.FindFirst(ClaimTypes.Email);
+                var claim = claimsIdentity == null ? null : claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
                 return claim == null ? "Anonimo" : string.IsNullOrEmpty(claim.Value) ? "Anonimo" : claim.Value;
             }
             catch (Exception ex)

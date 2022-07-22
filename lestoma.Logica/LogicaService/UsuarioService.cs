@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -20,9 +21,9 @@ namespace lestoma.Logica.LogicaService
     public class UsuarioService : IUsuarioService
     {
 
-        ////ENVIAR CORREOS CON ARCHIVOS 
-        //await _mailHelper.SendCorreoWithArchives("diegop177@hotmail.com", "", "cedula.pdf", "activar cuenta", 
-        //    MediaTypeNames.Application.Pdf, "cedula.pdf");
+        //ENVIAR CORREOS CON ARCHIVOS 
+        //    await _mailHelper.SendMailWithOneArchive("diegop177@hotmail.com", "", "cedula.pdf", "activar cuenta",
+        //MediaTypeNames.Application.Pdf, null, "cedula.pdf");
         private readonly Response _respuesta = new();
         private UsuarioRepository _usuarioRepository;
         private AplicacionRepository _aplicacionRepository;

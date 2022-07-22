@@ -21,16 +21,14 @@ namespace lestoma.Api.Controllers
     {
         #region attributes
         private readonly IUsuarioService _usuarioService;
-        private readonly IMailHelper _mailHelper;
         private readonly IJWT _jwt;
         #endregion
 
         #region Constructor
         public AccountController(IUsuarioService usuarioService,
-            IMailHelper mailHelper, IMapper mapper, IJWT jwt)
+            IMapper mapper, IJWT jwt)
             : base(mapper)
         {
-            _mailHelper = mailHelper;
             _usuarioService = usuarioService;
             _jwt = jwt;
         }

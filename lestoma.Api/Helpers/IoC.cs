@@ -1,4 +1,6 @@
-﻿using lestoma.CommonUtils.Helpers;
+﻿using DinkToPdf;
+using DinkToPdf.Contracts;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.Data;
 using lestoma.Data.Repositories;
@@ -18,6 +20,7 @@ namespace lestoma.Api.Helpers
             services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IJWT, JWT>();
             services.AddTransient<ICamposAuditoriaHelper, CamposAuditoriaHelper>();
+            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
             #endregion
 
             #region Injection de logica de negocio
@@ -28,6 +31,7 @@ namespace lestoma.Api.Helpers
             services.AddScoped<IDetalleUpaActividadService, DetalleUpaActividadService>();
             services.AddScoped<IComponenteService, ComponenteService>();
             services.AddScoped<IModuloService, ModuloService>();
+            services.AddScoped<IReporteService, ReporteService>();
             #endregion
 
             #region Injection de repositorios
@@ -39,6 +43,7 @@ namespace lestoma.Api.Helpers
             services.AddScoped<ComponenteRepository>();
             services.AddScoped<ModuloRepository>();
             services.AddScoped<AplicacionRepository>();
+            services.AddScoped<ReporteRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             #endregion
 

@@ -1,11 +1,11 @@
 using AutoMapper;
+using Hangfire;
+using Hangfire.PostgreSql;
+using lestoma.Api.Core;
 using lestoma.Api.Helpers;
 using lestoma.Api.Middleware;
-using lestoma.CommonUtils.Constants;
-using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.Data;
-using lestoma.Entidades.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,8 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Diagnostics;
-using System.Linq;
+using System.IO;
 using System.Text;
 
 namespace lestoma.Api
@@ -51,20 +50,26 @@ namespace lestoma.Api
 
             if (Environment.IsProduction())
             {
+                var connectionString = Configuration.GetConnectionString("PostgresConnectionProduction");
                 services.AddDbContext<LestomaContext>(options =>
                 {
-
-                    options.UseNpgsql(Configuration.GetConnectionString("PostgresConnectionProduction"));
+                    options.UseNpgsql(connectionString);
                 });
+                ConfigureHangfire(connectionString, services);
             }
             else if (Environment.IsDevelopment())
             {
+                var connectionString = Configuration.GetConnectionString("PostgresConnection");
                 services.AddDbContext<LestomaContext>(options =>
                 {
-
-                    options.UseNpgsql(Configuration.GetConnectionString("PostgresConnection"));
+                    options.UseNpgsql(connectionString);
                 });
+                ConfigureHangfire(connectionString, services);
             }
+
+            var context = new CustomAssemblyLoadContext();
+            context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox.dll"));
+
 
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
@@ -164,6 +169,8 @@ namespace lestoma.Api
 
             app.UseAuthentication();
 
+            app.UseHangfireDashboard("/dashboard");
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -171,6 +178,20 @@ namespace lestoma.Api
                 endpoints.MapControllers();
             });
         }
+        public void ConfigureHangfire(string connection, IServiceCollection services)
+        {
+            services.AddHangfire(configuration => configuration
+               .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+               .UseSimpleAssemblyNameTypeSerializer()
+               .UseRecommendedSerializerSettings()
+               .UsePostgreSqlStorage(connection, new PostgreSqlStorageOptions
+               {
+                   DistributedLockTimeout = TimeSpan.FromMinutes(5),
+                   SchemaName = "HangFire",
+                   InvisibilityTimeout = TimeSpan.FromMinutes(5),
+               }));
 
+            services.AddHangfireServer();
+        }
     }
 }

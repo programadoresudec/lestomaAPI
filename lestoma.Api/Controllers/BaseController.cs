@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +43,7 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
-        #region Claims token
+        #region Claims
         protected List<Claim> ClaimsToken()
         {
             List<Claim> claims = new List<Claim>();
@@ -63,6 +64,21 @@ namespace lestoma.Api.Controllers
                 sIdAplicacion = idAplicacion;
             }
             return sIdAplicacion;
+        }
+
+        protected bool IsSuperAdmin()
+        {
+            bool IsSuperAdmin = false;
+            int sIdRol = 0;
+            var rolId = ClaimsToken().Where(x => x.Type == ClaimsConfig.ID_ROL).Select(c => c.Value).SingleOrDefault();
+            if (int.TryParse(rolId, out int RolId))
+            {
+                sIdRol = RolId;
+                IsSuperAdmin = sIdRol == (int)TipoRol.SuperAdministrador ? true : false;
+            }
+
+
+            return IsSuperAdmin;
         }
         #endregion
 
