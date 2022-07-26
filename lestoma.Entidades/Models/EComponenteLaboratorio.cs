@@ -18,7 +18,9 @@ namespace lestoma.Entidades.Models
         public Guid UpaId { get; set; }
         [Column("nombre_componente")]
         public string NombreComponente { get; set; }
-        [Column("descripcion_estado", TypeName = "Json")]
+        [Column("descripcion_estado", TypeName = "jsonb")]
         public string JsonEstadoComponente { get; set; }
+        public EUpa Upa { get; set; }
+        public EModuloComponente ModuloComponente { get; set; }
     }
 }

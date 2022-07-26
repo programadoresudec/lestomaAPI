@@ -24,11 +24,11 @@ namespace lestoma.Api.Controllers
             _service = usuarioService;
         }
 
-        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
-        [HttpGet("listado-nombres")]
+        [AllowAnonymous]
+        [HttpGet("activos")]
         public IActionResult GetUsuarios()
         {
-            var listado = _service.GetUsersJustNames();
+            var listado = _service.GetUsersJustNames(IsSuperAdmin());
             return Ok(listado);
         }
 

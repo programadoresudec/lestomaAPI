@@ -9,7 +9,7 @@ namespace lestoma.Entidades.Models
         [Key]
         [Column("id")]
         public Guid Id { get; set; }
-        [Column("detalle", TypeName = "Json")]
+        [Column("detalle", TypeName = "jsonb")]
         public string DetalleJson { get; set; }
         [Column("detalle_laboratorio_id")]
         public Guid DetalleLaboratorioId { get; set; }

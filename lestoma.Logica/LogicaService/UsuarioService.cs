@@ -178,7 +178,7 @@ namespace lestoma.Logica.LogicaService
                 bool validar;
                 do
                 {
-                    user.CodigoRecuperacion = Reutilizables.generarCodigoVerificacion();
+                    user.CodigoRecuperacion = Reutilizables.GenerarCodigoVerificacion();
                     validar = await _usuarioRepository.ExisteCodigoVerificacion(user.CodigoRecuperacion);
                 } while (validar != false);
                 user.FechaVencimientoCodigo = DateTime.Now.AddHours(2);
@@ -281,9 +281,9 @@ namespace lestoma.Logica.LogicaService
         }
 
 
-        public List<UserDTO> GetUsersJustNames()
+        public List<UserDTO> GetUsersJustNames(bool isSuperAdmin)
         {
-            return _usuarioRepository.GetUsersJustNames();
+            return _usuarioRepository.GetUsersJustNames(isSuperAdmin);
         }
 
         public short GetExpirationToken(int aplicacionId)

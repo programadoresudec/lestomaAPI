@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace lestoma.Entidades.Models
 {
     [Table("protocolo_com", Schema = "laboratorio_lestoma")]
-    public class EProtocoloCOM
+    public partial class EProtocoloCOM
     {
         [Key]
         [Column("id")]

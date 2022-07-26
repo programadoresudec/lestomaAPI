@@ -1,30 +1,30 @@
 [
   {
-    "id": "b1f9c428-baa0-4988-9e52-0ed9977e282e",
+    "id": "5CD42E4E-5BF8-428B-8681-0CF1F6BACB91",
     "tipoEstado": "ENCENDIDO",
     "tercerByteTrama": "F0",
     "cuartoByteTrama": "00"
   },
   {
-    "id": "daaa7ebb-135f-48a8-95b5-e9099a3a83ea",
+    "id": "98A74BD5-7390-4244-8B2E-255D3707071D",
     "tipoEstado": "APAGADO",
     "tercerByteTrama": "F0",
     "cuartoByteTrama": "00"
   },
   {
-    "id": "0996cfa0-c56b-4a2a-80e8-7161e1e938d4",
+    "id": "E1394067-1CF1-4068-BA85-2EB8CEF4E91D",
     "tipoEstado": "TODOS LOS ESTADOS",
     "tercerByteTrama": "3C",
     "cuartoByteTrama": "00"
   },
   {
-    "id": "b0ae1474-7334-43a6-a6c3-25cdca1a3d5d",
+    "id": "F5F738C7-0DBA-48EE-AFEA-B22530160653",
     "tipoEstado": "LECTURA",
     "tercerByteTrama": "0F",
     "cuartoByteTrama": "00"
   },
   {
-    "id": "b0ae1474-7334-43a6-a6c3-25cdca1a3d5d",
+    "id": "C0619A30-875D-4E67-8F7F-02CC2BF98C03",
     "tipoEstado": "AJUSTE",
     "tercerByteTrama": "F0",
     "cuartoByteTrama": "00"

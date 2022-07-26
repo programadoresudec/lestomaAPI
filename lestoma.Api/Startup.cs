@@ -1,6 +1,7 @@
 using AutoMapper;
 using Hangfire;
 using Hangfire.PostgreSql;
+using HangfireBasicAuthenticationFilter;
 using lestoma.Api.Core;
 using lestoma.Api.Helpers;
 using lestoma.Api.Middleware;
@@ -169,7 +170,18 @@ namespace lestoma.Api
 
             app.UseAuthentication();
 
-            app.UseHangfireDashboard("/dashboard");
+            app.UseHangfireDashboard("/dashboard", new DashboardOptions
+            {
+                //AppPath = "" //The path for the Back To Site link. Set to null in order to hide the Back To  Site link.
+                DashboardTitle = "My Website",
+                Authorization = new[]
+        {
+                new HangfireCustomBasicAuthenticationFilter{
+                    User = Configuration.GetSection("HangfireSettings:UserName").Value,
+                    Pass = Configuration.GetSection("HangfireSettings:Password").Value
+                }
+            }
+            });
 
             app.UseAuthorization();
 

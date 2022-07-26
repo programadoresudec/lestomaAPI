@@ -36,12 +36,12 @@ namespace lestoma.Api.Helpers
             </head>
                <br>
                <body>
-                 <div>Generado el dia: @ReporteFecha</div>
+                 <div><strong>Generado el dia:</strong> @ReporteFecha</div>
                  <br>
-                 <div>Generado por: @NombreUsuario</div>
+                 <div><strong>Filtrado por las fechas</strong></div>
+                 <div> @FechaInicial- @FechaFinal</div>
                  <br>
-                 <div>@FechaInicial - @FechaFinal</div>
-                 <br>
+                 <hr>
                  <table align='center'>
                    <tr>
                      <th align='center'>Nombre Upa</th>
@@ -69,16 +69,14 @@ namespace lestoma.Api.Helpers
             </head>
                <br>
                <body>
-                 <div>Generado el dia: @ReporteFecha</div>
+                 <div><strong>Generado el dia:</strong> @ReporteFecha</div>
+                 <br>       
+                 <div><strong>Upa:</strong> @NombreUpa</div>
                  <br>
-                 <div>Generado por: @NombreUsuario</div>
+                 <div><strong>Filtrado por las fechas</strong></div>
+                 <div> @FechaInicial- @FechaFinal</div>
                  <br>
-                 <div>Upa: @NombreUpa</div>
-                 <br>
-                 <div>@FechaInicial - @FechaFinal</div>
-                 <br>
- 
-                 <br>
+                 <hr>
                  <table align='center'>
                    <tr>
                      <th align='center'>Generado por</th>
@@ -149,6 +147,7 @@ namespace lestoma.Api.Helpers
             try
             {
                 var html = GetHTMLString(reporte, IsSuperAdmin);
+                var pathEstilo = Path.Combine(_env.WebRootPath, "Assets\\StylePdf.css");
                 GlobalSettings globalSettings = new GlobalSettings();
                 globalSettings.ColorMode = ColorMode.Color;
                 globalSettings.Orientation = Orientation.Portrait;
@@ -159,7 +158,7 @@ namespace lestoma.Api.Helpers
                 objectSettings.HtmlContent = html;
                 WebSettings webSettings = new WebSettings()
 
-                { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(_env.WebRootPath, "Assets\\SendMail") };
+                { DefaultEncoding = "utf-8", UserStyleSheet = pathEstilo };
 
                 webSettings.DefaultEncoding = "utf-8";
                 HeaderSettings headerSettings = new HeaderSettings();
@@ -218,8 +217,8 @@ namespace lestoma.Api.Helpers
                                     <td>{4}</td>
                                     <td>{5}</td>
                                     <td>{6}</td>
-                                  </tr>", rep.Usuario, rep.FechaServidor, rep.FechaDispositivo, rep.Estado, rep.Modulo,
-                        rep.Componente, rep.SetPoint);
+                                  </tr>", rep.Usuario, rep.FechaServidor, rep.FechaDispositivo, rep.Modulo,
+                        rep.Componente, rep.SetPoint, rep.Estado);
                 }
             }
             else
@@ -235,8 +234,8 @@ namespace lestoma.Api.Helpers
                                     <td>{5}</td>
                                     <td>{6}</td>
                                     <td>{7}</td>
-                                  </tr>", rep.NombreUpa, rep.Usuario, rep.FechaServidor, rep.FechaDispositivo, rep.Estado, rep.Modulo,
-                        rep.Componente, rep.SetPoint);
+                                  </tr>", rep.NombreUpa, rep.Usuario, rep.FechaServidor, rep.FechaDispositivo, rep.Modulo,
+                        rep.Componente, rep.SetPoint, rep.Estado);
                 }
             }
             sb.Append(@"        </table>

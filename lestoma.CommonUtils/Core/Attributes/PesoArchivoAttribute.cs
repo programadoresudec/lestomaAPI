@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace lestoma.CommonUtils.Helpers
+namespace lestoma.CommonUtils.Core.Attributes
 {
-    public class PesoArchivoValidacion : ValidationAttribute
+    public class PesoArchivoAttribute : ValidationAttribute
     {
         private readonly int pesoMaximoEnMegaBytes;
 
-        public PesoArchivoValidacion(int PesoMaximoEnMegaBytes)
+        public PesoArchivoAttribute(int PesoMaximoEnMegaBytes)
         {
             pesoMaximoEnMegaBytes = PesoMaximoEnMegaBytes;
         }

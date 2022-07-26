@@ -6,7 +6,7 @@ namespace lestoma.Entidades.ModelsReports
 
     [Table("alimentar_peces", Schema = "reportes")]
 
-    public class EAlimentarPeces : EReporte
+    public partial class EAlimentarPeces : EReporte
     {
 
     }

@@ -4,18 +4,18 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace lestoma.CommonUtils.Helpers
+namespace lestoma.CommonUtils.Core.Attributes
 {
-    public class TipoArchivoValidacion : ValidationAttribute
+    public class TipoArchivoAttribute : ValidationAttribute
     {
         private readonly string[] tiposValidos;
 
-        public TipoArchivoValidacion(string[] tiposValidos)
+        public TipoArchivoAttribute(string[] tiposValidos)
         {
             this.tiposValidos = tiposValidos;
         }
 
-        public TipoArchivoValidacion(GrupoTipoArchivo grupoTipoArchivo)
+        public TipoArchivoAttribute(GrupoTipoArchivo grupoTipoArchivo)
         {
             if (grupoTipoArchivo == GrupoTipoArchivo.Imagen)
             {

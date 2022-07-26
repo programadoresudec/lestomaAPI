@@ -6,6 +6,7 @@ using lestoma.Data;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -27,10 +28,12 @@ namespace lestoma.Api.Controllers
 
 
         [HttpPost("daily")]
-        public IActionResult ReportDaily([FromBody] FilterReportDailyRequest filtro)
+        public async Task<IActionResult> ReportDaily([FromBody] FilterReportDailyRequest filtro)
         {
+            var response = await _reporteService.DailyReport();
+
             RecurringJob.AddOrUpdate<IReporteService>("Enviar-reporte-diario", servicio => servicio.DailyReport(),
-                Cron.Daily(filtro.Hour, filtro.Minute));
+                Cron.Daily(filtro.Hour, filtro.Minute),TimeZoneInfo.Local);
 
             return Ok(new Response
             {
@@ -44,6 +47,7 @@ namespace lestoma.Api.Controllers
         [HttpPost("by-date")]
         public async Task<IActionResult> ReportByDate([FromBody] FilterReportRequest filtro)
         {
+
             var reporte = await _reporteService.ReportByDate(filtro, IsSuperAdmin());
             return File(reporte.ArchivoBytes,
                reporte.MIME, reporte.Archivo);

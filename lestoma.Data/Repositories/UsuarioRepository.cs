@@ -1,5 +1,6 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
+using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.Repositories
@@ -48,15 +50,37 @@ namespace lestoma.Data.Repositories
         public short ExpiracionToken(int aplicacionId) =>
             _db.TablaAplicaciones.FirstOrDefault(x => x.Id == aplicacionId).TiempoExpiracionToken;
 
-        public List<UserDTO> GetUsersJustNames()
+        public List<UserDTO> GetUsersJustNames(bool isSuperAdmin)
         {
             try
             {
-                var id = new NpgsqlParameter("id", (int)TipoRol.SuperAdministrador);
-                string consulta = "SELECT uu.id, uu.nombre, uu.apellido, uu.rol_id, ur.nombre_rol FROM usuarios.usuario uu" +
-                    $" INNER JOIN usuarios.rol ur on uu.rol_id = ur.id WHERE ur.id != @id";
-                var users = _db.TablaUsuarios.FromSqlRaw(consulta, id).OrderBy(x => x.Nombre);
+                int rolsuperId = (int)TipoRol.SuperAdministrador;
+                int roladminId = (int)TipoRol.Administrador;
+                List<int> Ids = new List<int>();
+                if (isSuperAdmin)
+                {
+                    Ids.Add(rolsuperId);
+                }
+                else
+                {
+                    Ids.Add(rolsuperId);
+                    Ids.Add(roladminId);
+                }
+                var parameters = new string[Ids.Count];
+                var sqlParameters = new List<NpgsqlParameter>();
+                for (var i = 0; i < Ids.Count; i++)
+                {
+                    parameters[i] = string.Format("@p{0}", i);
+                    sqlParameters.Add(new NpgsqlParameter(parameters[i], Ids[i]));
+                }
 
+                var estadoId = new NpgsqlParameter("estadoId", (int)TipoEstadoUsuario.Activado);
+                sqlParameters.Add(estadoId);
+                string consulta = $@"SELECT usuario.id, usuario.nombre, usuario.apellido, usuario.rol_id, rol.nombre_rol
+                    FROM usuarios.usuario usuario INNER JOIN usuarios.rol rol on usuario.rol_id = rol.id
+                    INNER JOIN usuarios.estado_usuario estado on estado.id = usuario.estado_id 
+                    WHERE usuario.rol_id NOT IN ({string.Join(", ", parameters)}) AND usuario.estado_id = @estadoId";
+                var users = _db.TablaUsuarios.FromSqlRaw(consulta, sqlParameters.ToArray()).OrderBy(x => x.Nombre);
                 var query = users.Select(x => new UserDTO
                 {
                     Id = x.Id,
@@ -70,8 +94,7 @@ namespace lestoma.Data.Repositories
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
-                return null;
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, @$"Error: {ex.Message}");
             }
         }
 

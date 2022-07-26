@@ -6,7 +6,7 @@ namespace lestoma.Entidades.ModelsReports
 
     [Table("recirculacion_de_agua", Schema = "reportes")]
 
-    public class ERecirculacionAgua : EReporte
+    public partial class ERecirculacionAgua : EReporte
     {
 
     }

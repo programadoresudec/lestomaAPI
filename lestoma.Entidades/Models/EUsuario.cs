@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 namespace lestoma.Entidades.Models
 {
     [Table("usuario", Schema = "usuarios")]
-    public class EUsuario : ECamposAuditoria
+    public partial class EUsuario : ECamposAuditoria
     {
         [Key]
         [Column("id")]

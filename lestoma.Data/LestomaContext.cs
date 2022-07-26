@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -124,17 +125,23 @@ namespace lestoma.Data
             base.OnModelCreating(modelBuilder);
         }
 
-        private static void SeeData(ModelBuilder modelBuilder)
+        private void SeeData(ModelBuilder modelBuilder)
         {
+
+            var ip = _camposAuditoria.ObtenerIp();
+            var aplicacion = _camposAuditoria.ObtenerTipoDeAplicacion();
+            var usersession = _camposAuditoria.ObtenerUsuarioActual();
+
+
             #region data roles
-            var superAdmin = new ERol() { Id = 1, NombreRol = "Super Administrador" };
-            var admin = new ERol() { Id = 2, NombreRol = "Administrador" };
-            var auxiliar = new ERol() { Id = 3, NombreRol = "Auxiliar" };
+            var RolSuperAdmin = new ERol() { Id = (int)TipoRol.SuperAdministrador, NombreRol = "Super Administrador" };
+            var RolAdmin = new ERol() { Id = (int)TipoRol.Administrador, NombreRol = "Administrador" };
+            var RolAuxiliar = new ERol() { Id = (int)TipoRol.Auxiliar, NombreRol = "Auxiliar" };
 
             modelBuilder.Entity<ERol>()
                 .HasData(new List<ERol>
                 {
-                    superAdmin,admin,auxiliar
+                    RolSuperAdmin,RolAdmin,RolAuxiliar
                 });
             #endregion
 
@@ -173,12 +180,42 @@ namespace lestoma.Data
                 });
             #endregion
 
+            #region data modulos
+            var actuador = new EModuloComponente()
+            {
+                Id = 1,
+                Nombre = "ACTUADORES",
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+            var sensor = new EModuloComponente()
+            {
+                Id = 2,
+                Nombre = "SENSORES",
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
+            modelBuilder.Entity<EModuloComponente>()
+                .HasData(new List<EModuloComponente>
+                {
+                    actuador,sensor
+                });
+            #endregion
+
             #region data usuarios
             var hashSuper = HashHelper.Hash(Constants.PASSWORD_SUPER_ADMIN);
             var superadmin = new EUsuario
             {
                 Id = 1,
                 FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion,
                 Nombre = "Super Admin",
                 Apellido = "Lestoma",
                 Clave = hashSuper.Password,
@@ -194,6 +231,9 @@ namespace lestoma.Data
                 Id = 2,
                 Nombre = "Administrador",
                 FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion,
                 Apellido = "Lestoma",
                 Clave = hashAdmin.Password,
                 Salt = hashAdmin.Salt,
@@ -210,6 +250,9 @@ namespace lestoma.Data
                 Apellido = "Lestoma",
                 Clave = hashAuxiliar.Password,
                 FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion,
                 Salt = hashAuxiliar.Salt,
                 EstadoId = (int)TipoEstadoUsuario.Activado,
                 RolId = (int)TipoRol.Auxiliar,
@@ -222,6 +265,9 @@ namespace lestoma.Data
                 Apellido = "Lestoma",
                 Clave = hashAuxiliar.Password,
                 FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion,
                 Salt = hashAuxiliar.Salt,
                 EstadoId = (int)TipoEstadoUsuario.Activado,
                 RolId = (int)TipoRol.Auxiliar,
@@ -244,6 +290,297 @@ namespace lestoma.Data
              {
                     super
              });
+            #endregion
+
+            #region data upas
+
+            var upa1 = new EUpa()
+            {
+                Id = Guid.NewGuid(),
+                Nombre = "finca el vergel",
+                Descripcion = "queda ubicada en facatativá",
+                CantidadActividades = 5,
+                SuperAdminId = super.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+            var upa2 = new EUpa()
+            {
+                Id = Guid.NewGuid(),
+                Nombre = "ucundinamarca",
+                Descripcion = "queda ubicada en la universidad cundinamarca extensión nfaca",
+                CantidadActividades = 2,
+                SuperAdminId = super.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion,
+            };
+
+            modelBuilder.Entity<EUpa>()
+                .HasData(new List<EUpa>
+                {
+                    upa1,upa2
+                });
+            #endregion
+
+            #region data actividades
+            var controlAgua = new EActividad()
+            {
+                Id = Guid.NewGuid(),
+                Nombre = "control de agua",
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion,
+            };
+            var alimentacionPeces = new EActividad()
+            {
+                Id = Guid.NewGuid(),
+                Nombre = "alimentacion de peces",
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
+            modelBuilder.Entity<EActividad>()
+                .HasData(new List<EActividad>
+                {
+                    controlAgua,alimentacionPeces
+                });
+            #endregion
+
+            #region data detalle upa-actividad
+            var detalle1_1 = new EUpaActividad()
+            {
+                UpaId = upa1.Id,
+                ActividadId = controlAgua.Id,
+                UsuarioId = administrador.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+            var detalle1_2 = new EUpaActividad()
+            {
+                UpaId = upa1.Id,
+                ActividadId = alimentacionPeces.Id,
+                UsuarioId = administrador.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
+            var detalle1UserAuxiliar = new EUpaActividad()
+            {
+                UpaId = upa1.Id,
+                ActividadId = controlAgua.Id,
+                UsuarioId = auxiliar1.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+            var detalle1UserAuxiliar2 = new EUpaActividad()
+            {
+                UpaId = upa1.Id,
+                ActividadId = alimentacionPeces.Id,
+                UsuarioId = auxiliar2.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
+            var detalle2_1 = new EUpaActividad()
+            {
+                UpaId = upa2.Id,
+                ActividadId = controlAgua.Id,
+                UsuarioId = administrador.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+            var detalle2UserAuxiliar1 = new EUpaActividad()
+            {
+                UpaId = upa2.Id,
+                ActividadId = controlAgua.Id,
+                UsuarioId = auxiliar1.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+            var detalle2UserAuxiliar2 = new EUpaActividad()
+            {
+                UpaId = upa2.Id,
+                ActividadId = controlAgua.Id,
+                UsuarioId = auxiliar2.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
+
+            modelBuilder.Entity<EUpaActividad>()
+                .HasData(new List<EUpaActividad>
+                {
+                    detalle1_1,detalle1_2,detalle1UserAuxiliar,detalle1UserAuxiliar2,detalle2_1,detalle2UserAuxiliar1,detalle2UserAuxiliar2
+                });
+            #endregion
+
+            #region data componentes
+            var jsonEstadoOnOff = JsonSerializer.Serialize(new EstadosComponentes()
+            {
+
+                Id = Guid.NewGuid(),
+                TipoEstado = "ON-OFF",
+                TercerByteTrama = "F0",
+                CuartoByteTrama = "00",
+
+            });
+
+
+            var jsonEstadoLectura = JsonSerializer.Serialize(new EstadosComponentes()
+            {
+
+                Id = Guid.NewGuid(),
+                TipoEstado = "LECTURA",
+                TercerByteTrama = "0F",
+                CuartoByteTrama = "00",
+            });
+
+            var bombaDeOxigeno = new EComponenteLaboratorio()
+            {
+                Id = Guid.NewGuid(),
+                NombreComponente = "BOMBA DE OXIGENO",
+                ActividadId = alimentacionPeces.Id,
+                JsonEstadoComponente = jsonEstadoOnOff,
+                UpaId = upa1.Id,
+                ModuloComponenteId = actuador.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
+            var luzEstanque = new EComponenteLaboratorio()
+            {
+                Id = Guid.NewGuid(),
+                NombreComponente = "LUZ ESTANQUE",
+                ActividadId = alimentacionPeces.Id,
+                JsonEstadoComponente = jsonEstadoOnOff,
+                UpaId = upa1.Id,
+                ModuloComponenteId = actuador.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
+            var dosificadorAlimento = new EComponenteLaboratorio()
+            {
+                Id = Guid.NewGuid(),
+                NombreComponente = "DOSIFICADOR DE ALIMENTO",
+                ActividadId = alimentacionPeces.Id,
+                JsonEstadoComponente = jsonEstadoOnOff,
+                UpaId = upa1.Id,
+                ModuloComponenteId = actuador.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
+            var temperaturaH20 = new EComponenteLaboratorio()
+            {
+                Id = Guid.NewGuid(),
+                NombreComponente = "TEMPERATURA H2O",
+                ActividadId = controlAgua.Id,
+                JsonEstadoComponente = jsonEstadoLectura,
+                UpaId = upa1.Id,
+                ModuloComponenteId = sensor.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
+            var PH = new EComponenteLaboratorio()
+            {
+                Id = Guid.NewGuid(),
+                NombreComponente = "PH",
+                ActividadId = controlAgua.Id,
+                JsonEstadoComponente = jsonEstadoLectura,
+                UpaId = upa1.Id,
+                ModuloComponenteId = sensor.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
+            var nivelTanque = new EComponenteLaboratorio()
+            {
+                Id = Guid.NewGuid(),
+                NombreComponente = "NIVEL TANQUE",
+                ActividadId = controlAgua.Id,
+                JsonEstadoComponente = jsonEstadoLectura,
+                UpaId = upa1.Id,
+                ModuloComponenteId = sensor.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
+
+            modelBuilder.Entity<EComponenteLaboratorio>()
+                .HasData(new List<EComponenteLaboratorio>
+                {
+                    bombaDeOxigeno,luzEstanque,dosificadorAlimento,temperaturaH20,PH,nivelTanque
+                });
+            #endregion
+
+            #region data detalle laboratorio
+            var detalle1 = new ELaboratorio()
+            {
+                Id = Guid.NewGuid(),
+                ComponenteLaboratorioId = bombaDeOxigeno.Id,
+                TramaEnviada = "4901F000000000006180",
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion,
+                FechaCreacionDispositivo = DateTime.Now,
+                EstadoInternet = true,
+                TipoDeComunicacionId = peerToPeer.Id,
+            };
+            var detalle2 = new ELaboratorio()
+            {
+                Id = Guid.NewGuid(),
+                ComponenteLaboratorioId = luzEstanque.Id,
+                TramaEnviada = "6F01F000000000005302",
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion,
+                FechaCreacionDispositivo = DateTime.Now,
+                EstadoInternet = true,
+                TipoDeComunicacionId = broadCast.Id,
+            };
+
+            modelBuilder.Entity<ELaboratorio>()
+                .HasData(new List<ELaboratorio>
+                {
+                    detalle1,detalle2
+                });
             #endregion
         }
         #endregion

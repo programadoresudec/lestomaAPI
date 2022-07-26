@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace lestoma.Entidades.Models
 {
     [Table("super_administrador", Schema = "superadmin")]
-    public class ESuperAdministrador
+    public partial class ESuperAdministrador
     {
         [Key]
         [Column("id")]

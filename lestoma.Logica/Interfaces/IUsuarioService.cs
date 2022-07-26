@@ -16,12 +16,12 @@ namespace lestoma.Logica.Interfaces
         Task<Response> RecoverPassword(RecoverPasswordRequest recover);
         Task<Response> ChangeProfile(ChangeProfileRequest change);
         Task<EUsuario> RefreshToken(string refreshToken, string ipAddress);
-        List<UserDTO> GetUsersJustNames();
+        List<UserDTO> GetUsersJustNames(bool isSuperAdmin);
         short GetExpirationToken(int aplicacionId);
         Task<string> GetApplicationType(int tipoAplicacion);
         Task<Response> EditRol(RolRequest user);
         Task<Response> RevokeToken(string token, string ipAddress);
-        Task <IEnumerable<EUpaActividad>> GetActivitiesByUserId(int id);
+        Task<IEnumerable<EUpaActividad>> GetActivitiesByUserId(int id);
         Task<Response> GetByIdAsync(int id);
     }
 }

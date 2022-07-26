@@ -22,7 +22,7 @@ namespace lestoma.CommonUtils.Requests
 
         public string ConvertirJson()
         {
-            this.TipoEstadoComponente.Id = Guid.NewGuid().ToString();
+            this.TipoEstadoComponente.Id = Guid.NewGuid();
             return JsonConvert.SerializeObject(TipoEstadoComponente);
         }
     }

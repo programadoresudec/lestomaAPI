@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace lestoma.Entidades.Models
 {
     [Table("rol", Schema = "usuarios")]
-    public class ERol
+    public partial class ERol
     {
         public ERol()
         {

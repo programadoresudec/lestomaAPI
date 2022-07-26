@@ -15,7 +15,7 @@ namespace lestoma.CommonUtils.DTOs
     {
         public string NombreUpa { get; set; }
         public string Usuario { get; set; }
-        public DateTime FechaServidor { get; set; }
+        public DateTime? FechaServidor { get; set; }
         public DateTime FechaDispositivo { get; set; }
         public string Componente { get; set; }
         public string Modulo { get; set; }

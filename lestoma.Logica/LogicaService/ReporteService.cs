@@ -18,13 +18,17 @@ namespace lestoma.Logica.LogicaService
     {
         private readonly ReporteRepository _repositorio;
         private readonly IMailHelper _mailHelper;
+        private readonly UpaRepository _upaRepository;
+        private readonly ComponenteRepository _componenteRepository;
         private readonly IGenerateReport _generateReports;
         public ReporteService(ReporteRepository reporteRepository, IMailHelper mailHelper,
-            IGenerateReport generateReports)
+            IGenerateReport generateReports, UpaRepository upaRepository, ComponenteRepository componenteRepository)
         {
+            _upaRepository = upaRepository;
             _repositorio = reporteRepository;
             _mailHelper = mailHelper;
             _generateReports = generateReports;
+            _componenteRepository = componenteRepository;
         }
         public async Task<Response> DailyReport()
         {
@@ -32,25 +36,63 @@ namespace lestoma.Logica.LogicaService
             {
                 FechaInicial = DateTime.Now.Date
             };
-            filtro.FechaFinal = filtro.FechaInicial.AddHours(23);
-
+            filtro.FechaFinal = filtro.FechaInicial.AddDays(1).AddSeconds(-1);
             var listado = await _repositorio.DailyReport(filtro);
+            if (listado.Reporte.Count == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte diario.");
+            }
             listado.FiltroFecha = filtro;
             return await GenerateDailyReport(listado);
         }
 
-        public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByComponents(FilterReportComponentRequest filtro, bool isSuperAdmin)
+        public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByComponents(FilterReportComponentRequest filtro,
+            bool isSuperAdmin)
         {
+            await ExistUpa(filtro.Filtro.UpaId);
+
+            foreach (var item in filtro.ComponentesId)
+            {
+                bool existe = await _componenteRepository.AnyWithCondition(x => x.Id == item);
+                if (!existe)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se
+                                                                        pudo encontrar el componente con el id: {item}");
+                }
+            }
             var listado = await _repositorio.ReportByComponents(filtro);
             var bytes = _generateReports.GenerateReportByFormat(filtro.Filtro.TipoFormato, listado, isSuperAdmin);
             var file = GetFile(filtro.Filtro.TipoFormato);
             return (bytes, file.MIME, file.FILENAME);
         }
+        public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByDate(FilterReportRequest filtro, bool isSuperAdmin)
+        {
+            await ExistUpa(filtro.UpaId);
+            var listado = await _repositorio.ReportByDate(filtro);
+            listado.FiltroFecha = new FilterDateRequest()
+            {
+                FechaInicial = filtro.FechaInicial,
+                FechaFinal = filtro.FechaFinal
+            };
 
+            var bytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, listado, isSuperAdmin);
+            var file = GetFile(filtro.TipoFormato);
+            return (bytes, file.MIME, file.FILENAME);
+        }
+
+        private async Task ExistUpa(Guid upaId)
+        {
+            if (upaId != Guid.Empty)
+            {
+                var existe = await _upaRepository.AnyWithCondition(x => x.Id == upaId);
+                if (!existe)
+                    throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se pudo encontrar la upa indicada.");
+            }
+        }
 
         private static (string MIME, string FILENAME) GetFile(GrupoTipoArchivo grupoTipoArchivo)
         {
-            string dateString = DateTime.Now.ToString("dd/MM/yyyy h:mm tt");
+            string dateString = DateTime.Now.ToString("yyyy-MM-dd");
             string Mime = string.Empty;
             string FileName = string.Empty;
             switch (grupoTipoArchivo)
@@ -69,26 +111,11 @@ namespace lestoma.Logica.LogicaService
             }
             return (Mime, FileName);
         }
-
-        public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByDate(FilterReportRequest filtro, bool isSuperAdmin)
-        {
-            var listado = await _repositorio.ReportByDate(filtro);
-            listado.FiltroFecha = new FilterDateRequest()
-            {
-                FechaInicial = filtro.FechaInicial,
-                FechaFinal = filtro.FechaFinal
-            };
-
-            var bytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, listado, isSuperAdmin);
-            var file = GetFile(filtro.TipoFormato);
-            return (bytes, file.MIME, file.FILENAME);
-        }
-
         private async Task<Response> GenerateDailyReport(ReporteDTO reporte)
         {
             List<ArchivoDTO> archivos = new List<ArchivoDTO>();
             Response response = new Response();
-            var pdf = _generateReports.GeneratePdf(reporte);
+            var pdf = _generateReports.GeneratePdf(reporte, true);
             var filePdf = GetFile(GrupoTipoArchivo.PDF);
             if (pdf != null)
             {
@@ -99,7 +126,7 @@ namespace lestoma.Logica.LogicaService
                     MIME = filePdf.MIME
                 });
             }
-            var excel = _generateReports.GenerateExcel(reporte);
+            var excel = _generateReports.GenerateExcel(reporte, true);
             var fileExcel = GetFile(GrupoTipoArchivo.EXCEL);
             if (excel != null)
             {
@@ -119,7 +146,7 @@ namespace lestoma.Logica.LogicaService
             foreach (var item in correosSuperAdmin)
             {
                 await _mailHelper.SendMailWithAllArchives(item, $"Reporte diario día {DateTime.Now:dd/MM/yyyy}", archivos, string.Empty,
-                     "Hola Super Administrador", $"Se anexa, reporte diario día {DateTime.Now:dd/MM/yyyy}, en Pdf y Excel", string.Empty,
+                     "Hola Super Administrador", $"Se anexa el reporte del día {DateTime.Now:dd/MM/yyyy}, en Pdf y Excel", string.Empty,
                      @"Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.<br>
                       <strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
                 Debug.WriteLine($"Enviado el pdf  y excel a {item}");
