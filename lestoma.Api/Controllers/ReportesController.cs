@@ -2,12 +2,9 @@
 using Hangfire;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
-using lestoma.Data;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -33,7 +30,7 @@ namespace lestoma.Api.Controllers
             var response = await _reporteService.DailyReport();
 
             RecurringJob.AddOrUpdate<IReporteService>("Enviar-reporte-diario", servicio => servicio.DailyReport(),
-                Cron.Daily(filtro.Hour, filtro.Minute),TimeZoneInfo.Local);
+                Cron.Daily(filtro.Hour, filtro.Minute), TimeZoneInfo.Local);
 
             return Ok(new Response
             {
@@ -54,7 +51,7 @@ namespace lestoma.Api.Controllers
         }
 
 
-        [HttpGet("by-components")]
+        [HttpPost("by-components")]
         public async Task<IActionResult> ReportByComponents([FromBody] FilterReportComponentRequest filtro)
         {
             var reporte = await _reporteService.ReportByComponents(filtro, IsSuperAdmin());

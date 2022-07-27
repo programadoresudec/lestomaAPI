@@ -20,7 +20,7 @@ namespace lestoma.Pruebas
             List<byte> byteArray = new List<byte>() { 111, 1, 240, 0, 0, 0, 0, 0 };
 
 
-            var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(0);
+            var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(18);
 
             byteArray[4] = bytesFlotante[0];
             byteArray[5] = bytesFlotante[1];

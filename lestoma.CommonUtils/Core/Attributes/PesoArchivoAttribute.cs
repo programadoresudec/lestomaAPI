@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace lestoma.CommonUtils.Core.Attributes
 {
-    public class PesoArchivoAttribute : ValidationAttribute
+    public sealed class PesoArchivoAttribute : ValidationAttribute
     {
         private readonly int pesoMaximoEnMegaBytes;
 

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace lestoma.CommonUtils.Core.Attributes
 {
-    public class FromNowAttribute : ValidationAttribute
+    public sealed class FromNowAttribute : ValidationAttribute
     {
         public FromNowAttribute() { }
 
@@ -12,9 +12,13 @@ namespace lestoma.CommonUtils.Core.Attributes
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             var date = (DateTime)value;
+            int response = DateTime.Compare(date, DateTime.Now);
+            if (response >= 0)
+            {
+                return new ValidationResult(GetErrorMessage());
+            }
+            else { return ValidationResult.Success; }
 
-            if (DateTime.Compare(date, DateTime.Now) <= 0) return new ValidationResult(GetErrorMessage());
-            else return ValidationResult.Success;
         }
     }
 }

@@ -1,9 +1,14 @@
-﻿namespace lestoma.CommonUtils.Enums
+﻿using System.ComponentModel;
+
+namespace lestoma.CommonUtils.Enums
 {
     public enum GrupoTipoArchivo
     {
-        Imagen,
-        PDF,
-        EXCEL
+        [Description("Imagen")]
+        Imagen = 1,
+        [Description("PDF")]
+        PDF = 2,
+        [Description("EXCEL")]
+        EXCEL = 3
     }
 }

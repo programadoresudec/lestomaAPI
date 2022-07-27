@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace lestoma.CommonUtils.Core.Attributes
 {
-    public class TipoArchivoAttribute : ValidationAttribute
+    public sealed class TipoArchivoAttribute : ValidationAttribute
     {
         private readonly string[] tiposValidos;
 

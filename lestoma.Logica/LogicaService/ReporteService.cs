@@ -56,11 +56,14 @@ namespace lestoma.Logica.LogicaService
                 bool existe = await _componenteRepository.AnyWithCondition(x => x.Id == item);
                 if (!existe)
                 {
-                    throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se
-                                                                        pudo encontrar el componente con el id: {item}");
+                    throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Error: No se pudo encontrar el componente con el id: {item}");
                 }
             }
             var listado = await _repositorio.ReportByComponents(filtro);
+            if (listado.Reporte.Count == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
+            }
             var bytes = _generateReports.GenerateReportByFormat(filtro.Filtro.TipoFormato, listado, isSuperAdmin);
             var file = GetFile(filtro.Filtro.TipoFormato);
             return (bytes, file.MIME, file.FILENAME);
@@ -69,6 +72,10 @@ namespace lestoma.Logica.LogicaService
         {
             await ExistUpa(filtro.UpaId);
             var listado = await _repositorio.ReportByDate(filtro);
+            if (listado.Reporte.Count == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
+            }
             listado.FiltroFecha = new FilterDateRequest()
             {
                 FechaInicial = filtro.FechaInicial,
@@ -98,8 +105,7 @@ namespace lestoma.Logica.LogicaService
             switch (grupoTipoArchivo)
             {
                 case GrupoTipoArchivo.Imagen:
-
-                    break;
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, @"Formato invalido, solo se puede PDF y EXCEL");
                 case GrupoTipoArchivo.PDF:
                     Mime = MediaTypeNames.Application.Pdf;
                     FileName = $"Reporte_{dateString}.pdf";

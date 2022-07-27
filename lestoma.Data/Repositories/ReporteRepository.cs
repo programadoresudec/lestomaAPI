@@ -71,7 +71,7 @@ namespace lestoma.Data.Repositories
                 {
                     Usuario = x.Session,
                     Componente = x.ComponenteLaboratorio.NombreComponente,
-                    SetPoint = x.SetPoint.ToString(),
+                    SetPoint = x.SetPoint == null ? "N/A" : x.SetPoint.ToString(),
                     Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                     FechaDispositivo = x.FechaCreacionDispositivo,
                     FechaServidor = x.FechaCreacionServer,
@@ -100,7 +100,7 @@ namespace lestoma.Data.Repositories
                 }
                 if (reporte.ComponentesId.Count > 0)
                 {
-                    query = query.Where(x => !reporte.ComponentesId.Contains(x.ComponenteLaboratorioId));
+                    query = query.Where(x => reporte.ComponentesId.Contains(x.ComponenteLaboratorioId));
                 }
 
                 query = query.Where(x => x.FechaCreacionDispositivo >= reporte.Filtro.FechaInicial
@@ -109,7 +109,7 @@ namespace lestoma.Data.Repositories
                 {
                     Usuario = x.Session,
                     Componente = x.ComponenteLaboratorio.NombreComponente,
-                    SetPoint = x.SetPoint.ToString(),
+                    SetPoint = x.SetPoint == null ? "N/A" : x.SetPoint.ToString(),
                     Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                     FechaDispositivo = x.FechaCreacionDispositivo,
                     FechaServidor = x.FechaCreacionServer,

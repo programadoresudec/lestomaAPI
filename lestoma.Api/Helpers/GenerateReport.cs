@@ -217,8 +217,8 @@ namespace lestoma.Api.Helpers
                                     <td>{4}</td>
                                     <td>{5}</td>
                                     <td>{6}</td>
-                                  </tr>", rep.Usuario, rep.FechaServidor, rep.FechaDispositivo, rep.Modulo,
-                        rep.Componente, rep.SetPoint, rep.Estado);
+                                  </tr>", rep.Usuario.ToLower(), rep.FechaServidor, rep.FechaDispositivo, rep.Modulo.ToLower(),
+                        rep.Componente.ToLower(), rep.SetPoint, rep.Estado.ToLower());
                 }
             }
             else
@@ -234,8 +234,8 @@ namespace lestoma.Api.Helpers
                                     <td>{5}</td>
                                     <td>{6}</td>
                                     <td>{7}</td>
-                                  </tr>", rep.NombreUpa, rep.Usuario, rep.FechaServidor, rep.FechaDispositivo, rep.Modulo,
-                        rep.Componente, rep.SetPoint, rep.Estado);
+                                  </tr>", rep.NombreUpa, rep.Usuario, rep.FechaServidor, rep.FechaDispositivo, rep.Modulo.ToLower(),
+                        rep.Componente.ToLower(), rep.SetPoint, rep.Estado.ToLower());
                 }
             }
             sb.Append(@"        </table>

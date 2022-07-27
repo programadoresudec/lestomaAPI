@@ -23,6 +23,7 @@ namespace lestoma.CommonUtils.Requests
         public DateTime FechaFinal { get; set; }
         public Guid UpaId { get; set; }
         [Required(ErrorMessage = "El tipo de formato es requerido.")]
+        [EnumValidateExists(typeof(GrupoTipoArchivo))]
         public GrupoTipoArchivo TipoFormato { get; set; }
     }
     public class FilterDateRequest
