@@ -28,7 +28,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("paginar")]
         public async Task<IActionResult> GetDetallePaginado([FromQuery] Paginacion paginacion)
         {
-            var queryable = _detalleService.GetAllAsQueryable();
+            var queryable = _detalleService.GetAllForPagination();
             var listado = await GetPaginacion<EUpaActividad, DetalleUpaActividadDTO>(paginacion, queryable);
             var paginador = Paginador<DetalleUpaActividadDTO>.CrearPaginador(listado.Count, listado, paginacion);
             return Ok(paginador);
@@ -38,7 +38,7 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> CrearDetalle(CrearDetalleUpaActividadRequest entidad)
         {
             var upaActividadDTO = Mapear<CrearDetalleUpaActividadRequest, EUpaActividad>(entidad);
-            var response = await _detalleService.CrearEnCascada(upaActividadDTO);
+            var response = await _detalleService.CreateInCascade(upaActividadDTO);
 
             return CreatedAtAction(null, response);
         }

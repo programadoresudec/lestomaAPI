@@ -21,16 +21,12 @@ namespace lestoma.Logica.LogicaService
         {
             _buzonRepository = buzonRepository;
         }
-        public async Task<List<EBuzon>> Listado()
+        public IQueryable<EBuzon> GetAllForPagination()
         {
-            return await _buzonRepository.ListarBuzonConUsuario();
-        }
-        public IQueryable<EBuzon> GetAllAsQueryable()
-        {
-            throw new NotImplementedException();
+            return _buzonRepository.ListarBuzonConUsuario();
         }
 
-        public async Task<Response> AgregarReporte(BuzonCreacionRequest buzonCreacion)
+        public async Task<Response> CreateMailBox(BuzonCreacionRequest buzonCreacion)
         {
             var reporte = new EBuzon
             {
@@ -47,11 +43,9 @@ namespace lestoma.Logica.LogicaService
         }
 
      
-        public Task<EBuzon> GetBuzonById(int id)
+        public Task<EBuzon> GetMailBoxById(int id)
         {
             return _buzonRepository.GetById(id);
         }
-
-      
     }
 }

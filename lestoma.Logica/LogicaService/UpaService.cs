@@ -20,7 +20,7 @@ namespace lestoma.Logica.LogicaService
             _upaRepository = upaRepository;
         }
 
-        public async Task<IEnumerable<EUpa>> GetAllAsync()
+        public async Task<IEnumerable<EUpa>> GetAll()
         {
             var listado = await _upaRepository.GetAll();
             if (!listado.Any())
@@ -30,7 +30,7 @@ namespace lestoma.Logica.LogicaService
             return listado;
         }
 
-        public IQueryable<EUpa> GetAllAsQueryable()
+        public IQueryable<EUpa> GetAllForPagination()
         {
             var listado = _upaRepository.GetAllAsQueryable();
             if (!listado.Any())
@@ -40,7 +40,7 @@ namespace lestoma.Logica.LogicaService
             return listado;
         }
 
-        public async Task<Response> GetByIdAsync(Guid id)
+        public async Task<Response> GetById(Guid id)
         {
             var query = await _upaRepository.GetById(id);
             if (query != null)
@@ -55,7 +55,7 @@ namespace lestoma.Logica.LogicaService
             }
             return _respuesta;
         }
-        public async Task<Response> CrearAsync(EUpa entidad)
+        public async Task<Response> Create(EUpa entidad)
         {
             bool existe = await _upaRepository.ExisteUpa(entidad.Nombre, entidad.Id);
             if (existe)
@@ -72,9 +72,9 @@ namespace lestoma.Logica.LogicaService
             _respuesta.Mensaje = "se ha creado satisfactoriamente.";
             return _respuesta;
         }
-        public async Task<Response> ActualizarAsync(EUpa entidad)
+        public async Task<Response> Update(EUpa entidad)
         {
-            var response = await GetByIdAsync(entidad.Id);
+            var response = await GetById(entidad.Id);
             var upa = (EUpa)response.Data;
             bool existe = await _upaRepository.ExisteUpa(entidad.Nombre, upa.Id, true);
             if (!existe)
@@ -94,9 +94,9 @@ namespace lestoma.Logica.LogicaService
 
             return _respuesta;
         }
-        public async Task EliminarAsync(Guid id)
+        public async Task Delete(Guid id)
         {
-            var entidad = await GetByIdAsync(id);
+            var entidad = await GetById(id);
             await _upaRepository.Delete((EUpa)entidad.Data);
         }
 

@@ -20,7 +20,7 @@ namespace lestoma.Logica.LogicaService
         {
             _actividadRepository = actividadRepository;
         }
-        public async Task<IEnumerable<EActividad>> GetAllAsync()
+        public async Task<IEnumerable<EActividad>> GetAll()
         {
             var query = await _actividadRepository.GetAll();
             if (query.Count() == 0)
@@ -30,7 +30,7 @@ namespace lestoma.Logica.LogicaService
             return query;
         }
 
-        public IQueryable<EActividad> GetAllAsQueryable()
+        public IQueryable<EActividad> GetAllForPagination()
         {
             var query = _actividadRepository.GetAllAsQueryable();
             int variable = query.Count();
@@ -40,7 +40,7 @@ namespace lestoma.Logica.LogicaService
             }
             return query;
         }
-        public async Task<Response> GetByIdAsync(Guid id)
+        public async Task<Response> GetById(Guid id)
         {
             var query = await _actividadRepository.GetById(id);
             if (query != null)
@@ -55,9 +55,9 @@ namespace lestoma.Logica.LogicaService
             }
             return _respuesta;
         }
-        public async Task<Response> CrearAsync(EActividad entidad)
+        public async Task<Response> Create(EActividad entidad)
         {
-            bool existe = await _actividadRepository.ExisteActividad(entidad.Nombre, entidad.Id);
+            bool existe = await _actividadRepository.ExistActivity(entidad.Nombre, entidad.Id);
             if (!existe)
             {
                 entidad.Id = Guid.NewGuid();
@@ -73,11 +73,11 @@ namespace lestoma.Logica.LogicaService
             return _respuesta;
 
         }
-        public async Task<Response> ActualizarAsync(EActividad entidad)
+        public async Task<Response> Update(EActividad entidad)
         {
-            var response = await GetByIdAsync(entidad.Id);
+            var response = await GetById(entidad.Id);
             var actividad = (EActividad)response.Data;
-            bool existe = await _actividadRepository.ExisteActividad(entidad.Nombre, actividad.Id, true);
+            bool existe = await _actividadRepository.ExistActivity(entidad.Nombre, actividad.Id, true);
             if (!existe)
             {
                 actividad.Nombre = entidad.Nombre;
@@ -94,15 +94,15 @@ namespace lestoma.Logica.LogicaService
             return _respuesta;
         }
 
-        public async Task EliminarAsync(Guid id)
+        public async Task Delete(Guid id)
         {
-            var entidad = await GetByIdAsync(id);
+            var entidad = await GetById(id);
             await _actividadRepository.Delete((EActividad)entidad.Data);
         }
 
         public List<NameDTO> GetActividadesJustNames()
         {
-            return _actividadRepository.GetActividadesJustNames();
+            return _actividadRepository.GetActivitiesJustNames();
         }
 
         public async Task<Response> Merge(List<EActividad> listadoEntidad)
@@ -125,9 +125,9 @@ namespace lestoma.Logica.LogicaService
             };
         }
 
-        public async Task<List<NameDTO>> GetActividadesByUpa(Guid upaId)
+        public async Task<List<NameDTO>> GetActivitiesByUpaId(Guid upaId)
         {
-           return  await _actividadRepository.GetActividadesByUpa(upaId);
+           return  await _actividadRepository.GetActivitiesByUpaId(upaId);
         }
     }
 }

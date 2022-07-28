@@ -19,7 +19,7 @@ namespace lestoma.Logica.LogicaService
             _moduloRepository = moduloRepository;
         }
 
-        public async Task<IEnumerable<EModuloComponente>> GetAllAsync()
+        public async Task<IEnumerable<EModuloComponente>> GetAll()
         {
             var listado = await _moduloRepository.GetAll();
             if (listado.Count() == 0)
@@ -29,7 +29,7 @@ namespace lestoma.Logica.LogicaService
             return listado;
         }
 
-        public IQueryable<EModuloComponente> GetAllAsQueryable()
+        public IQueryable<EModuloComponente> GetAllForPagination()
         {
             var listado = _moduloRepository.GetAllAsQueryable();
             if (listado.Count() == 0)
@@ -39,7 +39,7 @@ namespace lestoma.Logica.LogicaService
             return listado;
         }
 
-        public async Task<Response> GetByIdAsync(int id)
+        public async Task<Response> GetById(int id)
         {
             var query = await _moduloRepository.GetById(id);
             if (query != null)
@@ -55,7 +55,7 @@ namespace lestoma.Logica.LogicaService
             }
             return _respuesta;
         }
-        public async Task<Response> CrearAsync(EModuloComponente entidad)
+        public async Task<Response> Create(EModuloComponente entidad)
         {
             bool existe = await _moduloRepository.ExisteModulo(entidad.Nombre, entidad.Id);
             if (!existe)
@@ -72,9 +72,9 @@ namespace lestoma.Logica.LogicaService
             }
             return _respuesta;
         }
-        public async Task<Response> ActualizarAsync(EModuloComponente entidad)
+        public async Task<Response> Update(EModuloComponente entidad)
         {
-            var response = await GetByIdAsync(entidad.Id);
+            var response = await GetById(entidad.Id);
             var Modulo = (EModuloComponente)response.Data;
             bool existe = await _moduloRepository.ExisteModulo(entidad.Nombre, Modulo.Id, true);
             if (!existe)
@@ -92,9 +92,9 @@ namespace lestoma.Logica.LogicaService
 
             return _respuesta;
         }
-        public async Task EliminarAsync(int id)
+        public async Task Delete(int id)
         {
-            var entidad = await GetByIdAsync(id);
+            var entidad = await GetById(id);
             await _moduloRepository.Delete((EModuloComponente)entidad.Data);
         }
     }

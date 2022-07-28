@@ -56,7 +56,7 @@ namespace lestoma.Data.Repositories
             {
                 int rolsuperId = (int)TipoRol.SuperAdministrador;
                 int roladminId = (int)TipoRol.Administrador;
-                List<int> Ids = new List<int>();
+                List<int> Ids = new();
                 if (isSuperAdmin)
                 {
                     Ids.Add(rolsuperId);
@@ -98,19 +98,11 @@ namespace lestoma.Data.Repositories
             }
         }
 
-
-
         public async Task<string> GetApplicationType(int tipoAplicacion)
         {
             var query = await _db.TablaAplicaciones.FindAsync(tipoAplicacion);
 
             return query == null ? "Local" : query.NombreAplicacion;
-        }
-
-        public async Task<IEnumerable<EUpaActividad>> GetActivitiesByUserId(int id)
-        {
-            return await _context.TablaUpasConActividades.Include(x => x.Actividad)
-                .Where(x => x.UsuarioId == id).ToListAsync();
         }
     }
 }

@@ -13,17 +13,17 @@ namespace lestoma.Data.Repositories
         {
             _db = db;
         }
-        public async Task<List<EBuzon>> ListarBuzonConUsuario()
+        public IQueryable<EBuzon> ListarBuzonConUsuario()
         {
-            var lista = (await (from buzon in _db.TablaBuzonReportes
-                                join user in _db.TablaUsuarios on buzon.UsuarioId equals user.Id
-                                select new
-                                {
-                                    buzon,
-                                    user
-                                }).ToListAsync());
+            var lista = from buzon in _db.TablaBuzonReportes
+                        join user in _db.TablaUsuarios on buzon.UsuarioId equals user.Id
+                        select new
+                        {
+                            buzon,
+                            user
+                        };
 
-            return lista.Select(m => new EBuzon
+            var query =  lista.Select(m => new EBuzon
 
             {
                 Descripcion = m.buzon.Descripcion,
@@ -34,7 +34,8 @@ namespace lestoma.Data.Repositories
                     Nombre = m.user.Nombre,
                     Apellido = m.user.Apellido
                 }
-            }).ToList();
+            }).AsNoTracking();
+            return query;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace lestoma.Data
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        protected readonly LestomaContext _context;
+        private readonly LestomaContext _context;
         private DbSet<T> _entities;
 
         public GenericRepository(LestomaContext context)

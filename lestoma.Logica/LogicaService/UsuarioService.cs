@@ -27,13 +27,15 @@ namespace lestoma.Logica.LogicaService
         private readonly Response _respuesta = new();
         private UsuarioRepository _usuarioRepository;
         private AplicacionRepository _aplicacionRepository;
+        private UpaActividadRepository _upaActividadRepository;
         private IMailHelper _mailHelper;
         public UsuarioService(UsuarioRepository usuarioRepository, IMailHelper mailHelper,
-            AplicacionRepository aplicacionRepository)
+            AplicacionRepository aplicacionRepository, UpaActividadRepository upaActividadRepository)
         {
             _usuarioRepository = usuarioRepository;
             _mailHelper = mailHelper;
             _aplicacionRepository = aplicacionRepository;
+            _upaActividadRepository = upaActividadRepository;
         }
 
         public async Task<Response> Login(LoginRequest login, string ip)
@@ -51,12 +53,13 @@ namespace lestoma.Logica.LogicaService
             }
             else
             {
-                CheckStatusOfUser(user.EstadoId);
+                var upaId = await ValidateUser(user.Id, user.EstadoId, user.Rol.Id);
                 if (HashHelper.CheckHash(login.Clave, user.Clave, user.Salt))
                 {
                     _respuesta.Mensaje = "Ha iniciado satisfactoriamente.";
                     var refreshToken = generateRefreshToken(login.TipoAplicacion, user.Id, ip);
                     user.RefreshToken = refreshToken.Token;
+                    user.UpaId = upaId;
                     _respuesta.Data = user;
                     user.RefreshTokens.Add(refreshToken);
                     await _usuarioRepository.Update(user);
@@ -71,7 +74,7 @@ namespace lestoma.Logica.LogicaService
             return _respuesta;
         }
 
-        private void CheckStatusOfUser(int estadoId)
+        private async Task<Guid> ValidateUser(int userId, int estadoId, int rolId)
         {
             if (estadoId == (int)TipoEstadoUsuario.CheckCuenta)
             {
@@ -85,6 +88,13 @@ namespace lestoma.Logica.LogicaService
             {
                 throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta esta bloqueada, debe comunicarse con el administrador.");
             }
+            var tieneUpa = await _upaActividadRepository.GetUpasByUserId(userId);
+            if (tieneUpa == Guid.Empty && rolId != (int)TipoRol.SuperAdministrador)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta no cuenta con ninguna upa asociada comunicarse con el administrador.");
+
+            }
+            return tieneUpa;
         }
 
         private ETokensUsuarioByAplicacion generateRefreshToken(int tipoAplicacion, int id, string ipAddress)
@@ -222,12 +232,6 @@ namespace lestoma.Logica.LogicaService
         public Task<Response> ChangeProfile(ChangeProfileRequest change)
         {
             throw new NotImplementedException();
-        }
-
-
-        public async Task<IEnumerable<EUpaActividad>> GetActivitiesByUserId(int id)
-        {
-            return await _usuarioRepository.GetActivitiesByUserId(id);
         }
 
         public async Task<Response> RevokeToken(string token, string ipAddress)

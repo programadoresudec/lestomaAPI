@@ -9,9 +9,8 @@ namespace lestoma.Logica.Interfaces
 {
     public interface IBuzonService
     {
-        Task<List<EBuzon>> Listado();
-        Task<Response> AgregarReporte(BuzonCreacionRequest buzonCreacion);
-        Task<EBuzon> GetBuzonById(int id);
-        IQueryable<EBuzon> GetAllAsQueryable();
+        IQueryable<EBuzon> GetAllForPagination();
+        Task<Response> CreateMailBox(BuzonCreacionRequest buzonCreacion);
+        Task<EBuzon> GetMailBoxById(int id);
     }
 }

@@ -29,7 +29,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("paginar")]
         public async Task<IActionResult> GetActividadesPaginado([FromQuery] Paginacion paginacion)
         {
-            var queryable = _actividadService.GetAllAsQueryable();
+            var queryable = _actividadService.GetAllForPagination();
             var listado = await GetPaginacion<EActividad, ActividadDTO>(paginacion, queryable);
             var paginador = Paginador<ActividadDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
             return Ok(paginador);
@@ -38,7 +38,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("listado")]
         public async Task<IActionResult> ListaActividades()
         {
-            var query = await _actividadService.GetAllAsync();
+            var query = await _actividadService.GetAll();
             var actividades = Mapear<IEnumerable<EActividad>, IEnumerable<ActividadDTO>>(query);
             return Ok(actividades);
         }
@@ -54,7 +54,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("listado-by-upa/{upaId}")]
         public async Task<IActionResult> GetActividadesByUpa(Guid upaId)
         {
-            var query = await _actividadService.GetActividadesByUpa(upaId);
+            var query = await _actividadService.GetActivitiesByUpaId(upaId);
             return Ok(query);
         }
 
@@ -63,7 +63,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> getActividad(Guid id)
         {
-            var response = await _actividadService.GetByIdAsync(id);
+            var response = await _actividadService.GetById(id);
             var actividadDTOSalida = Mapear<EActividad, ActividadRequest>((EActividad)response.Data);
             response.Data = actividadDTOSalida;
             return Ok(response);
@@ -72,7 +72,7 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> Crear(ActividadRequest actividad)
         {
             var objeto = Mapear<ActividadRequest, EActividad>(actividad);
-            var response = await _actividadService.CrearAsync(objeto);
+            var response = await _actividadService.Create(objeto);
             return Created(string.Empty, response);
         }
 
@@ -88,13 +88,13 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> Editar(ActividadRequest actividad)
         {
             var objeto = Mapear<ActividadRequest, EActividad>(actividad);
-            var response = await _actividadService.ActualizarAsync(objeto);
+            var response = await _actividadService.Update(objeto);
             return Ok(response);
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Eliminar(Guid id)
         {
-            await _actividadService.EliminarAsync(id);
+            await _actividadService.Delete(id);
             return NoContent();
         }
 

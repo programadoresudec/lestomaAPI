@@ -25,7 +25,7 @@ namespace lestoma.Logica.LogicaService
             _actividadRepo = _actividadRepository;
             _upaRepo = upaRepository;
         }
-        public async Task<IEnumerable<EComponenteLaboratorio>> GetAllAsync()
+        public async Task<IEnumerable<EComponenteLaboratorio>> GetAll()
         {
             var listado = await _componenteRepo.GetAll();
             if (!listado.Any())
@@ -34,7 +34,7 @@ namespace lestoma.Logica.LogicaService
             }
             return listado;
         }
-        public async Task<Response> CrearAsync(EComponenteLaboratorio entidad)
+        public async Task<Response> Create(EComponenteLaboratorio entidad)
         {
             await Validaciones(entidad);
             entidad.Id = Guid.NewGuid();
@@ -71,7 +71,7 @@ namespace lestoma.Logica.LogicaService
 
         }
 
-        public async Task<Response> GetByIdAsync(Guid id)
+        public async Task<Response> GetById(Guid id)
         {
             var query = await _componenteRepo.GetById(id);
             if (query == null)
@@ -82,9 +82,9 @@ namespace lestoma.Logica.LogicaService
             return _respuesta;
         }
 
-        public async Task<Response> ActualizarAsync(EComponenteLaboratorio entidad)
+        public async Task<Response> Update(EComponenteLaboratorio entidad)
         {
-            var response = await GetByIdAsync(entidad.Id);
+            var response = await GetById(entidad.Id);
             var comp = (EComponenteLaboratorio)response.Data;
             comp.NombreComponente = entidad.NombreComponente;
             await _componenteRepo.Update(comp);
@@ -94,15 +94,15 @@ namespace lestoma.Logica.LogicaService
             return _respuesta;
         }
 
-        public async Task EliminarAsync(Guid id)
+        public async Task Delete(Guid id)
         {
-            var entidad = await GetByIdAsync(id);
+            var entidad = await GetById(id);
             await _componenteRepo.Delete((EComponenteLaboratorio)entidad.Data);
         }
 
 
 
-        public IQueryable<EComponenteLaboratorio> GetAllAsQueryable()
+        public IQueryable<EComponenteLaboratorio> GetAllForPagination()
         {
             var listado = _componenteRepo.GetAllAsQueryable();
             if (!listado.Any())

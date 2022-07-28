@@ -28,7 +28,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("paginar")]
         public async Task<IActionResult> GetUpasPaginado([FromQuery] Paginacion paginacion)
         {
-            var queryable = _upaService.GetAllAsQueryable();
+            var queryable = _upaService.GetAllForPagination();
             var listado = await GetPaginacion<EUpa, UpaDTO>(paginacion, queryable);
             var paginador = Paginador<UpaDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
             return Ok(paginador);
@@ -36,7 +36,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("listado")]
         public async Task<IActionResult> GetUpas()
         {
-            var query = await _upaService.GetAllAsync();
+            var query = await _upaService.GetAll();
             var upas = Mapear<List<EUpa>, List<UpaDTO>>(query.ToList());
             return Ok(upas);
         }
@@ -50,7 +50,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUpa(Guid id)
         {
-            var response = await _upaService.GetByIdAsync(id);
+            var response = await _upaService.GetById(id);
             var upaDTOSalida = Mapear<EUpa, UpaRequest>((EUpa)response.Data);
             response.Data = upaDTOSalida;
             return Ok(response);
@@ -60,7 +60,7 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> CrearUpa(UpaRequest upa)
         {
             var upaDTO = Mapear<UpaRequest, EUpa>(upa);
-            var response = await _upaService.CrearAsync(upaDTO);
+            var response = await _upaService.Create(upaDTO);
             var upaDTOSalida = Mapear<EUpa, UpaRequest>((EUpa)response.Data);
             response.Data = upaDTOSalida;
             return CreatedAtAction(nameof(GetUpa), new { id = ((UpaRequest)response.Data).Id }, response);
@@ -69,7 +69,7 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> EditarUpa(UpaRequest upa)
         {
             var upaDTO = Mapear<UpaRequest, EUpa>(upa);
-            var response = await _upaService.ActualizarAsync(upaDTO);
+            var response = await _upaService.Update(upaDTO);
             var upaDTOSalida = Mapear<EUpa, UpaRequest>((EUpa)response.Data);
             response.Data = upaDTOSalida;
             return Ok(response);
@@ -77,7 +77,7 @@ namespace lestoma.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> EliminarUpa(Guid id)
         {
-            await _upaService.EliminarAsync(id);
+            await _upaService.Delete(id);
             return NoContent();
         }
     }

@@ -7,7 +7,6 @@ using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -28,18 +27,10 @@ namespace lestoma.Api.Controllers
             _almacenadorArchivos = almacenadorArchivos;
         }
 
-        [Authorize]
-        [HttpGet("listado")]
-        public async Task<IActionResult> Lista()
-        {
-            var lista = await _buzonService.Listado();
-            var listadobuzonDTO = Mapear<List<EBuzon>, List<BuzonDTO>>(lista);
-            return Ok(listadobuzonDTO);
-        }
         [HttpGet("paginar")]
         public async Task<IActionResult> GetReportesBuzonPaginado([FromQuery] Paginacion paginacion)
         {
-            var queryable = _buzonService.GetAllAsQueryable();
+            var queryable = _buzonService.GetAllForPagination();
             var listado = await GetPaginacion<EBuzon, BuzonDTO>(paginacion, queryable);
             var paginador = Paginador<BuzonDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
             return Ok(paginador);
@@ -49,7 +40,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetBuzonById(int id)
         {
-            var buzon = await _buzonService.GetBuzonById(id);
+            var buzon = await _buzonService.GetMailBoxById(id);
             var buzonDTO = Mapear<EBuzon, BuzonDTO>(buzon);
             return Ok(buzonDTO);
         }
@@ -62,7 +53,7 @@ namespace lestoma.Api.Controllers
             {
                 buzon.Detalle.PathImagen = await _almacenadorArchivos.GuardarArchivo(buzon.Imagen, buzon.Extension, contenedor);
             }
-            Respuesta = await _buzonService.AgregarReporte(buzon);
+            Respuesta = await _buzonService.CreateMailBox(buzon);
             return Created(string.Empty, Respuesta);
         }
     }

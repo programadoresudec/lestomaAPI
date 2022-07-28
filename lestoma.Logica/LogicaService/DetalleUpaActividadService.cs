@@ -23,12 +23,18 @@ namespace lestoma.Logica.LogicaService
             _upasActividadesRepository = upasActividadesRepository;
         }
 
-        public Task<Response> ActualizarEnCascada(EUpaActividad entidad)
+        public async Task<Response> UpdateInCascade(EUpaActividad entidad)
         {
-            throw new System.NotImplementedException();
+            await _upasActividadesRepository.CreateRelation(entidad);
+            return new Response
+            {
+                IsExito = true,
+                Mensaje = "Se ha creado satisfactoriamente.",
+                StatusCode = (int)HttpStatusCode.Created
+            };
         }
 
-        public async Task<Response> CrearEnCascada(EUpaActividad entidad)
+        public async Task<Response> CreateInCascade(EUpaActividad entidad)
         {
 
             await _upasActividadesRepository.CreateRelation(entidad);
@@ -40,9 +46,9 @@ namespace lestoma.Logica.LogicaService
             };
         }
 
-        public Task EliminarEnCascada(int IdUsuario)
+        public async Task<IEnumerable<string>> GetActivities(int UserId, Guid upaId)
         {
-            throw new System.NotImplementedException();
+            return await _upasActividadesRepository.GetActivities(UserId, upaId);
         }
 
         public async Task<IEnumerable<EUpaActividad>> GetAll()
@@ -50,7 +56,7 @@ namespace lestoma.Logica.LogicaService
             return await _upasActividadesRepository.GetAll();
         }
 
-        public IQueryable<EUpaActividad> GetAllAsQueryable()
+        public IQueryable<EUpaActividad> GetAllForPagination()
         {
             var query = _upasActividadesRepository.GetAllRelation();
             if (!query.Any())
@@ -58,6 +64,11 @@ namespace lestoma.Logica.LogicaService
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay actividades.");
             }
             return query;
+        }
+
+        public async Task<Guid> GetUpaByUserId(int UserId)
+        {
+            return await _upasActividadesRepository.GetUpasByUserId(UserId);
         }
     }
 }

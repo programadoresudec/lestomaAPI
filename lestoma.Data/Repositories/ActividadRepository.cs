@@ -16,7 +16,7 @@ namespace lestoma.Data.Repositories
         {
             _db = db;
         }
-        public async Task<bool> ExisteActividad(string nombre, Guid id, bool insertOrUpdate = false)
+        public async Task<bool> ExistActivity(string nombre, Guid id, bool insertOrUpdate = false)
         {
             if (insertOrUpdate)
             {
@@ -29,7 +29,7 @@ namespace lestoma.Data.Repositories
 
         }
 
-        public List<NameDTO> GetActividadesJustNames()
+        public List<NameDTO> GetActivitiesJustNames()
         {
             var users = _db.TablaActividades.FromSqlRaw("SELECT id, nombre_actividad FROM superadmin.actividad").OrderBy(x => x.Nombre);
             var query = users.Select(x => new NameDTO
@@ -40,9 +40,9 @@ namespace lestoma.Data.Repositories
             return query;
         }
 
-        public async Task<List<NameDTO>> GetActividadesByUpa(Guid upaId)
+        public async Task<List<NameDTO>> GetActivitiesByUpaId(Guid upaId)
         {
-            var query = await _context.TablaUpasConActividades.Include(x => x.Actividad).Where(x => x.UpaId == upaId).Select(x => new NameDTO
+            var query = await _db.TablaUpasConActividades.Include(x => x.Actividad).Where(x => x.UpaId == upaId).Select(x => new NameDTO
             {
                 Id = x.ActividadId,
                 Nombre = x.Actividad.Nombre

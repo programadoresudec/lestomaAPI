@@ -21,7 +21,6 @@ namespace lestoma.Logica.Interfaces
         Task<string> GetApplicationType(int tipoAplicacion);
         Task<Response> EditRol(RolRequest user);
         Task<Response> RevokeToken(string token, string ipAddress);
-        Task<IEnumerable<EUpaActividad>> GetActivitiesByUserId(int id);
         Task<Response> GetByIdAsync(int id);
     }
 }

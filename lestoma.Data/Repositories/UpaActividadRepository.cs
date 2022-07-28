@@ -4,6 +4,7 @@ using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -24,6 +25,31 @@ namespace lestoma.Data.Repositories
             {
                 try
                 {
+                    foreach (var item in entidad.Actividades)
+                    {
+                        entidad.ActividadId = item.Id;
+                        await Create(entidad);
+                    }
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    ObtenerException(ex, entidad);
+                }
+            }
+        }
+
+        public async Task UpadteRelation(EUpaActividad entidad)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var list = await _db.TablaUpasConActividades.Where(x => x.UpaId == entidad.UpaId).ToListAsync();
+                    if (list.Count > 0)
+                        _db.TablaUpasConActividades.RemoveRange(list);
+
                     foreach (var item in entidad.Actividades)
                     {
                         entidad.ActividadId = item.Id;
@@ -68,6 +94,18 @@ namespace lestoma.Data.Repositories
                 }).ToList()
             });
             return query;
+        }
+
+        public async Task<Guid> GetUpasByUserId(int id)
+        {
+            return await _db.TablaUpasConActividades.Include(x => x.Upa)
+                     .Where(x => x.UsuarioId == id).Select(x => x.UpaId).FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetActivities(int id, Guid UpaId)
+        {
+            return await _db.TablaUpasConActividades.Include(x => x.Actividad)
+                .Where(x => x.UsuarioId == id && x.UpaId == UpaId).Select(x => x.Actividad.Nombre).ToListAsync();
         }
     }
 }

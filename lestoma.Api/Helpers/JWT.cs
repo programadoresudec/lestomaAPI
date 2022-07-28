@@ -28,13 +28,14 @@ namespace lestoma.Api.Helpers
         public readonly IMapper _mapper;
         private readonly AppSettings _appSettings;
         private readonly IUsuarioService _usuarioService;
-
+        private readonly IDetalleUpaActividadService _detalleUpaActividadService;
         public JWT(IUsuarioService usuarioService,
-            IOptions<AppSettings> appSettings, IMapper mapper)
+            IOptions<AppSettings> appSettings, IMapper mapper, IDetalleUpaActividadService detalleUpaActividadService)
         {
             _appSettings = appSettings.Value;
             _usuarioService = usuarioService;
             _mapper = mapper;
+            _detalleUpaActividadService = detalleUpaActividadService;
         }
 
         #region Generar token JWT
@@ -44,21 +45,19 @@ namespace lestoma.Api.Helpers
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var llave = Encoding.ASCII.GetBytes(_appSettings.Secreto);
-
-                var actividades = await _usuarioService.GetActivitiesByUserId(user.Id);
+                var actividades = await _detalleUpaActividadService.GetActivities(user.Id, user.UpaId);
                 var claims = new List<Claim>();
                 claims.Add(new Claim(ClaimsConfig.ID_ROL, user.Rol.Id.ToString()));
                 claims.Add(new Claim(ClaimTypes.Role, user.Rol.NombreRol));
                 claims.Add(new Claim(ClaimTypes.NameIdentifier, $"{user.Nombre} {user.Apellido}"));
-                claims.Add(new Claim(ClaimTypes.Email, user.Email));
                 claims.Add(new Claim(ClaimTypes.Authentication, user.TipoDeAplicacion));
                 claims.Add(new Claim(ClaimsConfig.ID_APLICACION, user.AplicacionId.ToString()));
-
+                claims.Add(new Claim(ClaimsConfig.ID_UPA, user.UpaId.ToString()));
                 if (actividades.Count() > 0)
                 {
                     foreach (var item in actividades)
                     {
-                        claims.Add(new Claim(ClaimsConfig.ROLES_ACTIVIDADES, item.Actividad.Nombre));
+                        claims.Add(new Claim(ClaimsConfig.ROLES_ACTIVIDADES, item));
                     }
                 }
                 var tokenDescriptor = new SecurityTokenDescriptor
