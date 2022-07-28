@@ -44,8 +44,12 @@ namespace lestoma.Api.Controllers
         [HttpPost("by-date")]
         public async Task<IActionResult> ReportByDate([FromBody] FilterReportRequest filtro)
         {
-
-            var reporte = await _reporteService.ReportByDate(filtro, IsSuperAdmin());
+            var isSuper = IsSuperAdmin();
+            if (!isSuper)
+            {
+                filtro.UpaId = UpaId();
+            }
+            var reporte = await _reporteService.ReportByDate(filtro, isSuper);
             return File(reporte.ArchivoBytes,
                reporte.MIME, reporte.Archivo);
         }
@@ -54,7 +58,12 @@ namespace lestoma.Api.Controllers
         [HttpPost("by-components")]
         public async Task<IActionResult> ReportByComponents([FromBody] FilterReportComponentRequest filtro)
         {
-            var reporte = await _reporteService.ReportByComponents(filtro, IsSuperAdmin());
+            var isSuper = IsSuperAdmin();
+            if (!isSuper)
+            {
+                filtro.Filtro.UpaId = UpaId();
+            }
+            var reporte = await _reporteService.ReportByComponents(filtro, isSuper);
             return File(reporte.ArchivoBytes,
             reporte.MIME, reporte.Archivo);
         }

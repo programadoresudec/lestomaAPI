@@ -65,7 +65,16 @@ namespace lestoma.Api.Controllers
             }
             return sIdAplicacion;
         }
-
+        protected Guid UpaId()
+        {
+            Guid sId = Guid.Empty;
+            var id = ClaimsToken().Where(x => x.Type == ClaimsConfig.ID_UPA).Select(c => c.Value).SingleOrDefault();
+            if (Guid.TryParse(id, out Guid idUpa))
+            {
+                sId = idUpa;
+            }
+            return sId;
+        }
         protected bool IsSuperAdmin()
         {
             bool IsSuperAdmin = false;
