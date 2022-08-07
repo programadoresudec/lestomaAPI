@@ -3,6 +3,7 @@ using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,11 +20,13 @@ namespace lestoma.Api.Controllers
     [ApiController]
     public class BaseController : ControllerBase
     {
-        public readonly IMapper _mapper;
+        protected readonly IMapper _mapper;
+        protected readonly IDataProtector _protector;
         public Response Respuesta { get; set; } = new Response();
-        public BaseController(IMapper mapper)
+        public BaseController(IMapper mapper, IDataProtectionProvider protectorProvider)
         {
             _mapper = mapper;
+            _protector = protectorProvider.CreateProtector(Constants.PROTECT_USER);
         }
 
         #region GET Ip
@@ -65,6 +68,19 @@ namespace lestoma.Api.Controllers
             }
             return sIdAplicacion;
         }
+
+
+        protected string EmailDesencrypted()
+        {
+            string sEmailDesencrypted = string.Empty;
+            var email = ClaimsToken().Where(x => x.Type == ClaimTypes.Email).Select(c => c.Value).SingleOrDefault();
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                sEmailDesencrypted = _protector.Unprotect(email);
+            }
+            return sEmailDesencrypted;
+        }
+
         protected Guid UpaId()
         {
             Guid sId = Guid.Empty;

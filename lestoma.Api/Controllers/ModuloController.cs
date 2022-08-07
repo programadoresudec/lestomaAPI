@@ -6,6 +6,7 @@ using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -20,8 +21,8 @@ namespace lestoma.Api.Controllers
     public class ModuloController : BaseController
     {
         private readonly IModuloService _moduloService;
-        public ModuloController(IMapper mapper, IModuloService moduloService)
-            : base(mapper)
+        public ModuloController(IMapper mapper, IModuloService moduloService, IDataProtectionProvider protectorProvider)
+            : base(mapper, protectorProvider)
         {
             _moduloService = moduloService;
         }
