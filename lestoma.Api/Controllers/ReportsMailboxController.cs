@@ -6,6 +6,7 @@ using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,8 +20,9 @@ namespace lestoma.Api.Controllers
         private readonly IAlmacenadorArchivos _almacenadorArchivos;
         private readonly IBuzonService _buzonService;
         private readonly string contenedor = "ReportesDelBuzon";
-        public ReportsMailboxController(IMapper mapper, IAlmacenadorArchivos almacenadorArchivos, IBuzonService buzonService)
-            : base(mapper)
+        public ReportsMailboxController(IMapper mapper, IAlmacenadorArchivos almacenadorArchivos, IBuzonService buzonService,
+            IDataProtectionProvider protectorProvider)
+            : base(mapper, protectorProvider)
         {
 
             _buzonService = buzonService;

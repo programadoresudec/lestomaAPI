@@ -5,6 +5,7 @@ using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
@@ -19,7 +20,8 @@ namespace lestoma.Api.Controllers
     {
         private readonly IUsuarioService _service;
 
-        public UsuarioController(IUsuarioService usuarioService, IMapper mapper) : base(mapper)
+        public UsuarioController(IUsuarioService usuarioService, IMapper mapper, IDataProtectionProvider protectorProvider)
+            : base(mapper, protectorProvider)
         {
             _service = usuarioService;
         }

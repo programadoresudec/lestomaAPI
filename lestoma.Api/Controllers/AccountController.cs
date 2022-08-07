@@ -7,6 +7,7 @@ using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -26,8 +27,8 @@ namespace lestoma.Api.Controllers
 
         #region Constructor
         public AccountController(IUsuarioService usuarioService,
-            IMapper mapper, IJWT jwt)
-            : base(mapper)
+            IMapper mapper, IJWT jwt, IDataProtectionProvider protectorProvider)
+            : base(mapper, protectorProvider)
         {
             _usuarioService = usuarioService;
             _jwt = jwt;
@@ -42,6 +43,7 @@ namespace lestoma.Api.Controllers
             var data = (EUsuario)Respuesta.Data;
             data.AplicacionId = logeo.TipoAplicacion;
             data.TipoDeAplicacion = await _usuarioService.GetApplicationType(logeo.TipoAplicacion);
+            data.Email = _protector.Protect(data.Email);
             TokenDTO usuario = await _jwt.GenerateJwtToken(data);
             Respuesta.Data = usuario;
             setTokenCookie(usuario.RefreshToken);

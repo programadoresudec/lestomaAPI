@@ -6,6 +6,7 @@ using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -19,8 +20,8 @@ namespace lestoma.Api.Controllers
     public class UpaController : BaseController
     {
         private readonly IUpaService _upaService;
-        public UpaController(IMapper mapper, IUpaService upaService)
-            : base(mapper)
+        public UpaController(IMapper mapper, IUpaService upaService, IDataProtectionProvider protectorProvider)
+            : base(mapper, protectorProvider)
         {
             _upaService = upaService;
         }

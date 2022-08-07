@@ -9,6 +9,7 @@ using lestoma.CommonUtils.Helpers;
 using lestoma.Entidades.Models;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace lestoma.Api.Controllers
 {
@@ -17,8 +18,8 @@ namespace lestoma.Api.Controllers
     public class ComponenteController : BaseController
     {
         private readonly IComponenteService _componentService;
-        public ComponenteController(IMapper mapper, IComponenteService componenteService)
-         : base(mapper)
+        public ComponenteController(IMapper mapper, IComponenteService componenteService, IDataProtectionProvider protectorProvider)
+            : base(mapper, protectorProvider)
         {
             _componentService = componenteService;
 

@@ -12,5 +12,6 @@ namespace lestoma.CommonUtils.Constants
         public const string PASSWORD_ADMIN = "admin1234";
         public const string PASSWORD_AUXILIAR = "auxiliar1234";
         public const string EMAIL_AUXILIAR = "programadoresuc@outlook.com";
+        public const string PROTECT_USER = "UserInfo.Protector";
     }
 }

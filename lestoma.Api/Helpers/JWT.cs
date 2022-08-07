@@ -6,6 +6,7 @@ using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -49,6 +50,7 @@ namespace lestoma.Api.Helpers
                 var claims = new List<Claim>();
                 claims.Add(new Claim(ClaimsConfig.ID_ROL, user.Rol.Id.ToString()));
                 claims.Add(new Claim(ClaimTypes.Role, user.Rol.NombreRol));
+                claims.Add(new Claim(ClaimTypes.Email, user.Email));
                 claims.Add(new Claim(ClaimTypes.NameIdentifier, $"{user.Nombre} {user.Apellido}"));
                 claims.Add(new Claim(ClaimTypes.Authentication, user.TipoDeAplicacion));
                 claims.Add(new Claim(ClaimsConfig.ID_APLICACION, user.AplicacionId.ToString()));

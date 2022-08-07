@@ -3,6 +3,7 @@ using Hangfire;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
 using lestoma.Logica.Interfaces;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
@@ -16,8 +17,8 @@ namespace lestoma.Api.Controllers
     {
         private readonly IReporteService _reporteService;
         #region Constructor
-        public ReportesController(IMapper mapper, IReporteService reporteService)
-            : base(mapper)
+        public ReportesController(IMapper mapper, IReporteService reporteService, IDataProtectionProvider protectorProvider)
+            : base(mapper, protectorProvider)
         {
             _reporteService = reporteService;
         }
@@ -25,10 +26,8 @@ namespace lestoma.Api.Controllers
 
 
         [HttpPost("daily")]
-        public async Task<IActionResult> ReportDaily([FromBody] FilterReportDailyRequest filtro)
+        public IActionResult ReportDaily([FromBody] FilterReportDailyRequest filtro)
         {
-            var response = await _reporteService.DailyReport();
-
             RecurringJob.AddOrUpdate<IReporteService>("Enviar-reporte-diario", servicio => servicio.DailyReport(),
                 Cron.Daily(filtro.Hour, filtro.Minute), TimeZoneInfo.Local);
 
