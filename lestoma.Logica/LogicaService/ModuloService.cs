@@ -3,6 +3,7 @@ using lestoma.CommonUtils.MyException;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -22,7 +23,7 @@ namespace lestoma.Logica.LogicaService
         public async Task<IEnumerable<EModuloComponente>> GetAll()
         {
             var listado = await _moduloRepository.GetAll();
-            if (listado.Count() == 0)
+            if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
             }
@@ -32,14 +33,14 @@ namespace lestoma.Logica.LogicaService
         public IQueryable<EModuloComponente> GetAllForPagination()
         {
             var listado = _moduloRepository.GetAllAsQueryable();
-            if (listado.Count() == 0)
+            if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
             }
             return listado;
         }
 
-        public async Task<Response> GetById(int id)
+        public async Task<Response> GetById(Guid id)
         {
             var query = await _moduloRepository.GetById(id);
             if (query != null)
@@ -92,7 +93,7 @@ namespace lestoma.Logica.LogicaService
 
             return _respuesta;
         }
-        public async Task Delete(int id)
+        public async Task Delete(Guid id)
         {
             var entidad = await GetById(id);
             await _moduloRepository.Delete((EModuloComponente)entidad.Data);

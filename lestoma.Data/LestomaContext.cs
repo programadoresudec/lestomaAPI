@@ -183,7 +183,7 @@ namespace lestoma.Data
             #region data modulos
             var actuador = new EModuloComponente()
             {
-                Id = 1,
+                Id = Guid.NewGuid(),
                 Nombre = "ACTUADORES",
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
@@ -192,7 +192,7 @@ namespace lestoma.Data
             };
             var sensor = new EModuloComponente()
             {
-                Id = 2,
+                Id = Guid.NewGuid(),
                 Nombre = "SENSORES",
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,

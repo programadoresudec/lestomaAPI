@@ -7,6 +7,7 @@ using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetModulo(int id)
+        public async Task<IActionResult> GetModulo(Guid id)
         {
             var response = await _moduloService.GetById(id);
             var moduloDTOSalida = Mapear<EModuloComponente, ModuloDTO>((EModuloComponente)response.Data);
@@ -70,7 +71,7 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> EliminarModulo(int id)
+        public async Task<IActionResult> EliminarModulo(Guid id)
         {
             await _moduloService.Delete(id);
             return NoContent();

@@ -11,7 +11,7 @@ namespace lestoma.Entidades.Models
         [Column("id")]
         public Guid Id { get; set; }
         [Column("modulo_componente_id")]
-        public int ModuloComponenteId { get; set; }
+        public Guid ModuloComponenteId { get; set; }
         [Column("actividad_id")]
         public Guid ActividadId { get; set; }
         [Column("upa_id")]

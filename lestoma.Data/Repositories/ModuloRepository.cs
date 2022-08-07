@@ -1,5 +1,6 @@
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.Repositories
@@ -11,7 +12,7 @@ namespace lestoma.Data.Repositories
         {
             _db = db;
         }
-        public async Task<bool> ExisteModulo(string nombre, int id, bool insertOrUpdate = false)
+        public async Task<bool> ExisteModulo(string nombre, Guid id, bool insertOrUpdate = false)
         {
             if (!insertOrUpdate)
             {
