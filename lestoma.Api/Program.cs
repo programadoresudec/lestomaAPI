@@ -13,16 +13,15 @@ namespace lestoma.Api
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            var logger = host.Services.GetRequiredService<ILogger<Program>>();
             try
             {
-                logger.LogInformation("Host created.");
+                Console.WriteLine("Host created.");
                 host.Run();
-                logger.LogInformation("Host run.");
+                Console.WriteLine("Host run.");
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Terminated");
+                Console.WriteLine(ex.ToString());
             }
         }
 

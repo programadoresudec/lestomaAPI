@@ -37,67 +37,68 @@ namespace lestoma.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddSingleton<ILoggerManager, LoggerManager>();
-            services.AddCors(options =>
+            try
             {
-                var frontendURL = Configuration.GetValue<string>("frontend_web_url");
-                options.AddDefaultPolicy(builder =>
+                services.AddSingleton<ILoggerManager, LoggerManager>();
+                services.AddCors(options =>
                 {
-                    builder.WithOrigins(frontendURL).AllowAnyMethod().AllowAnyHeader()
-                    .WithExposedHeaders(new string[] { "cantidadTotalRegistros" });
+                    var frontendURL = Configuration.GetValue<string>("frontend_web_url");
+                    options.AddDefaultPolicy(builder =>
+                    {
+                        builder.WithOrigins(frontendURL).AllowAnyMethod().AllowAnyHeader()
+                        .WithExposedHeaders(new string[] { "cantidadTotalRegistros" });
+                    });
                 });
-            });
 
-            services.AddControllers()
-                .AddNewtonsoftJson();
+                services.AddControllers()
+                    .AddNewtonsoftJson();
 
-            if (Environment.IsProduction())
-            {
-                var connectionString = Configuration.GetConnectionString("PostgresConnectionProduction");
-                services.AddDbContext<LestomaContext>(options =>
+                if (Environment.IsProduction())
                 {
-                    options.UseNpgsql(connectionString);
-                });
-                ConfigureHangfire(connectionString, services);
-            }
-            else if (Environment.IsDevelopment())
-            {
-                var connectionString = Configuration.GetConnectionString("PostgresConnection");
-                services.AddDbContext<LestomaContext>(options =>
+                    var connectionString = Configuration.GetConnectionString("PostgresConnectionProduction");
+                    services.AddDbContext<LestomaContext>(options =>
+                    {
+                        options.UseNpgsql(connectionString);
+                    });
+                    ConfigureHangfire(connectionString, services);
+                }
+                else if (Environment.IsDevelopment())
                 {
-                    options.UseNpgsql(connectionString);
-                });
-                ConfigureHangfire(connectionString, services);
-            }
+                    var connectionString = Configuration.GetConnectionString("PostgresConnection");
+                    services.AddDbContext<LestomaContext>(options =>
+                    {
+                        options.UseNpgsql(connectionString);
+                    });
+                    ConfigureHangfire(connectionString, services);
+                }
 
-            var context = new CustomAssemblyLoadContext();
-            context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox.dll"));
+                var context = new CustomAssemblyLoadContext();
+                context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox.dll"));
 
 
-            var appSettingsSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
-            services.AddSwaggerGen(swagger =>
-            {
-                //This is to generate the Default UI of Swagger Documentation    
-                swagger.SwaggerDoc("v1", new OpenApiInfo
+                var appSettingsSection = Configuration.GetSection("AppSettings");
+                services.Configure<AppSettings>(appSettingsSection);
+                services.AddSwaggerGen(swagger =>
                 {
-                    Version = "v1",
-                    Title = "lestoma.Api",
-                    Description = "Authentication and Authorization in ASP.NET 5 with JWT and Swagger"
-                });
-                // To Enable authorization using Swagger (JWT)    
-                swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-                {
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header,
-                    Description = "Copia y pega el Token en el campo 'Value:' así: Bearer " +
-                    "{Token JWT}.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
-                });
-                swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    //This is to generate the Default UI of Swagger Documentation    
+                    swagger.SwaggerDoc("v1", new OpenApiInfo
+                    {
+                        Version = "v1",
+                        Title = "lestoma.Api",
+                        Description = "Authentication and Authorization in ASP.NET 5 with JWT and Swagger"
+                    });
+                    // To Enable authorization using Swagger (JWT)    
+                    swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                    {
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer",
+                        BearerFormat = "JWT",
+                        In = ParameterLocation.Header,
+                        Description = "Copia y pega el Token en el campo 'Value:' así: Bearer " +
+                        "{Token JWT}.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+                    });
+                    swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                     {
                           new OpenApiSecurityScheme
@@ -112,44 +113,50 @@ namespace lestoma.Api
 
                     }
             });
-            });
-            // JWT TOKEN
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            var llave = Encoding.ASCII.GetBytes(appSettings.Secreto);
-            var issuer = appSettings.Issuer;
-            var audience = appSettings.Audience;
-            services.AddAuthentication(d =>
-            {
-                d.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                d.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(d =>
+                });
+                // JWT TOKEN
+                var appSettings = appSettingsSection.Get<AppSettings>();
+                var llave = Encoding.ASCII.GetBytes(appSettings.Secreto);
+                var issuer = appSettings.Issuer;
+                var audience = appSettings.Audience;
+                services.AddAuthentication(d =>
                 {
-                    d.RequireHttpsMetadata = false;
-                    d.SaveToken = true;
-                    d.TokenValidationParameters = new TokenValidationParameters
+                    d.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    d.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                    .AddJwtBearer(d =>
                     {
-                        ValidIssuer = issuer,
-                        ValidAudience = audience,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(llave),
-                        //establezca clockskew en cero para que los tokens caduquen exactamente a la hora de
-                        //vencimiento del token(en lugar de 5 minutos después)
-                        ClockSkew = TimeSpan.Zero
-                    };
+                        d.RequireHttpsMetadata = false;
+                        d.SaveToken = true;
+                        d.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidIssuer = issuer,
+                            ValidAudience = audience,
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(llave),
+                            //establezca clockskew en cero para que los tokens caduquen exactamente a la hora de
+                            //vencimiento del token(en lugar de 5 minutos después)
+                            ClockSkew = TimeSpan.Zero
+                        };
+                    });
+
+                // Inyección de dependencias a partir de una inversión de control.
+                IoC.AddDependency(services);
+                services.AddHttpContextAccessor();
+                var mapperConfig = new MapperConfiguration(m =>
+                {
+                    m.AddProfile(new AutoMappersProfiles());
                 });
 
-            // Inyección de dependencias a partir de una inversión de control.
-            IoC.AddDependency(services);
-            services.AddHttpContextAccessor();
-            var mapperConfig = new MapperConfiguration(m =>
+                IMapper mapper = mapperConfig.CreateMapper();
+                services.AddSingleton(mapper);
+                services.AddMvc();
+            }
+            catch (Exception ex)
             {
-                m.AddProfile(new AutoMappersProfiles());
-            });
-
-            IMapper mapper = mapperConfig.CreateMapper();
-            services.AddSingleton(mapper);
-            services.AddMvc();
+                Console.WriteLine(ex.Message);
+                new LoggerManager().LogError(ex.Message, ex);
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
