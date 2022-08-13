@@ -12,5 +12,6 @@ namespace lestoma.Logica.Interfaces
     {
         Task<Response> CreateDetail(ELaboratorio detalle);
         Task<Response> MergeDetails(IEnumerable<ELaboratorio> datosOffline);
+        Task SendEmailFinishMerge(string email);
     }
 }

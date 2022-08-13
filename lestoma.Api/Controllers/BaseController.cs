@@ -30,7 +30,7 @@ namespace lestoma.Api.Controllers
         }
 
         #region GET Ip
-        protected string ipAddress()
+        protected string IpAddress()
         {
             string IP4Address = String.Empty;
 
@@ -49,7 +49,7 @@ namespace lestoma.Api.Controllers
         #region Claims
         protected List<Claim> ClaimsToken()
         {
-            List<Claim> claims = new List<Claim>();
+            List<Claim> claims = new();
             if (User.Identity.IsAuthenticated)
             {
                 var identity = (ClaimsIdentity)User.Identity;
@@ -99,7 +99,7 @@ namespace lestoma.Api.Controllers
             if (int.TryParse(rolId, out int RolId))
             {
                 sIdRol = RolId;
-                IsSuperAdmin = sIdRol == (int)TipoRol.SuperAdministrador ? true : false;
+                IsSuperAdmin = sIdRol == (int)TipoRol.SuperAdministrador;
             }
 
 

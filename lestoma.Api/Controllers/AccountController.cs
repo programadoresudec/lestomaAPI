@@ -39,15 +39,15 @@ namespace lestoma.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Logeo(LoginRequest logeo)
         {
-            Respuesta = await _usuarioService.Login(logeo, ipAddress());
+            Respuesta = await _usuarioService.Login(logeo, IpAddress());
             var data = (EUsuario)Respuesta.Data;
             data.AplicacionId = logeo.TipoAplicacion;
             data.TipoDeAplicacion = await _usuarioService.GetApplicationType(logeo.TipoAplicacion);
             data.Email = _protector.Protect(data.Email);
             TokenDTO usuario = await _jwt.GenerateJwtToken(data);
             Respuesta.Data = usuario;
-            setTokenCookie(usuario.RefreshToken);
-            setAplicacionCookie(logeo.TipoAplicacion);
+            SetTokenCookie(usuario.RefreshToken);
+            SetAplicacionCookie(logeo.TipoAplicacion);
             return Created(string.Empty, Respuesta);
         }
         #endregion
@@ -61,15 +61,15 @@ namespace lestoma.Api.Controllers
             var refreshToken = Request.Cookies["refreshToken"];
             var idAplicacion = Request.Cookies["aplicacionId"];
 
-            var response = await _usuarioService.RefreshToken(refreshToken, ipAddress());
+            var response = await _usuarioService.RefreshToken(refreshToken, IpAddress());
             if (int.TryParse(idAplicacion, out int id))
             {
                 sIdAplicacion = id;
             }
             response.TipoDeAplicacion = await _usuarioService.GetApplicationType(sIdAplicacion);
             TokenDTO usuario = await _jwt.GenerateJwtToken(response);
-            setTokenCookie(response.RefreshToken);
-            setAplicacionCookie(sIdAplicacion);
+            SetTokenCookie(response.RefreshToken);
+            SetAplicacionCookie(sIdAplicacion);
             Respuesta.Data = usuario;
             Respuesta.IsExito = true;
             Respuesta.StatusCode = (int)HttpStatusCode.OK;
@@ -87,13 +87,13 @@ namespace lestoma.Api.Controllers
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"El token de refresco no corresponde al actual.");
             }
-            var response = await _usuarioService.RevokeToken(model.Token, ipAddress());
+            var response = await _usuarioService.RevokeToken(model.Token, IpAddress());
             return Ok(response);
         }
         #endregion
 
         #region Save cookies
-        private void setTokenCookie(string refreshToken)
+        private void SetTokenCookie(string refreshToken)
         {
             var cookieOptions = new CookieOptions
             {
@@ -103,7 +103,7 @@ namespace lestoma.Api.Controllers
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
 
-        private void setAplicacionCookie(int aplicacionId)
+        private void SetAplicacionCookie(int aplicacionId)
         {
             var cookieOptions = new CookieOptions
             {
@@ -125,7 +125,7 @@ namespace lestoma.Api.Controllers
             return Created(string.Empty, Respuesta);
         }
         #endregion
-
+            
         #region olvido su contraseña
         [HttpPut("forgotpassword")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest email)

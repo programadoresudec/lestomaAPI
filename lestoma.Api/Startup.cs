@@ -5,6 +5,7 @@ using HangfireBasicAuthenticationFilter;
 using lestoma.Api.Core;
 using lestoma.Api.Helpers;
 using lestoma.Api.Middleware;
+using lestoma.CommonUtils.Core;
 using lestoma.CommonUtils.Helpers;
 using lestoma.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,6 +37,8 @@ namespace lestoma.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddSingleton<ILoggerManager, LoggerManager>();
             services.AddCors(options =>
             {
                 var frontendURL = Configuration.GetValue<string>("frontend_web_url");
@@ -95,7 +98,7 @@ namespace lestoma.Api
                     "{Token JWT}.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
                 });
                 swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
+            {
                     {
                           new OpenApiSecurityScheme
                             {
@@ -108,7 +111,7 @@ namespace lestoma.Api
                             Array.Empty<string>()
 
                     }
-                });
+            });
             });
             // JWT TOKEN
             var appSettings = appSettingsSection.Get<AppSettings>();

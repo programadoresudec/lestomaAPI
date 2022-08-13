@@ -12,18 +12,18 @@ namespace lestoma.Data
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly LestomaContext _context;
-        private DbSet<T> _entities;
+        protected DbSet<T> _dbSet;
 
         public GenericRepository(LestomaContext context)
         {
-            this._context = context;
-            _entities = context.Set<T>();
+            _context = context;
+            _dbSet = context.Set<T>();
         }
 
         #region Listado IEnumerable In BD
-        public virtual async Task<IEnumerable<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAll()
         {
-            return await _entities.ToListAsync();
+            return await _dbSet.ToListAsync();
         }
 
         #endregion
@@ -31,7 +31,7 @@ namespace lestoma.Data
         #region Listado IQueryable para hacer consultas al servidor optimizado
         public IQueryable<T> GetAllAsQueryable()
         {
-            return _entities.AsNoTracking();
+            return _dbSet.AsNoTracking();
         }
 
         #endregion
@@ -39,7 +39,7 @@ namespace lestoma.Data
         #region Get by Id In BD
         public async Task<T> GetById(object id)
         {
-            return await _entities.FindAsync(id);
+            return await _dbSet.FindAsync(id);
         }
         #endregion
 
@@ -95,14 +95,21 @@ namespace lestoma.Data
         #region Exist with condition
         public async Task<bool> AnyWithCondition(Expression<Func<T, bool>> whereCondition)
         {
-            return await _entities.AnyAsync(whereCondition);
+            return await _dbSet.AnyAsync(whereCondition);
         }
         #endregion
 
         #region Find with condition
         public async Task<T> FindWithCondition(Expression<Func<T, bool>> whereCondition)
         {
-            return await _entities.FirstOrDefaultAsync(whereCondition);
+            return await _dbSet.FirstOrDefaultAsync(whereCondition);
+        }
+        #endregion
+
+        #region Where With Condition
+        public IQueryable<T> WhereWithCondition(Expression<Func<T, bool>> whereCondition)
+        {
+            return _dbSet.Where(whereCondition);
         }
         #endregion
 

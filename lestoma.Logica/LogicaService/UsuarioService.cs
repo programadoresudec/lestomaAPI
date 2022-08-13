@@ -25,10 +25,10 @@ namespace lestoma.Logica.LogicaService
         //    await _mailHelper.SendMailWithOneArchive("diegop177@hotmail.com", "", "cedula.pdf", "activar cuenta",
         //MediaTypeNames.Application.Pdf, null, "cedula.pdf");
         private readonly Response _respuesta = new();
-        private UsuarioRepository _usuarioRepository;
-        private AplicacionRepository _aplicacionRepository;
-        private UpaActividadRepository _upaActividadRepository;
-        private IMailHelper _mailHelper;
+        private readonly UsuarioRepository _usuarioRepository;
+        private readonly AplicacionRepository _aplicacionRepository;
+        private readonly UpaActividadRepository _upaActividadRepository;
+        private readonly IMailHelper _mailHelper;
         public UsuarioService(UsuarioRepository usuarioRepository, IMailHelper mailHelper,
             AplicacionRepository aplicacionRepository, UpaActividadRepository upaActividadRepository)
         {
@@ -82,16 +82,16 @@ namespace lestoma.Logica.LogicaService
             }
             else if (estadoId == (int)TipoEstadoUsuario.Inactivo)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta esta Inactiva, debe comunicarse con el administrador.");
+                throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta esta Inactiva, debe comunicarse con el Super Administrador.");
             }
             else if (estadoId == (int)TipoEstadoUsuario.Bloqueado)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta esta bloqueada, debe comunicarse con el administrador.");
+                throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta esta bloqueada, debe comunicarse con el Super Administrador.");
             }
             var tieneUpa = await _upaActividadRepository.GetUpasByUserId(userId);
             if (tieneUpa == Guid.Empty && rolId != (int)TipoRol.SuperAdministrador)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta no cuenta con ninguna upa asociada comunicarse con el administrador.");
+                throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta no cuenta con ninguna upa asociada comunicarse con el Super Administrador.");
 
             }
             return tieneUpa;

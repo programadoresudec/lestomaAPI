@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Hangfire;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
 using lestoma.Data;
 using lestoma.Entidades.Models;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
@@ -39,15 +41,21 @@ namespace lestoma.Api.Controllers
             return Ok();
         }
 
-        
+
         [HttpPost("crear-detalle")]
-        public async Task<IActionResult> MergeDetail(IEnumerable<LaboratorioRequestOffline> datosOfOffline)
+        public IActionResult MergeDetail(IEnumerable<LaboratorioRequestOffline> datosOfOffline)
         {
             var EmailDesencryptedUser = EmailDesencrypted();
             var datosMapeados = Mapear<IEnumerable<LaboratorioRequestOffline>, IEnumerable<ELaboratorio>>(datosOfOffline);
             var jobId = _backgroundJobClient.Schedule<ILaboratorioService>(service =>
-           service.MergeDetails(datosMapeados), TimeSpan.FromSeconds(20));
-            return Ok();
+           service.MergeDetails(datosMapeados), TimeSpan.FromSeconds(10));
+            _backgroundJobClient.ContinueJobWith<ILaboratorioService>(jobId, service => service.SendEmailFinishMerge(EmailDesencryptedUser));
+            return Ok(new Response
+            {
+                Mensaje = "Se esta generando la migración de datos, pronto le llegará un correo cuando termine.",
+                IsExito = true,
+                StatusCode = (int)HttpStatusCode.OK
+            });
         }
     }
 }

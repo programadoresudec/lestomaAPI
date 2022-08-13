@@ -1,4 +1,5 @@
-﻿using lestoma.CommonUtils.DTOs;
+﻿using lestoma.CommonUtils.Core;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.MyException;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,10 +13,12 @@ namespace lestoma.Api.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public CustomExceptionMiddleware(RequestDelegate next, IWebHostEnvironment webHostEnvironment)
+        private readonly ILoggerManager _logger;
+        public CustomExceptionMiddleware(RequestDelegate next, IWebHostEnvironment webHostEnvironment, ILoggerManager logger)
         {
             _next = next;
             _webHostEnvironment = webHostEnvironment;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -47,6 +50,7 @@ namespace lestoma.Api.Middleware
                     StatusCode = (int)exception.StatusCode
                 }.ToString();
                 context.Response.StatusCode = (int)exception.StatusCode;
+                _logger.LogWarning(result);
             }
             else
             {
@@ -56,6 +60,7 @@ namespace lestoma.Api.Middleware
                     StatusCode = (int)HttpStatusCode.BadRequest
                 }.ToString();
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                _logger.LogWarning(result);
             }
             return context.Response.WriteAsync(result);
         }
@@ -68,6 +73,7 @@ namespace lestoma.Api.Middleware
                 Mensaje = "Ha ocurrido un error en la aplicación " + _webHostEnvironment.ApplicationName + "  Error: " + exception.Message,
                 StatusCode = (int)HttpStatusCode.InternalServerError
             }.ToString();
+            _logger.LogError(result, exception);
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             return context.Response.WriteAsync(result);
         }

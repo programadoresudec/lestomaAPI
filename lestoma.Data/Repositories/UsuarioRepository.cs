@@ -24,22 +24,22 @@ namespace lestoma.Data.Repositories
         }
         public async Task<EUsuario> Logeo(LoginRequest login)
         {
-            return await _db.TablaUsuarios.Include(o => o.EstadoUsuario).
+            return await _dbSet.Include(o => o.EstadoUsuario).
                 Include(e => e.Rol).Where(x => x.Email.Equals(login.Email)).FirstOrDefaultAsync();
         }
 
         public async Task<EUsuario> GetByEmail(string email)
         {
-            return await _db.TablaUsuarios.FirstOrDefaultAsync(x => x.Email.Equals(email));
+            return await _dbSet.FirstOrDefaultAsync(x => x.Email.Equals(email));
         }
 
         public async Task<bool> ExisteCodigoVerificacion(string codigoRecuperacion)
         {
-            return await _db.TablaUsuarios.AnyAsync(x => x.CodigoRecuperacion.Equals(codigoRecuperacion));
+            return await _dbSet.AnyAsync(x => x.CodigoRecuperacion.Equals(codigoRecuperacion));
         }
 
         public async Task<EUsuario> UsuarioByCodigoVerificacion(string codigo) =>
-            await _db.TablaUsuarios.Where(x => x.CodigoRecuperacion.Equals(codigo))
+            await _dbSet.Where(x => x.CodigoRecuperacion.Equals(codigo))
             .FirstOrDefaultAsync();
 
         public EUsuario UsuarioByToken(string token)
