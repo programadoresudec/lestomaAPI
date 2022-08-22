@@ -28,8 +28,9 @@ namespace lestoma.Data.Repositories
                     foreach (var item in entidad.Actividades)
                     {
                         entidad.ActividadId = item.Id;
-                        await Create(entidad);
+                        _db.Add(entidad);
                     }
+                    await _db.SaveChangesAsync();
                     transaction.Commit();
                 }
                 catch (Exception ex)
@@ -53,8 +54,9 @@ namespace lestoma.Data.Repositories
                     foreach (var item in entidad.Actividades)
                     {
                         entidad.ActividadId = item.Id;
-                        await Create(entidad);
+                        _db.Add(entidad);
                     }
+                    await _db.SaveChangesAsync();
                     transaction.Commit();
                 }
                 catch (Exception ex)

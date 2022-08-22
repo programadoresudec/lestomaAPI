@@ -6,7 +6,7 @@ using lestoma.Logica.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
@@ -15,19 +15,35 @@ namespace lestoma.Logica.LogicaService
     {
         private readonly IMailHelper _mailHelper;
         private readonly UsuarioRepository _usuarioRepository;
-        public LaboratorioService(IMailHelper mailHelper, UsuarioRepository usuarioRepository)
+        private readonly LaboratorioRepository _laboratorioRepository;
+        public LaboratorioService(IMailHelper mailHelper, UsuarioRepository usuarioRepository, LaboratorioRepository laboratorioRepository)
         {
             _mailHelper = mailHelper;
             _usuarioRepository = usuarioRepository;
+            _laboratorioRepository = laboratorioRepository;
         }
         public async Task<Response> CreateDetail(ELaboratorio detalle)
         {
-            throw new NotImplementedException();
+
+            detalle.Id = Guid.NewGuid();
+            await _laboratorioRepository.Create(detalle);
+            return new Response
+            {
+                IsExito = true,
+                Mensaje = "Los datos offline fueron cargados con exito al servidor.",
+                StatusCode = (int)HttpStatusCode.Created
+            };
         }
 
         public async Task<Response> MergeDetails(IEnumerable<ELaboratorio> datosOffline)
         {
-            throw new NotImplementedException();
+            await _laboratorioRepository.MergeDetails(datosOffline);
+            return new Response
+            {
+                IsExito = true,
+                Mensaje = "Los datos offline fueron cargados con exito al servidor.",
+                StatusCode = (int)HttpStatusCode.Created
+            };
         }
 
         public async Task SendEmailFinishMerge(string email)

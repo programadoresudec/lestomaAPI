@@ -1,14 +1,7 @@
-using lestoma.CommonUtils.DTOs;
-using lestoma.CommonUtils.Enums;
-using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
-using Microsoft.EntityFrameworkCore;
-using Npgsql;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.Repositories
@@ -20,7 +13,24 @@ namespace lestoma.Data.Repositories
         {
             _db = db;
         }
+
+        public async Task MergeDetails(IEnumerable<ELaboratorio> datosOffline)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _db.AddRangeAsync(datosOffline);
+                    await _db.SaveChangesAsync();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    ObtenerException(ex, null);
+                }
+            }
+        }
     }
 }
 
-    

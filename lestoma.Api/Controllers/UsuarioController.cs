@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
 {
-    [AllowAnonymous]
+
     [Route("api/usuarios")]
     [ApiController]
-
+    [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
     public class UsuarioController : BaseController
     {
         private readonly IUsuarioService _service;
@@ -44,6 +44,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpPost("registro")]
+     
         public async Task<IActionResult> Registrarse(RegistroRequest registro)
         {
             var entidad = Mapear<RegistroRequest, EUsuario>(registro);
@@ -53,7 +54,6 @@ namespace lestoma.Api.Controllers
             return Created(string.Empty, Respuesta);
         }
 
-        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
         [HttpPut("editar-rol")]
         public async Task<IActionResult> EditarRol(RolRequest user)
         {

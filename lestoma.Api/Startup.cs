@@ -53,25 +53,13 @@ namespace lestoma.Api
                 services.AddControllers()
                     .AddNewtonsoftJson();
 
-                if (Environment.IsProduction())
+                var connectionString = Configuration.GetConnectionString("PostgresConnection");
+                services.AddDbContext<LestomaContext>(options =>
                 {
-                    var connectionString = Configuration.GetConnectionString("PostgresConnectionProduction");
-                    services.AddDbContext<LestomaContext>(options =>
-                    {
-                        options.UseNpgsql(connectionString);
-                    });
-                    ConfigureHangfire(connectionString, services);
-                }
-                else if (Environment.IsDevelopment())
-                {
-                    var connectionString = Configuration.GetConnectionString("PostgresConnection");
-                    services.AddDbContext<LestomaContext>(options =>
-                    {
-                        options.UseNpgsql(connectionString);
-                    });
-                    ConfigureHangfire(connectionString, services);
-                }
-
+                    options.UseNpgsql(connectionString);
+                });
+                ConfigureHangfire(connectionString, services);
+              
                 var context = new CustomAssemblyLoadContext();
                 context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox.dll"));
 

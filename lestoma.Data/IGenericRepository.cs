@@ -11,6 +11,5 @@ namespace lestoma.Data
         Task Update(T entidad);
         Task Delete(T entidad);
         Task<IEnumerable<T>> GetAll();
-        Task Merge(List<T> ListadoEntidad);
     }
 }
