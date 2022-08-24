@@ -18,8 +18,8 @@ namespace lestoma.Api.Controllers
     public class ComponenteController : BaseController
     {
         private readonly IComponenteService _componentService;
-        public ComponenteController(IMapper mapper, IComponenteService componenteService, IDataProtectionProvider protectorProvider)
-            : base(mapper, protectorProvider)
+        public ComponenteController(IMapper mapper, IComponenteService componenteService)
+            : base(mapper)
         {
             _componentService = componenteService;
 

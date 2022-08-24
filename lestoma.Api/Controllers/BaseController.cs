@@ -23,12 +23,15 @@ namespace lestoma.Api.Controllers
         protected readonly IMapper _mapper;
         protected readonly IDataProtector _protector;
         public Response Respuesta { get; set; } = new Response();
+        public BaseController(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
         public BaseController(IMapper mapper, IDataProtectionProvider protectorProvider)
         {
             _mapper = mapper;
             _protector = protectorProvider.CreateProtector(Constants.PROTECT_USER);
         }
-
         #region GET Ip
         protected string IpAddress()
         {

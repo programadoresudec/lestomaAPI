@@ -17,8 +17,8 @@ namespace lestoma.Api.Controllers
     {
         private readonly IReporteService _reporteService;
         #region Constructor
-        public ReportesController(IMapper mapper, IReporteService reporteService, IDataProtectionProvider protectorProvider)
-            : base(mapper, protectorProvider)
+        public ReportesController(IMapper mapper, IReporteService reporteService)
+            : base(mapper)
         {
             _reporteService = reporteService;
         }

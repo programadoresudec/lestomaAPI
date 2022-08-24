@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+﻿using lestoma.CommonUtils.MyException;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -28,6 +30,10 @@ namespace lestoma.CommonUtils.Helpers
 
         public static bool CheckHash(string attemptedPassword, string hash, string salt)
         {
+            if (string.IsNullOrWhiteSpace(attemptedPassword) || string.IsNullOrWhiteSpace(hash) || string.IsNullOrWhiteSpace(salt))
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "se encontraron campos vacios en la clave actual, hash-clave y salt");
+
+
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                  password: attemptedPassword,
                  salt: Convert.FromBase64String(salt),
@@ -39,6 +45,8 @@ namespace lestoma.CommonUtils.Helpers
 
         public static byte[] GetHash(string password, string salt)
         {
+            if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(salt))
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "se encontraron campos vacios en la clave y en la salt");
             byte[] unhashedBytes = Encoding.Unicode.GetBytes(string.Concat(salt, password));
             SHA256Managed sha256 = new SHA256Managed();
             byte[] hashedBytes = sha256.ComputeHash(unhashedBytes);

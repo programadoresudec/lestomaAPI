@@ -20,9 +20,8 @@ namespace lestoma.Api.Controllers
         private readonly IAlmacenadorArchivos _almacenadorArchivos;
         private readonly IBuzonService _buzonService;
         private readonly string contenedor = "ReportesDelBuzon";
-        public ReportsMailboxController(IMapper mapper, IAlmacenadorArchivos almacenadorArchivos, IBuzonService buzonService,
-            IDataProtectionProvider protectorProvider)
-            : base(mapper, protectorProvider)
+        public ReportsMailboxController(IMapper mapper, IAlmacenadorArchivos almacenadorArchivos, IBuzonService buzonService)
+            : base(mapper)
         {
 
             _buzonService = buzonService;

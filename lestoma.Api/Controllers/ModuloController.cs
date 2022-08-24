@@ -21,8 +21,8 @@ namespace lestoma.Api.Controllers
     public class ModuloController : BaseController
     {
         private readonly IModuloService _moduloService;
-        public ModuloController(IMapper mapper, IModuloService moduloService, IDataProtectionProvider protectorProvider)
-            : base(mapper, protectorProvider)
+        public ModuloController(IMapper mapper, IModuloService moduloService)
+            : base(mapper)
         {
             _moduloService = moduloService;
         }

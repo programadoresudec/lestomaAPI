@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\lestoma.CommonUtils\lestoma.CommonUtils.csproj" />
     <ProjectReference Include="..\lestoma.CRC\lestoma.CRC.csproj" />
     <ProjectReference Include="..\lestoma.Data\lestoma.Data.csproj" />
     <ProjectReference Include="..\lestoma.Logica\lestoma.Logica.csproj" />

@@ -2,15 +2,12 @@
 using Hangfire;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
-using lestoma.Data;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -18,6 +15,7 @@ using System.Threading.Tasks;
 namespace lestoma.Api.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class LaboratorioController : BaseController
     {

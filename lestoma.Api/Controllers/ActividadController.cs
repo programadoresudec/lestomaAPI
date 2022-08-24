@@ -21,8 +21,8 @@ namespace lestoma.Api.Controllers
     public class ActividadController : BaseController
     {
         private readonly IActividadService _actividadService;
-        public ActividadController(IMapper mapper, IActividadService actividadService, IDataProtectionProvider protectorProvider)
-            : base(mapper, protectorProvider)
+        public ActividadController(IMapper mapper, IActividadService actividadService)
+            : base(mapper)
         {
             _actividadService = actividadService;
         }

@@ -59,6 +59,7 @@ namespace lestoma.Logica.LogicaService
                     _respuesta.Mensaje = "Ha iniciado satisfactoriamente.";
                     var refreshToken = generateRefreshToken(login.TipoAplicacion, user.Id, ip);
                     user.RefreshToken = refreshToken.Token;
+
                     user.UpaId = upaId;
                     _respuesta.Data = user;
                     user.RefreshTokens.Add(refreshToken);

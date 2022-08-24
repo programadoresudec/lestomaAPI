@@ -20,8 +20,8 @@ namespace lestoma.Api.Controllers
     {
         private readonly IUsuarioService _service;
 
-        public UsuarioController(IUsuarioService usuarioService, IMapper mapper, IDataProtectionProvider protectorProvider)
-            : base(mapper, protectorProvider)
+        public UsuarioController(IUsuarioService usuarioService, IMapper mapper)
+            : base(mapper)
         {
             _service = usuarioService;
         }
