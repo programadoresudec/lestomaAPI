@@ -4,7 +4,7 @@ using System.Text;
 
 namespace lestoma.CommonUtils.DTOs
 {
-    public class ComponentesDTO : AuditoriaDTO
+    public class ComponenteDTO : AuditoriaDTO
     {
         public Guid Id { get; set; }
 

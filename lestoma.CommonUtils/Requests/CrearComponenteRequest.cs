@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace lestoma.CommonUtils.Requests
 {
-    public class CrearComponenteRequest : IId
+    public class CreateOrEditComponenteRequest : IId
     {
         [Required]
         public string Nombre { get; set; }

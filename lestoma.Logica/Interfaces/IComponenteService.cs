@@ -11,6 +11,7 @@ namespace lestoma.Logica.Interfaces
     public interface IComponenteService : IGenericCRUD<EComponenteLaboratorio, Guid>
     {
         List<NameDTO> GetComponentesJustNames();
+        IQueryable<ListadoComponenteDTO> GetAllFilter(Guid upaId);
     }
 
 }

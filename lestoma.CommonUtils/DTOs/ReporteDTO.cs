@@ -1,4 +1,4 @@
-﻿using lestoma.CommonUtils.Requests;
+﻿using lestoma.CommonUtils.Requests.Filters;
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +8,7 @@ namespace lestoma.CommonUtils.DTOs
     {
         public string UserGenerator { get; set; }
         public List<ReportInfo> Reporte { get; set; }
-        public FilterDateRequest FiltroFecha { get; set; }
+        public DateFilterRequest FiltroFecha { get; set; }
     }
 
     public class ReportInfo

@@ -1,7 +1,7 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.MyException;
-using lestoma.CommonUtils.Requests;
+using lestoma.CommonUtils.Requests.Filters;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace lestoma.Data.Repositories
                     && x.EstadoId == (int)TipoEstadoUsuario.Activado).Select(x => x.Email).ToListAsync();
         }
 
-        public async Task<ReporteDTO> DailyReport(FilterDateRequest filtro)
+        public async Task<ReporteDTO> DailyReport(DateFilterRequest filtro)
         {
             ReporteDTO reporteDTO = new ReporteDTO();
             try
@@ -54,7 +54,7 @@ namespace lestoma.Data.Repositories
             return reporteDTO;
         }
 
-        public async Task<ReporteDTO> ReportByDate(FilterReportRequest reporte)
+        public async Task<ReporteDTO> ReportByDate(ReportFilterRequest reporte)
         {
             ReporteDTO reporteDTO = new ReporteDTO();
             try
@@ -86,7 +86,7 @@ namespace lestoma.Data.Repositories
             return reporteDTO;
         }
 
-        public async Task<ReporteDTO> ReportByComponents(FilterReportComponentRequest reporte)
+        public async Task<ReporteDTO> ReportByComponents(ReportComponentFilterRequest reporte)
         {
             ReporteDTO reporteDTO = new ReporteDTO();
             try

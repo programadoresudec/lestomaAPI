@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Hangfire;
 using lestoma.CommonUtils.DTOs;
-using lestoma.CommonUtils.Requests;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +26,7 @@ namespace lestoma.Api.Controllers
 
 
         [HttpPost("daily")]
-        public IActionResult ReportDaily([FromBody] FilterReportDailyRequest filtro)
+        public IActionResult ReportDaily([FromBody] ReportDailyFilterRequest filtro)
         {
             RecurringJob.AddOrUpdate<IReporteService>("Enviar-reporte-diario", servicio => servicio.DailyReport(),
                 Cron.Daily(filtro.Hour, filtro.Minute), TimeZoneInfo.Local);
@@ -41,7 +41,7 @@ namespace lestoma.Api.Controllers
 
 
         [HttpPost("by-date")]
-        public async Task<IActionResult> ReportByDate([FromBody] FilterReportRequest filtro)
+        public async Task<IActionResult> ReportByDate([FromBody] ReportFilterRequest filtro)
         {
             var isSuper = IsSuperAdmin();
             if (!isSuper)
@@ -55,7 +55,7 @@ namespace lestoma.Api.Controllers
 
 
         [HttpPost("by-components")]
-        public async Task<IActionResult> ReportByComponents([FromBody] FilterReportComponentRequest filtro)
+        public async Task<IActionResult> ReportByComponents([FromBody] ReportComponentFilterRequest filtro)
         {
             var isSuper = IsSuperAdmin();
             if (!isSuper)

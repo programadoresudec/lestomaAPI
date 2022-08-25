@@ -4,16 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace lestoma.CommonUtils.Requests
+namespace lestoma.CommonUtils.Requests.Filters
 {
-    public class FilterReportDailyRequest
+    public class ReportDailyFilterRequest
     {
         [Range(0, 23, ErrorMessage = "La hora tiene que estar entre {1} - {2}.")]
         public int Hour { get; set; }
         [Range(0, 59, ErrorMessage = "Los minutos tiene que estar entre {1} - {2}.")]
         public int Minute { get; set; }
     }
-    public class FilterReportRequest
+    public class ReportFilterRequest
     {
         [Required(ErrorMessage = "Fecha fnicial requerida.")]
         [FromNow]
@@ -26,15 +26,15 @@ namespace lestoma.CommonUtils.Requests
         [EnumValidateExists(typeof(GrupoTipoArchivo))]
         public GrupoTipoArchivo TipoFormato { get; set; }
     }
-    public class FilterDateRequest
+    public class DateFilterRequest
     {
         public DateTime FechaInicial { get; set; }
         public DateTime FechaFinal { get; set; }
     }
 
-    public class FilterReportComponentRequest
+    public class ReportComponentFilterRequest
     {
-        public FilterReportRequest Filtro { get; set; }
+        public ReportFilterRequest Filtro { get; set; }
         public List<Guid> ComponentesId { get; set; }
     }
 }

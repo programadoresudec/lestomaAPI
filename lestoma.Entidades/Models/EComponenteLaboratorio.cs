@@ -21,6 +21,7 @@ namespace lestoma.Entidades.Models
         [Column("descripcion_estado", TypeName = "jsonb")]
         public string JsonEstadoComponente { get; set; }
         public EUpa Upa { get; set; }
+        public EActividad Actividad { get; set; }
         public EModuloComponente ModuloComponente { get; set; }
     }
 }

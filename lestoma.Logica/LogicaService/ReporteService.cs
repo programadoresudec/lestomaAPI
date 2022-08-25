@@ -2,7 +2,7 @@
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
-using lestoma.CommonUtils.Requests;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Data.Repositories;
 using lestoma.Logica.Interfaces;
 using System;
@@ -32,7 +32,7 @@ namespace lestoma.Logica.LogicaService
         }
         public async Task<Response> DailyReport()
         {
-            var filtro = new FilterDateRequest
+            var filtro = new DateFilterRequest
             {
                 FechaInicial = DateTime.Now.Date
             };
@@ -46,7 +46,7 @@ namespace lestoma.Logica.LogicaService
             return await GenerateDailyReport(listado);
         }
 
-        public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByComponents(FilterReportComponentRequest filtro,
+        public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByComponents(ReportComponentFilterRequest filtro,
             bool isSuperAdmin)
         {
             await ExistUpa(filtro.Filtro.UpaId);
@@ -68,7 +68,7 @@ namespace lestoma.Logica.LogicaService
             var file = GetFile(filtro.Filtro.TipoFormato);
             return (bytes, file.MIME, file.FILENAME);
         }
-        public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByDate(FilterReportRequest filtro, bool isSuperAdmin)
+        public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByDate(ReportFilterRequest filtro, bool isSuperAdmin)
         {
             await ExistUpa(filtro.UpaId);
             var listado = await _repositorio.ReportByDate(filtro);
@@ -76,7 +76,7 @@ namespace lestoma.Logica.LogicaService
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
             }
-            listado.FiltroFecha = new FilterDateRequest()
+            listado.FiltroFecha = new DateFilterRequest()
             {
                 FechaInicial = filtro.FechaInicial,
                 FechaFinal = filtro.FechaFinal

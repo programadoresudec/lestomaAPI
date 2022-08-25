@@ -1,4 +1,6 @@
-﻿namespace lestoma.CommonUtils.Helpers
+﻿using System;
+
+namespace lestoma.CommonUtils.Helpers
 {
     public class Paginacion
     {

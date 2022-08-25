@@ -111,6 +111,16 @@ namespace lestoma.Logica.LogicaService
             }
             return listado;
         }
+
+        public IQueryable<ListadoComponenteDTO> GetAllFilter(Guid upaId)
+        {
+            var listado = _componenteRepo.GetAllFilter(upaId);
+            if (!listado.Any())
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
+            }
+            return listado;
+        }
     }
 
 

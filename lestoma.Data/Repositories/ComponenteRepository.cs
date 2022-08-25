@@ -17,20 +17,20 @@ namespace lestoma.Data.Repositories
         {
             _db = db;
         }
-        public async Task<bool> ExisteComp(string nombre, Guid id, bool insertOrUpdate = false)
+        public async Task<bool> ExisteComponente(string nombre, Guid id, bool insertOrUpdate = false)
         {
             if (!insertOrUpdate)
             {
-                return await _db.TablaComponentesLaboratorio.AnyAsync(x => x.NombreComponente.ToLower().Equals(nombre.ToLower()));
+                return await _dbSet.AnyAsync(x => x.NombreComponente.ToLower().Equals(nombre.ToLower()));
 
             }
             else
             {
-                return await _db.TablaComponentesLaboratorio.AnyAsync(x => x.NombreComponente.ToLower().Equals(nombre.ToLower()) && x.Id != id);
+                return await _dbSet.AnyAsync(x => x.NombreComponente.ToLower().Equals(nombre.ToLower()) && x.Id != id);
 
             }
         }
-        
+
         public async Task<ESuperAdministrador> GetSuperAdmin()
         {
             var user = await _db.TablaUsuarios.FirstOrDefaultAsync(x => x.RolId == (int)TipoRol.SuperAdministrador);
@@ -43,7 +43,7 @@ namespace lestoma.Data.Repositories
 
         public List<NameDTO> GetComponentesJustNames()
         {
-            var comp = _db.TablaComponentesLaboratorio.FromSqlRaw("SELECT id, nombre FROM laboratorio_lestoma.componente_laboratorio").OrderBy(x => x.NombreComponente);
+            var comp = _dbSet.FromSqlRaw("SELECT id, nombre FROM laboratorio_lestoma.componente_laboratorio").OrderBy(x => x.NombreComponente);
             var query = comp.Select(x => new NameDTO
             {
                 Id = x.Id,
@@ -54,6 +54,29 @@ namespace lestoma.Data.Repositories
 
         }
 
+        public IQueryable<ListadoComponenteDTO> GetAllFilter(Guid upaId)
+        {
+            var query = _dbSet.AsNoTracking();
+            if (upaId != Guid.Empty)
+            {
+                query = query.Where(x => x.UpaId == upaId);
+            }
+
+            var listado = query.Select(x => new ListadoComponenteDTO
+            {
+                Actividad = x.Actividad.Nombre,
+                Nombre = x.NombreComponente,
+                FechaCreacionServer = x.FechaCreacionServer,
+                Modulo = x.ModuloComponente.Nombre,
+                Ip = x.Ip,
+                Session = x.Session,
+                Id = x.Id,
+                JsonEstadoComponente = x.JsonEstadoComponente,
+                TipoDeAplicacion = x.TipoDeAplicacion,
+                Upa = x.Upa.Nombre
+            });
+            return listado;
+        }
     }
 }
 

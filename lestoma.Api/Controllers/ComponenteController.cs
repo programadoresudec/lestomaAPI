@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
+using lestoma.CommonUtils.Requests;
+using lestoma.CommonUtils.Requests.Filters;
+using lestoma.Entidades.Models;
+using lestoma.Logica.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using lestoma.Logica.Interfaces;
-using AutoMapper;
-using lestoma.CommonUtils.Helpers;
-using lestoma.Entidades.Models;
-using lestoma.CommonUtils.DTOs;
-using lestoma.CommonUtils.Requests;
-using Microsoft.AspNetCore.DataProtection;
 
 namespace lestoma.Api.Controllers
 {
@@ -25,21 +25,21 @@ namespace lestoma.Api.Controllers
 
         }
         [HttpGet("paginar")]
-        public async Task<IActionResult> GetCompPag([FromQuery] Paginacion pag)
+        public async Task<IActionResult> GetAllFilter([FromQuery] ComponentFilterRequest filtro)
         {
-            var query = _componentService.GetAllForPagination();
-            var list = await GetPaginacion<EComponenteLaboratorio, ComponentesDTO>(pag, query);
-            var paginador = Paginador<ComponentesDTO>.CrearPaginador(query.Count(), list, pag);
-            return Ok(pag);
+            var upaId = UpaId();
+            if (upaId != Guid.Empty)
+            {
+                filtro.UpaId = upaId;
+            }
+            var queryable = _componentService.GetAllFilter(filtro.UpaId);
+            var listado = await queryable.Paginar(filtro.Paginacion).ToListAsync();
+            var paginador = Paginador<ListadoComponenteDTO>.CrearPaginador(queryable.Count(), listado, filtro.Paginacion);
+            return Ok(paginador);
         }
-        [HttpGet("listado")]
-        public async Task<IActionResult> GetComponente()
-        {
-            var query = await _componentService.GetAll();
-            var comp = Mapear<List<EComponenteLaboratorio>, List<ComponentesDTO>>(query.ToList());
-            return Ok(comp);
-        }
-        [HttpGet("listado-nombres")]
+
+
+        [HttpGet("list-by-nombre")]
         public IActionResult GetComponentesNombres()
         {
             var query = _componentService.GetComponentesJustNames();
@@ -49,26 +49,26 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> GetComponente(Guid id)
         {
             var response = await _componentService.GetById(id);
-            var compDTOSalida = Mapear<EComponenteLaboratorio, CrearComponenteRequest>((EComponenteLaboratorio)response.Data);
+            var compDTOSalida = Mapear<EComponenteLaboratorio, CreateOrEditComponenteRequest>((EComponenteLaboratorio)response.Data);
             response.Data = compDTOSalida;
             return Ok(response);
         }
 
         [HttpPost("crear")]
 
-        public async Task<IActionResult> CrearComponente(CrearComponenteRequest comp)
+        public async Task<IActionResult> CrearComponente(CreateOrEditComponenteRequest comp)
         {
-            var compDTO = Mapear<CrearComponenteRequest, EComponenteLaboratorio>(comp);
+            var compDTO = Mapear<CreateOrEditComponenteRequest, EComponenteLaboratorio>(comp);
             var response = await _componentService.Create(compDTO);
             return Ok(response);
         }
         [HttpPut("editar")]
 
-        public async Task<IActionResult> EditarComponente(CrearComponenteRequest comp)
+        public async Task<IActionResult> EditarComponente(CreateOrEditComponenteRequest comp)
         {
-            var compDTO = Mapear<CrearComponenteRequest, EComponenteLaboratorio>(comp);
+            var compDTO = Mapear<CreateOrEditComponenteRequest, EComponenteLaboratorio>(comp);
             var response = await _componentService.Update(compDTO);
-            var comDTOSalida = Mapear<EComponenteLaboratorio, CrearComponenteRequest>((EComponenteLaboratorio)response.Data);
+            var comDTOSalida = Mapear<EComponenteLaboratorio, CreateOrEditComponenteRequest>((EComponenteLaboratorio)response.Data);
             response.Data = comDTOSalida;
             return Ok(response);
         }
@@ -81,4 +81,4 @@ namespace lestoma.Api.Controllers
     }
 
 
- }
+}

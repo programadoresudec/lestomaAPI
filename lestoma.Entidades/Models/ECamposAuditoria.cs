@@ -12,6 +12,6 @@ namespace lestoma.Entidades.Models
         [Column("tipo_de_aplicacion")]
         public string TipoDeAplicacion { get; set; }
         [Column("fecha_creacion_server")]
-        public DateTime? FechaCreacionServer { get; set; }
+        public DateTime FechaCreacionServer { get; set; }
     }
 }
