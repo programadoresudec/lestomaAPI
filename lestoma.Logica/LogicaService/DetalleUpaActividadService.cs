@@ -1,5 +1,6 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.MyException;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
@@ -56,13 +57,11 @@ namespace lestoma.Logica.LogicaService
             return await _upasActividadesRepository.GetAll();
         }
 
-        public IQueryable<EUpaActividad> GetAllForPagination()
+        public IQueryable<DetalleUpaActividadDTO> GetAllForPagination()
         {
             var query = _upasActividadesRepository.GetAllRelation();
             if (!query.Any())
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay actividades.");
-            }
+                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay detalles.");
             return query;
         }
 
@@ -70,5 +69,12 @@ namespace lestoma.Logica.LogicaService
         {
             return await _upasActividadesRepository.GetUpasByUserId(UserId);
         }
+
+        public async Task<List<NameDTO>> GetActivitiesByUpaUserId(UpaUserFilterRequest filtro)
+        {
+            return await _upasActividadesRepository.GetActivitiesByUpaUserId(filtro);
+        }
+
+
     }
 }

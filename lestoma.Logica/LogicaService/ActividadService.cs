@@ -125,9 +125,6 @@ namespace lestoma.Logica.LogicaService
             };
         }
 
-        public async Task<List<NameDTO>> GetActivitiesByUpaId(Guid upaId)
-        {
-           return  await _actividadRepository.GetActivitiesByUpaId(upaId);
-        }
+  
     }
 }

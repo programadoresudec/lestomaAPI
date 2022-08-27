@@ -39,15 +39,5 @@ namespace lestoma.Data.Repositories
             }).ToList();
             return query;
         }
-
-        public async Task<List<NameDTO>> GetActivitiesByUpaId(Guid upaId)
-        {
-            var query = await _db.TablaUpasConActividades.Include(x => x.Actividad).Where(x => x.UpaId == upaId).Select(x => new NameDTO
-            {
-                Id = x.ActividadId,
-                Nombre = x.Actividad.Nombre
-            }).ToListAsync();
-            return query;
-        }
     }
 }

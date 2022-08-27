@@ -385,32 +385,23 @@ namespace lestoma.Data
                 Session = usersession,
                 TipoDeAplicacion = aplicacion
             };
-            var detalle1UserAuxiliar2 = new EUpaActividad()
+            var detalle2UserAuxiliar = new EUpaActividad()
             {
                 UpaId = upa1.Id,
                 ActividadId = alimentacionPeces.Id,
-                UsuarioId = auxiliar2.Id,
+                UsuarioId = auxiliar1.Id,
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
                 Session = usersession,
                 TipoDeAplicacion = aplicacion
             };
 
-            var detalle2_1 = new EUpaActividad()
+
+            var detalle1UserAuxiliar2 = new EUpaActividad()
             {
                 UpaId = upa2.Id,
                 ActividadId = controlAgua.Id,
-                UsuarioId = administrador.Id,
-                FechaCreacionServer = DateTime.Now,
-                Ip = ip,
-                Session = usersession,
-                TipoDeAplicacion = aplicacion
-            };
-            var detalle2UserAuxiliar1 = new EUpaActividad()
-            {
-                UpaId = upa2.Id,
-                ActividadId = controlAgua.Id,
-                UsuarioId = auxiliar1.Id,
+                UsuarioId = auxiliar2.Id,
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
                 Session = usersession,
@@ -419,7 +410,7 @@ namespace lestoma.Data
             var detalle2UserAuxiliar2 = new EUpaActividad()
             {
                 UpaId = upa2.Id,
-                ActividadId = controlAgua.Id,
+                ActividadId = alimentacionPeces.Id,
                 UsuarioId = auxiliar2.Id,
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
@@ -427,11 +418,10 @@ namespace lestoma.Data
                 TipoDeAplicacion = aplicacion
             };
 
-
             modelBuilder.Entity<EUpaActividad>()
                 .HasData(new List<EUpaActividad>
                 {
-                    detalle1_1,detalle1_2,detalle1UserAuxiliar,detalle1UserAuxiliar2,detalle2_1,detalle2UserAuxiliar1,detalle2UserAuxiliar2
+                    detalle1_1,detalle1_2,detalle1UserAuxiliar,detalle2UserAuxiliar,detalle1UserAuxiliar2,detalle2UserAuxiliar2
                 });
             #endregion
 

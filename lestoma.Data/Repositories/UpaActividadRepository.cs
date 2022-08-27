@@ -1,5 +1,6 @@
-﻿using lestoma.CommonUtils.MyException;
-using lestoma.CommonUtils.Requests;
+﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.MyException;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -66,37 +67,47 @@ namespace lestoma.Data.Repositories
                 }
             }
         }
-
-
-        public IQueryable<EUpaActividad> GetAllRelation()
+        public IQueryable<DetalleUpaActividadDTO> GetAllRelation()
         {
-            var listaAgrupada = _db.TablaUpasConActividades.Include(a => a.Actividad).GroupBy(p => new { p.UsuarioId, p.UpaId });
 
-            //var listaAgrupada = (await _db.TablaUpasConActividades.Include(a => a.Actividad).ToListAsync())
-            //    .GroupBy(p => new { p.UsuarioId, p.UpaId });
+            string consulta = $@"SELECT upa_id, usuario_id,u.nombre_upa, u.cantidad_actividades, us.nombre, 
+                                us.apellido, max(ua.fecha_creacion_server) as fecha_creacion_server,
+                                max(ua.session) as session,max(ua.ip) as ip,max(ua.tipo_de_aplicacion) as tipo_de_aplicacion 
+                                FROM superadmin.upa_actividad ua
+                                INNER JOIN superadmin.upa u on u.id = ua.upa_id
+                                INNER JOIN usuarios.usuario us on us.id = ua.usuario_id
+                                group by upa_id, usuario_id,u.nombre_upa, us.nombre, us.apellido, u.cantidad_actividades";
 
-            if (listaAgrupada.Count() == 0)
+            var listado = _db.TablaUpasConActividades.FromSqlRaw(consulta);
+
+            if (listado.Count() == 0)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
             }
-            var query = listaAgrupada.Select(x => new EUpaActividad
+
+            var query = listado.Select(x => new DetalleUpaActividadDTO
             {
-                UpaId = x.Key.UpaId,
-                UsuarioId = x.Key.UsuarioId,
-                Upa = _db.TablaUpas.Find(x.Key.UpaId),
-                FechaCreacionServer = x.Select(f => f.FechaCreacionServer).FirstOrDefault(),
-                Ip = x.Select(i => i.Ip).FirstOrDefault(),
-                Session = x.Select(s => s.Session).FirstOrDefault(),
-                TipoDeAplicacion = x.Select(a => a.TipoDeAplicacion).FirstOrDefault(),
-                Usuario = _db.TablaUsuarios.Include(r => r.Rol).FirstOrDefault(u => u.Id == x.Key.UsuarioId),
-                Actividades = x.ToList().Select(y => new ActividadRequest
+                UsuarioId = x.UsuarioId,
+                UpaId = x.UpaId,
+                User = new InfoUser
                 {
-                    Nombre = y.Actividad.Nombre,
-                    Id = y.Actividad.Id
-                }).ToList()
+                    Nombre = x.Usuario.Nombre,
+                    Apellido = x.Usuario.Apellido
+                },
+                Upa = new InfoUpa
+                {
+                    CantidadActividades = x.Upa.CantidadActividades,
+                    Nombre = x.Upa.Nombre
+                },
+                TipoDeAplicacion = x.TipoDeAplicacion,
+                FechaCreacionServer = x.FechaCreacionServer,
+                Ip = x.Ip,
+                Session = x.Session
             });
             return query;
         }
+
+
 
         public async Task<Guid> GetUpasByUserId(int id)
         {
@@ -108,6 +119,17 @@ namespace lestoma.Data.Repositories
         {
             return await _db.TablaUpasConActividades.Include(x => x.Actividad)
                 .Where(x => x.UsuarioId == id && x.UpaId == UpaId).Select(x => x.Actividad.Nombre).ToListAsync();
+        }
+
+        public async Task<List<NameDTO>> GetActivitiesByUpaUserId(UpaUserFilterRequest filtro)
+        {
+            var query = await _db.TablaUpasConActividades.Include(x => x.Actividad).Where(x => x.UpaId == filtro.UpaId && x.UsuarioId == filtro.UsuarioId)
+                .Select(x => new NameDTO
+                {
+                    Id = x.ActividadId,
+                    Nombre = x.Actividad.Nombre
+                }).ToListAsync();
+            return query;
         }
     }
 }

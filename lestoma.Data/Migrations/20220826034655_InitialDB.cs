@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace lestoma.Data.Migrations
 {
-    public partial class FirstData : Migration
+    public partial class InitialDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -33,7 +33,7 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -105,7 +105,7 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -196,7 +196,7 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -275,7 +275,7 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -301,7 +301,7 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -336,11 +336,18 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_componente_laboratorio", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_componente_laboratorio_actividad_actividad_id",
+                        column: x => x.actividad_id,
+                        principalSchema: "superadmin",
+                        principalTable: "actividad",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_componente_laboratorio_modulo_componente_modulo_componente_~",
                         column: x => x.modulo_componente_id,
@@ -350,6 +357,38 @@ namespace lestoma.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_componente_laboratorio_upa_upa_id",
+                        column: x => x.upa_id,
+                        principalSchema: "superadmin",
+                        principalTable: "upa",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "upa_actividad",
+                schema: "superadmin",
+                columns: table => new
+                {
+                    upa_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    actividad_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    usuario_id = table.Column<int>(type: "integer", nullable: false),
+                    ip = table.Column<string>(type: "text", nullable: true),
+                    session = table.Column<string>(type: "text", nullable: true),
+                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_upa_actividad", x => new { x.upa_id, x.actividad_id, x.usuario_id });
+                    table.ForeignKey(
+                        name: "FK_upa_actividad_actividad_actividad_id",
+                        column: x => x.actividad_id,
+                        principalSchema: "superadmin",
+                        principalTable: "actividad",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_upa_actividad_upa_upa_id",
                         column: x => x.upa_id,
                         principalSchema: "superadmin",
                         principalTable: "upa",
@@ -387,45 +426,6 @@ namespace lestoma.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "upa_actividad",
-                schema: "superadmin",
-                columns: table => new
-                {
-                    upa_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    actividad_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    usuario_id = table.Column<int>(type: "integer", nullable: false),
-                    ip = table.Column<string>(type: "text", nullable: true),
-                    session = table.Column<string>(type: "text", nullable: true),
-                    tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_upa_actividad", x => new { x.upa_id, x.actividad_id, x.usuario_id });
-                    table.ForeignKey(
-                        name: "FK_upa_actividad_actividad_actividad_id",
-                        column: x => x.actividad_id,
-                        principalSchema: "superadmin",
-                        principalTable: "actividad",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_upa_actividad_upa_upa_id",
-                        column: x => x.upa_id,
-                        principalSchema: "superadmin",
-                        principalTable: "upa",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_upa_actividad_usuario_usuario_id",
-                        column: x => x.usuario_id,
-                        principalSchema: "usuarios",
-                        principalTable: "usuario",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "detalle_laboratorio",
                 schema: "laboratorio_lestoma",
                 columns: table => new
@@ -440,7 +440,7 @@ namespace lestoma.Data.Migrations
                     ip = table.Column<string>(type: "text", nullable: true),
                     session = table.Column<string>(type: "text", nullable: true),
                     tipo_de_aplicacion = table.Column<string>(type: "text", nullable: true),
-                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    fecha_creacion_server = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -467,8 +467,8 @@ namespace lestoma.Data.Migrations
                 columns: new[] { "id", "fecha_creacion_server", "ip", "nombre_modulo", "session", "tipo_de_aplicacion" },
                 values: new object[,]
                 {
-                    { new Guid("68d80433-a30f-46a8-9751-fa66a4df652f"), new DateTime(2022, 8, 6, 22, 15, 21, 562, DateTimeKind.Local).AddTicks(2401), "172.25.224.1", "ACTUADORES", "Anonimo", "Local" },
-                    { new Guid("78049990-d5ba-481f-aa21-d23b444ad918"), new DateTime(2022, 8, 6, 22, 15, 21, 564, DateTimeKind.Local).AddTicks(7896), "172.25.224.1", "SENSORES", "Anonimo", "Local" }
+                    { new Guid("0ae66223-7d06-4578-b740-352912786240"), new DateTime(2022, 8, 25, 22, 46, 54, 576, DateTimeKind.Local).AddTicks(6321), "192.168.1.6", "ACTUADORES", "Anonimo", "Local" },
+                    { new Guid("a1a443dd-4d80-4171-a5b7-aed140787af7"), new DateTime(2022, 8, 25, 22, 46, 54, 578, DateTimeKind.Local).AddTicks(2722), "192.168.1.6", "SENSORES", "Anonimo", "Local" }
                 });
 
             migrationBuilder.InsertData(
@@ -497,8 +497,8 @@ namespace lestoma.Data.Migrations
                 columns: new[] { "id", "fecha_creacion_server", "ip", "nombre_actividad", "session", "tipo_de_aplicacion" },
                 values: new object[,]
                 {
-                    { new Guid("bf984295-6d23-42f9-a790-d567b540ccaf"), new DateTime(2022, 8, 6, 22, 15, 21, 601, DateTimeKind.Local).AddTicks(8022), "172.25.224.1", "control de agua", "Anonimo", "Local" },
-                    { new Guid("be63bec7-8971-48b7-8385-7aab75c8b01d"), new DateTime(2022, 8, 6, 22, 15, 21, 601, DateTimeKind.Local).AddTicks(8047), "172.25.224.1", "alimentacion de peces", "Anonimo", "Local" }
+                    { new Guid("240106f0-6882-4324-8fe1-f9e2e3bf739b"), new DateTime(2022, 8, 25, 22, 46, 54, 606, DateTimeKind.Local).AddTicks(3977), "192.168.1.6", "control de agua", "Anonimo", "Local" },
+                    { new Guid("eadfbf7a-9dcb-478d-88bd-26355878b8a7"), new DateTime(2022, 8, 25, 22, 46, 54, 606, DateTimeKind.Local).AddTicks(4002), "192.168.1.6", "alimentacion de peces", "Anonimo", "Local" }
                 });
 
             migrationBuilder.InsertData(
@@ -513,8 +513,8 @@ namespace lestoma.Data.Migrations
                 columns: new[] { "id", "cantidad_actividades", "descripcion", "fecha_creacion_server", "ip", "nombre_upa", "session", "superadmin_id", "tipo_de_aplicacion" },
                 values: new object[,]
                 {
-                    { new Guid("6e1cb560-1047-4f98-8e2f-e2e57c93f8ac"), (short)5, "queda ubicada en facatativá", new DateTime(2022, 8, 6, 22, 15, 21, 601, DateTimeKind.Local).AddTicks(5732), "172.25.224.1", "finca el vergel", "Anonimo", 1, "Local" },
-                    { new Guid("efb96939-d8d1-455d-9efd-bf345ba43732"), (short)2, "queda ubicada en la universidad cundinamarca extensión nfaca", new DateTime(2022, 8, 6, 22, 15, 21, 601, DateTimeKind.Local).AddTicks(5758), "172.25.224.1", "ucundinamarca", "Anonimo", 1, "Local" }
+                    { new Guid("fe089e47-6780-4f0f-8bca-f608e0cf740f"), (short)5, "queda ubicada en facatativá", new DateTime(2022, 8, 25, 22, 46, 54, 606, DateTimeKind.Local).AddTicks(1247), "192.168.1.6", "finca el vergel", "Anonimo", 1, "Local" },
+                    { new Guid("18f736ab-ce68-4d88-a0d1-ef05dcbc140f"), (short)2, "queda ubicada en la universidad cundinamarca extensión nfaca", new DateTime(2022, 8, 25, 22, 46, 54, 606, DateTimeKind.Local).AddTicks(1282), "192.168.1.6", "ucundinamarca", "Anonimo", 1, "Local" }
                 });
 
             migrationBuilder.InsertData(
@@ -546,34 +546,12 @@ namespace lestoma.Data.Migrations
                 columns: new[] { "id", "actividad_id", "fecha_creacion_server", "ip", "descripcion_estado", "modulo_componente_id", "nombre_componente", "session", "tipo_de_aplicacion", "upa_id" },
                 values: new object[,]
                 {
-                    { new Guid("49b17244-255e-4411-a2e4-1dc7211d922d"), new Guid("be63bec7-8971-48b7-8385-7aab75c8b01d"), new DateTime(2022, 8, 6, 22, 15, 21, 630, DateTimeKind.Local).AddTicks(928), "172.25.224.1", "{\"Id\":\"da39353a-e5c4-408a-a8f6-240bc15790f5\",\"TipoEstado\":\"ON-OFF\",\"TercerByteTrama\":\"F0\",\"CuartoByteTrama\":\"00\"}", new Guid("68d80433-a30f-46a8-9751-fa66a4df652f"), "BOMBA DE OXIGENO", "Anonimo", "Local", new Guid("6e1cb560-1047-4f98-8e2f-e2e57c93f8ac") },
-                    { new Guid("751ef5ec-cc5c-47d0-9fdc-058ce088e71d"), new Guid("be63bec7-8971-48b7-8385-7aab75c8b01d"), new DateTime(2022, 8, 6, 22, 15, 21, 630, DateTimeKind.Local).AddTicks(967), "172.25.224.1", "{\"Id\":\"da39353a-e5c4-408a-a8f6-240bc15790f5\",\"TipoEstado\":\"ON-OFF\",\"TercerByteTrama\":\"F0\",\"CuartoByteTrama\":\"00\"}", new Guid("68d80433-a30f-46a8-9751-fa66a4df652f"), "LUZ ESTANQUE", "Anonimo", "Local", new Guid("6e1cb560-1047-4f98-8e2f-e2e57c93f8ac") },
-                    { new Guid("6aa9f3fe-be72-48df-b327-a18c2c68e7c8"), new Guid("be63bec7-8971-48b7-8385-7aab75c8b01d"), new DateTime(2022, 8, 6, 22, 15, 21, 630, DateTimeKind.Local).AddTicks(993), "172.25.224.1", "{\"Id\":\"da39353a-e5c4-408a-a8f6-240bc15790f5\",\"TipoEstado\":\"ON-OFF\",\"TercerByteTrama\":\"F0\",\"CuartoByteTrama\":\"00\"}", new Guid("68d80433-a30f-46a8-9751-fa66a4df652f"), "DOSIFICADOR DE ALIMENTO", "Anonimo", "Local", new Guid("6e1cb560-1047-4f98-8e2f-e2e57c93f8ac") },
-                    { new Guid("cba16d2d-259b-407a-96a2-6a969e4a3532"), new Guid("bf984295-6d23-42f9-a790-d567b540ccaf"), new DateTime(2022, 8, 6, 22, 15, 21, 630, DateTimeKind.Local).AddTicks(998), "172.25.224.1", "{\"Id\":\"f7c21379-5977-4210-9651-fd5de7af4a5b\",\"TipoEstado\":\"LECTURA\",\"TercerByteTrama\":\"0F\",\"CuartoByteTrama\":\"00\"}", new Guid("78049990-d5ba-481f-aa21-d23b444ad918"), "TEMPERATURA H2O", "Anonimo", "Local", new Guid("6e1cb560-1047-4f98-8e2f-e2e57c93f8ac") },
-                    { new Guid("7a2b6285-f5dd-4c16-be40-4dbabd4246e3"), new Guid("bf984295-6d23-42f9-a790-d567b540ccaf"), new DateTime(2022, 8, 6, 22, 15, 21, 630, DateTimeKind.Local).AddTicks(1001), "172.25.224.1", "{\"Id\":\"f7c21379-5977-4210-9651-fd5de7af4a5b\",\"TipoEstado\":\"LECTURA\",\"TercerByteTrama\":\"0F\",\"CuartoByteTrama\":\"00\"}", new Guid("78049990-d5ba-481f-aa21-d23b444ad918"), "PH", "Anonimo", "Local", new Guid("6e1cb560-1047-4f98-8e2f-e2e57c93f8ac") },
-                    { new Guid("d62d15c6-f5a7-4b80-9054-9f2b035a48e9"), new Guid("bf984295-6d23-42f9-a790-d567b540ccaf"), new DateTime(2022, 8, 6, 22, 15, 21, 630, DateTimeKind.Local).AddTicks(1006), "172.25.224.1", "{\"Id\":\"f7c21379-5977-4210-9651-fd5de7af4a5b\",\"TipoEstado\":\"LECTURA\",\"TercerByteTrama\":\"0F\",\"CuartoByteTrama\":\"00\"}", new Guid("78049990-d5ba-481f-aa21-d23b444ad918"), "NIVEL TANQUE", "Anonimo", "Local", new Guid("6e1cb560-1047-4f98-8e2f-e2e57c93f8ac") }
-                });
-
-            migrationBuilder.InsertData(
-                schema: "usuarios",
-                table: "usuario",
-                columns: new[] { "id", "apellido", "clave", "codigo_recuperacion", "email", "estado_id", "fecha_creacion_server", "vencimiento_codigo_recuperacion", "ip", "nombre", "rol_id", "semilla", "session", "tipo_de_aplicacion" },
-                values: new object[,]
-                {
-                    { 1, "Lestoma", "3RVoU8PlKLRj1bgpxI1ippv6ZfGvfrUwVhLTLkCt/Xw=", null, "diegop177@hotmail.com", 2, new DateTime(2022, 8, 6, 22, 15, 21, 584, DateTimeKind.Local).AddTicks(6693), null, "172.25.224.1", "Super Admin", 1, "SfhvDub9d7Pm/3skIvAtiQ==", "Anonimo", "Local" },
-                    { 2, "Lestoma", "v4bDfOL0aR0xJZ98MwaDFBZo7ebyEbL33d9mykAMz1g=", null, "diegoarturo1598@hotmail.com", 2, new DateTime(2022, 8, 6, 22, 15, 21, 592, DateTimeKind.Local).AddTicks(7510), null, "172.25.224.1", "Administrador", 2, "bA6SLT8feXPi23ZCL3ygBA==", "Anonimo", "Local" },
-                    { 3, "Lestoma", "PNx6FbHdF+e8d/7j17B6Q0mhvKgNxJxPCOGCveXwO2k=", null, "programadoresuc@outlook.com", 2, new DateTime(2022, 8, 6, 22, 15, 21, 600, DateTimeKind.Local).AddTicks(7975), null, "172.25.224.1", "Auxiliar 1", 3, "DfxeXsg5YFHzTxmRTXGtzA==", "Anonimo", "Local" },
-                    { 4, "Lestoma", "PNx6FbHdF+e8d/7j17B6Q0mhvKgNxJxPCOGCveXwO2k=", null, "auxiliar2@gmail.com", 2, new DateTime(2022, 8, 6, 22, 15, 21, 600, DateTimeKind.Local).AddTicks(8002), null, "172.25.224.1", "Auxiliar 2", 3, "DfxeXsg5YFHzTxmRTXGtzA==", "Anonimo", "Local" }
-                });
-
-            migrationBuilder.InsertData(
-                schema: "laboratorio_lestoma",
-                table: "detalle_laboratorio",
-                columns: new[] { "id", "componente_laboratorio_id", "estado_internet", "fecha_creacion_dispositivo", "fecha_creacion_server", "ip", "session", "set_point", "tipo_de_aplicacion", "tipo_com_id", "trama_enviada" },
-                values: new object[,]
-                {
-                    { new Guid("94a97b5f-996c-41d5-b172-538b3efe9e32"), new Guid("49b17244-255e-4411-a2e4-1dc7211d922d"), true, new DateTime(2022, 8, 6, 22, 15, 21, 630, DateTimeKind.Local).AddTicks(4252), new DateTime(2022, 8, 6, 22, 15, 21, 630, DateTimeKind.Local).AddTicks(4239), "172.25.224.1", "Anonimo", null, "Local", 1, "4901F000000000006180" },
-                    { new Guid("0d2ce4e4-5ebb-4601-8972-b5fe6a4f5004"), new Guid("751ef5ec-cc5c-47d0-9fdc-058ce088e71d"), true, new DateTime(2022, 8, 6, 22, 15, 21, 630, DateTimeKind.Local).AddTicks(5967), new DateTime(2022, 8, 6, 22, 15, 21, 630, DateTimeKind.Local).AddTicks(5956), "172.25.224.1", "Anonimo", null, "Local", 2, "6F01F000000000005302" }
+                    { new Guid("5d371d35-f20d-4115-9efc-d549ede92ee0"), new Guid("eadfbf7a-9dcb-478d-88bd-26355878b8a7"), new DateTime(2022, 8, 25, 22, 46, 54, 625, DateTimeKind.Local).AddTicks(4516), "192.168.1.6", "{\"Id\":\"c1d0a88e-3a5f-41e2-a1c2-4e1a7de34d42\",\"TipoEstado\":\"ON-OFF\",\"TercerByteTrama\":\"F0\",\"CuartoByteTrama\":\"00\"}", new Guid("0ae66223-7d06-4578-b740-352912786240"), "BOMBA DE OXIGENO", "Anonimo", "Local", new Guid("fe089e47-6780-4f0f-8bca-f608e0cf740f") },
+                    { new Guid("6a89ec3e-61d7-4f61-a034-b89b43e457d5"), new Guid("eadfbf7a-9dcb-478d-88bd-26355878b8a7"), new DateTime(2022, 8, 25, 22, 46, 54, 625, DateTimeKind.Local).AddTicks(4568), "192.168.1.6", "{\"Id\":\"c1d0a88e-3a5f-41e2-a1c2-4e1a7de34d42\",\"TipoEstado\":\"ON-OFF\",\"TercerByteTrama\":\"F0\",\"CuartoByteTrama\":\"00\"}", new Guid("0ae66223-7d06-4578-b740-352912786240"), "LUZ ESTANQUE", "Anonimo", "Local", new Guid("fe089e47-6780-4f0f-8bca-f608e0cf740f") },
+                    { new Guid("7c381c30-80d5-4093-8c31-d9f71395aea6"), new Guid("eadfbf7a-9dcb-478d-88bd-26355878b8a7"), new DateTime(2022, 8, 25, 22, 46, 54, 625, DateTimeKind.Local).AddTicks(4574), "192.168.1.6", "{\"Id\":\"c1d0a88e-3a5f-41e2-a1c2-4e1a7de34d42\",\"TipoEstado\":\"ON-OFF\",\"TercerByteTrama\":\"F0\",\"CuartoByteTrama\":\"00\"}", new Guid("0ae66223-7d06-4578-b740-352912786240"), "DOSIFICADOR DE ALIMENTO", "Anonimo", "Local", new Guid("fe089e47-6780-4f0f-8bca-f608e0cf740f") },
+                    { new Guid("b13a7f2b-969e-4d1a-b786-a1dc47cc1423"), new Guid("240106f0-6882-4324-8fe1-f9e2e3bf739b"), new DateTime(2022, 8, 25, 22, 46, 54, 625, DateTimeKind.Local).AddTicks(4577), "192.168.1.6", "{\"Id\":\"e5af5e30-5683-4332-8015-48978a17b799\",\"TipoEstado\":\"LECTURA\",\"TercerByteTrama\":\"0F\",\"CuartoByteTrama\":\"00\"}", new Guid("a1a443dd-4d80-4171-a5b7-aed140787af7"), "TEMPERATURA H2O", "Anonimo", "Local", new Guid("fe089e47-6780-4f0f-8bca-f608e0cf740f") },
+                    { new Guid("06326ac6-c21d-4189-9e4a-9681425b00d4"), new Guid("240106f0-6882-4324-8fe1-f9e2e3bf739b"), new DateTime(2022, 8, 25, 22, 46, 54, 625, DateTimeKind.Local).AddTicks(4581), "192.168.1.6", "{\"Id\":\"e5af5e30-5683-4332-8015-48978a17b799\",\"TipoEstado\":\"LECTURA\",\"TercerByteTrama\":\"0F\",\"CuartoByteTrama\":\"00\"}", new Guid("a1a443dd-4d80-4171-a5b7-aed140787af7"), "PH", "Anonimo", "Local", new Guid("fe089e47-6780-4f0f-8bca-f608e0cf740f") },
+                    { new Guid("2155080c-83ea-4e75-b645-8956e2982446"), new Guid("240106f0-6882-4324-8fe1-f9e2e3bf739b"), new DateTime(2022, 8, 25, 22, 46, 54, 625, DateTimeKind.Local).AddTicks(4584), "192.168.1.6", "{\"Id\":\"e5af5e30-5683-4332-8015-48978a17b799\",\"TipoEstado\":\"LECTURA\",\"TercerByteTrama\":\"0F\",\"CuartoByteTrama\":\"00\"}", new Guid("a1a443dd-4d80-4171-a5b7-aed140787af7"), "NIVEL TANQUE", "Anonimo", "Local", new Guid("fe089e47-6780-4f0f-8bca-f608e0cf740f") }
                 });
 
             migrationBuilder.InsertData(
@@ -582,14 +560,41 @@ namespace lestoma.Data.Migrations
                 columns: new[] { "actividad_id", "upa_id", "usuario_id", "fecha_creacion_server", "ip", "session", "tipo_de_aplicacion" },
                 values: new object[,]
                 {
-                    { new Guid("bf984295-6d23-42f9-a790-d567b540ccaf"), new Guid("6e1cb560-1047-4f98-8e2f-e2e57c93f8ac"), 2, new DateTime(2022, 8, 6, 22, 15, 21, 602, DateTimeKind.Local).AddTicks(2066), "172.25.224.1", "Anonimo", "Local" },
-                    { new Guid("be63bec7-8971-48b7-8385-7aab75c8b01d"), new Guid("6e1cb560-1047-4f98-8e2f-e2e57c93f8ac"), 2, new DateTime(2022, 8, 6, 22, 15, 21, 602, DateTimeKind.Local).AddTicks(2082), "172.25.224.1", "Anonimo", "Local" },
-                    { new Guid("bf984295-6d23-42f9-a790-d567b540ccaf"), new Guid("efb96939-d8d1-455d-9efd-bf345ba43732"), 2, new DateTime(2022, 8, 6, 22, 15, 21, 602, DateTimeKind.Local).AddTicks(2091), "172.25.224.1", "Anonimo", "Local" },
-                    { new Guid("bf984295-6d23-42f9-a790-d567b540ccaf"), new Guid("6e1cb560-1047-4f98-8e2f-e2e57c93f8ac"), 3, new DateTime(2022, 8, 6, 22, 15, 21, 602, DateTimeKind.Local).AddTicks(2086), "172.25.224.1", "Anonimo", "Local" },
-                    { new Guid("bf984295-6d23-42f9-a790-d567b540ccaf"), new Guid("efb96939-d8d1-455d-9efd-bf345ba43732"), 3, new DateTime(2022, 8, 6, 22, 15, 21, 602, DateTimeKind.Local).AddTicks(2095), "172.25.224.1", "Anonimo", "Local" },
-                    { new Guid("be63bec7-8971-48b7-8385-7aab75c8b01d"), new Guid("6e1cb560-1047-4f98-8e2f-e2e57c93f8ac"), 4, new DateTime(2022, 8, 6, 22, 15, 21, 602, DateTimeKind.Local).AddTicks(2088), "172.25.224.1", "Anonimo", "Local" },
-                    { new Guid("bf984295-6d23-42f9-a790-d567b540ccaf"), new Guid("efb96939-d8d1-455d-9efd-bf345ba43732"), 4, new DateTime(2022, 8, 6, 22, 15, 21, 602, DateTimeKind.Local).AddTicks(2098), "172.25.224.1", "Anonimo", "Local" }
+                    { new Guid("240106f0-6882-4324-8fe1-f9e2e3bf739b"), new Guid("fe089e47-6780-4f0f-8bca-f608e0cf740f"), 2, new DateTime(2022, 8, 25, 22, 46, 54, 606, DateTimeKind.Local).AddTicks(7892), "192.168.1.6", "Anonimo", "Local" },
+                    { new Guid("eadfbf7a-9dcb-478d-88bd-26355878b8a7"), new Guid("fe089e47-6780-4f0f-8bca-f608e0cf740f"), 2, new DateTime(2022, 8, 25, 22, 46, 54, 606, DateTimeKind.Local).AddTicks(7908), "192.168.1.6", "Anonimo", "Local" },
+                    { new Guid("240106f0-6882-4324-8fe1-f9e2e3bf739b"), new Guid("fe089e47-6780-4f0f-8bca-f608e0cf740f"), 3, new DateTime(2022, 8, 25, 22, 46, 54, 606, DateTimeKind.Local).AddTicks(7910), "192.168.1.6", "Anonimo", "Local" },
+                    { new Guid("eadfbf7a-9dcb-478d-88bd-26355878b8a7"), new Guid("fe089e47-6780-4f0f-8bca-f608e0cf740f"), 3, new DateTime(2022, 8, 25, 22, 46, 54, 606, DateTimeKind.Local).AddTicks(7912), "192.168.1.6", "Anonimo", "Local" },
+                    { new Guid("240106f0-6882-4324-8fe1-f9e2e3bf739b"), new Guid("18f736ab-ce68-4d88-a0d1-ef05dcbc140f"), 4, new DateTime(2022, 8, 25, 22, 46, 54, 606, DateTimeKind.Local).AddTicks(7915), "192.168.1.6", "Anonimo", "Local" },
+                    { new Guid("eadfbf7a-9dcb-478d-88bd-26355878b8a7"), new Guid("18f736ab-ce68-4d88-a0d1-ef05dcbc140f"), 4, new DateTime(2022, 8, 25, 22, 46, 54, 606, DateTimeKind.Local).AddTicks(7917), "192.168.1.6", "Anonimo", "Local" }
                 });
+
+            migrationBuilder.InsertData(
+                schema: "usuarios",
+                table: "usuario",
+                columns: new[] { "id", "apellido", "clave", "codigo_recuperacion", "email", "estado_id", "fecha_creacion_server", "vencimiento_codigo_recuperacion", "ip", "nombre", "rol_id", "semilla", "session", "tipo_de_aplicacion" },
+                values: new object[,]
+                {
+                    { 1, "Lestoma", "P8aY6NNrvS9qN4U3JUbXUjKMnT3xJqSNHkapHz0NSIs=", null, "diegop177@hotmail.com", 2, new DateTime(2022, 8, 25, 22, 46, 54, 590, DateTimeKind.Local).AddTicks(2707), null, "192.168.1.6", "Super Admin", 1, "qHOuN/KuGBcjfqTdV93Oog==", "Anonimo", "Local" },
+                    { 2, "Lestoma", "vPBqYJqiJSmToTIgC9i6LyAvwYcR9jGqU4Hy6PPhA3k=", null, "diegoarturo1598@hotmail.com", 2, new DateTime(2022, 8, 25, 22, 46, 54, 598, DateTimeKind.Local).AddTicks(83), null, "192.168.1.6", "Administrador", 2, "QIwPzUlZ2tsLXYphpxC4rg==", "Anonimo", "Local" },
+                    { 3, "Lestoma", "dRE/4IcCXKZwn4LVcRZKoPCs3z3gu8FglDYB9m8S7yE=", null, "programadoresuc@outlook.com", 2, new DateTime(2022, 8, 25, 22, 46, 54, 605, DateTimeKind.Local).AddTicks(2399), null, "192.168.1.6", "Auxiliar 1", 3, "UTqrlysx1CFGM2EE20ec3w==", "Anonimo", "Local" },
+                    { 4, "Lestoma", "dRE/4IcCXKZwn4LVcRZKoPCs3z3gu8FglDYB9m8S7yE=", null, "auxiliar2@gmail.com", 2, new DateTime(2022, 8, 25, 22, 46, 54, 605, DateTimeKind.Local).AddTicks(2428), null, "192.168.1.6", "Auxiliar 2", 3, "UTqrlysx1CFGM2EE20ec3w==", "Anonimo", "Local" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "laboratorio_lestoma",
+                table: "detalle_laboratorio",
+                columns: new[] { "id", "componente_laboratorio_id", "estado_internet", "fecha_creacion_dispositivo", "fecha_creacion_server", "ip", "session", "set_point", "tipo_de_aplicacion", "tipo_com_id", "trama_enviada" },
+                values: new object[,]
+                {
+                    { new Guid("3d338823-98a9-4dfe-b357-eadba3c07c17"), new Guid("5d371d35-f20d-4115-9efc-d549ede92ee0"), true, new DateTime(2022, 8, 25, 22, 46, 54, 625, DateTimeKind.Local).AddTicks(8327), new DateTime(2022, 8, 25, 22, 46, 54, 625, DateTimeKind.Local).AddTicks(8309), "192.168.1.6", "Anonimo", null, "Local", 1, "4901F000000000006180" },
+                    { new Guid("4c4432c3-ef57-40c1-8e0b-7bd7d3834ab4"), new Guid("6a89ec3e-61d7-4f61-a034-b89b43e457d5"), true, new DateTime(2022, 8, 25, 22, 46, 54, 625, DateTimeKind.Local).AddTicks(9909), new DateTime(2022, 8, 25, 22, 46, 54, 625, DateTimeKind.Local).AddTicks(9898), "192.168.1.6", "Anonimo", null, "Local", 2, "6F01F000000000005302" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_componente_laboratorio_actividad_id",
+                schema: "laboratorio_lestoma",
+                table: "componente_laboratorio",
+                column: "actividad_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_componente_laboratorio_modulo_componente_id",
@@ -626,12 +631,6 @@ namespace lestoma.Data.Migrations
                 schema: "superadmin",
                 table: "upa_actividad",
                 column: "actividad_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_upa_actividad_usuario_id",
-                schema: "superadmin",
-                table: "upa_actividad",
-                column: "usuario_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_usuario_estado_id",
@@ -709,12 +708,12 @@ namespace lestoma.Data.Migrations
                 schema: "laboratorio_lestoma");
 
             migrationBuilder.DropTable(
-                name: "actividad",
-                schema: "superadmin");
-
-            migrationBuilder.DropTable(
                 name: "usuario",
                 schema: "usuarios");
+
+            migrationBuilder.DropTable(
+                name: "actividad",
+                schema: "superadmin");
 
             migrationBuilder.DropTable(
                 name: "modulo_componente",

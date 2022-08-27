@@ -1,4 +1,5 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace lestoma.Logica.Interfaces
         Task<Response> UpdateInCascade(EUpaActividad entidad);
         Task<Guid> GetUpaByUserId(int userId);
         Task<IEnumerable<string>> GetActivities(int userId, Guid upaId);
-        IQueryable<EUpaActividad> GetAllForPagination();
+        IQueryable<DetalleUpaActividadDTO> GetAllForPagination();
+        Task<List<NameDTO>> GetActivitiesByUpaUserId(UpaUserFilterRequest filtro);
     }
 }

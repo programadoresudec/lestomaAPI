@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
-using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -50,15 +47,6 @@ namespace lestoma.Api.Controllers
             var query = _actividadService.GetActividadesJustNames();
             return Ok(query);
         }
-
-
-        [HttpGet("listado-by-upa/{upaId}")]
-        public async Task<IActionResult> GetActividadesByUpa(Guid upaId)
-        {
-            var query = await _actividadService.GetActivitiesByUpaId(upaId);
-            return Ok(query);
-        }
-
 
 
         [HttpGet("{id}")]
