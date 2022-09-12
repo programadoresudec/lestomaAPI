@@ -12,17 +12,7 @@ namespace lestoma.Api
 
         public static void Main(string[] args)
         {
-            try
-            {
-                var host = CreateHostBuilder(args).Build();
-                Console.WriteLine("Host created.");
-                host.Run();
-                Console.WriteLine("Host run.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
+            CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

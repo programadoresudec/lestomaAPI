@@ -37,6 +37,7 @@ namespace lestoma.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string connectionString = string.Empty;
             try
             {
                 services.AddSingleton<ILoggerManager, LoggerManager>();
@@ -53,13 +54,20 @@ namespace lestoma.Api
                 services.AddControllers()
                     .AddNewtonsoftJson();
 
-                var connectionString = Configuration.GetConnectionString("PostgresConnection");
+                if (Environment.IsProduction())
+                {
+                    connectionString = Encryption.EncryptDecrypt.Decrypt(Configuration.GetConnectionString("PostgresConnection"));
+                }
+                else if (Environment.IsDevelopment())
+                {
+                    connectionString = Configuration.GetConnectionString("PostgresConnection");
+                }
                 services.AddDbContext<LestomaContext>(options =>
                 {
                     options.UseNpgsql(connectionString);
                 });
                 ConfigureHangfire(connectionString, services);
-              
+
                 var context = new CustomAssemblyLoadContext();
                 context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox.dll"));
 
@@ -150,10 +158,19 @@ namespace lestoma.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            string userDashboardHangfire = string.Empty;
+            string pwdDashboardHangfire = string.Empty;
+
             if (env.IsDevelopment())
             {
+                userDashboardHangfire = Configuration.GetSection("HangfireSettings:UserName").Value;
+                pwdDashboardHangfire = Configuration.GetSection("HangfireSettings:Password").Value;
                 app.UseDeveloperExceptionPage();
-
+            }
+            if (Environment.IsProduction())
+            {
+                userDashboardHangfire = Encryption.EncryptDecrypt.Decrypt(Configuration.GetSection("HangfireSettings:UserName").Value);
+                pwdDashboardHangfire = Encryption.EncryptDecrypt.Decrypt(Configuration.GetSection("HangfireSettings:Password").Value);
             }
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "lestoma.Api v1"));
@@ -175,8 +192,8 @@ namespace lestoma.Api
                 Authorization = new[]
         {
                 new HangfireCustomBasicAuthenticationFilter{
-                    User = Configuration.GetSection("HangfireSettings:UserName").Value,
-                    Pass = Configuration.GetSection("HangfireSettings:Password").Value
+                    User = userDashboardHangfire,
+                    Pass =pwdDashboardHangfire
                 }
             }
             });

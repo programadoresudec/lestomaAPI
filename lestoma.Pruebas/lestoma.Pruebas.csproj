@@ -10,4 +10,10 @@
     <ProjectReference Include="..\lestoma.CRC\lestoma.CRC.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Encryption">
+      <HintPath>..\lestoma.CommonUtils\Helpers\Encryption.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

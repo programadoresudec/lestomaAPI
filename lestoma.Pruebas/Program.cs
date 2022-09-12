@@ -9,8 +9,13 @@ namespace lestoma.Pruebas
 {
     class Program
     {
+        const string user = "super_admin_lestoma";
+        const string pwd = "lestoma1598.";
         static void Main(string[] args)
         {
+            var host = Encryption.EncryptDecrypt.Encrypt("host=lestomalaboratorio.cmqyph4tjrf8.us-east-1.rds.amazonaws.com;database=lestoma;user id=lestoma2022;password=vgivhbtAnWC5m5!");
+            var en = Encryption.EncryptDecrypt.Encrypt(user);
+            var pwden = Encryption.EncryptDecrypt.Encrypt(pwd);
             ListadoEstadoComponente listado = new ListadoEstadoComponente();
             foreach (var item in listado.Listado)
             {

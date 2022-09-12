@@ -18,7 +18,7 @@ namespace lestoma.Data.Repositories
         }
         public async Task<bool> ExistActivity(string nombre, Guid id, bool insertOrUpdate = false)
         {
-            if (insertOrUpdate)
+            if (!insertOrUpdate && id == Guid.Empty)
             {
                 return await _db.TablaActividades.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()));
             }
