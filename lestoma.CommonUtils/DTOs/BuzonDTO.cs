@@ -3,12 +3,15 @@ using System;
 
 namespace lestoma.CommonUtils.DTOs
 {
-    public class BuzonDTO
+    public class BuzonDTO : AuditoriaDTO
     {
         public int Id { get; set; }
-        public DetalleBuzon Detalle { get; set; } = new DetalleBuzon();
+        public string Titulo { get; set; }
+        public string Upa { get; set; }
         public UserDTO User { get; set; } = new UserDTO();
-        public DateTime FechaCreacion { get; set; }
-
+    }
+    public class MoreInfoBuzonDTO
+    {
+        public DetalleBuzon Detalle { get; set; }
     }
 }

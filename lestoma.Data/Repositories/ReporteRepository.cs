@@ -38,7 +38,7 @@ namespace lestoma.Data.Repositories
                {
                    Usuario = x.Session,
                    Componente = x.ComponenteLaboratorio.NombreComponente,
-                   SetPoint = x.SetPoint == null ? "N/A" : x.SetPoint.ToString(),
+                   SetPoint = x.ValorCalculado == null ? "N/A" : x.ValorCalculado.ToString(),
                    Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                    FechaDispositivo = x.FechaCreacionDispositivo,
                    FechaServidor = x.FechaCreacionServer,
@@ -71,7 +71,7 @@ namespace lestoma.Data.Repositories
                 {
                     Usuario = x.Session,
                     Componente = x.ComponenteLaboratorio.NombreComponente,
-                    SetPoint = x.SetPoint == null ? "N/A" : x.SetPoint.ToString(),
+                    SetPoint = x.ValorCalculado == null ? "N/A" : x.ValorCalculado.ToString(),
                     Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                     FechaDispositivo = x.FechaCreacionDispositivo,
                     FechaServidor = x.FechaCreacionServer,
@@ -109,7 +109,7 @@ namespace lestoma.Data.Repositories
                 {
                     Usuario = x.Session,
                     Componente = x.ComponenteLaboratorio.NombreComponente,
-                    SetPoint = x.SetPoint == null ? "N/A" : x.SetPoint.ToString(),
+                    SetPoint = x.ValorCalculado == null ? "N/A" : x.ValorCalculado.ToString(),
                     Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                     FechaDispositivo = x.FechaCreacionDispositivo,
                     FechaServidor = x.FechaCreacionServer,

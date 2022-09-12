@@ -49,6 +49,7 @@ namespace lestoma.Logica.LogicaService
         public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByComponents(ReportComponentFilterRequest filtro,
             bool isSuperAdmin)
         {
+            var file = GetFile(filtro.Filtro.TipoFormato);
             await ExistUpa(filtro.Filtro.UpaId);
 
             foreach (var item in filtro.ComponentesId)
@@ -65,11 +66,11 @@ namespace lestoma.Logica.LogicaService
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
             }
             var bytes = _generateReports.GenerateReportByFormat(filtro.Filtro.TipoFormato, listado, isSuperAdmin);
-            var file = GetFile(filtro.Filtro.TipoFormato);
             return (bytes, file.MIME, file.FILENAME);
         }
         public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByDate(ReportFilterRequest filtro, bool isSuperAdmin)
         {
+            var file = GetFile(filtro.TipoFormato);
             await ExistUpa(filtro.UpaId);
             var listado = await _repositorio.ReportByDate(filtro);
             if (listado.Reporte.Count == 0)
@@ -83,7 +84,6 @@ namespace lestoma.Logica.LogicaService
             };
 
             var bytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, listado, isSuperAdmin);
-            var file = GetFile(filtro.TipoFormato);
             return (bytes, file.MIME, file.FILENAME);
         }
 

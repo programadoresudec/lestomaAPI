@@ -28,6 +28,8 @@ namespace lestoma.Data.Repositories
                 Include(e => e.Rol).Where(x => x.Email.Equals(login.Email)).FirstOrDefaultAsync();
         }
 
+
+
         public async Task<EUsuario> GetByEmail(string email)
         {
             return await _dbSet.FirstOrDefaultAsync(x => x.Email.Equals(email));
@@ -103,6 +105,32 @@ namespace lestoma.Data.Repositories
             var query = await _db.TablaAplicaciones.FindAsync(tipoAplicacion);
 
             return query == null ? "Local" : query.NombreAplicacion;
+        }
+
+        public async Task<IEnumerable<InfoUserDTO>> GetInfoUsers()
+        {
+            return await _db.TablaUsuarios
+             .Select(x => new InfoUserDTO
+             {
+                 Id = x.Id,
+                 Rol = new RolDTO
+                 {
+                     Id = x.Rol.Id,
+                     NombreRol = x.Rol.NombreRol,
+                 },
+                 Nombre = x.Nombre,
+                 Apellido = x.Apellido,
+                 Email = x.Email,
+                 Estado = new EstadoDTO
+                 {
+                     Id = x.EstadoUsuario.Id,
+                     NombreEstado = x.EstadoUsuario.DescripcionEstado
+                 },
+                 Ip = x.Ip,
+                 Session = x.Session,
+                 TipoDeAplicacion = x.TipoDeAplicacion,
+                 FechaCreacionServer = x.FechaCreacionServer
+             }).ToListAsync();
         }
     }
 }

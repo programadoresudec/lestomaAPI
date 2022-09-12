@@ -37,6 +37,7 @@ namespace lestoma.Api.Controllers
 
         #region logeo
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Logeo(LoginRequest logeo)
         {
             Respuesta = await _usuarioService.Login(logeo, IpAddress());
@@ -80,6 +81,7 @@ namespace lestoma.Api.Controllers
         #region LogOut
 
         [HttpPost("LogOut")]
+        [Authorize]
         public async Task<IActionResult> LogOut([FromBody] TokenRefreshDTO model)
         {
             // accept token from request body or cookie
@@ -117,15 +119,16 @@ namespace lestoma.Api.Controllers
 
         #region registrarse
         [HttpPost("registro")]
+        [AllowAnonymous]
         public async Task<IActionResult> Registrarse(UsuarioRequest usuario)
         {
             var entidad = Mapear<UsuarioRequest, EUsuario>(usuario);
-            Respuesta = await _usuarioService.Register(entidad);
+            Respuesta = await _usuarioService.RegisterUser(entidad);
             Respuesta.Data = usuario;
             return Created(string.Empty, Respuesta);
         }
         #endregion
-            
+
         #region olvido su contraseña
         [HttpPut("forgotpassword")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest email)
@@ -158,6 +161,7 @@ namespace lestoma.Api.Controllers
 
         #region cambiar el perfil
         [HttpPut("changeprofile")]
+        [Authorize]
         public async Task<IActionResult> ChangeProfile(ChangeProfileRequest change)
         {
             Respuesta = await _usuarioService.ChangeProfile(change);

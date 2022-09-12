@@ -58,7 +58,7 @@ namespace lestoma.Logica.LogicaService
         }
         public async Task<Response> Create(EModuloComponente entidad)
         {
-            bool existe = await _moduloRepository.ExisteModulo(entidad.Nombre, entidad.Id);
+            bool existe = await _moduloRepository.ExisteModulo(entidad.Nombre, Guid.Empty);
             if (!existe)
             {
                 await _moduloRepository.Create(entidad);

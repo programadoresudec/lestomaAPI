@@ -3,7 +3,6 @@ using Hangfire;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Logica.Interfaces;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/reportes-laboratorio")]
     [ApiController]
     public class ReportesController : BaseController
     {

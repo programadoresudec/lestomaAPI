@@ -116,7 +116,7 @@ namespace lestoma.Logica.LogicaService
             }
         }
 
-        public async Task<Response> Register(EUsuario usuario)
+        public async Task<Response> RegisterUser(EUsuario usuario, bool ownRegister = true)
         {
 
             EUsuario existe = await _usuarioRepository.GetByEmail(usuario.Email);
@@ -131,16 +131,20 @@ namespace lestoma.Logica.LogicaService
                     usuario.RolId = (int)TipoRol.Auxiliar;
                 }
                 var hash = HashHelper.Hash(usuario.Clave);
+                var clave = usuario.Clave;
                 usuario.Apellido = usuario.Apellido.Trim();
                 usuario.Nombre = usuario.Nombre.Trim();
                 usuario.Clave = hash.Password;
                 usuario.Salt = hash.Salt;
-                usuario.EstadoId = usuario.RolId == (int)TipoRol.Auxiliar ? (int)TipoEstadoUsuario.CheckCuenta : (int)TipoEstadoUsuario.Activado;
+                if (usuario.EstadoId == 0)
+                {
+                    usuario.EstadoId = usuario.RolId == (int)TipoRol.Auxiliar ? (int)TipoEstadoUsuario.CheckCuenta : (int)TipoEstadoUsuario.Activado;
+                }
                 await _usuarioRepository.Create(usuario);
                 _respuesta.IsExito = true;
                 _respuesta.StatusCode = (int)HttpStatusCode.Created;
-                _respuesta.Mensaje = "Se ha registrado satisfactoriamente.";
-                if (usuario.RolId == (int)TipoRol.Auxiliar)
+                _respuesta.Mensaje = ownRegister ? "Se ha registrado satisfactoriamente." : "creado el usuario con exito.";
+                if (usuario.RolId == (int)TipoRol.Auxiliar && ownRegister)
                 {
                     await _mailHelper.SendMail(usuario.Email, "Activación de Cuenta", String.Empty,
                          "Hola: ¡Su activación de la cuenta será pronto!",
@@ -148,10 +152,25 @@ namespace lestoma.Logica.LogicaService
                          string.Empty, $"Enviamos este correo electrónico a {usuario.Email} porque te registraste en LESTOMA APP.");
 
                     await _mailHelper.SendMail(Constants.EMAIL_SUPER_ADMIN, $"Activación de cuenta: de {usuario.Email}", String.Empty,
-                       "Hola: ¡Administrador!",
+                       "Hola: ¡Super Administrador!",
                        $"Debe activar la cuenta del auxiliar con correo: {usuario.Email} que se registro el dia: " +
                        $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
                        string.Empty, $"LESTOMA APP");
+                }
+                else if (!ownRegister)
+                {
+                    string rol = usuario.RolId == (int)TipoRol.Auxiliar ? TipoRol.Auxiliar.ToString() : TipoRol.Administrador.ToString();
+
+                    await _mailHelper.SendMail(usuario.Email, "Se ha creado una cuenta en LESTOMA APP", String.Empty,
+                       "Hola: ¡Logueate y conoce LESTOMA APP!",
+                       $"Su usuario es: {usuario.Email} Contraseña: {clave}",
+                       string.Empty, $"Enviamos este correo electrónico a {usuario.Email} porque te agregaron en LESTOMA APP.");
+
+                    await _mailHelper.SendMail(Constants.EMAIL_SUPER_ADMIN, $"Registraste la cuenta: de {usuario.Email}", String.Empty,
+                      "Hola: ¡Super Administrador!",
+                      $"registraste el usuario con correo {usuario.Email} y rol {rol} el dia: " +
+                      $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
+                      string.Empty, $"LESTOMA APP");
                 }
             }
             return _respuesta;
@@ -329,6 +348,16 @@ namespace lestoma.Logica.LogicaService
             _respuesta.StatusCode = (int)HttpStatusCode.OK;
             _respuesta.Data = existe;
             return _respuesta;
+        }
+
+        public Task<Response> UpdateUser(EUsuario usuario)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<InfoUserDTO>> GetInfoUsers()
+        {
+            return await _usuarioRepository.GetInfoUsers();
         }
     }
 }

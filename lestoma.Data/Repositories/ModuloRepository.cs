@@ -14,7 +14,7 @@ namespace lestoma.Data.Repositories
         }
         public async Task<bool> ExisteModulo(string nombre, Guid id, bool insertOrUpdate = false)
         {
-            if (!insertOrUpdate)
+            if (!insertOrUpdate && id == Guid.Empty)
             {
                 return await _db.TablaModuloComponentes.AnyAsync(x => x.Nombre.ToLower().Trim().Equals(nombre.ToLower().Trim()));
             }

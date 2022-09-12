@@ -36,7 +36,7 @@ namespace lestoma.Logica.LogicaService
             };
         }
 
-        public async Task<Response> MergeDetails(IEnumerable<ELaboratorio> datosOffline)
+        public async Task<Response> SyncLabDataOffline(IEnumerable<ELaboratorio> datosOffline)
         {
             await _laboratorioRepository.MergeDetails(datosOffline);
             return new Response
@@ -63,6 +63,13 @@ namespace lestoma.Logica.LogicaService
                  "Ha finalizado la migración de datos.",
                 string.Empty, "Si no has intentado migrar datos offline al servidor, puedes ignorar este mensaje.");
 
+        }
+
+        public async Task<IEnumerable<DataComponentSyncDTO>> GetDataBySyncToMobileByUpaId(Guid upaId)
+        {
+            if (upaId == Guid.Empty)
+                throw new HttpStatusCodeException(HttpStatusCode.OK, $"No hay datos por migrar, usted no cuenta con una Upa asignada.");
+            return await _laboratorioRepository.GetDataBySyncToMobileByUpaId(upaId);
         }
     }
 }

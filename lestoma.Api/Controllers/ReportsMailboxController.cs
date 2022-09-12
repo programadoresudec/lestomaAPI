@@ -2,18 +2,21 @@
 using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Helpers;
+using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/buzon-de-reportes")]
     [ApiController]
     public class ReportsMailboxController : BaseController
     {
@@ -32,17 +35,16 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> GetReportesBuzonPaginado([FromQuery] Paginacion paginacion)
         {
             var queryable = _buzonService.GetAllForPagination();
-            var listado = await GetPaginacion<EBuzon, BuzonDTO>(paginacion, queryable);
+            var listado = await queryable.Paginar(paginacion).ToListAsync();
             var paginador = Paginador<BuzonDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
             return Ok(paginador);
         }
-
-        [Authorize]
-        [HttpGet("{id:int}")]
+        [AllowAnonymous]
+        [HttpGet("info/{id:int}")]
         public async Task<IActionResult> GetBuzonById(int id)
         {
             var buzon = await _buzonService.GetMailBoxById(id);
-            var buzonDTO = Mapear<EBuzon, BuzonDTO>(buzon);
+            var buzonDTO = Mapear<EBuzon, MoreInfoBuzonDTO>(buzon);
             return Ok(buzonDTO);
         }
 
@@ -50,12 +52,22 @@ namespace lestoma.Api.Controllers
         [Authorize]
         public async Task<IActionResult> CrearReporteDelBuzon(BuzonCreacionRequest buzon)
         {
-            if (!string.IsNullOrEmpty(buzon.Extension))
+            try
             {
-                buzon.Detalle.PathImagen = await _almacenadorArchivos.GuardarArchivo(buzon.Imagen, buzon.Extension, contenedor);
+                if (!string.IsNullOrEmpty(buzon.Extension))
+                {
+                    buzon.Detalle.PathImagen = await _almacenadorArchivos.GuardarArchivo(buzon.Imagen, buzon.Extension, contenedor);
+                }
+                Respuesta = await _buzonService.CreateMailBox(buzon);
+                return Created(string.Empty, Respuesta);
+
             }
-            Respuesta = await _buzonService.CreateMailBox(buzon);
-            return Created(string.Empty, Respuesta);
+            catch (Exception ex)
+            {
+                await _almacenadorArchivos.BorrarArchivo(buzon.Detalle.PathImagen, contenedor);
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, ex);
+            }
+
         }
     }
 }

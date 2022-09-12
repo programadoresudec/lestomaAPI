@@ -11,7 +11,9 @@ namespace lestoma.CommonUtils.Requests
         [Required(ErrorMessage = "El email es requerido")]
         [EmailAddress]
         public string Email { get; set; }
+        [MaxLength(30, ErrorMessage = "La clave debe contener maximo 30 caracteres"), MinLength(8, ErrorMessage = "La clave debe contener minimo 8 caracteres")]
         [Required(ErrorMessage = "la clave es requerida")]
+
         public string Clave { get; set; }
     }
 }

@@ -57,7 +57,7 @@ namespace lestoma.Logica.LogicaService
         }
         public async Task<Response> Create(EActividad entidad)
         {
-            bool existe = await _actividadRepository.ExistActivity(entidad.Nombre, entidad.Id);
+            bool existe = await _actividadRepository.ExistActivity(entidad.Nombre, Guid.Empty);
             if (!existe)
             {
                 entidad.Id = Guid.NewGuid();
@@ -125,6 +125,6 @@ namespace lestoma.Logica.LogicaService
             };
         }
 
-  
+
     }
 }

@@ -37,16 +37,27 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> GetDetalle()
         {
             return Ok();
+            Console.WriteLine();
         }
 
 
-        [HttpPost("crear-detalle")]
-        public IActionResult MergeDetail(IEnumerable<LaboratorioRequestOffline> datosOfOffline)
+
+
+        [HttpGet("data-para-sincronizar-modo-offline-por-upa")]
+        public async Task<IActionResult> GetDataBySyncToMobileByUpaId()
+        {
+            var upaId = UpaId();
+            var data = await _laboratorioService.GetDataBySyncToMobileByUpaId(upaId);
+            return Ok(data);
+        }
+
+        [HttpPost("sincronizar-data-del-laboratorio-offline")]
+        public IActionResult SyncLabDataOffline(IEnumerable<LaboratorioRequestOffline> datosOfOffline)
         {
             var EmailDesencryptedUser = EmailDesencrypted();
             var datosMapeados = Mapear<IEnumerable<LaboratorioRequestOffline>, IEnumerable<ELaboratorio>>(datosOfOffline);
             var jobId = _backgroundJobClient.Schedule<ILaboratorioService>(service =>
-           service.MergeDetails(datosMapeados), TimeSpan.FromSeconds(10));
+           service.SyncLabDataOffline(datosMapeados), TimeSpan.FromSeconds(10));
             _backgroundJobClient.ContinueJobWith<ILaboratorioService>(jobId, service => service.SendEmailFinishMerge(EmailDesencryptedUser));
             return Ok(new Response
             {

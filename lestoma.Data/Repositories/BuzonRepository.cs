@@ -1,4 +1,5 @@
-﻿using lestoma.Entidades.Models;
+﻿using lestoma.CommonUtils.DTOs;
+using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace lestoma.Data.Repositories
         {
             _db = db;
         }
-        public IQueryable<EBuzon> ListarBuzonConUsuario()
+        public IQueryable<BuzonDTO> ListarBuzonConUsuario()
         {
             var lista = from buzon in _db.TablaBuzonReportes
                         join user in _db.TablaUsuarios on buzon.UsuarioId equals user.Id
@@ -23,17 +24,22 @@ namespace lestoma.Data.Repositories
                             user
                         };
 
-            var query =  lista.Select(m => new EBuzon
+            var query = lista.Select(m => new BuzonDTO
 
             {
-                Descripcion = m.buzon.Descripcion,
-                FechaCreacionServer = m.buzon.FechaCreacionServer,
                 Id = m.buzon.Id,
-                User =
+                User = new UserDTO
                 {
+                    Id = m.user.Id,
                     Nombre = m.user.Nombre,
                     Apellido = m.user.Apellido
-                }
+                },
+                FechaCreacionServer = m.buzon.FechaCreacionServer,
+                Ip = m.buzon.Ip,
+                Upa = (from upa in _db.TablaUpas
+                       join detalle in _db.TablaUpasConActividades on upa.Id equals detalle.UpaId
+                       where m.user.Id == detalle.UsuarioId
+                       select upa.Nombre).FirstOrDefault()
             }).AsNoTracking();
             return query;
         }

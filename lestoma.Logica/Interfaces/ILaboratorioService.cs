@@ -11,7 +11,8 @@ namespace lestoma.Logica.Interfaces
     public interface ILaboratorioService
     {
         Task<Response> CreateDetail(ELaboratorio detalle);
-        Task<Response> MergeDetails(IEnumerable<ELaboratorio> datosOffline);
+        Task<Response> SyncLabDataOffline(IEnumerable<ELaboratorio> datosOffline);
         Task SendEmailFinishMerge(string email);
+        Task<IEnumerable<DataComponentSyncDTO>> GetDataBySyncToMobileByUpaId(Guid upaId);
     }
 }
