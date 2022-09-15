@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
 {
@@ -33,7 +34,7 @@ namespace lestoma.Api.Controllers
         [HttpPost("daily")]
         public IActionResult ReportDaily([FromBody] ReportDailyFilterRequest filtro)
         {
-            RecurringJob.AddOrUpdate<IReporteService>("Enviar-reporte-diario", servicio => servicio.DailyReport(),
+            RecurringJob.AddOrUpdate<IReporteService>("Enviar-reporte-diario", servicio => servicio.GetDailyReport(),
                 Cron.Daily(filtro.Hour, filtro.Minute), TimeZoneInfo.Local);
 
             return Ok(new Response
@@ -46,15 +47,18 @@ namespace lestoma.Api.Controllers
 
 
         [HttpPost("by-date")]
-        public IActionResult ReportByDate([FromBody] ReportFilterRequest filtro)
+        public async Task<IActionResult> ReportByDate([FromBody] ReportFilterRequest filtro)
         {
             var isSuper = IsSuperAdmin();
             if (!isSuper)
             {
                 filtro.UpaId = UpaId();
             }
+
+            var obj = await _reporteService.GetReportByDate(filtro, isSuper);
+            var jobId = _backgroundJobClient.Schedule<IReporteService>(service => service.GenerateReportByDate(obj.reporte, obj.archivo, filtro, isSuper),
+                TimeSpan.FromSeconds(2));
             var EmailDesencryptedUser = EmailDesencrypted();
-            var jobId = _backgroundJobClient.Schedule<IReporteService>(service => service.ReportByDate(filtro, isSuper), TimeSpan.FromSeconds(2));
             _backgroundJobClient.ContinueJobWith<IReporteService>(jobId, service => service.SendReportByFilter(EmailDesencryptedUser));
             return Ok(new Response
             {
@@ -67,15 +71,17 @@ namespace lestoma.Api.Controllers
 
 
         [HttpPost("by-components")]
-        public IActionResult ReportByComponents([FromBody] ReportComponentFilterRequest filtro)
+        public async Task<IActionResult> ReportByComponents([FromBody] ReportComponentFilterRequest filtro)
         {
             var isSuper = IsSuperAdmin();
             if (!isSuper)
             {
                 filtro.Filtro.UpaId = UpaId();
             }
+            var obj = await _reporteService.GetReportByComponents(filtro, isSuper);
+            var jobId = _backgroundJobClient.Schedule<IReporteService>(service => service.GenerateReportByComponents(obj.reporte, obj.archivo, filtro, isSuper),
+                TimeSpan.FromSeconds(2));
             var EmailDesencryptedUser = EmailDesencrypted();
-            var jobId = _backgroundJobClient.Schedule<IReporteService>(service => service.ReportByComponents(filtro, isSuper), TimeSpan.FromSeconds(2));
             _backgroundJobClient.ContinueJobWith<IReporteService>(jobId, service => service.SendReportByFilter(EmailDesencryptedUser));
             return Ok(new Response
             {

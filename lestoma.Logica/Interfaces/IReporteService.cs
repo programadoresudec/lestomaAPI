@@ -6,9 +6,12 @@ namespace lestoma.Logica.Interfaces
 {
     public interface IReporteService
     {
-        Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByDate(ReportFilterRequest filtro, bool isSuperAdmin);
-        Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByComponents(ReportComponentFilterRequest filtro, bool isSuperAdmin);
-        Task<Response> DailyReport();
+        Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByDate(ReportFilterRequest filtro, bool isSuper);
+        Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByComponents(ReportComponentFilterRequest filtro, bool isSuper);
+        ArchivoDTO GenerateReportByDate(ReporteDTO reporte, ArchivoDTO archivo, ReportFilterRequest filtro, bool isSuper);
+        ArchivoDTO GenerateReportByComponents(ReporteDTO reporte, ArchivoDTO archivo, ReportComponentFilterRequest filtro, bool isSuper);
+        Task<Response> GetDailyReport();
         Task SendReportByFilter(string email);
+        Task<Response> GenerateDailyReport(ReporteDTO reporte);
     }
 }

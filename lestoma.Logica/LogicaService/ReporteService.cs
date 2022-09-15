@@ -8,10 +8,8 @@ using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Data.Repositories;
 using lestoma.Logica.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -38,7 +36,7 @@ namespace lestoma.Logica.LogicaService
             _generateReports = generateReports;
             _componenteRepository = componenteRepository;
         }
-        public async Task<Response> DailyReport()
+        public async Task<Response> GetDailyReport()
         {
             var filtro = new DateFilterRequest
             {
@@ -54,8 +52,25 @@ namespace lestoma.Logica.LogicaService
             return await GenerateDailyReport(listado);
         }
 
-        public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByComponents(ReportComponentFilterRequest filtro,
-            bool isSuperAdmin)
+
+        public async Task SendReportByFilter(string email)
+        {
+            _logger.LogInformation($"obteniendo el reporte");
+            if (_cache.TryGetValue(Constants.CACHE_REPORTE_KEY, out ArchivoDTO archivo))
+            {
+                await _mailHelper.SendMailWithOneFile(email, string.Empty, $"Reporte {DateTime.Now:dd/MM/yyyy}",
+                    archivo, $"Se anexa el reporte generado.", string.Empty,
+                   @"Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.<br>
+                      <strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
+                _logger.LogInformation($"Enviado el reporte a {email}");
+            }
+            else
+            {
+                _logger.LogInformation($"No hay reportes para generar.");
+            }
+        }
+
+        public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByComponents(ReportComponentFilterRequest filtro, bool isSuper)
         {
             var file = GetFile(filtro.Filtro.TipoFormato);
             await ExistUpa(filtro.Filtro.UpaId);
@@ -73,52 +88,62 @@ namespace lestoma.Logica.LogicaService
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
             }
-            var bytes = _generateReports.GenerateReportByFormat(filtro.Filtro.TipoFormato, listado, isSuperAdmin);
-
             ArchivoDTO archivo = new()
             {
-                ArchivoBytes = bytes,
                 FileName = file.FILENAME,
                 MIME = file.MIME
             };
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromSeconds(60))
-                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
-                    .SetPriority(CacheItemPriority.Normal);
-            _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
-
-            return (bytes, file.MIME, file.FILENAME);
+            return (listado, archivo);
         }
-        public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByDate(ReportFilterRequest filtro, bool isSuperAdmin)
+
+        public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByDate(ReportFilterRequest filtro, bool isSuper)
         {
             var file = GetFile(filtro.TipoFormato);
             await ExistUpa(filtro.UpaId);
             var listado = await _repositorio.ReportByDate(filtro);
             if (listado.Reporte.Count == 0)
-            {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
-            }
-            listado.FiltroFecha = new DateFilterRequest()
+
+            ArchivoDTO archivo = new()
+            {
+                FileName = file.FILENAME,
+                MIME = file.MIME
+            };
+            return (listado, archivo);
+        }
+
+        public ArchivoDTO GenerateReportByDate(ReporteDTO reporte,
+            ArchivoDTO archivo, ReportFilterRequest filtro, bool isSuper)
+        {
+            reporte.FiltroFecha = new DateFilterRequest()
             {
                 FechaInicial = filtro.FechaInicial,
                 FechaFinal = filtro.FechaFinal
             };
 
-            var bytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, listado, isSuperAdmin);
-
-            ArchivoDTO archivo = new()
-            {
-                ArchivoBytes = bytes,
-                FileName = file.FILENAME,
-                MIME = file.MIME
-            };
+            var bytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, reporte, isSuper);
+            archivo.ArchivoBytes = bytes;
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromSeconds(60))
                     .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
                     .SetPriority(CacheItemPriority.Normal);
             _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
-            return (bytes, file.MIME, file.FILENAME);
+            return archivo;
         }
+
+        public ArchivoDTO GenerateReportByComponents(ReporteDTO reporte,
+            ArchivoDTO archivo, ReportComponentFilterRequest filtro, bool isSuper)
+        {
+            var bytes = _generateReports.GenerateReportByFormat(filtro.Filtro.TipoFormato, reporte, isSuper);
+            archivo.ArchivoBytes = bytes;
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(60))
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                    .SetPriority(CacheItemPriority.Normal);
+            _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
+            return archivo;
+        }
+
 
         private async Task ExistUpa(Guid upaId)
         {
@@ -150,7 +175,7 @@ namespace lestoma.Logica.LogicaService
             }
             return (Mime, FileName);
         }
-        private async Task<Response> GenerateDailyReport(ReporteDTO reporte)
+        public async Task<Response> GenerateDailyReport(ReporteDTO reporte)
         {
             List<ArchivoDTO> archivos = new List<ArchivoDTO>();
             Response response = new Response();
@@ -192,23 +217,6 @@ namespace lestoma.Logica.LogicaService
                 response.Mensaje = $"Enviado el pdf  y excel a {item}";
             }
             return response;
-        }
-
-        public async Task SendReportByFilter(string email)
-        {
-            _logger.LogInformation($"obteniendo el reporte");
-            if (_cache.TryGetValue(Constants.CACHE_REPORTE_KEY, out ArchivoDTO archivo))
-            {
-                await _mailHelper.SendMailWithOneFile(email, string.Empty, $"Reporte {DateTime.Now:dd/MM/yyyy}",
-                    archivo, $"Se anexa el reporte generado.", string.Empty,
-                   @"Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.<br>
-                      <strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
-                _logger.LogInformation($"Enviado el reporte a {email}");
-            }
-            else
-            {
-                _logger.LogInformation($"No hay reportes para generar.");
-            }
         }
     }
 }
