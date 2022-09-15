@@ -42,7 +42,7 @@ namespace lestoma.Data.Repositories
             }
         }
 
-        public async Task UpadteRelation(EUpaActividad entidad)
+        public async Task UpdateRelation(EUpaActividad entidad)
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {

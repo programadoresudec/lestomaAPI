@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Plugin.Connectivity;
 using System;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -17,7 +18,6 @@ namespace lestoma.CommonUtils.Services
     public class ApiService : IApiService
     {
         public HttpResponseMessage ResponseMessage { get; set; }
-
         private string _tokenNuevo;
         public Response Respuesta { get; set; }
 
@@ -74,11 +74,13 @@ namespace lestoma.CommonUtils.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    Mensaje = ex.Message
-                };
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
+                });
+                throw new Exception(jsonError);
             }
         }
 
@@ -127,11 +129,13 @@ namespace lestoma.CommonUtils.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    Mensaje = ex.Message
-                };
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
+                });
+                throw new Exception(jsonError);
             }
         }
         #endregion
@@ -165,12 +169,13 @@ namespace lestoma.CommonUtils.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    StatusCode = (int)ResponseMessage.StatusCode,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
-                };
+                });
+                throw new Exception(jsonError);
             }
         }
         #endregion
@@ -209,13 +214,13 @@ namespace lestoma.CommonUtils.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
-                return new Response
+                var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    StatusCode = (int)ResponseMessage.StatusCode,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
-                };
+                });
+                throw new Exception(jsonError);
             }
         }
         #endregion
@@ -249,12 +254,13 @@ namespace lestoma.CommonUtils.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    StatusCode = (int)ResponseMessage.StatusCode,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
-                };
+                });
+                throw new Exception(jsonError);
             }
         }
         #endregion
@@ -265,7 +271,7 @@ namespace lestoma.CommonUtils.Services
             try
             {
 
-                string json =  JsonConvert.SerializeObject(model);
+                string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
@@ -274,7 +280,7 @@ namespace lestoma.CommonUtils.Services
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
                 ResponseMessage = await client.PutAsync(controller, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                Respuesta =  JsonConvert.DeserializeObject<Response>(jsonString);
+                Respuesta = JsonConvert.DeserializeObject<Response>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
                     return new Response
@@ -287,11 +293,13 @@ namespace lestoma.CommonUtils.Services
             }
             catch (Exception ex)
             {
-                return new Response
+                var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
-                };
+                });
+                throw new Exception(jsonError);
             }
         }
         #endregion
@@ -331,13 +339,13 @@ namespace lestoma.CommonUtils.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
-                return new Response
+                var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    StatusCode = (int)ResponseMessage.StatusCode,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
-                };
+                });
+                throw new Exception(jsonError);
             }
         }
 
@@ -352,7 +360,7 @@ namespace lestoma.CommonUtils.Services
                 {
                     TipoAplicacion = (int)TipoAplicacion.AppMovil
                 };
-                var json =  JsonConvert.SerializeObject(tipoAplicacionRequest);
+                var json = JsonConvert.SerializeObject(tipoAplicacionRequest);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient
                 {
@@ -362,9 +370,9 @@ namespace lestoma.CommonUtils.Services
                 ResponseMessage = await client.PostAsync("Account/refresh-token", content);
                 ResponseMessage.EnsureSuccessStatusCode();
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                Respuesta =  JsonConvert.DeserializeObject<Response>(jsonString);
+                Respuesta = JsonConvert.DeserializeObject<Response>(jsonString);
                 TokenDTO tokenNuevo = (TokenDTO)Respuesta.Data;
-                MovilSettings.Token =  JsonConvert.SerializeObject(tokenNuevo);
+                MovilSettings.Token = JsonConvert.SerializeObject(tokenNuevo);
                 _tokenNuevo = tokenNuevo.Token;
             }
             catch (Exception ex)

@@ -1,10 +1,14 @@
-﻿using lestoma.CommonUtils.DTOs;
+﻿using lestoma.CommonUtils.Constants;
+using lestoma.CommonUtils.Core;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Data.Repositories;
 using lestoma.Logica.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,14 +20,18 @@ namespace lestoma.Logica.LogicaService
 {
     public class ReporteService : IReporteService
     {
+        private readonly ILoggerManager _logger;
+        private IMemoryCache _cache;
         private readonly ReporteRepository _repositorio;
         private readonly IMailHelper _mailHelper;
         private readonly UpaRepository _upaRepository;
         private readonly ComponenteRepository _componenteRepository;
         private readonly IGenerateReport _generateReports;
-        public ReporteService(ReporteRepository reporteRepository, IMailHelper mailHelper,
+        public ReporteService(ReporteRepository reporteRepository, IMailHelper mailHelper, ILoggerManager logger, IMemoryCache memoryCache,
             IGenerateReport generateReports, UpaRepository upaRepository, ComponenteRepository componenteRepository)
         {
+            _cache = memoryCache;
+            _logger = logger;
             _upaRepository = upaRepository;
             _repositorio = reporteRepository;
             _mailHelper = mailHelper;
@@ -66,6 +74,19 @@ namespace lestoma.Logica.LogicaService
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
             }
             var bytes = _generateReports.GenerateReportByFormat(filtro.Filtro.TipoFormato, listado, isSuperAdmin);
+
+            ArchivoDTO archivo = new()
+            {
+                ArchivoBytes = bytes,
+                FileName = file.FILENAME,
+                MIME = file.MIME
+            };
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(60))
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                    .SetPriority(CacheItemPriority.Normal);
+            _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
+
             return (bytes, file.MIME, file.FILENAME);
         }
         public async Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByDate(ReportFilterRequest filtro, bool isSuperAdmin)
@@ -84,6 +105,18 @@ namespace lestoma.Logica.LogicaService
             };
 
             var bytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, listado, isSuperAdmin);
+
+            ArchivoDTO archivo = new()
+            {
+                ArchivoBytes = bytes,
+                FileName = file.FILENAME,
+                MIME = file.MIME
+            };
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(60))
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                    .SetPriority(CacheItemPriority.Normal);
+            _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
             return (bytes, file.MIME, file.FILENAME);
         }
 
@@ -151,15 +184,31 @@ namespace lestoma.Logica.LogicaService
             }
             foreach (var item in correosSuperAdmin)
             {
-                await _mailHelper.SendMailWithAllArchives(item, $"Reporte diario día {DateTime.Now:dd/MM/yyyy}", archivos, string.Empty,
+                await _mailHelper.SendMailWithMultipleFile(item, $"Reporte diario día {DateTime.Now:dd/MM/yyyy}", archivos, string.Empty,
                      "Hola Super Administrador", $"Se anexa el reporte del día {DateTime.Now:dd/MM/yyyy}, en Pdf y Excel", string.Empty,
                      @"Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.<br>
                       <strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
-                Debug.WriteLine($"Enviado el pdf  y excel a {item}");
+                _logger.LogInformation($"Enviado el pdf  y excel a {item}");
                 response.Mensaje = $"Enviado el pdf  y excel a {item}";
             }
             return response;
         }
 
+        public async Task SendReportByFilter(string email)
+        {
+            _logger.LogInformation($"obteniendo el reporte");
+            if (_cache.TryGetValue(Constants.CACHE_REPORTE_KEY, out ArchivoDTO archivo))
+            {
+                await _mailHelper.SendMailWithOneFile(email, string.Empty, $"Reporte {DateTime.Now:dd/MM/yyyy}",
+                    archivo, $"Se anexa el reporte generado.", string.Empty,
+                   @"Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.<br>
+                      <strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
+                _logger.LogInformation($"Enviado el reporte a {email}");
+            }
+            else
+            {
+                _logger.LogInformation($"No hay reportes para generar.");
+            }
+        }
     }
 }

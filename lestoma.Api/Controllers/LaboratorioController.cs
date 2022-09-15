@@ -37,7 +37,7 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> GetDetalle()
         {
             return Ok();
-            Console.WriteLine();
+       
         }
 
 

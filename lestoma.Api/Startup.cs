@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -179,7 +180,14 @@ namespace lestoma.Api
 
             app.UseHttpsRedirection();
 
-            app.UseStaticFiles();
+            app.UseCors();
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot"))
+            });
 
             app.UseRouting();
 
@@ -188,7 +196,7 @@ namespace lestoma.Api
             app.UseHangfireDashboard("/dashboard", new DashboardOptions
             {
                 //AppPath = "" //The path for the Back To Site link. Set to null in order to hide the Back To  Site link.
-                DashboardTitle = "My Website",
+                DashboardTitle = "Dashboard De Lestoma APP",
                 Authorization = new[]
         {
                 new HangfireCustomBasicAuthenticationFilter{

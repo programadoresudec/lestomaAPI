@@ -26,18 +26,20 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<Response> UpdateInCascade(EUpaActividad entidad)
         {
-            await _upasActividadesRepository.CreateRelation(entidad);
+            await _upasActividadesRepository.UpdateRelation(entidad);
             return new Response
             {
                 IsExito = true,
-                Mensaje = "Se ha creado satisfactoriamente.",
+                Mensaje = "Se ha editado satisfactoriamente.",
                 StatusCode = (int)HttpStatusCode.Created
             };
         }
 
         public async Task<Response> CreateInCascade(EUpaActividad entidad)
         {
-
+            bool tieneUpa = await _upasActividadesRepository.AnyWithCondition(x => x.UsuarioId == entidad.UsuarioId);
+            if (tieneUpa)
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El usuario ya tiene asignada una upa.");
             await _upasActividadesRepository.CreateRelation(entidad);
             return new Response
             {

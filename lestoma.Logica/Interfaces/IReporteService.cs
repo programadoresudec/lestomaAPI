@@ -9,5 +9,6 @@ namespace lestoma.Logica.Interfaces
         Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByDate(ReportFilterRequest filtro, bool isSuperAdmin);
         Task<(byte[] ArchivoBytes, string MIME, string Archivo)> ReportByComponents(ReportComponentFilterRequest filtro, bool isSuperAdmin);
         Task<Response> DailyReport();
+        Task SendReportByFilter(string email);
     }
 }

@@ -79,9 +79,9 @@ namespace lestoma.Api.Helpers
         #endregion
 
         #region Enviar correos con un archivo
-        public async Task SendMailWithOneArchive(string correoDestino, string folder, string archivo, string mensaje, string MIME,
-                byte[] ArchivoBytes, string MensajeBoton = "", string title = "Lestoma", string body = "",
-                string botonRuta = "", string footer = "por favor comuniquese con el administrador.")
+        public async Task SendMailWithOneFile(string correoDestino, string folder, string mensaje, ArchivoDTO archivo,
+            string MensajeBoton = "", string title = "Lestoma", string body = "", string botonRuta = "", 
+            string footer = "por favor comuniquese con el administrador.")
         {
             try
             {
@@ -104,22 +104,22 @@ namespace lestoma.Api.Helpers
                 {
                     HtmlBody = strBody
                 };
-                if (ArchivoBytes == null)
+                if (archivo.ArchivoBytes == null)
                 {
                     string path = string.Empty;
                     if (string.IsNullOrWhiteSpace(folder))
                     {
-                        path = $"{archivo}";
+                        path = $"{archivo.FileName}";
                     }
                     else
                     {
                         path = $"{folder}\\{archivo}";
                     }
                     string carpeta = Path.Combine(_env.WebRootPath, $"Recursos\\{path}");
-                    ArchivoBytes = File.ReadAllBytes(carpeta);
+                    archivo.ArchivoBytes = File.ReadAllBytes(carpeta);
                 }
 
-                bodyBuilder.Attachments.Add(Path.GetFileName(archivo), ArchivoBytes, new ContentType(MIME, Path.GetExtension(archivo)));
+                bodyBuilder.Attachments.Add(Path.GetFileName(archivo.FileName), archivo.ArchivoBytes, new ContentType(archivo.MIME, Path.GetExtension(archivo.FileName)));
 
                 mailMessage.Body = bodyBuilder.ToMessageBody();
 
@@ -139,7 +139,7 @@ namespace lestoma.Api.Helpers
         #endregion
 
         #region Enviar correos con varios archivos
-        public async Task SendMailWithAllArchives(string correoDestino, string mensaje, List<ArchivoDTO> archivos
+        public async Task SendMailWithMultipleFile(string correoDestino, string mensaje, List<ArchivoDTO> archivos
             , string MensajeBoton = "", string title = "Lestoma",
             string body = "", string botonRuta = "", string footer = "por favor comuniquese con el administrador.")
         {

@@ -19,6 +19,11 @@ namespace lestoma.Data.Repositories
             _db = context;
         }
 
+        public async Task<bool> ExistCorreo(string email)
+        {
+            return await _db.TablaUsuarios.AnyAsync(x => x.Email.Equals(email));
+        }
+
         public async Task<List<string>> GetCorreosRolSuperAdmin()
         {
             return await _db.TablaUsuarios.Where(x => x.RolId == (int)TipoRol.SuperAdministrador
@@ -38,7 +43,7 @@ namespace lestoma.Data.Repositories
                {
                    Usuario = x.Session,
                    Componente = x.ComponenteLaboratorio.NombreComponente,
-                   SetPoint = x.ValorCalculado == null ? "N/A" : x.ValorCalculado.ToString(),
+                   SetPoint = x.ValorCalculadoTramaEnviada == null ? "N/A" : x.ValorCalculadoTramaEnviada.ToString(),
                    Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                    FechaDispositivo = x.FechaCreacionDispositivo,
                    FechaServidor = x.FechaCreacionServer,
@@ -71,7 +76,7 @@ namespace lestoma.Data.Repositories
                 {
                     Usuario = x.Session,
                     Componente = x.ComponenteLaboratorio.NombreComponente,
-                    SetPoint = x.ValorCalculado == null ? "N/A" : x.ValorCalculado.ToString(),
+                    SetPoint = x.ValorCalculadoTramaEnviada == null ? "N/A" : x.ValorCalculadoTramaEnviada.ToString(),
                     Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                     FechaDispositivo = x.FechaCreacionDispositivo,
                     FechaServidor = x.FechaCreacionServer,
@@ -109,7 +114,7 @@ namespace lestoma.Data.Repositories
                 {
                     Usuario = x.Session,
                     Componente = x.ComponenteLaboratorio.NombreComponente,
-                    SetPoint = x.ValorCalculado == null ? "N/A" : x.ValorCalculado.ToString(),
+                    SetPoint = x.ValorCalculadoTramaEnviada == null ? "N/A" : x.ValorCalculadoTramaEnviada.ToString(),
                     Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                     FechaDispositivo = x.FechaCreacionDispositivo,
                     FechaServidor = x.FechaCreacionServer,
