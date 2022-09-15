@@ -2,15 +2,11 @@
 using lestoma.Entidades.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace lestoma.Logica.Interfaces
 {
     public interface IActividadService : IGenericCRUD<EActividad, Guid>
     {
-        Task<Response> Merge(List<EActividad> listadoEntidad);
         List<NameDTO> GetActividadesJustNames();
     }
 }

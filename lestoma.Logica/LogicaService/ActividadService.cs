@@ -104,27 +104,5 @@ namespace lestoma.Logica.LogicaService
         {
             return _actividadRepository.GetActivitiesJustNames();
         }
-
-        public async Task<Response> Merge(List<EActividad> listadoEntidad)
-        {
-            var listado = await _actividadRepository.GetAll();
-
-            if (listado.ToList().Count > listadoEntidad.Count)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "no se hizo ninguna sincronización.");
-            }
-            else
-            {
-                await _actividadRepository.Merge(listadoEntidad);
-            }
-            return new Response
-            {
-                IsExito = true,
-                Mensaje = "Se ha hecho la sincronización correctamente.",
-                StatusCode = (int)HttpStatusCode.OK
-            };
-        }
-
-
     }
 }

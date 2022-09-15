@@ -65,14 +65,6 @@ namespace lestoma.Api.Controllers
             return Created(string.Empty, response);
         }
 
-        [HttpPost("merge")]
-        public async Task<IActionResult> Merge(List<ActividadRequest> actividades)
-        {
-            var listado = Mapear<List<ActividadRequest>, List<EActividad>>(actividades);
-            var response = await _actividadService.Merge(listado);
-            return Created(string.Empty, response);
-        }
-
         [HttpPut("editar")]
         public async Task<IActionResult> Editar(ActividadRequest actividad)
         {

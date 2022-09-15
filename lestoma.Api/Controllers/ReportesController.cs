@@ -15,7 +15,7 @@ namespace lestoma.Api.Controllers
 {
     [Route("api/reportes-laboratorio")]
     [ApiController]
-    [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
+ 
     public class ReportesController : BaseController
     {
         private readonly IReporteService _reporteService;
@@ -30,7 +30,7 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
-
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
         [HttpPost("daily")]
         public IActionResult ReportDaily([FromBody] ReportDailyFilterRequest filtro)
         {
@@ -45,7 +45,7 @@ namespace lestoma.Api.Controllers
             });
         }
 
-
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
         [HttpPost("by-date")]
         public async Task<IActionResult> ReportByDate([FromBody] ReportFilterRequest filtro)
         {
@@ -69,7 +69,7 @@ namespace lestoma.Api.Controllers
 
         }
 
-
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
         [HttpPost("by-components")]
         public async Task<IActionResult> ReportByComponents([FromBody] ReportComponentFilterRequest filtro)
         {

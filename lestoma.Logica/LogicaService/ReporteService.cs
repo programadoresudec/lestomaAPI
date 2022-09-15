@@ -36,6 +36,7 @@ namespace lestoma.Logica.LogicaService
             _generateReports = generateReports;
             _componenteRepository = componenteRepository;
         }
+        #region Obtiene la data del reporte diario
         public async Task<Response> GetDailyReport()
         {
             var filtro = new DateFilterRequest
@@ -51,130 +52,9 @@ namespace lestoma.Logica.LogicaService
             listado.FiltroFecha = filtro;
             return await GenerateDailyReport(listado);
         }
+        #endregion
 
-
-        public async Task SendReportByFilter(string email)
-        {
-            _logger.LogInformation($"obteniendo el reporte");
-            if (_cache.TryGetValue(Constants.CACHE_REPORTE_KEY, out ArchivoDTO archivo))
-            {
-                await _mailHelper.SendMailWithOneFile(email, string.Empty, $"Reporte {DateTime.Now:dd/MM/yyyy}",
-                    archivo, $"Se anexa el reporte generado.", string.Empty,
-                   @"Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.<br>
-                      <strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
-                _logger.LogInformation($"Enviado el reporte a {email}");
-            }
-            else
-            {
-                _logger.LogInformation($"No hay reportes para generar.");
-            }
-        }
-
-        public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByComponents(ReportComponentFilterRequest filtro, bool isSuper)
-        {
-            var file = GetFile(filtro.Filtro.TipoFormato);
-            await ExistUpa(filtro.Filtro.UpaId);
-
-            foreach (var item in filtro.ComponentesId)
-            {
-                bool existe = await _componenteRepository.AnyWithCondition(x => x.Id == item);
-                if (!existe)
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Error: No se pudo encontrar el componente con el id: {item}");
-                }
-            }
-            var listado = await _repositorio.ReportByComponents(filtro);
-            if (listado.Reporte.Count == 0)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
-            }
-            ArchivoDTO archivo = new()
-            {
-                FileName = file.FILENAME,
-                MIME = file.MIME
-            };
-            return (listado, archivo);
-        }
-
-        public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByDate(ReportFilterRequest filtro, bool isSuper)
-        {
-            var file = GetFile(filtro.TipoFormato);
-            await ExistUpa(filtro.UpaId);
-            var listado = await _repositorio.ReportByDate(filtro);
-            if (listado.Reporte.Count == 0)
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
-
-            ArchivoDTO archivo = new()
-            {
-                FileName = file.FILENAME,
-                MIME = file.MIME
-            };
-            return (listado, archivo);
-        }
-
-        public ArchivoDTO GenerateReportByDate(ReporteDTO reporte,
-            ArchivoDTO archivo, ReportFilterRequest filtro, bool isSuper)
-        {
-            reporte.FiltroFecha = new DateFilterRequest()
-            {
-                FechaInicial = filtro.FechaInicial,
-                FechaFinal = filtro.FechaFinal
-            };
-
-            var bytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, reporte, isSuper);
-            archivo.ArchivoBytes = bytes;
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromSeconds(60))
-                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
-                    .SetPriority(CacheItemPriority.Normal);
-            _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
-            return archivo;
-        }
-
-        public ArchivoDTO GenerateReportByComponents(ReporteDTO reporte,
-            ArchivoDTO archivo, ReportComponentFilterRequest filtro, bool isSuper)
-        {
-            var bytes = _generateReports.GenerateReportByFormat(filtro.Filtro.TipoFormato, reporte, isSuper);
-            archivo.ArchivoBytes = bytes;
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromSeconds(60))
-                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
-                    .SetPriority(CacheItemPriority.Normal);
-            _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
-            return archivo;
-        }
-
-
-        private async Task ExistUpa(Guid upaId)
-        {
-            if (upaId != Guid.Empty)
-            {
-                var existe = await _upaRepository.AnyWithCondition(x => x.Id == upaId);
-                if (!existe)
-                    throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se pudo encontrar la upa indicada.");
-            }
-        }
-
-        private static (string MIME, string FILENAME) GetFile(GrupoTipoArchivo grupoTipoArchivo)
-        {
-            string dateString = DateTime.Now.ToString("yyyy-MM-dd");
-            string Mime = string.Empty;
-            string FileName = string.Empty;
-            switch (grupoTipoArchivo)
-            {
-                case GrupoTipoArchivo.Imagen:
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, @"Formato invalido, solo se puede PDF y EXCEL");
-                case GrupoTipoArchivo.PDF:
-                    Mime = MediaTypeNames.Application.Pdf;
-                    FileName = $"Reporte_{dateString}.pdf";
-                    break;
-                case GrupoTipoArchivo.EXCEL:
-                    Mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                    FileName = $"Reporte_{dateString}.xlsx";
-                    break;
-            }
-            return (Mime, FileName);
-        }
+        #region Generar el documento PDF y Excel diariamente
         public async Task<Response> GenerateDailyReport(ReporteDTO reporte)
         {
             List<ArchivoDTO> archivos = new List<ArchivoDTO>();
@@ -217,6 +97,138 @@ namespace lestoma.Logica.LogicaService
                 response.Mensaje = $"Enviado el pdf  y excel a {item}";
             }
             return response;
+        }
+        #endregion
+
+        #region Obtiene la data del reporte por fechas  upa y los componentes correspondientes
+        public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByComponents(ReportComponentFilterRequest filtro, bool isSuper)
+        {
+            var file = GetFile(filtro.Filtro.TipoFormato);
+            await ExistUpa(filtro.Filtro.UpaId);
+
+            foreach (var item in filtro.ComponentesId)
+            {
+                bool existe = await _componenteRepository.AnyWithCondition(x => x.Id == item);
+                if (!existe)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Error: No se pudo encontrar el componente con el id: {item}");
+                }
+            }
+            var listado = await _repositorio.ReportByComponents(filtro);
+            if (listado.Reporte.Count == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
+            }
+            ArchivoDTO archivo = new()
+            {
+                FileName = file.FILENAME,
+                MIME = file.MIME
+            };
+            return (listado, archivo);
+        }
+        #endregion
+
+        #region Obtiene la data del reporte por fechas y upa
+        public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByDate(ReportFilterRequest filtro, bool isSuper)
+        {
+            var file = GetFile(filtro.TipoFormato);
+            await ExistUpa(filtro.UpaId);
+            var listado = await _repositorio.ReportByDate(filtro);
+            if (listado.Reporte.Count == 0)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
+
+            ArchivoDTO archivo = new()
+            {
+                FileName = file.FILENAME,
+                MIME = file.MIME
+            };
+            return (listado, archivo);
+        }
+        #endregion
+
+        #region Genera el reporte por fecha inicial y fecha final dependiendo el formato dado
+        public ArchivoDTO GenerateReportByDate(ReporteDTO reporte,
+            ArchivoDTO archivo, ReportFilterRequest filtro, bool isSuper)
+        {
+            reporte.FiltroFecha = new DateFilterRequest()
+            {
+                FechaInicial = filtro.FechaInicial,
+                FechaFinal = filtro.FechaFinal
+            };
+
+            var bytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, reporte, isSuper);
+            archivo.ArchivoBytes = bytes;
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(60))
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                    .SetPriority(CacheItemPriority.Normal);
+            _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
+            return archivo;
+        }
+        #endregion
+
+        #region Genera el reporte por componentes dependiendo el formato dado
+        public ArchivoDTO GenerateReportByComponents(ReporteDTO reporte,
+            ArchivoDTO archivo, ReportComponentFilterRequest filtro, bool isSuper)
+        {
+            var bytes = _generateReports.GenerateReportByFormat(filtro.Filtro.TipoFormato, reporte, isSuper);
+            archivo.ArchivoBytes = bytes;
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(60))
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                    .SetPriority(CacheItemPriority.Normal);
+            _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
+            return archivo;
+        }
+        #endregion
+
+        #region Envia el reporte dado el filtro correspondiente
+        public async Task SendReportByFilter(string email)
+        {
+            _logger.LogInformation($"obteniendo el reporte");
+            if (_cache.TryGetValue(Constants.CACHE_REPORTE_KEY, out ArchivoDTO archivo))
+            {
+                await _mailHelper.SendMailWithOneFile(email, string.Empty, $"Reporte {DateTime.Now:dd/MM/yyyy}",
+                    archivo, $"Se anexa el reporte generado.", string.Empty,
+                   "Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.",string.Empty, 
+                   "<strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
+                _logger.LogInformation($"Enviado el reporte a {email}");
+            }
+            else
+            {
+                _logger.LogInformation($"No hay reportes para generar.");
+            }
+        } 
+        #endregion
+
+        private async Task ExistUpa(Guid upaId)
+        {
+            if (upaId != Guid.Empty)
+            {
+                var existe = await _upaRepository.AnyWithCondition(x => x.Id == upaId);
+                if (!existe)
+                    throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se pudo encontrar la upa indicada.");
+            }
+        }
+        private static (string MIME, string FILENAME) GetFile(GrupoTipoArchivo grupoTipoArchivo)
+        {
+            string dateString = DateTime.Now.ToString("yyyy-MM-dd");
+            string Mime = string.Empty;
+            string FileName = string.Empty;
+            switch (grupoTipoArchivo)
+            {
+                case GrupoTipoArchivo.Imagen:
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, @"Formato invalido, solo se puede PDF y EXCEL");
+                case GrupoTipoArchivo.PDF:
+                    Mime = MediaTypeNames.Application.Pdf;
+                    FileName = $"Reporte_{dateString}.pdf";
+                    break;
+                case GrupoTipoArchivo.EXCEL:
+                    Mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    FileName = $"Reporte_{dateString}.xlsx";
+                    break;
+            }
+            return (Mime, FileName);
         }
     }
 }
