@@ -6,18 +6,13 @@
     <OutputType>Library</OutputType>
     <StartupObject></StartupObject>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Listados\EstadosDeComponentes.json" />
-  </ItemGroup>
-
+  
   <ItemGroup>
     <EmbeddedResource Include="Listados\EstadosDeComponentes.json" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="5.0.17" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -27,9 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Helpers\Encryption.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\lestoma.CRC\lestoma.CRC.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Encryption">
+      <HintPath>Helpers\Encryption.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

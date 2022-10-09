@@ -1,21 +1,23 @@
 ﻿using lestoma.Api.Helpers;
+using lestoma.CommonUtils.Core;
 using lestoma.CommonUtils.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Claims;
 
-namespace lestoma.CommonUtils.Helpers
+namespace lestoma.Data.Auditoria
 {
-    public class CamposAuditoriaHelper : ICamposAuditoriaHelper, IClaimsTransformation
+    public class AuditoriaHelper : IAuditoriaHelper, IClaimsTransformation
     {
+        private readonly ILoggerManager _logger;
         private HttpContext hcontext;
 
-        public CamposAuditoriaHelper(IHttpContextAccessor hacess)
+        public AuditoriaHelper(IHttpContextAccessor hacess, ILoggerManager logger)
         {
             hcontext = hacess.HttpContext;
+            _logger = logger;
         }
         public string ObtenerIp()
         {
@@ -29,7 +31,6 @@ namespace lestoma.CommonUtils.Helpers
                 }
             }
             return IP4Address;
-
         }
 
         public string ObtenerTipoDeAplicacion()
@@ -47,10 +48,9 @@ namespace lestoma.CommonUtils.Helpers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                _logger.LogError(ex.Message);
                 return "Principal";
             }
-
         }
 
         public string ObtenerUsuarioActual()
@@ -68,7 +68,7 @@ namespace lestoma.CommonUtils.Helpers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                _logger.LogError(ex.Message);
                 return "anonimo";
             }
         }

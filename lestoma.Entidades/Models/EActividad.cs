@@ -10,6 +10,7 @@ namespace lestoma.Entidades.Models
         [Key]
         [Column("id")]
         public Guid Id { get; set; }
+        [Required(ErrorMessage = "Campo requerido.")]
         [Column("nombre_actividad")]
         public string Nombre { get; set; }
 

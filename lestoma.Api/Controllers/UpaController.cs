@@ -6,7 +6,6 @@ using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -27,6 +26,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpGet("paginar")]
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
         public async Task<IActionResult> GetUpasPaginado([FromQuery] Paginacion paginacion)
         {
             var queryable = _upaService.GetAllForPagination();
@@ -35,6 +35,7 @@ namespace lestoma.Api.Controllers
             return Ok(paginador);
         }
         [HttpGet("listado")]
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
         public async Task<IActionResult> GetUpas()
         {
             var query = await _upaService.GetAll();
@@ -42,6 +43,7 @@ namespace lestoma.Api.Controllers
             return Ok(upas);
         }
         [HttpGet("listado-nombres")]
+
         public IActionResult GetUpasNombres()
         {
             var query = _upaService.GetUpasJustNames();
@@ -49,6 +51,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
         public async Task<IActionResult> GetUpa(Guid id)
         {
             var response = await _upaService.GetById(id);
@@ -58,6 +61,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpPost("crear")]
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
         public async Task<IActionResult> CrearUpa(UpaRequest upa)
         {
             var upaDTO = Mapear<UpaRequest, EUpa>(upa);
@@ -67,6 +71,7 @@ namespace lestoma.Api.Controllers
             return CreatedAtAction(nameof(GetUpa), new { id = ((UpaRequest)response.Data).Id }, response);
         }
         [HttpPut("editar")]
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
         public async Task<IActionResult> EditarUpa(UpaRequest upa)
         {
             var upaDTO = Mapear<UpaRequest, EUpa>(upa);
@@ -76,6 +81,7 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
         public async Task<IActionResult> EliminarUpa(Guid id)
         {
             await _upaService.Delete(id);

@@ -1,8 +1,8 @@
 ﻿using DinkToPdf;
 using DinkToPdf.Contracts;
-using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.Data;
+using lestoma.Data.Auditoria;
 using lestoma.Data.Repositories;
 using lestoma.Logica.Interfaces;
 using lestoma.Logica.LogicaService;
@@ -19,7 +19,7 @@ namespace lestoma.Api.Helpers
             services.AddScoped<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
             services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IJWT, JWT>();
-            services.AddScoped<ICamposAuditoriaHelper, CamposAuditoriaHelper>();
+            services.AddScoped<IAuditoriaHelper, AuditoriaHelper>();
             services.AddScoped<IGenerateReport, GenerateReport>();
             services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
             #endregion

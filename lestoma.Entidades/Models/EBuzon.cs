@@ -11,8 +11,10 @@ namespace lestoma.Entidades.Models
         [Key]
         [Column("id")]
         public int Id { get; set; }
+        [Required(ErrorMessage = "Campo requerido.")]
         [Column("descripcion", TypeName = "jsonb")]
         public string Descripcion { get; set; }
+        [Required(ErrorMessage = "Campo requerido.")]
         [Column("usuario_id")]
         public int UsuarioId { get; set; }
         [NotMapped]

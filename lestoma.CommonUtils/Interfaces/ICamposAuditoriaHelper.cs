@@ -4,7 +4,7 @@ using System.Text;
 
 namespace lestoma.CommonUtils.Interfaces
 {
-    public interface ICamposAuditoriaHelper
+    public interface IAuditoriaHelper
     {
         string ObtenerIp();
         string ObtenerUsuarioActual();

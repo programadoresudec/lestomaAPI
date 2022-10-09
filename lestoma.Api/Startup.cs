@@ -1,7 +1,6 @@
 using AutoMapper;
 using Hangfire;
 using Hangfire.PostgreSql;
-using HangfireBasicAuthenticationFilter;
 using lestoma.Api.Core;
 using lestoma.Api.Helpers;
 using lestoma.Api.Middleware;
@@ -159,6 +158,7 @@ namespace lestoma.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            new HangFireRemove().WipeJobs();
             string userDashboardHangfire = string.Empty;
             string pwdDashboardHangfire = string.Empty;
 
@@ -193,20 +193,15 @@ namespace lestoma.Api
 
             app.UseAuthentication();
 
-            app.UseHangfireDashboard("/dashboard", new DashboardOptions
+            app.UseAuthorization();
+
+
+            new LoggerManager().LogInformation("configurando dashboard");
+            app.UseHangfireDashboard("/dashboard-lestoma", new DashboardOptions
             {
                 //AppPath = "" //The path for the Back To Site link. Set to null in order to hide the Back To  Site link.
                 DashboardTitle = "Dashboard De Lestoma APP",
-                Authorization = new[]
-        {
-                new HangfireCustomBasicAuthenticationFilter{
-                    User = userDashboardHangfire,
-                    Pass =pwdDashboardHangfire
-                }
-            }
             });
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\lestoma.CommonUtils\lestoma.CommonUtils.csproj" />
-    <ProjectReference Include="..\lestoma.CRC\lestoma.CRC.csproj" />
   </ItemGroup>
 
   <ItemGroup>

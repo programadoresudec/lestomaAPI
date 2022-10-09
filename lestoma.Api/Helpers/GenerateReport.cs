@@ -95,6 +95,8 @@ namespace lestoma.Api.Helpers
             _converter = converter;
             _env = env;
         }
+
+        #region Generar reporte en excel
         public byte[] GenerateExcel(ReporteDTO reporte, bool IsSuperAdmin)
         {
 
@@ -142,6 +144,9 @@ namespace lestoma.Api.Helpers
             }
         }
 
+        #endregion
+
+        #region Generar reporte en PDF
         public byte[] GeneratePdf(ReporteDTO reporte, bool IsSuperAdmin)
         {
             try
@@ -187,7 +192,9 @@ namespace lestoma.Api.Helpers
             }
 
         }
+        #endregion
 
+        #region Agregar dinamicamente al html el reporte en pdf
         public static string GetHTMLString(ReporteDTO reporte, bool IsSuperAdmin)
         {
             var sb = new StringBuilder();
@@ -243,7 +250,9 @@ namespace lestoma.Api.Helpers
                         </html>");
             return sb.ToString();
         }
+        #endregion
 
+        #region Generar reporte por formato
         public byte[] GenerateReportByFormat(GrupoTipoArchivo TipoFormato, ReporteDTO reporte, bool IsSuperAdmin)
         {
             byte[] reporteArchivo = null;
@@ -256,6 +265,7 @@ namespace lestoma.Api.Helpers
                 reporteArchivo = GenerateExcel(reporte, IsSuperAdmin);
             }
             return reporteArchivo;
-        }
+        } 
+        #endregion
     }
 }

@@ -17,12 +17,12 @@ namespace lestoma.Data
 {
     public class LestomaContext : DbContext
     {
-        private readonly ICamposAuditoriaHelper _camposAuditoria;
+        private readonly IAuditoriaHelper _camposAuditoria;
         public LestomaContext() { }
 
 
         #region Constructor conexion Postgres
-        public LestomaContext(DbContextOptions<LestomaContext> options, ICamposAuditoriaHelper camposAuditoria)
+        public LestomaContext(DbContextOptions<LestomaContext> options, IAuditoriaHelper camposAuditoria)
          : base(options)
         {
             _camposAuditoria = camposAuditoria ?? throw new ArgumentNullException(nameof(camposAuditoria));
@@ -79,12 +79,12 @@ namespace lestoma.Data
 
             #region Schema usuarios
             modelBuilder.Entity<EUsuario>().ToTable("usuario", "usuarios");
-            modelBuilder.Entity<ERol>()
+            modelBuilder.Entity<ERol>().ToTable("rol", "usuarios")
                 .HasMany(g => g.Usuarios)
                 .WithOne(s => s.Rol)
                 .HasForeignKey(s => s.RolId)
                 .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<EEstadoUsuario>()
+            modelBuilder.Entity<EEstadoUsuario>().ToTable("estado_usuario", "usuarios")
                 .HasMany(g => g.Usuarios)
                 .WithOne(s => s.EstadoUsuario)
                 .HasForeignKey(s => s.EstadoId)
@@ -208,7 +208,7 @@ namespace lestoma.Data
             #endregion
 
             #region data usuarios
-            var hashSuper = HashHelper.Hash(Constants.PASSWORD_SUPER_ADMIN);
+            var hashSuper = HashHelper.Hash(Constants.PWD_SUPER_ADMIN);
             var superadmin = new EUsuario
             {
                 Id = 1,
@@ -225,7 +225,7 @@ namespace lestoma.Data
                 Email = Constants.EMAIL_SUPER_ADMIN
             };
 
-            var hashAdmin = HashHelper.Hash(Constants.PASSWORD_ADMIN);
+            var hashAdmin = HashHelper.Hash(Constants.PWD_ADMIN);
             var administrador = new EUsuario
             {
                 Id = 2,
@@ -242,7 +242,7 @@ namespace lestoma.Data
                 Email = Constants.EMAIL_ADMIN
             };
 
-            var hashAuxiliar = HashHelper.Hash(Constants.PASSWORD_AUXILIAR);
+            var hashAuxiliar = HashHelper.Hash(Constants.PWD_AUXILIAR);
             var auxiliar1 = new EUsuario
             {
                 Id = 3,

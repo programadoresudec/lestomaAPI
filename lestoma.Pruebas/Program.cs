@@ -1,7 +1,6 @@
-﻿using lestoma.CommonUtils.Helpers;
-using lestoma.CommonUtils.Interfaces;
+﻿
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Listados;
-using lestoma.CRC.Helpers;
 using System;
 using System.Collections.Generic;
 
@@ -9,9 +8,15 @@ namespace lestoma.Pruebas
 {
     class Program
     {
-      
+
         static void Main(string[] args)
-        {          
+        {
+
+            string miVariable = "Pepe";
+
+            var e = Encryption.EncryptDecrypt.Encrypt(miVariable);
+            var d = Encryption.EncryptDecrypt.Decrypt(e);
+
             ListadoEstadoComponente listado = new ListadoEstadoComponente();
             foreach (var item in listado.Listado)
             {
@@ -29,7 +34,7 @@ namespace lestoma.Pruebas
 
             var trama = Reutilizables.ByteArrayToHexString(byteArray.ToArray());
 
-            var crc = CalcularCRCHelper.CalculateCrc16Modbus(trama);
+            var crc = new CRCHelper().CalculateCrc16Modbus(trama);
 
 
             byteArray.Add(crc[1]);

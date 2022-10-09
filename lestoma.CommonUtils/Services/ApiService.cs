@@ -17,6 +17,7 @@ namespace lestoma.CommonUtils.Services
 {
     public class ApiService : IApiService
     {
+
         public HttpResponseMessage ResponseMessage { get; set; }
         private string _tokenNuevo;
         public Response Respuesta { get; set; }
@@ -37,7 +38,12 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                HttpClient client = new HttpClient
+                var httpClientHandler = new HttpClientHandler();
+#if DEBUG
+                httpClientHandler.ServerCertificateCustomValidationCallback =
+                    (message, certificate, chain, sslPolicyErrors) => true;
+#endif
+                HttpClient client = new HttpClient(httpClientHandler)
                 {
                     BaseAddress = new Uri(urlBase),
                 };
@@ -77,7 +83,7 @@ namespace lestoma.CommonUtils.Services
                 var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -91,7 +97,12 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                HttpClient client = new HttpClient
+                var httpClientHandler = new HttpClientHandler();
+#if DEBUG
+                httpClientHandler.ServerCertificateCustomValidationCallback =
+                    (message, certificate, chain, sslPolicyErrors) => true;
+#endif
+                HttpClient client = new HttpClient(httpClientHandler)
                 {
                     Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
@@ -132,7 +143,7 @@ namespace lestoma.CommonUtils.Services
                 var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -145,9 +156,15 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
+
+                var httpClientHandler = new HttpClientHandler();
+#if DEBUG
+                httpClientHandler.ServerCertificateCustomValidationCallback =
+                    (message, certificate, chain, sslPolicyErrors) => true;
+#endif
                 string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpClient client = new HttpClient
+                HttpClient client = new HttpClient(httpClientHandler)
                 {
                     Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
@@ -172,7 +189,7 @@ namespace lestoma.CommonUtils.Services
                 var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -185,10 +202,15 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-
                 string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpClient client = new HttpClient
+
+                var httpClientHandler = new HttpClientHandler();
+#if DEBUG
+                httpClientHandler.ServerCertificateCustomValidationCallback =
+                    (message, certificate, chain, sslPolicyErrors) => true;
+#endif
+                HttpClient client = new HttpClient(httpClientHandler)
                 {
                     BaseAddress = new Uri(urlBase),
                 };
@@ -217,7 +239,7 @@ namespace lestoma.CommonUtils.Services
                 var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -230,13 +252,17 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
+                var httpClientHandler = new HttpClientHandler();
+#if DEBUG
+                httpClientHandler.ServerCertificateCustomValidationCallback =
+                    (message, certificate, chain, sslPolicyErrors) => true;
+#endif
+                HttpClient client = new HttpClient(httpClientHandler)
+                {
+                    BaseAddress = new Uri(urlBase)
+                };
                 string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpClient client = new HttpClient
-                {
-                    BaseAddress = new Uri(urlBase),
-                };
-
                 ResponseMessage = await client.PutAsync(controller, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 Respuesta = JsonConvert.DeserializeObject<Response>(jsonString);
@@ -257,7 +283,7 @@ namespace lestoma.CommonUtils.Services
                 var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -270,10 +296,14 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-
                 string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpClient client = new HttpClient
+                var httpClientHandler = new HttpClientHandler();
+#if DEBUG
+                httpClientHandler.ServerCertificateCustomValidationCallback =
+                    (message, certificate, chain, sslPolicyErrors) => true;
+#endif
+                HttpClient client = new HttpClient(httpClientHandler)
                 {
                     BaseAddress = new Uri(urlBase),
                 };
@@ -296,7 +326,7 @@ namespace lestoma.CommonUtils.Services
                 var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -309,7 +339,12 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                HttpClient client = new HttpClient
+                var httpClientHandler = new HttpClientHandler();
+#if DEBUG
+                httpClientHandler.ServerCertificateCustomValidationCallback =
+                    (message, certificate, chain, sslPolicyErrors) => true;
+#endif
+                HttpClient client = new HttpClient(httpClientHandler)
                 {
                     Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
@@ -342,7 +377,7 @@ namespace lestoma.CommonUtils.Services
                 var jsonError = JsonConvert.SerializeObject(new Response
                 {
                     IsExito = false,
-                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
                     Mensaje = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -356,6 +391,7 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
+
                 TipoAplicacionRequest tipoAplicacionRequest = new TipoAplicacionRequest
                 {
                     TipoAplicacion = (int)TipoAplicacion.AppMovil

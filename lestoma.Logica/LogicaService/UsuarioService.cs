@@ -148,7 +148,7 @@ namespace lestoma.Logica.LogicaService
                 {
                     await _mailHelper.SendMail(usuario.Email, "Activación de Cuenta", String.Empty,
                          "Hola: ¡Su activación de la cuenta será pronto!",
-                         "Su usuario se activará de acuerdo al administrador.",
+                         "Su usuario se activará de acuerdo al super administrador.",
                          string.Empty, $"Enviamos este correo electrónico a {usuario.Email} porque te registraste en LESTOMA APP.");
 
                     await _mailHelper.SendMail(Constants.EMAIL_SUPER_ADMIN, $"Activación de cuenta: de {usuario.Email}", String.Empty,

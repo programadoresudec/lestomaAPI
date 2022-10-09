@@ -14,6 +14,7 @@ namespace lestoma.Entidades.Models
         [Key]
         [Column("id")]
         public int Id { get; set; }
+        [Required(ErrorMessage = "Campo requerido.")]
         [Column("descripcion")]
         public string DescripcionEstado { get; set; }
         public ICollection<EUsuario> Usuarios { get; set; }
