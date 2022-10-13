@@ -132,5 +132,25 @@ namespace lestoma.Data.Repositories
                  FechaCreacionServer = x.FechaCreacionServer
              }).ToListAsync();
         }
+
+        public async Task<IEnumerable<EstadoDTO>> GetUserStatuses()
+        {
+            return await _db.TablaEstadosUsuarios
+             .Select(x => new EstadoDTO
+             {
+                 Id = x.Id,
+                 NombreEstado = x.DescripcionEstado
+             }).ToListAsync();
+        }
+
+        public async Task<IEnumerable<RolDTO>> GetUserRoles()
+        {
+            return await _db.TablaRoles.Where(x => x.Id != (int)TipoRol.SuperAdministrador)
+            .Select(x => new RolDTO
+            {
+                Id = x.Id,
+                NombreRol = x.NombreRol
+            }).ToListAsync();
+        }
     }
 }

@@ -350,14 +350,35 @@ namespace lestoma.Logica.LogicaService
             return _respuesta;
         }
 
-        public Task<Response> UpdateUser(EUsuario usuario)
+        public async Task<Response> UpdateUser(EUsuario usuario)
         {
-            throw new NotImplementedException();
+            var respuesta = await GetByIdAsync(usuario.Id);
+            EUsuario userActual = (EUsuario)respuesta.Data;
+            userActual.Nombre = usuario.Nombre;
+            userActual.RolId = usuario.RolId;
+            userActual.Apellido = usuario.Apellido;
+            userActual.EstadoId = usuario.EstadoId;
+            await _usuarioRepository.Update(userActual);
+            _respuesta.IsExito = true;
+            _respuesta.Mensaje = "Usuario actualizado.";
+            _respuesta.StatusCode = (int)HttpStatusCode.OK;
+            return _respuesta;
+
         }
 
         public async Task<IEnumerable<InfoUserDTO>> GetInfoUsers()
         {
             return await _usuarioRepository.GetInfoUsers();
+        }
+
+        public async Task<IEnumerable<EstadoDTO>> GetUserStatuses()
+        {
+            return await _usuarioRepository.GetUserStatuses();
+        }
+
+        public async Task<IEnumerable<RolDTO>> GetUserRoles()
+        {
+            return await _usuarioRepository.GetUserRoles();
         }
     }
 }

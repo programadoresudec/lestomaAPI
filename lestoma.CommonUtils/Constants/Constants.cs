@@ -14,6 +14,7 @@
         public static string PWD_ADMIN = Decript("7Cq3fMRoo69IHINVq7YRYkVgJo42bk1bkvaIZRBAyME=");
         public static string PWD_AUXILIAR = Decript("VKsb3eDWTZSiU8IhKCFIDvHMy5hTQbJt+HrauPNPASg=");
 
+        public const string REFRESH = "refresh";
         public const string PROTECT_USER = "UserInfo.Protector";
         public const string CACHE_REPORTE_KEY = "KEYREPORTE";
 

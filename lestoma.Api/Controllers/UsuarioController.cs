@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using lestoma.Api.Helpers;
+using lestoma.Api.Core;
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
@@ -24,7 +24,7 @@ namespace lestoma.Api.Controllers
             _service = usuarioService;
         }
 
-        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         [HttpGet("activos")]
         public IActionResult GetUsuarios()
         {
@@ -32,7 +32,7 @@ namespace lestoma.Api.Controllers
             return Ok(listado);
         }
 
-        [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpGet("listado")]
         public async Task<IActionResult> GetInfoUsuarios()
         {
@@ -40,7 +40,23 @@ namespace lestoma.Api.Controllers
             return Ok(listado);
         }
 
-        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        [HttpGet("listado-estados")]
+        public async Task<IActionResult> GetEstados()
+        {
+            var listado = await _service.GetUserStatuses();
+            return Ok(listado);
+        }
+
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        [HttpGet("listado-roles")]
+        public async Task<IActionResult> GetRoles()
+        {
+            var listado = await _service.GetUserRoles();
+            return Ok(listado);
+        }
+
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         [HttpGet("search/{id}")]
         public async Task<IActionResult> getUsuario(int id)
         {
@@ -50,30 +66,26 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
 
-        [HttpPost("agregar")]
-        [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
+        [HttpPost("crear")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> RegistrarUsuario(RegistroRequest registro)
         {
             var entidad = Mapear<RegistroRequest, EUsuario>(registro);
             Respuesta = await _service.RegisterUser(entidad, false);
-            Respuesta.Data = registro;
-            Respuesta.StatusCode = (int)HttpStatusCode.Created;
             return Created(string.Empty, Respuesta);
         }
 
-        [HttpPost("editar")]
-        [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
-        public async Task<IActionResult> EditarUsuario(RegistroRequest registro)
+        [HttpPut("editar")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        public async Task<IActionResult> EditarUsuario(RegistroUpdateRequest registro)
         {
-            var entidad = Mapear<RegistroRequest, EUsuario>(registro);
+            var entidad = Mapear<RegistroUpdateRequest, EUsuario>(registro);
             Respuesta = await _service.UpdateUser(entidad);
-            Respuesta.Data = registro;
-            Respuesta.StatusCode = (int)HttpStatusCode.Created;
-            return Created(string.Empty, Respuesta);
+            return Ok(Respuesta);
         }
 
 
-        [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpPut("editar-rol")]
         public async Task<IActionResult> EditarRol(RolRequest user)
         {

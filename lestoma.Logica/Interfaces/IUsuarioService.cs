@@ -24,5 +24,7 @@ namespace lestoma.Logica.Interfaces
         Task<Response> RevokeToken(string token, string ipAddress);
         Task<Response> GetByIdAsync(int id);
         Task<IEnumerable<InfoUserDTO>> GetInfoUsers();
+        Task<IEnumerable<EstadoDTO>> GetUserStatuses();
+        Task<IEnumerable<RolDTO>> GetUserRoles();
     }
 }

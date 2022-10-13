@@ -11,21 +11,15 @@ namespace lestoma.Pruebas
 
         static void Main(string[] args)
         {
-
-            string miVariable = "Pepe";
-
-            var e = Encryption.EncryptDecrypt.Encrypt(miVariable);
-            var d = Encryption.EncryptDecrypt.Decrypt(e);
-
             ListadoEstadoComponente listado = new ListadoEstadoComponente();
             foreach (var item in listado.Listado)
             {
                 Console.WriteLine(item.TipoEstado);
             }
 
-            List<byte> byteArray = new List<byte>() { 111, 1, 240, 0, 0, 0, 0, 0 };
+            List<byte> byteArray = new List<byte>() { 111, 1, 60, 0, 0, 0, 0, 0 };
 
-            var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(18);
+            var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(0);
 
             byteArray[4] = bytesFlotante[0];
             byteArray[5] = bytesFlotante[1];

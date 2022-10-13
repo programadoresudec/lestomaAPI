@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Hangfire;
-using lestoma.Api.Helpers;
+using lestoma.Api.Core;
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Logica.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,7 +15,7 @@ namespace lestoma.Api.Controllers
 {
     [Route("api/reportes-laboratorio")]
     [ApiController]
- 
+
     public class ReportesController : BaseController
     {
         private readonly IReporteService _reporteService;
@@ -30,7 +30,7 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
-        [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpPost("daily")]
         public IActionResult ReportDaily([FromBody] ReportDailyFilterRequest filtro)
         {
@@ -44,8 +44,7 @@ namespace lestoma.Api.Controllers
                 StatusCode = (int)HttpStatusCode.OK,
             });
         }
-
-        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         [HttpPost("by-date")]
         public async Task<IActionResult> ReportByDate([FromBody] ReportFilterRequest filtro)
         {
@@ -69,7 +68,7 @@ namespace lestoma.Api.Controllers
 
         }
 
-        [Authorize(Roles = RolesEstaticos.SUPERADMIN + "," + RolesEstaticos.ADMIN)]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         [HttpPost("by-components")]
         public async Task<IActionResult> ReportByComponents([FromBody] ReportComponentFilterRequest filtro)
         {

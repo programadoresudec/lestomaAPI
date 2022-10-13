@@ -1,6 +1,8 @@
 using AutoMapper;
+using lestoma.Api.Core;
 using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
@@ -16,7 +18,7 @@ using System.Threading.Tasks;
 namespace lestoma.Api.Controllers
 {
     [Route("api/modulos")]
-    [Authorize(Roles = RolesEstaticos.SUPERADMIN)]
+    [AuthorizeRoles(TipoRol.SuperAdministrador)]
     [ApiController]
     public class ModuloController : BaseController
     {

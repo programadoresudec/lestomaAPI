@@ -131,6 +131,7 @@ namespace lestoma.Api.Controllers
 
         #region olvido su contraseña
         [HttpPut("forgotpassword")]
+        [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest email)
         {
             Respuesta = await _usuarioService.ForgotPassword(email);
@@ -140,7 +141,7 @@ namespace lestoma.Api.Controllers
 
         #region restablecer la contraseña
         [HttpPut("recoverpassword")]
-        public async Task<IActionResult> ForgotPassword(RecoverPasswordRequest recover)
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordRequest recover)
         {
             Respuesta = await _usuarioService.RecoverPassword(recover);
             Respuesta.StatusCode = (int)HttpStatusCode.OK;

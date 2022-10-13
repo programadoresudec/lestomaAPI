@@ -22,4 +22,18 @@ namespace lestoma.CommonUtils.Requests
         [Required(ErrorMessage = "la clave es requerida")]
         public string Clave { get; set; }
     }
+
+    public class RegistroUpdateRequest
+    {
+        [Required(ErrorMessage = "El id del usuario es requerido")]
+        public int UsuarioId { get; set; }
+        [Required(ErrorMessage = "El estado id es requerido")]
+        public int EstadoId { get; set; }
+        [Required(ErrorMessage = "El rol id es requerido")]
+        public int RolId { get; set; }
+        [Required(ErrorMessage = "El nombre es requerido")]
+        public string Nombre { get; set; }
+        [Required(ErrorMessage = "El apellido es requerido")]
+        public string Apellido { get; set; }
+    }
 }
