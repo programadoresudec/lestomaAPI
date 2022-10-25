@@ -1,5 +1,6 @@
 using AutoMapper;
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
 using lestoma.Api.Core;
 using lestoma.Api.Helpers;
@@ -66,7 +67,6 @@ namespace lestoma.Api
                 {
                     options.UseNpgsql(connectionString);
                 });
-                ConfigureHangfire(connectionString, services);
 
                 var context = new CustomAssemblyLoadContext();
                 context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox.dll"));
@@ -147,6 +147,7 @@ namespace lestoma.Api
                 IMapper mapper = mapperConfig.CreateMapper();
                 services.AddSingleton(mapper);
                 services.AddMvc();
+                ConfigureHangfire(connectionString, services);
             }
             catch (Exception ex)
             {
@@ -201,6 +202,10 @@ namespace lestoma.Api
             {
                 //AppPath = "" //The path for the Back To Site link. Set to null in order to hide the Back To  Site link.
                 DashboardTitle = "Dashboard De Lestoma APP",
+                Authorization = new IDashboardAuthorizationFilter[]
+                {
+                     new HangfireDashboardJwtAuthorizationFilter()
+                }
             });
 
             app.UseEndpoints(endpoints =>

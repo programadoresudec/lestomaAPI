@@ -1,16 +1,13 @@
-﻿using Hangfire.Storage.Monitoring;
+﻿using Hangfire;
 using Hangfire.Storage;
-using Hangfire;
-using System.Collections.Generic;
+using Hangfire.Storage.Monitoring;
 using System;
-using lestoma.CommonUtils.Core;
+using System.Collections.Generic;
 
 namespace lestoma.Api.Core
 {
     public class HangFireRemove
     {
-
-
         public void WipeJobs()
         {
             var _logger = new LoggerManager();

@@ -6,7 +6,9 @@ using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -64,6 +66,7 @@ namespace lestoma.Api.Helpers
                         claims.Add(new Claim(ClaimsConfig.ROLES_ACTIVIDADES, item));
                     }
                 }
+
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
 

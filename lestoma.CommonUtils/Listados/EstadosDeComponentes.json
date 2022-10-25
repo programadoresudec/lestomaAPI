@@ -1,32 +1,22 @@
 [
   {
-    "id": "5CD42E4E-5BF8-428B-8681-0CF1F6BACB91",
-    "tipoEstado": "ENCENDIDO",
-    "tercerByteTrama": "F0",
-    "cuartoByteTrama": "00"
-  },
-  {
     "id": "98A74BD5-7390-4244-8B2E-255D3707071D",
-    "tipoEstado": "APAGADO",
-    "tercerByteTrama": "F0",
-    "cuartoByteTrama": "00"
-  },
-  {
-    "id": "E1394067-1CF1-4068-BA85-2EB8CEF4E91D",
-    "tipoEstado": "TODOS LOS ESTADOS",
-    "tercerByteTrama": "3C",
-    "cuartoByteTrama": "00"
+    "tipoEstado": "ON-OFF",
+    "ByteFuncion": "F0"
   },
   {
     "id": "F5F738C7-0DBA-48EE-AFEA-B22530160653",
     "tipoEstado": "LECTURA",
-    "tercerByteTrama": "0F",
-    "cuartoByteTrama": "00"
+    "ByteFuncion": "0F"
   },
   {
-    "id": "C0619A30-875D-4E67-8F7F-02CC2BF98C03",
+    "id": "C781773B-7D7C-47F7-B5D0-34A4943BA907",
     "tipoEstado": "AJUSTE",
-    "tercerByteTrama": "F0",
-    "cuartoByteTrama": "00"
+    "ByteFuncion": "F0"
+  },
+  {
+    "id": "77ECDA56-C345-48DE-9F74-9BA5C134DA80",
+    "tipoEstado": "REINICIO SOFTWARE",
+    "ByteFuncion": "DE"
   }
 ]

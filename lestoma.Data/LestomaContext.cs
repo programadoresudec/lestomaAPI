@@ -431,8 +431,7 @@ namespace lestoma.Data
 
                 Id = Guid.NewGuid(),
                 TipoEstado = "ON-OFF",
-                TercerByteTrama = "F0",
-                CuartoByteTrama = "00",
+                ByteFuncion = "F0",
 
             });
 
@@ -442,8 +441,7 @@ namespace lestoma.Data
 
                 Id = Guid.NewGuid(),
                 TipoEstado = "LECTURA",
-                TercerByteTrama = "0F",
-                CuartoByteTrama = "00",
+                ByteFuncion = "0F",
             });
 
             var bombaDeOxigeno = new EComponenteLaboratorio()

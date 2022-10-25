@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace lestoma.CommonUtils.Helpers
@@ -13,7 +14,7 @@ namespace lestoma.CommonUtils.Helpers
         public static string GenerarCodigoVerificacion()
         {
             string codigo = string.Empty;
-            string[] letras = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+            string[] letras = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
             Random EleccionAleatoria = new Random();
 
             for (int i = 0; i < LONGITUD_CODIGO; i++)
@@ -60,6 +61,16 @@ namespace lestoma.CommonUtils.Helpers
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(Bytes); // We have to reverse
             return BitConverter.ToSingle(Bytes, 0);
+        }
+
+        public static Byte[] RandomByteDireccionEsclavoAndRegistro()
+        {
+            using (RNGCryptoServiceProvider rg = new RNGCryptoServiceProvider())
+            {
+                Byte[] BytesRandom = new Byte[2];
+                rg.GetBytes(BytesRandom);
+                return BytesRandom;           
+            }
         }
         public static byte[] IEEEFloatingPointToByte(float floatingPoint)
         {

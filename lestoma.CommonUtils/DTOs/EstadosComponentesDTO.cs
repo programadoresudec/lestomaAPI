@@ -6,7 +6,6 @@ namespace lestoma.CommonUtils.DTOs
     {
         public Guid Id { get; set; }
         public string TipoEstado { get; set; }
-        public string TercerByteTrama { get; set; }
-        public string CuartoByteTrama { get; set; }
+        public string ByteFuncion { get; set; }
     }
 }

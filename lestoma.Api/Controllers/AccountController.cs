@@ -6,13 +6,20 @@ using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Spreadsheet;
+using lestoma.CommonUtils.Enums;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace lestoma.Api.Controllers
 {
@@ -35,6 +42,33 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
+
+        #region refresh-token
+        [AllowAnonymous]
+        [HttpGet("IsSignIn")]
+        public IActionResult IsSignIn()
+        {
+            var claims = ClaimsToken();
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                Respuesta = new Response
+                {
+                    IsExito = true,
+                    Mensaje = "Esta Autenticado.",
+                    StatusCode = (int)HttpStatusCode.OK
+                };
+                return Ok(Respuesta);
+            }
+            Respuesta = new Response
+            {
+                IsExito = false,
+                Mensaje = "No Esta Autenticado.",
+                StatusCode = (int)HttpStatusCode.Unauthorized
+            };
+            return Unauthorized(Respuesta);
+        }
+        #endregion
+
         #region logeo
         [HttpPost("login")]
         [AllowAnonymous]
@@ -49,9 +83,15 @@ namespace lestoma.Api.Controllers
             Respuesta.Data = usuario;
             SetTokenCookie(usuario.RefreshToken);
             SetAplicacionCookie(logeo.TipoAplicacion);
+
+            //if (data.Rol.Id == (int)TipoRol.SuperAdministrador)
+            //    await SignInUserHangfire($"{data.Nombre} {data.Apellido}");
+
             return Created(string.Empty, Respuesta);
         }
         #endregion
+
+
 
         #region refresh-token
         [AllowAnonymous]
@@ -78,8 +118,10 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
-        #region LogOut
 
+
+
+        #region LogOut
         [HttpPost("LogOut")]
         [Authorize]
         public async Task<IActionResult> LogOut([FromBody] TokenRefreshDTO model)
@@ -169,6 +211,23 @@ namespace lestoma.Api.Controllers
             return Ok(Respuesta);
         }
         #endregion
+
+        private async Task SignInUserHangfire(string username)
+        {
+            var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
+            identity.AddClaim(new Claim(ClaimTypes.Name, username ?? string.Empty));
+
+            var principal = new ClaimsPrincipal(identity);
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal,
+                new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    AllowRefresh = true,
+                    ExpiresUtc = DateTime.UtcNow.AddDays(1)
+                });
+        }
     }
 }
 
