@@ -42,7 +42,6 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
-
         #region refresh-token
         [AllowAnonymous]
         [HttpGet("IsSignIn")]
@@ -91,8 +90,6 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
-
-
         #region refresh-token
         [AllowAnonymous]
         [HttpPost("refresh-token")]
@@ -117,9 +114,6 @@ namespace lestoma.Api.Controllers
             return Ok(Respuesta);
         }
         #endregion
-
-
-
 
         #region LogOut
         [HttpPost("LogOut")]

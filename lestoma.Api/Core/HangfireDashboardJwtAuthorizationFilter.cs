@@ -1,4 +1,5 @@
 ﻿using Hangfire.Dashboard;
+using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.Core;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.MyException;
@@ -50,8 +51,17 @@ namespace lestoma.Api.Core
 
             try
             {
-                // Only authenticated users who have the required claim (AzureAD group in this demo) can access the dashboard.
-                return jwtSecurityToken.Claims.Any(t => t.Type == ClaimTypes.Role && t.Value == EnumConfig.GetDescription(TipoRol.SuperAdministrador));
+                int IdRol = 0;
+                var rolId = jwtSecurityToken.Claims.Where(x => x.Type == ClaimsConfig.ID_ROL)
+                    .Select(x => x.Value).FirstOrDefault();
+                if (string.IsNullOrWhiteSpace(rolId))
+                    return false;
+                if (int.TryParse(rolId, out int RolId))
+                {
+                    IdRol = RolId;
+                }
+
+                return IdRol == (int)TipoRol.SuperAdministrador;
             }
             catch (Exception exception)
             {
