@@ -59,9 +59,9 @@ namespace lestoma.Api.Controllers
             var jobId = _backgroundJobClient.Schedule<ILaboratorioService>(service =>
            service.SyncLabDataOffline(datosMapeados), TimeSpan.FromSeconds(10));
             _backgroundJobClient.ContinueJobWith<ILaboratorioService>(jobId, service => service.SendEmailFinishMerge(EmailDesencryptedUser));
-            return Ok(new Response
+            return Ok(new ResponseDTO
             {
-                Mensaje = "Se esta generando la migración de datos, pronto le llegará un correo cuando termine.",
+                MensajeHttp = "Se esta generando la migración de datos, pronto le llegará un correo cuando termine.",
                 IsExito = true,
                 StatusCode = (int)HttpStatusCode.OK
             });

@@ -426,7 +426,7 @@ namespace lestoma.Data
             #endregion
 
             #region data componentes
-            var jsonEstadoOnOff = JsonSerializer.Serialize(new EstadosComponentes()
+            var jsonEstadoOnOff = JsonSerializer.Serialize(new EstadoComponente()
             {
 
                 Id = Guid.NewGuid(),
@@ -436,7 +436,7 @@ namespace lestoma.Data
             });
 
 
-            var jsonEstadoLectura = JsonSerializer.Serialize(new EstadosComponentes()
+            var jsonEstadoLectura = JsonSerializer.Serialize(new EstadoComponente()
             {
 
                 Id = Guid.NewGuid(),

@@ -15,7 +15,7 @@ namespace lestoma.Logica.LogicaService
 {
     public class BuzonService : IBuzonService
     {
-        private readonly Response _respuesta = new();
+        private readonly ResponseDTO _respuesta = new();
 
         private BuzonRepository _buzonRepository;
 
@@ -28,18 +28,16 @@ namespace lestoma.Logica.LogicaService
             return _buzonRepository.ListarBuzonConUsuario();
         }
 
-        public async Task<Response> CreateMailBox(BuzonCreacionRequest buzonCreacion)
+        public async Task<ResponseDTO> CreateMailBox(BuzonCreacionRequest buzonCreacion)
         {
             var reporte = new EBuzon
             {
                 Descripcion = JsonSerializer.Serialize(buzonCreacion.Detalle),
                 UsuarioId = buzonCreacion.UsuarioId
             };
-
-
             await _buzonRepository.Create(reporte);
             _respuesta.IsExito = true;
-            _respuesta.Mensaje = "Enviado con exito.";
+            _respuesta.MensajeHttp = "Enviado con exito.";
             return _respuesta;
         }
 

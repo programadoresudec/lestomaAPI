@@ -37,10 +37,10 @@ namespace lestoma.Api.Controllers
             RecurringJob.AddOrUpdate<IReporteService>("Enviar-reporte-diario", servicio => servicio.GetDailyReport(),
                 Cron.Daily(filtro.Hour, filtro.Minute), TimeZoneInfo.Local);
 
-            return Ok(new Response
+            return Ok(new ResponseDTO
             {
                 IsExito = true,
-                Mensaje = "Se ha generado correctamente el job.",
+                MensajeHttp = "Se ha generado correctamente el job.",
                 StatusCode = (int)HttpStatusCode.OK,
             });
         }
@@ -59,9 +59,9 @@ namespace lestoma.Api.Controllers
                 TimeSpan.FromSeconds(2));
             var EmailDesencryptedUser = EmailDesencrypted();
             _backgroundJobClient.ContinueJobWith<IReporteService>(jobId, service => service.SendReportByFilter(EmailDesencryptedUser));
-            return Ok(new Response
+            return Ok(new ResponseDTO
             {
-                Mensaje = "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado.",
+                MensajeHttp = "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado.",
                 IsExito = true,
                 StatusCode = (int)HttpStatusCode.OK
             });
@@ -82,9 +82,9 @@ namespace lestoma.Api.Controllers
                 TimeSpan.FromSeconds(2));
             var EmailDesencryptedUser = EmailDesencrypted();
             _backgroundJobClient.ContinueJobWith<IReporteService>(jobId, service => service.SendReportByFilter(EmailDesencryptedUser));
-            return Ok(new Response
+            return Ok(new ResponseDTO
             {
-                Mensaje = "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado.",
+                MensajeHttp = "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado.",
                 IsExito = true,
                 StatusCode = (int)HttpStatusCode.OK
             });

@@ -7,13 +7,13 @@ namespace lestoma.CommonUtils.Interfaces
 {
     public interface IApiService
     {
-        Task<Response> GetPaginadoAsyncWithToken<T>(string urlBase, string controller, string token);
-        Task<Response> GetListAsyncWithToken<T>(string urlBase, string controller, string token);
-        Task<Response> PostAsync<T>(string urlBase, string controller, T model);
-        Task<Response> PutAsync<T>(string urlBase, string controller, T model);
-        Task<Response> DeleteAsyncWithToken(string urlBase, string controller, object id, string token);
-        Task<Response> PostAsyncWithToken<T>(string urlBase, string controller, T model, string token);
-        Task<Response> PutAsyncWithToken<T>(string urlBase, string controller, T model, string token);
+        Task<ResponseDTO> GetPaginadoAsyncWithToken<T>(string urlBase, string controller, string token);
+        Task<ResponseDTO> GetListAsyncWithToken<T>(string urlBase, string controller, string token);
+        Task<ResponseDTO> PostAsync<T>(string urlBase, string controller, T model);
+        Task<ResponseDTO> PutAsync<T>(string urlBase, string controller, T model);
+        Task<ResponseDTO> DeleteAsyncWithToken(string urlBase, string controller, object id, string token);
+        Task<ResponseDTO> PostAsyncWithToken<T>(string urlBase, string controller, T model, string token);
+        Task<ResponseDTO> PutAsyncWithToken<T>(string urlBase, string controller, T model, string token);
         bool CheckConnection();
     }
 }

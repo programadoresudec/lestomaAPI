@@ -22,7 +22,7 @@ namespace lestoma.Api.Controllers
     {
         protected readonly IMapper _mapper;
         protected readonly IDataProtector _protector;
-        public Response Respuesta { get; set; } = new Response();
+        public ResponseDTO Respuesta { get; set; } = new ResponseDTO();
         public BaseController(IMapper mapper)
         {
             _mapper = mapper;

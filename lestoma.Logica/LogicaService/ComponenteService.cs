@@ -1,4 +1,5 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
@@ -16,7 +17,6 @@ namespace lestoma.Logica.LogicaService
         private ComponenteRepository _componenteRepo;
         private ActividadRepository _actividadRepo;
         private UpaRepository _upaRepo;
-        private readonly Response _respuesta = new();
 
         public ComponenteService(ComponenteRepository componente, ActividadRepository _actividadRepository,
             UpaRepository upaRepository)
@@ -34,16 +34,12 @@ namespace lestoma.Logica.LogicaService
             }
             return listado;
         }
-        public async Task<Response> Create(EComponenteLaboratorio entidad)
+        public async Task<ResponseDTO> Create(EComponenteLaboratorio entidad)
         {
             await Validaciones(entidad);
             entidad.Id = Guid.NewGuid();
             await _componenteRepo.Create(entidad);
-            _respuesta.IsExito = true;
-            _respuesta.Data = entidad;
-            _respuesta.StatusCode = (int)HttpStatusCode.Created;
-            _respuesta.Mensaje = "Se ha creado";
-            return _respuesta;
+            return Responses.SetCreatedResponse(entidad);
         }
 
         private async Task Validaciones(EComponenteLaboratorio entidad)
@@ -71,36 +67,36 @@ namespace lestoma.Logica.LogicaService
 
         }
 
-        public async Task<Response> GetById(Guid id)
+        public async Task<ResponseDTO> GetById(Guid id)
         {
-            var query = await _componenteRepo.GetById(id);
+            var query = await _componenteRepo.GetInfoById(id);
             if (query == null)
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el componente.");
-            _respuesta.Data = query;
-            _respuesta.IsExito = true;
-            _respuesta.Mensaje = "Encontrado";
-            return _respuesta;
+            return Responses.SetOkResponse(query);
         }
 
-        public async Task<Response> Update(EComponenteLaboratorio entidad)
+        public async Task<ResponseDTO> Update(EComponenteLaboratorio entidad)
         {
-            var response = await GetById(entidad.Id);
-            var comp = (EComponenteLaboratorio)response.Data;
-            comp.NombreComponente = entidad.NombreComponente;
-            await _componenteRepo.Update(comp);
-            _respuesta.IsExito = true;
-            _respuesta.StatusCode = (int)HttpStatusCode.OK;
-            _respuesta.Mensaje = "se ha editado satisfactoriamente.";
-            return _respuesta;
+            var componente = await _componenteRepo.GetById(entidad.Id);
+            if (componente == null)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el componente.");
+
+            componente.NombreComponente = entidad.NombreComponente;
+            componente.ActividadId = entidad.ActividadId;
+            componente.UpaId = entidad.UpaId;
+            componente.ModuloComponenteId = entidad.ModuloComponenteId;
+            componente.JsonEstadoComponente = entidad.JsonEstadoComponente;
+            await _componenteRepo.Update(componente);
+            return Responses.SetOkMessageEditResponse(componente);
         }
 
         public async Task Delete(Guid id)
         {
-            var entidad = await GetById(id);
-            await _componenteRepo.Delete((EComponenteLaboratorio)entidad.Data);
+            var componente = await _componenteRepo.GetById(id);
+            if (componente == null)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el componente.");
+            await _componenteRepo.Delete(componente);
         }
-
-
 
         public IQueryable<EComponenteLaboratorio> GetAllForPagination()
         {

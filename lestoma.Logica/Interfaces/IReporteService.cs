@@ -10,8 +10,8 @@ namespace lestoma.Logica.Interfaces
         Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByComponents(ReportComponentFilterRequest filtro, bool isSuper);
         ArchivoDTO GenerateReportByDate(ReporteDTO reporte, ArchivoDTO archivo, ReportFilterRequest filtro, bool isSuper);
         ArchivoDTO GenerateReportByComponents(ReporteDTO reporte, ArchivoDTO archivo, ReportComponentFilterRequest filtro, bool isSuper);
-        Task<Response> GetDailyReport();
+        Task<ResponseDTO> GetDailyReport();
         Task SendReportByFilter(string email);
-        Task<Response> GenerateDailyReport(ReporteDTO reporte);
+        Task<ResponseDTO> GenerateDailyReport(ReporteDTO reporte);
     }
 }

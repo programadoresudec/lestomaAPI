@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace lestoma.Data.Repositories
 {
@@ -76,6 +77,37 @@ namespace lestoma.Data.Repositories
                 Upa = x.Upa.Nombre
             });
             return listado;
+        }
+
+        public async Task<InfoComponenteDTO> GetInfoById(Guid id)
+        {
+            return await _dbSet.Where(x => x.Id == id).Include(y => y.Actividad).Include(y => y.Upa).Include(y => y.ModuloComponente)
+                .Select(x => new InfoComponenteDTO
+                {
+                    Id = x.Id,
+                    Nombre = x.NombreComponente,
+                    Upa = new NameDTO
+                    {
+                        Id = x.Upa.Id,
+                        Nombre = x.Upa.Nombre
+                    },
+                    Actividad = new NameDTO
+                    {
+                        Id = x.Actividad.Id,
+                        Nombre = x.Actividad.Nombre
+                    },
+                    Modulo = new NameDTO
+                    {
+                        Id = x.ModuloComponente.Id,
+                        Nombre = x.ModuloComponente.Nombre
+                    },
+                    EstadoComponente = new EstadoComponenteDTO
+                    {
+                        Id = x.ObjetoJsonEstado.Id,
+                        TipoEstado = x.ObjetoJsonEstado.TipoEstado,
+                        ByteFuncion = x.ObjetoJsonEstado.ByteFuncion
+                    }
+                }).FirstOrDefaultAsync();
         }
     }
 }

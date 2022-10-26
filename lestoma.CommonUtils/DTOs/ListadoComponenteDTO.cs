@@ -14,7 +14,7 @@ namespace lestoma.CommonUtils.DTOs
         public string Nombre { get; set; }
         [JsonIgnore]
         public string JsonEstadoComponente { get; set; }
-        public EstadosComponentesDTO TipoEstadoComponente => JsonConvert.DeserializeObject<EstadosComponentesDTO>(this.JsonEstadoComponente);
+        public EstadoComponenteDTO TipoEstadoComponente => JsonConvert.DeserializeObject<EstadoComponenteDTO>(this.JsonEstadoComponente);
 
     }
 }

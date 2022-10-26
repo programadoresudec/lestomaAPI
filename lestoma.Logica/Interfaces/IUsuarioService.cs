@@ -9,20 +9,20 @@ namespace lestoma.Logica.Interfaces
 {
     public interface IUsuarioService
     {
-        Task<Response> Login(LoginRequest login, string ip);
-        Task<Response> RegisterUser(EUsuario usuario, bool ownRegister = true);
-        Task<Response> UpdateUser(EUsuario usuario);
-        Task<Response> ChangePassword(ChangePasswordRequest usuario);
-        Task<Response> ForgotPassword(ForgotPasswordRequest email);
-        Task<Response> RecoverPassword(RecoverPasswordRequest recover);
-        Task<Response> ChangeProfile(ChangeProfileRequest change);
+        Task<ResponseDTO> Login(LoginRequest login, string ip);
+        Task<ResponseDTO> RegisterUser(EUsuario usuario, bool ownRegister = true);
+        Task<ResponseDTO> UpdateUser(EUsuario usuario);
+        Task<ResponseDTO> ChangePassword(ChangePasswordRequest usuario);
+        Task<ResponseDTO> ForgotPassword(ForgotPasswordRequest email);
+        Task<ResponseDTO> RecoverPassword(RecoverPasswordRequest recover);
+        Task<ResponseDTO> ChangeProfile(ChangeProfileRequest change);
         Task<EUsuario> RefreshToken(string refreshToken, string ipAddress);
         List<UserDTO> GetUsersJustNames(bool isSuperAdmin);
         short GetExpirationToken(int aplicacionId);
         Task<string> GetApplicationType(int tipoAplicacion);
-        Task<Response> EditRol(RolRequest user);
-        Task<Response> RevokeToken(string token, string ipAddress);
-        Task<Response> GetByIdAsync(int id);
+        Task<ResponseDTO> EditRol(RolRequest user);
+        Task<ResponseDTO> RevokeToken(string token, string ipAddress);
+        Task<ResponseDTO> GetByIdAsync(int id);
         Task<IEnumerable<InfoUserDTO>> GetInfoUsers();
         Task<IEnumerable<EstadoDTO>> GetUserStatuses();
         Task<IEnumerable<RolDTO>> GetUserRoles();

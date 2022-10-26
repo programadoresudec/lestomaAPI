@@ -16,7 +16,7 @@ namespace lestoma.Logica.LogicaService
     public class DetalleUpaActividadService : IDetalleUpaActividadService
 
     {
-        private readonly Response _respuesta = new();
+        private readonly ResponseDTO _respuesta = new();
 
         private readonly UpaActividadRepository _upasActividadesRepository;
         public DetalleUpaActividadService(UpaActividadRepository upasActividadesRepository)
@@ -24,27 +24,27 @@ namespace lestoma.Logica.LogicaService
             _upasActividadesRepository = upasActividadesRepository;
         }
 
-        public async Task<Response> UpdateInCascade(EUpaActividad entidad)
+        public async Task<ResponseDTO> UpdateInCascade(EUpaActividad entidad)
         {
             await _upasActividadesRepository.UpdateRelation(entidad);
-            return new Response
+            return new ResponseDTO
             {
                 IsExito = true,
-                Mensaje = "Se ha editado satisfactoriamente.",
+                MensajeHttp = "Se ha editado satisfactoriamente.",
                 StatusCode = (int)HttpStatusCode.Created
             };
         }
 
-        public async Task<Response> CreateInCascade(EUpaActividad entidad)
+        public async Task<ResponseDTO> CreateInCascade(EUpaActividad entidad)
         {
             bool tieneUpa = await _upasActividadesRepository.AnyWithCondition(x => x.UsuarioId == entidad.UsuarioId);
             if (tieneUpa)
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El usuario ya tiene asignada una upa.");
             await _upasActividadesRepository.CreateRelation(entidad);
-            return new Response
+            return new ResponseDTO
             {
                 IsExito = true,
-                Mensaje = "Se ha creado satisfactoriamente.",
+                MensajeHttp = "Se ha creado satisfactoriamente.",
                 StatusCode = (int)HttpStatusCode.Created
             };
         }

@@ -7,9 +7,9 @@ namespace lestoma.Entidades.Models
     public partial class EComponenteLaboratorio
     {
         [NotMapped]
-        public EstadosComponentes ObjetoJsonEstado => JsonSerializer.Deserialize<EstadosComponentes>(this.JsonEstadoComponente);
+        public EstadoComponente ObjetoJsonEstado => JsonSerializer.Deserialize<EstadoComponente>(this.JsonEstadoComponente);
     }
-    public class EstadosComponentes
+    public class EstadoComponente
     {
         public Guid Id { get; set; }
         public string TipoEstado { get; set; }

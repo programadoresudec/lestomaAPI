@@ -2,7 +2,7 @@
 
 namespace lestoma.CommonUtils.DTOs
 {
-    public class EstadosComponentesDTO
+    public class EstadoComponenteDTO
     {
         public Guid Id { get; set; }
         public string TipoEstado { get; set; }

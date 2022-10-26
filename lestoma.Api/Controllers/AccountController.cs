@@ -50,18 +50,18 @@ namespace lestoma.Api.Controllers
             var claims = ClaimsToken();
             if (HttpContext.User.Identity.IsAuthenticated)
             {
-                Respuesta = new Response
+                Respuesta = new ResponseDTO
                 {
                     IsExito = true,
-                    Mensaje = "Esta Autenticado.",
+                    MensajeHttp = "Esta Autenticado.",
                     StatusCode = (int)HttpStatusCode.OK
                 };
                 return Ok(Respuesta);
             }
-            Respuesta = new Response
+            Respuesta = new ResponseDTO
             {
                 IsExito = false,
-                Mensaje = "No Esta Autenticado.",
+                MensajeHttp = "No Esta Autenticado.",
                 StatusCode = (int)HttpStatusCode.Unauthorized
             };
             return Unauthorized(Respuesta);

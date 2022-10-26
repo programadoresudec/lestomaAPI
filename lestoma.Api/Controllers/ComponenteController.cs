@@ -5,6 +5,7 @@ using lestoma.CommonUtils.Requests;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,6 +16,7 @@ namespace lestoma.Api.Controllers
 {
     [Route("api/componentes")]
     [ApiController]
+    [AllowAnonymous]
     public class ComponenteController : BaseController
     {
         private readonly IComponenteService _componentService;
@@ -49,8 +51,7 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> GetComponente(Guid id)
         {
             var response = await _componentService.GetById(id);
-            var compDTOSalida = Mapear<EComponenteLaboratorio, CreateOrEditComponenteRequest>((EComponenteLaboratorio)response.Data);
-            response.Data = compDTOSalida;
+            response.Data = (InfoComponenteDTO)response.Data;
             return Ok(response);
         }
 
@@ -73,7 +74,7 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> EliminarComponent(Guid id)
+        public async Task<IActionResult> EliminarComponente(Guid id)
         {
             await _componentService.Delete(id);
             return NoContent();

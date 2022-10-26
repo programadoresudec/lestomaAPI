@@ -11,7 +11,7 @@ namespace lestoma.CommonUtils.Requests
         [Required]
         public string Nombre { get; set; }
         public Guid Id { get; set; }
-        public EstadosComponentesDTO TipoEstadoComponente { get; set; }
+        public EstadoComponenteDTO TipoEstadoComponente { get; set; }
         public string JsonEstadoComponente => ConvertirJson();
         [Required]
         public Guid ActividadId { get; set; }
@@ -22,7 +22,10 @@ namespace lestoma.CommonUtils.Requests
 
         public string ConvertirJson()
         {
-            this.TipoEstadoComponente.Id = Guid.NewGuid();
+            if (this.TipoEstadoComponente.Id == Guid.Empty)
+            {
+                this.TipoEstadoComponente.Id = Guid.NewGuid();
+            }
             return JsonConvert.SerializeObject(TipoEstadoComponente);
         }
     }

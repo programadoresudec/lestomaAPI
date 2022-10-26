@@ -13,7 +13,7 @@ namespace lestoma.Logica.LogicaService
 {
     public class UpaService : IUpaService
     {
-        private readonly Response _respuesta = new();
+        private readonly ResponseDTO _respuesta = new();
         private readonly UpaRepository _upaRepository;
         public UpaService(UpaRepository upaRepository)
         {
@@ -40,14 +40,14 @@ namespace lestoma.Logica.LogicaService
             return listado;
         }
 
-        public async Task<Response> GetById(Guid id)
+        public async Task<ResponseDTO> GetById(Guid id)
         {
             var query = await _upaRepository.GetById(id);
             if (query != null)
             {
                 _respuesta.Data = query;
                 _respuesta.IsExito = true;
-                _respuesta.Mensaje = "Encontrado";
+                _respuesta.MensajeHttp = "Encontrado";
             }
             else
             {
@@ -55,7 +55,7 @@ namespace lestoma.Logica.LogicaService
             }
             return _respuesta;
         }
-        public async Task<Response> Create(EUpa entidad)
+        public async Task<ResponseDTO> Create(EUpa entidad)
         {
             bool existe = await _upaRepository.ExisteUpa(entidad.Nombre, entidad.Id);
             if (existe)
@@ -69,10 +69,10 @@ namespace lestoma.Logica.LogicaService
             _respuesta.IsExito = true;
             _respuesta.Data = entidad;
             _respuesta.StatusCode = (int)HttpStatusCode.Created;
-            _respuesta.Mensaje = "se ha creado satisfactoriamente.";
+            _respuesta.MensajeHttp = "se ha creado satisfactoriamente.";
             return _respuesta;
         }
-        public async Task<Response> Update(EUpa entidad)
+        public async Task<ResponseDTO> Update(EUpa entidad)
         {
             var response = await GetById(entidad.Id);
             var upa = (EUpa)response.Data;
@@ -85,7 +85,7 @@ namespace lestoma.Logica.LogicaService
                 await _upaRepository.Update(upa);
                 _respuesta.IsExito = true;
                 _respuesta.StatusCode = (int)HttpStatusCode.OK;
-                _respuesta.Mensaje = "se ha editado satisfactoriamente.";
+                _respuesta.MensajeHttp = "se ha editado satisfactoriamente.";
             }
             else
             {

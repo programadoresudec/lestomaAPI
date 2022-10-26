@@ -13,7 +13,7 @@ namespace lestoma.Logica.LogicaService
 {
     public class ModuloService : IModuloService
     {
-        private readonly Response _respuesta = new();
+        private readonly ResponseDTO _respuesta = new();
         private readonly ModuloRepository _moduloRepository;
         public ModuloService(ModuloRepository moduloRepository)
         {
@@ -40,7 +40,7 @@ namespace lestoma.Logica.LogicaService
             return listado;
         }
 
-        public async Task<Response> GetById(Guid id)
+        public async Task<ResponseDTO> GetById(Guid id)
         {
             var query = await _moduloRepository.GetById(id);
             if (query != null)
@@ -48,7 +48,7 @@ namespace lestoma.Logica.LogicaService
                 _respuesta.Data = query;
                 _respuesta.StatusCode = (int)HttpStatusCode.OK;
                 _respuesta.IsExito = true;
-                _respuesta.Mensaje = "Encontrado";
+                _respuesta.MensajeHttp = "Encontrado";
             }
             else
             {
@@ -56,7 +56,7 @@ namespace lestoma.Logica.LogicaService
             }
             return _respuesta;
         }
-        public async Task<Response> Create(EModuloComponente entidad)
+        public async Task<ResponseDTO> Create(EModuloComponente entidad)
         {
             bool existe = await _moduloRepository.ExisteModulo(entidad.Nombre, Guid.Empty);
             if (!existe)
@@ -65,7 +65,7 @@ namespace lestoma.Logica.LogicaService
                 _respuesta.IsExito = true;
                 _respuesta.Data = entidad;
                 _respuesta.StatusCode = (int)HttpStatusCode.Created;
-                _respuesta.Mensaje = "se ha creado satisfactoriamente.";
+                _respuesta.MensajeHttp = "se ha creado satisfactoriamente.";
             }
             else
             {
@@ -73,7 +73,7 @@ namespace lestoma.Logica.LogicaService
             }
             return _respuesta;
         }
-        public async Task<Response> Update(EModuloComponente entidad)
+        public async Task<ResponseDTO> Update(EModuloComponente entidad)
         {
             var response = await GetById(entidad.Id);
             var Modulo = (EModuloComponente)response.Data;
@@ -84,7 +84,7 @@ namespace lestoma.Logica.LogicaService
                 await _moduloRepository.Update(Modulo);
                 _respuesta.IsExito = true;
                 _respuesta.StatusCode = (int)HttpStatusCode.OK;
-                _respuesta.Mensaje = "se ha editado satisfactoriamente.";
+                _respuesta.MensajeHttp = "se ha editado satisfactoriamente.";
             }
             else
             {

@@ -23,26 +23,26 @@ namespace lestoma.Logica.LogicaService
             _usuarioRepository = usuarioRepository;
             _laboratorioRepository = laboratorioRepository;
         }
-        public async Task<Response> CreateDetail(ELaboratorio detalle)
+        public async Task<ResponseDTO> CreateDetail(ELaboratorio detalle)
         {
 
             detalle.Id = Guid.NewGuid();
             await _laboratorioRepository.Create(detalle);
-            return new Response
+            return new ResponseDTO
             {
                 IsExito = true,
-                Mensaje = "Los datos offline fueron cargados con exito al servidor.",
+                MensajeHttp = "Los datos offline fueron cargados con exito al servidor.",
                 StatusCode = (int)HttpStatusCode.Created
             };
         }
 
-        public async Task<Response> SyncLabDataOffline(IEnumerable<ELaboratorio> datosOffline)
+        public async Task<ResponseDTO> SyncLabDataOffline(IEnumerable<ELaboratorio> datosOffline)
         {
             await _laboratorioRepository.MergeDetails(datosOffline);
-            return new Response
+            return new ResponseDTO
             {
                 IsExito = true,
-                Mensaje = "Los datos offline fueron cargados con exito al servidor.",
+                MensajeHttp = "Los datos offline fueron cargados con exito al servidor.",
                 StatusCode = (int)HttpStatusCode.Created
             };
         }

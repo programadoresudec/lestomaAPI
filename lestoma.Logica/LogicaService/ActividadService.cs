@@ -1,4 +1,5 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
@@ -13,8 +14,6 @@ namespace lestoma.Logica.LogicaService
 {
     public class ActividadService : IActividadService
     {
-        private readonly Response _respuesta = new();
-
         private readonly ActividadRepository _actividadRepository;
         public ActividadService(ActividadRepository actividadRepository)
         {
@@ -40,58 +39,33 @@ namespace lestoma.Logica.LogicaService
             }
             return query;
         }
-        public async Task<Response> GetById(Guid id)
+        public async Task<ResponseDTO> GetById(Guid id)
         {
             var query = await _actividadRepository.GetById(id);
-            if (query != null)
-            {
-                _respuesta.Data = query;
-                _respuesta.IsExito = true;
-                _respuesta.Mensaje = "Encontrado";
-            }
-            else
-            {
+            if (query == null)
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la actividad.");
-            }
-            return _respuesta;
+            return Responses.SetOkResponse(query);
         }
-        public async Task<Response> Create(EActividad entidad)
+        public async Task<ResponseDTO> Create(EActividad entidad)
         {
             bool existe = await _actividadRepository.ExistActivity(entidad.Nombre, Guid.Empty);
-            if (!existe)
-            {
-                entidad.Id = Guid.NewGuid();
-                await _actividadRepository.Create(entidad);
-                _respuesta.IsExito = true;
-                _respuesta.StatusCode = (int)HttpStatusCode.Created;
-                _respuesta.Mensaje = "se ha creado satisfactoriamente.";
-            }
-            else
-            {
+            if (existe)
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El nombre ya está en uso utilice otro.");
-            }
-            return _respuesta;
 
+            entidad.Id = Guid.NewGuid();
+            await _actividadRepository.Create(entidad);
+            return Responses.SetCreatedResponse(entidad);
         }
-        public async Task<Response> Update(EActividad entidad)
+        public async Task<ResponseDTO> Update(EActividad entidad)
         {
             var response = await GetById(entidad.Id);
             var actividad = (EActividad)response.Data;
             bool existe = await _actividadRepository.ExistActivity(entidad.Nombre, actividad.Id, true);
-            if (!existe)
-            {
-                actividad.Nombre = entidad.Nombre;
-                await _actividadRepository.Update(actividad);
-                _respuesta.IsExito = true;
-                _respuesta.StatusCode = (int)HttpStatusCode.OK;
-                _respuesta.Mensaje = "se ha editado satisfactoriamente.";
-            }
-            else
-            {
+            if (existe)
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El nombre ya está en uso utilice otro.");
-            }
-
-            return _respuesta;
+            actividad.Nombre = entidad.Nombre;
+            await _actividadRepository.Update(actividad);
+            return Responses.SetOkMessageEditResponse();
         }
 
         public async Task Delete(Guid id)

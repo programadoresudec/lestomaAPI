@@ -14,7 +14,6 @@ namespace lestoma.Entidades.Models
         [Column("modulo_componente_id")]
         [Required(ErrorMessage = "Campo requerido.")]
         public Guid ModuloComponenteId { get; set; }
-
         [Column("actividad_id")]
         [Required(ErrorMessage = "Campo requerido.")]
         public Guid ActividadId { get; set; }

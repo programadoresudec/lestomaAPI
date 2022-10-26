@@ -8,10 +8,10 @@ namespace lestoma.CommonUtils.Listados
 {
     public class ListadoEstadoComponente
     {
-        public List<EstadosComponentesDTO> Listado { get; set; }
+        public List<EstadoComponenteDTO> Listado { get; set; }
         public ListadoEstadoComponente()
         {
-            this.Listado = new Reutilizables().ReadJSON<List<EstadosComponentesDTO>>("EstadosDeComponentes.json");
+            this.Listado = new Reutilizables().ReadJSON<List<EstadoComponenteDTO>>("EstadosDeComponentes.json");
         }
     }
 }

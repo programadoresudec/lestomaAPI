@@ -37,7 +37,7 @@ namespace lestoma.Logica.LogicaService
             _componenteRepository = componenteRepository;
         }
         #region Obtiene la data del reporte diario
-        public async Task<Response> GetDailyReport()
+        public async Task<ResponseDTO> GetDailyReport()
         {
             var filtro = new DateFilterRequest
             {
@@ -55,10 +55,10 @@ namespace lestoma.Logica.LogicaService
         #endregion
 
         #region Generar el documento PDF y Excel diariamente
-        public async Task<Response> GenerateDailyReport(ReporteDTO reporte)
+        public async Task<ResponseDTO> GenerateDailyReport(ReporteDTO reporte)
         {
             List<ArchivoDTO> archivos = new List<ArchivoDTO>();
-            Response response = new Response();
+            ResponseDTO response = new ResponseDTO();
             var pdf = _generateReports.GeneratePdf(reporte, true);
             var filePdf = GetFile(GrupoTipoArchivo.PDF);
             if (pdf != null)
@@ -94,7 +94,7 @@ namespace lestoma.Logica.LogicaService
                      @"Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.<br>
                       <strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
                 _logger.LogInformation($"Enviado el pdf  y excel a {item}");
-                response.Mensaje = $"Enviado el pdf  y excel a {item}";
+                response.MensajeHttp = $"Enviado el pdf  y excel a {item}";
             }
             return response;
         }
