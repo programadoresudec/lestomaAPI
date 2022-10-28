@@ -15,5 +15,7 @@ namespace lestoma.Entidades.Models
         public int AplicacionId { get; set; }
         [NotMapped]
         public Guid UpaId { get; set; }
+        [NotMapped]
+        public string UserId { get; set; }
     }
 }

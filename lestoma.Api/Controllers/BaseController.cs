@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
@@ -64,7 +65,7 @@ namespace lestoma.Api.Controllers
         protected int AplicacionId()
         {
             int sIdAplicacion = 0;
-            var id = ClaimsToken().Where(x => x.Type == ClaimsConfig.ID_APLICACION).Select(c => c.Value).SingleOrDefault();
+            var id = ClaimsToken().Where(x => x.Type == ClaimsConfig.APLICACION_ID).Select(c => c.Value).SingleOrDefault();
             if (int.TryParse(id, out int idAplicacion))
             {
                 sIdAplicacion = idAplicacion;
@@ -84,21 +85,49 @@ namespace lestoma.Api.Controllers
             return sEmailDesencrypted;
         }
 
+        protected int UserIdDesencrypted()
+        {
+            int sIdDesencrypted = 0;
+            var id = ClaimsToken().Where(x => x.Type == ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                sIdDesencrypted = Convert.ToInt32(_protector.Unprotect(id));
+            }
+            return sIdDesencrypted;
+        }
+
         protected Guid UpaId()
         {
             Guid sId = Guid.Empty;
-            var id = ClaimsToken().Where(x => x.Type == ClaimsConfig.ID_UPA).Select(c => c.Value).SingleOrDefault();
+            var id = ClaimsToken().Where(x => x.Type == ClaimsConfig.UPA_ID).Select(c => c.Value).SingleOrDefault();
             if (Guid.TryParse(id, out Guid idUpa))
             {
                 sId = idUpa;
             }
             return sId;
         }
+
+        protected IEnumerable<Guid> ActividadesIds()
+        {
+            List<Guid> sIds = new List<Guid>();
+            var ids = ClaimsToken().Where(x => x.Type == ClaimsConfig.PERMISOS_ACTIVIDADES_ID).Select(c => c.Value).ToList();
+
+            foreach (var item in ids)
+            {
+                if (Guid.TryParse(item, out Guid idActividad))
+                {
+                    sIds.Add(idActividad);
+                }
+            }
+          
+            return sIds;
+        }
+
         protected bool IsSuperAdmin()
         {
             bool IsSuperAdmin = false;
             int sIdRol = 0;
-            var rolId = ClaimsToken().Where(x => x.Type == ClaimsConfig.ID_ROL).Select(c => c.Value).SingleOrDefault();
+            var rolId = ClaimsToken().Where(x => x.Type == ClaimsConfig.ROL_ID).Select(c => c.Value).SingleOrDefault();
             if (int.TryParse(rolId, out int RolId))
             {
                 sIdRol = RolId;

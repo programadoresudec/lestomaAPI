@@ -109,7 +109,7 @@ namespace lestoma.Data.Repositories
 
 
 
-        public async Task<Guid> GetUpasByUserId(int id)
+        public async Task<Guid> GetUpaByUserId(int id)
         {
             return await _db.TablaUpasConActividades.Include(x => x.Upa)
                      .Where(x => x.UsuarioId == id).Select(x => x.UpaId).FirstOrDefaultAsync();

@@ -59,7 +59,6 @@ namespace lestoma.Logica.LogicaService
                     _respuesta.MensajeHttp = "Ha iniciado satisfactoriamente.";
                     var refreshToken = generateRefreshToken(login.TipoAplicacion, user.Id, ip);
                     user.RefreshToken = refreshToken.Token;
-
                     user.UpaId = upaId;
                     _respuesta.Data = user;
                     user.RefreshTokens.Add(refreshToken);
@@ -89,7 +88,7 @@ namespace lestoma.Logica.LogicaService
             {
                 throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta esta bloqueada, debe comunicarse con el Super Administrador.");
             }
-            var tieneUpa = await _upaActividadRepository.GetUpasByUserId(userId);
+            var tieneUpa = await _upaActividadRepository.GetUpaByUserId(userId);
             if (tieneUpa == Guid.Empty && rolId != (int)TipoRol.SuperAdministrador)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta no cuenta con ninguna upa asociada comunicarse con el Super Administrador.");

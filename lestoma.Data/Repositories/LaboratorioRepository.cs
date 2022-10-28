@@ -1,4 +1,6 @@
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -42,6 +44,20 @@ namespace lestoma.Data.Repositories
                         TipoDeAplicacion = x.ModuloComponente.TipoDeAplicacion
                     }
                 }).ToListAsync();
+        }
+
+        public async Task<IEnumerable<NameDTO>> GetModulosByUpaAndActivitiesOfUser(UpaActivitiesFilterRequest filtro)
+        {
+            var query = await (from componente in _db.TablaComponentesLaboratorio
+                               join modulo in _db.TablaModuloComponentes on componente.ModuloComponenteId equals modulo.Id
+                               where componente.UpaId == filtro.UpaId && filtro.ActividadesId.Contains(componente.ActividadId)
+                               group modulo by new { modulo.Id, modulo.Nombre } into grupo
+                               select new NameDTO
+                               {
+                                   Id = grupo.Key.Id,
+                                   Nombre = grupo.Key.Nombre
+                               }).ToListAsync();
+            return query;
         }
 
         public async Task MergeDetails(IEnumerable<ELaboratorio> datosOffline)

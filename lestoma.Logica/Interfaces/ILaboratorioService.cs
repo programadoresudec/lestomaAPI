@@ -1,4 +1,5 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,6 @@ namespace lestoma.Logica.Interfaces
         Task<ResponseDTO> SyncLabDataOffline(IEnumerable<ELaboratorio> datosOffline);
         Task SendEmailFinishMerge(string email);
         Task<IEnumerable<DataComponentSyncDTO>> GetDataBySyncToMobileByUpaId(Guid upaId);
+        Task<IEnumerable<NameDTO>> GetModulosByUpaAndActivitiesOfUser(UpaActivitiesFilterRequest filtro);
     }
 }

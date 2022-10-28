@@ -4,6 +4,7 @@ using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -48,22 +49,28 @@ namespace lestoma.Api.Helpers
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var llave = Encoding.ASCII.GetBytes(_appSettings.Secreto);
-                var actividades = await _detalleUpaActividadService.GetActivities(user.Id, user.UpaId);
+                UpaUserFilterRequest request = new UpaUserFilterRequest
+                {
+                    UpaId = user.UpaId,
+                    UsuarioId = user.Id
+                };
+                var actividades = await _detalleUpaActividadService.GetActivitiesByUpaUserId(request);
                 var claims = new List<Claim>();
-                claims.Add(new Claim(ClaimsConfig.ID_ROL, user.Rol.Id.ToString()));
+                claims.Add(new Claim(ClaimsConfig.ROL_ID, user.Rol.Id.ToString()));
                 claims.Add(new Claim(ClaimTypes.Role, user.Rol.NombreRol));
                 claims.Add(new Claim(ClaimTypes.Email, user.Email));
+                claims.Add(new Claim(ClaimTypes.Sid, user.UserId));
                 claims.Add(new Claim(ClaimTypes.NameIdentifier, $"{user.Nombre} {user.Apellido}"));
                 claims.Add(new Claim(ClaimTypes.Authentication, user.TipoDeAplicacion));
-                claims.Add(new Claim(ClaimsConfig.ID_APLICACION, user.AplicacionId.ToString()));
-                claims.Add(new Claim(ClaimsConfig.ID_UPA, user.UpaId.ToString()));
+                claims.Add(new Claim(ClaimsConfig.APLICACION_ID, user.AplicacionId.ToString()));
+                claims.Add(new Claim(ClaimsConfig.UPA_ID, user.UpaId.ToString()));
 
                 // agregar con ID
-                if (actividades.Count() > 0)
+                if (actividades.Count > 0)
                 {
                     foreach (var item in actividades)
                     {
-                        claims.Add(new Claim(ClaimsConfig.ROLES_ACTIVIDADES, item));
+                        claims.Add(new Claim(ClaimsConfig.PERMISOS_ACTIVIDADES_ID, item.Id.ToString()));
                     }
                 }
 

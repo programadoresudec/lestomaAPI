@@ -6,9 +6,9 @@ namespace lestoma.CommonUtils.Constants
 {
     public class ClaimsConfig
     {
-        public const string ROLES_ACTIVIDADES = "actividades";
-        public const string ID_APLICACION = "aplicacionId";
-        public const string ID_ROL = "rolId";
-        public const string ID_UPA = "upaId";
+        public const string PERMISOS_ACTIVIDADES_ID = "actividades";
+        public const string APLICACION_ID = "aplicacionId";
+        public const string ROL_ID = "rolId";
+        public const string UPA_ID = "upaId";
     }
 }

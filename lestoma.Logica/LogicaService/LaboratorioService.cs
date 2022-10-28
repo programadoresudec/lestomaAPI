@@ -1,6 +1,7 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
@@ -70,6 +71,11 @@ namespace lestoma.Logica.LogicaService
             if (upaId == Guid.Empty)
                 throw new HttpStatusCodeException(HttpStatusCode.OK, $"No hay datos por migrar, usted no cuenta con una Upa asignada.");
             return await _laboratorioRepository.GetDataBySyncToMobileByUpaId(upaId);
+        }
+
+        public async Task<IEnumerable<NameDTO>> GetModulosByUpaAndActivitiesOfUser(UpaActivitiesFilterRequest filtro)
+        {
+            return await _laboratorioRepository.GetModulosByUpaAndActivitiesOfUser(filtro);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace lestoma.CommonUtils.Requests.Filters
     }
     public class ReportFilterRequest
     {
-        [Required(ErrorMessage = "Fecha fnicial requerida.")]
+        [Required(ErrorMessage = "Fecha Inicial requerida.")]
         [FromNow]
         public DateTime FechaInicial { get; set; }
         [Required(ErrorMessage = "Fecha Final requerida.")]

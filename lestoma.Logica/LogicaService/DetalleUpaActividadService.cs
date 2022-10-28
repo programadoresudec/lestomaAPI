@@ -49,11 +49,6 @@ namespace lestoma.Logica.LogicaService
             };
         }
 
-        public async Task<IEnumerable<string>> GetActivities(int UserId, Guid upaId)
-        {
-            return await _upasActividadesRepository.GetActivities(UserId, upaId);
-        }
-
         public async Task<IEnumerable<EUpaActividad>> GetAll()
         {
             return await _upasActividadesRepository.GetAll();
@@ -69,7 +64,7 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<Guid> GetUpaByUserId(int UserId)
         {
-            return await _upasActividadesRepository.GetUpasByUserId(UserId);
+            return await _upasActividadesRepository.GetUpaByUserId(UserId);
         }
 
         public async Task<List<NameDTO>> GetActivitiesByUpaUserId(UpaUserFilterRequest filtro)

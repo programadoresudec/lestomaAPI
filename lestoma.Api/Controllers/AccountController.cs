@@ -78,6 +78,7 @@ namespace lestoma.Api.Controllers
             data.AplicacionId = logeo.TipoAplicacion;
             data.TipoDeAplicacion = await _usuarioService.GetApplicationType(logeo.TipoAplicacion);
             data.Email = _protector.Protect(data.Email);
+            data.UserId = _protector.Protect(data.Id.ToString());
             TokenDTO usuario = await _jwt.GenerateJwtToken(data);
             Respuesta.Data = usuario;
             SetTokenCookie(usuario.RefreshToken);

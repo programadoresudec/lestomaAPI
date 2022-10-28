@@ -52,7 +52,7 @@ namespace lestoma.Api.Core
             try
             {
                 int IdRol = 0;
-                var rolId = jwtSecurityToken.Claims.Where(x => x.Type == ClaimsConfig.ID_ROL)
+                var rolId = jwtSecurityToken.Claims.Where(x => x.Type == ClaimsConfig.ROL_ID)
                     .Select(x => x.Value).FirstOrDefault();
                 if (string.IsNullOrWhiteSpace(rolId))
                     return false;
