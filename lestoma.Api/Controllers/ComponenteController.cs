@@ -57,20 +57,18 @@ namespace lestoma.Api.Controllers
 
         [HttpPost("crear")]
 
-        public async Task<IActionResult> CrearComponente(CreateOrEditComponenteRequest comp)
+        public async Task<IActionResult> CrearComponente([FromBody] CreateComponenteRequest comp)
         {
-            var compDTO = Mapear<CreateOrEditComponenteRequest, EComponenteLaboratorio>(comp);
+            var compDTO = Mapear<CreateComponenteRequest, EComponenteLaboratorio>(comp);
             var response = await _componentService.Create(compDTO);
-            return Ok(response);
+            return Created(string.Empty,response);
         }
-        [HttpPut("editar")]
 
-        public async Task<IActionResult> EditarComponente(CreateOrEditComponenteRequest comp)
+        [HttpPut("editar")]
+        public async Task<IActionResult> EditarComponente([FromBody] EditComponenteRequest comp)
         {
-            var compDTO = Mapear<CreateOrEditComponenteRequest, EComponenteLaboratorio>(comp);
+            var compDTO = Mapear<EditComponenteRequest, EComponenteLaboratorio>(comp);
             var response = await _componentService.Update(compDTO);
-            var comDTOSalida = Mapear<EComponenteLaboratorio, CreateOrEditComponenteRequest>((EComponenteLaboratorio)response.Data);
-            response.Data = comDTOSalida;
             return Ok(response);
         }
         [HttpDelete("{id}")]
@@ -80,6 +78,4 @@ namespace lestoma.Api.Controllers
             return NoContent();
         }
     }
-
-
 }

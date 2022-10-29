@@ -18,7 +18,12 @@ namespace lestoma.Api.Helpers
             CreateMap<ActividadRequest, EActividad>().ReverseMap();
             CreateMap<ModuloRequest, EModuloComponente>().ReverseMap();
             CreateMap<CrearDetalleUpaActividadRequest, EUpaActividad>();
-            CreateMap<CreateOrEditComponenteRequest, EComponenteLaboratorio>().ReverseMap();
+
+            CreateMap<CreateComponenteRequest, EComponenteLaboratorio>()
+                .ForMember(d => d.NombreComponente, o => o.MapFrom(s => s.Nombre));
+
+            CreateMap<EditComponenteRequest, EComponenteLaboratorio>()
+                .ForMember(d => d.NombreComponente, o => o.MapFrom(s => s.Nombre));
             #endregion
 
             #region DTO a entidad 

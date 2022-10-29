@@ -45,8 +45,8 @@ namespace lestoma.Api.Controllers
 
         }
 
-        [HttpGet("lista-modulos-by-upa-de-usuario")]
-        public async Task<IActionResult> GetModulosByUpaUser()
+        [HttpGet("get-modulos-by-upa-actividades-usuario")]
+        public async Task<IActionResult> GetModulosByUpaAndUserId()
         {
             var filtro1 = new UpaUserFilterRequest
             {
@@ -68,6 +68,12 @@ namespace lestoma.Api.Controllers
             return Ok(data);
         }
 
+        [HttpGet("get-componentes-by-modulo/{Id}")]
+        public async Task<IActionResult> GetComponentesByModuloId(Guid Id)
+        {
+            var data = await _laboratorioService.GetComponentsByModuleId(Id);
+            return Ok(data);
+        }
 
         [HttpGet("data-para-sincronizar-modo-offline-por-upa")]
         public async Task<IActionResult> GetDataBySyncToMobileByUpaId()

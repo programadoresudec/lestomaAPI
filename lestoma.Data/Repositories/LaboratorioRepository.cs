@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.Repositories
@@ -76,6 +77,21 @@ namespace lestoma.Data.Repositories
                     ObtenerException(ex, null);
                 }
             }
+        }
+
+        public async Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByModuleId(Guid id)
+        {
+            var query = await (from componente in _db.TablaComponentesLaboratorio
+                               join actividad in _db.TablaActividades on componente.ActividadId equals actividad.Id
+                               where componente.ModuloComponenteId == id
+                               select new LaboratorioComponenteDTO
+                               {
+                                   Actividad = actividad.Nombre,
+                                   Id = componente.Id,
+                                   Nombre = componente.NombreComponente,
+                                   JsonEstado = componente.JsonEstadoComponente
+                               }).ToListAsync();
+            return query;
         }
     }
 }

@@ -16,5 +16,6 @@ namespace lestoma.Logica.Interfaces
         Task SendEmailFinishMerge(string email);
         Task<IEnumerable<DataComponentSyncDTO>> GetDataBySyncToMobileByUpaId(Guid upaId);
         Task<IEnumerable<NameDTO>> GetModulosByUpaAndActivitiesOfUser(UpaActivitiesFilterRequest filtro);
+        Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByModuleId(Guid id);
     }
 }

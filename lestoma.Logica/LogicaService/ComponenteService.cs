@@ -81,11 +81,15 @@ namespace lestoma.Logica.LogicaService
             if (componente == null)
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el componente.");
 
+            await Validaciones(entidad);
             componente.NombreComponente = entidad.NombreComponente;
             componente.ActividadId = entidad.ActividadId;
             componente.UpaId = entidad.UpaId;
             componente.ModuloComponenteId = entidad.ModuloComponenteId;
-            componente.JsonEstadoComponente = entidad.JsonEstadoComponente;
+            if (!string.IsNullOrWhiteSpace(entidad.JsonEstadoComponente))
+            {
+                componente.JsonEstadoComponente = entidad.JsonEstadoComponente;
+            }
             await _componenteRepo.Update(componente);
             return Responses.SetOkMessageEditResponse(componente);
         }
