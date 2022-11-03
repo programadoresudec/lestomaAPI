@@ -50,7 +50,8 @@ namespace lestoma.Api.Helpers
                      <th align='center'>Fecha de Dispositivo</th>
                      <th align='center'>Modulo</th>
                      <th align='center'>Componente</th>
-                     <th align='center'>SetPoint</th>
+                     <th align='center'>SetPointIn</th>
+                     <th align='center'>SetPointOut</th>
                      <th align='center'>Estado</th>
                    </tr>";
 
@@ -84,7 +85,8 @@ namespace lestoma.Api.Helpers
                      <th align='center'>Fecha del Dispositivo</th>      
                      <th align='center'>Modulo</th>
                      <th align='center'>Componente</th>
-                     <th align='center'>SetPoint</th>
+                     <th align='center'>SetPointIn</th>
+                     <th align='center'>SetPointOut</th>
                      <th align='center'>Estado</th>
                    </tr>";
 
@@ -113,8 +115,9 @@ namespace lestoma.Api.Helpers
                     worksheet.Cell(currentRow, 4).Value = "Fecha del Dispositivo";
                     worksheet.Cell(currentRow, 5).Value = "Modulo";
                     worksheet.Cell(currentRow, 6).Value = "Componente";
-                    worksheet.Cell(currentRow, 7).Value = "SetPoint";
-                    worksheet.Cell(currentRow, 8).Value = "Estado";
+                    worksheet.Cell(currentRow, 7).Value = "SetPointIn";
+                    worksheet.Cell(currentRow, 8).Value = "SetPointOut";
+                    worksheet.Cell(currentRow, 9).Value = "Estado";
                     // Data
                     foreach (var item in reporte.Reporte)
                     {
@@ -125,8 +128,9 @@ namespace lestoma.Api.Helpers
                         worksheet.Cell(currentRow, 4).Value = item.FechaDispositivo;
                         worksheet.Cell(currentRow, 5).Value = item.Modulo;
                         worksheet.Cell(currentRow, 6).Value = item.Componente;
-                        worksheet.Cell(currentRow, 7).Value = item.SetPoint;
-                        worksheet.Cell(currentRow, 8).Value = item.Estado;
+                        worksheet.Cell(currentRow, 7).Value = item.SetPointIn;
+                        worksheet.Cell(currentRow, 8).Value = item.SetPointOut;
+                        worksheet.Cell(currentRow, 9).Value = item.Estado;
                     }
                     worksheet.ColumnsUsed().AdjustToContents();
                     using (var stream = new MemoryStream())
@@ -224,8 +228,9 @@ namespace lestoma.Api.Helpers
                                     <td>{4}</td>
                                     <td>{5}</td>
                                     <td>{6}</td>
+                                    <td>{7}</td>
                                   </tr>", rep.Usuario.ToLower(), rep.FechaServidor, rep.FechaDispositivo, rep.Modulo.ToLower(),
-                        rep.Componente.ToLower(), rep.SetPoint, rep.Estado.ToLower());
+                        rep.Componente.ToLower(), rep.SetPointIn, rep.SetPointOut, rep.Estado.ToLower());
                 }
             }
             else
@@ -241,8 +246,9 @@ namespace lestoma.Api.Helpers
                                     <td>{5}</td>
                                     <td>{6}</td>
                                     <td>{7}</td>
+                                    <td>{8}</td>
                                   </tr>", rep.NombreUpa, rep.Usuario, rep.FechaServidor, rep.FechaDispositivo, rep.Modulo.ToLower(),
-                        rep.Componente.ToLower(), rep.SetPoint, rep.Estado.ToLower());
+                        rep.Componente.ToLower(), rep.SetPointIn, rep.SetPointOut, rep.Estado.ToLower());
                 }
             }
             sb.Append(@"        </table>
@@ -265,7 +271,7 @@ namespace lestoma.Api.Helpers
                 reporteArchivo = GenerateExcel(reporte, IsSuperAdmin);
             }
             return reporteArchivo;
-        } 
+        }
         #endregion
     }
 }

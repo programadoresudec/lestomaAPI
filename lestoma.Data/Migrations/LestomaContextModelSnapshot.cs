@@ -57,18 +57,18 @@ namespace lestoma.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e3696ce4-4d9f-4c41-bcc7-a5af08dd6141"),
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 777, DateTimeKind.Local).AddTicks(7557),
-                            Ip = "172.26.240.1",
+                            Id = new Guid("6a34de57-da72-4747-bc2b-89c77ae30407"),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 24, DateTimeKind.Local).AddTicks(6358),
+                            Ip = "192.168.1.15",
                             Nombre = "control de agua",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
                         new
                         {
-                            Id = new Guid("197037dd-b4e3-49cc-96e3-fe91ef004b84"),
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 777, DateTimeKind.Local).AddTicks(7578),
-                            Ip = "172.26.240.1",
+                            Id = new Guid("cc710f98-7619-4f29-9419-2004c501104f"),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 24, DateTimeKind.Local).AddTicks(6378),
+                            Ip = "192.168.1.15",
                             Nombre = "alimentacion de peces",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
@@ -266,81 +266,94 @@ namespace lestoma.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("0232f0bd-2c0c-4b0e-b4e7-f36d781a2a4a"),
-                            ActividadId = new Guid("197037dd-b4e3-49cc-96e3-fe91ef004b84"),
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 803, DateTimeKind.Local).AddTicks(572),
-                            Ip = "172.26.240.1",
-                            JsonEstadoComponente = "{\"Id\":\"6260f1d0-794b-40d7-b042-633a340bfa5c\",\"TipoEstado\":\"ON-OFF\",\"ByteFuncion\":\"F0\"}",
-                            ModuloComponenteId = new Guid("2ae1b730-a8b2-4e47-957f-75083c112e3d"),
+                            Id = new Guid("d858035b-cf16-4e90-8683-f4054be881a0"),
+                            ActividadId = new Guid("cc710f98-7619-4f29-9419-2004c501104f"),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 171, DateTimeKind.Local).AddTicks(9314),
+                            Ip = "192.168.1.15",
+                            JsonEstadoComponente = "{\"Id\":\"98a74bd5-7390-4244-8b2e-255d3707071d\",\"TipoEstado\":\"ON-OFF\",\"ByteFuncion\":\"F0\"}",
+                            ModuloComponenteId = new Guid("15c562d3-d21b-40e6-a47f-728e7ad07996"),
                             NombreComponente = "BOMBA DE OXIGENO",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("dbec633a-425d-4a9e-8544-f3ad306c8566")
+                            UpaId = new Guid("f545f65d-c1e8-42e6-87a3-ffb8dc1d556e")
                         },
                         new
                         {
-                            Id = new Guid("1db1a114-4b27-4277-b50c-929dfc93ef64"),
-                            ActividadId = new Guid("197037dd-b4e3-49cc-96e3-fe91ef004b84"),
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 803, DateTimeKind.Local).AddTicks(613),
-                            Ip = "172.26.240.1",
-                            JsonEstadoComponente = "{\"Id\":\"6260f1d0-794b-40d7-b042-633a340bfa5c\",\"TipoEstado\":\"ON-OFF\",\"ByteFuncion\":\"F0\"}",
-                            ModuloComponenteId = new Guid("2ae1b730-a8b2-4e47-957f-75083c112e3d"),
+                            Id = new Guid("2afa5d36-b849-4305-b496-4a434e955ad6"),
+                            ActividadId = new Guid("cc710f98-7619-4f29-9419-2004c501104f"),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 171, DateTimeKind.Local).AddTicks(9356),
+                            Ip = "192.168.1.15",
+                            JsonEstadoComponente = "{\"Id\":\"98a74bd5-7390-4244-8b2e-255d3707071d\",\"TipoEstado\":\"ON-OFF\",\"ByteFuncion\":\"F0\"}",
+                            ModuloComponenteId = new Guid("15c562d3-d21b-40e6-a47f-728e7ad07996"),
                             NombreComponente = "LUZ ESTANQUE",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("dbec633a-425d-4a9e-8544-f3ad306c8566")
+                            UpaId = new Guid("f545f65d-c1e8-42e6-87a3-ffb8dc1d556e")
                         },
                         new
                         {
-                            Id = new Guid("089d1927-a006-4014-a82e-d68fc5e4945f"),
-                            ActividadId = new Guid("197037dd-b4e3-49cc-96e3-fe91ef004b84"),
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 803, DateTimeKind.Local).AddTicks(618),
-                            Ip = "172.26.240.1",
-                            JsonEstadoComponente = "{\"Id\":\"6260f1d0-794b-40d7-b042-633a340bfa5c\",\"TipoEstado\":\"ON-OFF\",\"ByteFuncion\":\"F0\"}",
-                            ModuloComponenteId = new Guid("2ae1b730-a8b2-4e47-957f-75083c112e3d"),
+                            Id = new Guid("707de268-5307-4017-97fa-12a760e44433"),
+                            ActividadId = new Guid("cc710f98-7619-4f29-9419-2004c501104f"),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 171, DateTimeKind.Local).AddTicks(9363),
+                            Ip = "192.168.1.15",
+                            JsonEstadoComponente = "{\"Id\":\"98a74bd5-7390-4244-8b2e-255d3707071d\",\"TipoEstado\":\"ON-OFF\",\"ByteFuncion\":\"F0\"}",
+                            ModuloComponenteId = new Guid("15c562d3-d21b-40e6-a47f-728e7ad07996"),
                             NombreComponente = "DOSIFICADOR DE ALIMENTO",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("dbec633a-425d-4a9e-8544-f3ad306c8566")
+                            UpaId = new Guid("f545f65d-c1e8-42e6-87a3-ffb8dc1d556e")
                         },
                         new
                         {
-                            Id = new Guid("881d2c64-2769-424e-86c1-c5d213aefc44"),
-                            ActividadId = new Guid("e3696ce4-4d9f-4c41-bcc7-a5af08dd6141"),
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 803, DateTimeKind.Local).AddTicks(621),
-                            Ip = "172.26.240.1",
-                            JsonEstadoComponente = "{\"Id\":\"4ff50ada-c774-4f35-b0ff-e9ddca639ea3\",\"TipoEstado\":\"LECTURA\",\"ByteFuncion\":\"0F\"}",
-                            ModuloComponenteId = new Guid("431c9716-2fa1-422b-b863-988ca2bd3be4"),
+                            Id = new Guid("846388be-1468-4fc5-b682-81897191eb72"),
+                            ActividadId = new Guid("6a34de57-da72-4747-bc2b-89c77ae30407"),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 171, DateTimeKind.Local).AddTicks(9366),
+                            Ip = "192.168.1.15",
+                            JsonEstadoComponente = "{\"Id\":\"f5f738c7-0dba-48ee-afea-b22530160653\",\"TipoEstado\":\"LECTURA\",\"ByteFuncion\":\"0F\"}",
+                            ModuloComponenteId = new Guid("d9633ddd-1804-48f1-a74d-3f3d6aefe40e"),
                             NombreComponente = "TEMPERATURA H2O",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("dbec633a-425d-4a9e-8544-f3ad306c8566")
+                            UpaId = new Guid("f545f65d-c1e8-42e6-87a3-ffb8dc1d556e")
                         },
                         new
                         {
-                            Id = new Guid("f23ad237-a970-4085-b9a7-6f323c7c504f"),
-                            ActividadId = new Guid("e3696ce4-4d9f-4c41-bcc7-a5af08dd6141"),
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 803, DateTimeKind.Local).AddTicks(640),
-                            Ip = "172.26.240.1",
-                            JsonEstadoComponente = "{\"Id\":\"4ff50ada-c774-4f35-b0ff-e9ddca639ea3\",\"TipoEstado\":\"LECTURA\",\"ByteFuncion\":\"0F\"}",
-                            ModuloComponenteId = new Guid("431c9716-2fa1-422b-b863-988ca2bd3be4"),
+                            Id = new Guid("8bafe268-55c2-4474-96aa-7547683b129a"),
+                            ActividadId = new Guid("6a34de57-da72-4747-bc2b-89c77ae30407"),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 171, DateTimeKind.Local).AddTicks(9369),
+                            Ip = "192.168.1.15",
+                            JsonEstadoComponente = "{\"Id\":\"f5f738c7-0dba-48ee-afea-b22530160653\",\"TipoEstado\":\"LECTURA\",\"ByteFuncion\":\"0F\"}",
+                            ModuloComponenteId = new Guid("d9633ddd-1804-48f1-a74d-3f3d6aefe40e"),
                             NombreComponente = "PH",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("dbec633a-425d-4a9e-8544-f3ad306c8566")
+                            UpaId = new Guid("f545f65d-c1e8-42e6-87a3-ffb8dc1d556e")
                         },
                         new
                         {
-                            Id = new Guid("d563ff6c-03dd-4880-8a1c-654b70b4b3f2"),
-                            ActividadId = new Guid("e3696ce4-4d9f-4c41-bcc7-a5af08dd6141"),
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 803, DateTimeKind.Local).AddTicks(644),
-                            Ip = "172.26.240.1",
-                            JsonEstadoComponente = "{\"Id\":\"4ff50ada-c774-4f35-b0ff-e9ddca639ea3\",\"TipoEstado\":\"LECTURA\",\"ByteFuncion\":\"0F\"}",
-                            ModuloComponenteId = new Guid("431c9716-2fa1-422b-b863-988ca2bd3be4"),
+                            Id = new Guid("332b239f-e232-4b96-aad3-ef48ae70d111"),
+                            ActividadId = new Guid("6a34de57-da72-4747-bc2b-89c77ae30407"),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 171, DateTimeKind.Local).AddTicks(9372),
+                            Ip = "192.168.1.15",
+                            JsonEstadoComponente = "{\"Id\":\"f5f738c7-0dba-48ee-afea-b22530160653\",\"TipoEstado\":\"LECTURA\",\"ByteFuncion\":\"0F\"}",
+                            ModuloComponenteId = new Guid("d9633ddd-1804-48f1-a74d-3f3d6aefe40e"),
                             NombreComponente = "NIVEL TANQUE",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("dbec633a-425d-4a9e-8544-f3ad306c8566")
+                            UpaId = new Guid("f545f65d-c1e8-42e6-87a3-ffb8dc1d556e")
+                        },
+                        new
+                        {
+                            Id = new Guid("557282b0-7848-4a2b-944a-66a112432fa8"),
+                            ActividadId = new Guid("6a34de57-da72-4747-bc2b-89c77ae30407"),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 171, DateTimeKind.Local).AddTicks(9396),
+                            Ip = "192.168.1.15",
+                            JsonEstadoComponente = "{\"Id\":\"c781773b-7d7c-47f7-b5d0-34a4943ba907\",\"TipoEstado\":\"AJUSTE\",\"ByteFuncion\":\"F0\"}",
+                            ModuloComponenteId = new Guid("7e675b69-cfe9-456d-8216-e9852466170a"),
+                            NombreComponente = "SP_TEMPERATURA H2O",
+                            Session = "Anonimo",
+                            TipoDeAplicacion = "Local",
+                            UpaId = new Guid("f545f65d-c1e8-42e6-87a3-ffb8dc1d556e")
                         });
                 });
 
@@ -453,29 +466,79 @@ namespace lestoma.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("9d06ba7b-d252-42a5-b89b-8cebff362e2d"),
-                            ComponenteLaboratorioId = new Guid("0232f0bd-2c0c-4b0e-b4e7-f36d781a2a4a"),
+                            Id = new Guid("ae8be37f-2c5c-4bd5-9dfd-63bc217ddd6b"),
+                            ComponenteLaboratorioId = new Guid("d858035b-cf16-4e90-8683-f4054be881a0"),
                             EstadoInternet = true,
-                            FechaCreacionDispositivo = new DateTime(2022, 10, 23, 16, 37, 46, 803, DateTimeKind.Local).AddTicks(3886),
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 803, DateTimeKind.Local).AddTicks(3873),
-                            Ip = "172.26.240.1",
+                            FechaCreacionDispositivo = new DateTime(2022, 11, 2, 19, 50, 20, 172, DateTimeKind.Local).AddTicks(3690),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 172, DateTimeKind.Local).AddTicks(2833),
+                            Ip = "192.168.1.15",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
                             TipoDeComunicacionId = 1,
-                            TramaEnviada = "4901F000000000006180"
+                            TramaEnviada = "6FDAF029000000009834",
+                            TramaRecibida = "49803CE33F8000008FC8",
+                            ValorCalculadoTramaRecibida = 1.0
                         },
                         new
                         {
-                            Id = new Guid("55891357-4c19-4845-a1d2-729160e89bc1"),
-                            ComponenteLaboratorioId = new Guid("1db1a114-4b27-4277-b50c-929dfc93ef64"),
+                            Id = new Guid("dabf3513-1650-41fc-89f7-960566d26587"),
+                            ComponenteLaboratorioId = new Guid("2afa5d36-b849-4305-b496-4a434e955ad6"),
                             EstadoInternet = true,
-                            FechaCreacionDispositivo = new DateTime(2022, 10, 23, 16, 37, 46, 803, DateTimeKind.Local).AddTicks(5453),
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 803, DateTimeKind.Local).AddTicks(5443),
-                            Ip = "172.26.240.1",
+                            FechaCreacionDispositivo = new DateTime(2022, 11, 2, 19, 50, 20, 172, DateTimeKind.Local).AddTicks(5405),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 172, DateTimeKind.Local).AddTicks(5397),
+                            Ip = "192.168.1.15",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
                             TipoDeComunicacionId = 2,
-                            TramaEnviada = "6F01F000000000005302"
+                            TramaEnviada = "495DF08E000000007B74",
+                            TramaRecibida = "496D3C083F80000096D1",
+                            ValorCalculadoTramaRecibida = 1.0
+                        },
+                        new
+                        {
+                            Id = new Guid("0aa5ff65-7279-44bb-8b82-a9778ee3170f"),
+                            ComponenteLaboratorioId = new Guid("8bafe268-55c2-4474-96aa-7547683b129a"),
+                            EstadoInternet = true,
+                            FechaCreacionDispositivo = new DateTime(2022, 11, 2, 19, 50, 20, 172, DateTimeKind.Local).AddTicks(5411),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 172, DateTimeKind.Local).AddTicks(5410),
+                            Ip = "192.168.1.15",
+                            Session = "Anonimo",
+                            TipoDeAplicacion = "Local",
+                            TipoDeComunicacionId = 1,
+                            TramaEnviada = "493E0FA6000000007453",
+                            TramaRecibida = "6FB2F0DC410E66663E8F",
+                            ValorCalculadoTramaRecibida = 8.8999996185302734
+                        },
+                        new
+                        {
+                            Id = new Guid("a8fc134a-8521-4fe4-8887-7407ac199928"),
+                            ComponenteLaboratorioId = new Guid("8bafe268-55c2-4474-96aa-7547683b129a"),
+                            EstadoInternet = true,
+                            FechaCreacionDispositivo = new DateTime(2022, 11, 2, 19, 50, 20, 172, DateTimeKind.Local).AddTicks(5416),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 172, DateTimeKind.Local).AddTicks(5415),
+                            Ip = "192.168.1.15",
+                            Session = "Anonimo",
+                            TipoDeAplicacion = "Local",
+                            TipoDeComunicacionId = 1,
+                            TramaEnviada = "493E0FA6000000007453",
+                            TramaRecibida = "6FEFF08440D66666F1A3",
+                            ValorCalculadoTramaRecibida = 6.6999998092651367
+                        },
+                        new
+                        {
+                            Id = new Guid("a737944d-1943-48e3-8e9a-2a3647912a58"),
+                            ComponenteLaboratorioId = new Guid("557282b0-7848-4a2b-944a-66a112432fa8"),
+                            EstadoInternet = true,
+                            FechaCreacionDispositivo = new DateTime(2022, 11, 2, 19, 50, 20, 172, DateTimeKind.Local).AddTicks(5843),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 172, DateTimeKind.Local).AddTicks(5835),
+                            Ip = "192.168.1.15",
+                            Session = "Anonimo",
+                            TipoDeAplicacion = "Local",
+                            TipoDeComunicacionId = 1,
+                            TramaEnviada = "49F2F04541C00000A19A",
+                            TramaRecibida = "6FEEF0D8434800001CA9",
+                            ValorCalculadoTramaEnviada = 24.0,
+                            ValorCalculadoTramaRecibida = 200.0
                         });
                 });
 
@@ -517,19 +580,28 @@ namespace lestoma.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("2ae1b730-a8b2-4e47-957f-75083c112e3d"),
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 729, DateTimeKind.Local).AddTicks(1353),
-                            Ip = "172.26.240.1",
+                            Id = new Guid("15c562d3-d21b-40e6-a47f-728e7ad07996"),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 19, 977, DateTimeKind.Local).AddTicks(8973),
+                            Ip = "192.168.1.15",
                             Nombre = "ACTUADORES",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
                         new
                         {
-                            Id = new Guid("431c9716-2fa1-422b-b863-988ca2bd3be4"),
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 729, DateTimeKind.Local).AddTicks(2815),
-                            Ip = "172.26.240.1",
+                            Id = new Guid("d9633ddd-1804-48f1-a74d-3f3d6aefe40e"),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 19, 978, DateTimeKind.Local).AddTicks(545),
+                            Ip = "192.168.1.15",
                             Nombre = "SENSORES",
+                            Session = "Anonimo",
+                            TipoDeAplicacion = "Local"
+                        },
+                        new
+                        {
+                            Id = new Guid("7e675b69-cfe9-456d-8216-e9852466170a"),
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 19, 978, DateTimeKind.Local).AddTicks(556),
+                            Ip = "192.168.1.15",
+                            Nombre = "SET_POINT/CONTROL",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         });
@@ -690,11 +762,11 @@ namespace lestoma.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("dbec633a-425d-4a9e-8544-f3ad306c8566"),
+                            Id = new Guid("f545f65d-c1e8-42e6-87a3-ffb8dc1d556e"),
                             CantidadActividades = (short)5,
                             Descripcion = "queda ubicada en facatativá",
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 777, DateTimeKind.Local).AddTicks(5663),
-                            Ip = "172.26.240.1",
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 24, DateTimeKind.Local).AddTicks(4395),
+                            Ip = "192.168.1.15",
                             Nombre = "finca el vergel",
                             Session = "Anonimo",
                             SuperAdminId = 1,
@@ -702,11 +774,11 @@ namespace lestoma.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("776fd8f9-8be5-435d-8e8f-5b2b9e8c9edc"),
+                            Id = new Guid("dbe94b8c-a8e7-4646-aa08-642a420e5bd4"),
                             CantidadActividades = (short)2,
                             Descripcion = "queda ubicada en la universidad cundinamarca extensión nfaca",
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 777, DateTimeKind.Local).AddTicks(5688),
-                            Ip = "172.26.240.1",
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 24, DateTimeKind.Local).AddTicks(4419),
+                            Ip = "192.168.1.15",
                             Nombre = "ucundinamarca",
                             Session = "Anonimo",
                             SuperAdminId = 1,
@@ -758,61 +830,61 @@ namespace lestoma.Data.Migrations
                     b.HasData(
                         new
                         {
-                            UpaId = new Guid("dbec633a-425d-4a9e-8544-f3ad306c8566"),
-                            ActividadId = new Guid("e3696ce4-4d9f-4c41-bcc7-a5af08dd6141"),
+                            UpaId = new Guid("f545f65d-c1e8-42e6-87a3-ffb8dc1d556e"),
+                            ActividadId = new Guid("6a34de57-da72-4747-bc2b-89c77ae30407"),
                             UsuarioId = 2,
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 778, DateTimeKind.Local).AddTicks(1035),
-                            Ip = "172.26.240.1",
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 25, DateTimeKind.Local).AddTicks(140),
+                            Ip = "192.168.1.15",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
                         new
                         {
-                            UpaId = new Guid("dbec633a-425d-4a9e-8544-f3ad306c8566"),
-                            ActividadId = new Guid("197037dd-b4e3-49cc-96e3-fe91ef004b84"),
+                            UpaId = new Guid("f545f65d-c1e8-42e6-87a3-ffb8dc1d556e"),
+                            ActividadId = new Guid("cc710f98-7619-4f29-9419-2004c501104f"),
                             UsuarioId = 2,
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 778, DateTimeKind.Local).AddTicks(1050),
-                            Ip = "172.26.240.1",
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 25, DateTimeKind.Local).AddTicks(154),
+                            Ip = "192.168.1.15",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
                         new
                         {
-                            UpaId = new Guid("dbec633a-425d-4a9e-8544-f3ad306c8566"),
-                            ActividadId = new Guid("e3696ce4-4d9f-4c41-bcc7-a5af08dd6141"),
+                            UpaId = new Guid("f545f65d-c1e8-42e6-87a3-ffb8dc1d556e"),
+                            ActividadId = new Guid("6a34de57-da72-4747-bc2b-89c77ae30407"),
                             UsuarioId = 3,
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 778, DateTimeKind.Local).AddTicks(1125),
-                            Ip = "172.26.240.1",
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 25, DateTimeKind.Local).AddTicks(157),
+                            Ip = "192.168.1.15",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
                         new
                         {
-                            UpaId = new Guid("dbec633a-425d-4a9e-8544-f3ad306c8566"),
-                            ActividadId = new Guid("197037dd-b4e3-49cc-96e3-fe91ef004b84"),
+                            UpaId = new Guid("f545f65d-c1e8-42e6-87a3-ffb8dc1d556e"),
+                            ActividadId = new Guid("cc710f98-7619-4f29-9419-2004c501104f"),
                             UsuarioId = 3,
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 778, DateTimeKind.Local).AddTicks(1130),
-                            Ip = "172.26.240.1",
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 25, DateTimeKind.Local).AddTicks(160),
+                            Ip = "192.168.1.15",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
                         new
                         {
-                            UpaId = new Guid("776fd8f9-8be5-435d-8e8f-5b2b9e8c9edc"),
-                            ActividadId = new Guid("e3696ce4-4d9f-4c41-bcc7-a5af08dd6141"),
+                            UpaId = new Guid("dbe94b8c-a8e7-4646-aa08-642a420e5bd4"),
+                            ActividadId = new Guid("6a34de57-da72-4747-bc2b-89c77ae30407"),
                             UsuarioId = 4,
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 778, DateTimeKind.Local).AddTicks(1132),
-                            Ip = "172.26.240.1",
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 25, DateTimeKind.Local).AddTicks(162),
+                            Ip = "192.168.1.15",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
                         new
                         {
-                            UpaId = new Guid("776fd8f9-8be5-435d-8e8f-5b2b9e8c9edc"),
-                            ActividadId = new Guid("197037dd-b4e3-49cc-96e3-fe91ef004b84"),
+                            UpaId = new Guid("dbe94b8c-a8e7-4646-aa08-642a420e5bd4"),
+                            ActividadId = new Guid("cc710f98-7619-4f29-9419-2004c501104f"),
                             UsuarioId = 4,
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 778, DateTimeKind.Local).AddTicks(1135),
-                            Ip = "172.26.240.1",
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 25, DateTimeKind.Local).AddTicks(164),
+                            Ip = "192.168.1.15",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         });
@@ -899,14 +971,14 @@ namespace lestoma.Data.Migrations
                         {
                             Id = 1,
                             Apellido = "Lestoma",
-                            Clave = "XtQMAMfdxeSi2rRXSY0AGmvBWC8EAyDwNbhguYomPr8=",
+                            Clave = "3rVGoKyuGEG4Huy/b1ejkeDlWB0hqduF1If1HGXEbFE=",
                             Email = "diegop177@hotmail.com",
                             EstadoId = 2,
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 762, DateTimeKind.Local).AddTicks(5338),
-                            Ip = "172.26.240.1",
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 9, DateTimeKind.Local).AddTicks(3406),
+                            Ip = "192.168.1.15",
                             Nombre = "Super Admin",
                             RolId = 1,
-                            Salt = "IXCqrov6ZbOPiLIz5qT/Hg==",
+                            Salt = "vP0+jz9BB8UdZC2vhETwJQ==",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
@@ -914,14 +986,14 @@ namespace lestoma.Data.Migrations
                         {
                             Id = 2,
                             Apellido = "Lestoma",
-                            Clave = "wwsO2q6CIwa2WCWFQDc1cSUEzZjZScV1WTCQnvKiIms=",
+                            Clave = "3Vk4QTCzW2SK63My06UiPnOZj7tZCewwheJEsF2zac4=",
                             Email = "diegoarturo1598@hotmail.com",
                             EstadoId = 2,
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 769, DateTimeKind.Local).AddTicks(8896),
-                            Ip = "172.26.240.1",
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 16, DateTimeKind.Local).AddTicks(5910),
+                            Ip = "192.168.1.15",
                             Nombre = "Administrador",
                             RolId = 2,
-                            Salt = "kACxqH1/GIVKuE3Q69K1Yw==",
+                            Salt = "vTq3hNkpduCAeyO+TYCjig==",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
@@ -929,14 +1001,14 @@ namespace lestoma.Data.Migrations
                         {
                             Id = 3,
                             Apellido = "Lestoma",
-                            Clave = "Irj4lpORi/IcD5tceZnwxXFLfmFCGPN0djyrzaMsPdA=",
+                            Clave = "fQApGgw+PwMLiG9DIcJlNb7iMxbXb85BOVTNKjKVuXE=",
                             Email = "programadoresuc@outlook.com",
                             EstadoId = 2,
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 776, DateTimeKind.Local).AddTicks(8720),
-                            Ip = "172.26.240.1",
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 23, DateTimeKind.Local).AddTicks(6902),
+                            Ip = "192.168.1.15",
                             Nombre = "Auxiliar 1",
                             RolId = 3,
-                            Salt = "ER9CtFYEAhIV/NsCiInkaQ==",
+                            Salt = "lx5YfT0Y2PRwNCF2a7GyPg==",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
@@ -944,14 +1016,14 @@ namespace lestoma.Data.Migrations
                         {
                             Id = 4,
                             Apellido = "Lestoma",
-                            Clave = "Irj4lpORi/IcD5tceZnwxXFLfmFCGPN0djyrzaMsPdA=",
+                            Clave = "fQApGgw+PwMLiG9DIcJlNb7iMxbXb85BOVTNKjKVuXE=",
                             Email = "auxiliar2@gmail.com",
                             EstadoId = 2,
-                            FechaCreacionServer = new DateTime(2022, 10, 23, 16, 37, 46, 776, DateTimeKind.Local).AddTicks(8733),
-                            Ip = "172.26.240.1",
+                            FechaCreacionServer = new DateTime(2022, 11, 2, 19, 50, 20, 23, DateTimeKind.Local).AddTicks(6920),
+                            Ip = "192.168.1.15",
                             Nombre = "Auxiliar 2",
                             RolId = 3,
-                            Salt = "ER9CtFYEAhIV/NsCiInkaQ==",
+                            Salt = "lx5YfT0Y2PRwNCF2a7GyPg==",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         });

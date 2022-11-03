@@ -43,7 +43,8 @@ namespace lestoma.Data.Repositories
                {
                    Usuario = x.Session,
                    Componente = x.ComponenteLaboratorio.NombreComponente,
-                   SetPoint = x.ValorCalculadoTramaEnviada == null ? "N/A" : x.ValorCalculadoTramaEnviada.ToString(),
+                   SetPointIn = x.ValorCalculadoTramaEnviada == null ? "N/A" : x.ValorCalculadoTramaEnviada.ToString(),
+                   SetPointOut = GetSetPointOut(x.ValorCalculadoTramaRecibida),
                    Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                    FechaDispositivo = x.FechaCreacionDispositivo,
                    FechaServidor = x.FechaCreacionServer,
@@ -57,6 +58,30 @@ namespace lestoma.Data.Repositories
                 throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, @$"Error: {ex.Message}");
             }
             return reporteDTO;
+        }
+
+        private string GetSetPointOut(double? valorCalculadoTramaRecibida)
+        {
+            string valor;
+            switch (valorCalculadoTramaRecibida)
+            {
+                case 0:
+                    valor = "Actuador Apagado.";
+                    break;
+                case 1:
+                    valor = "Actuador Encendido.";
+                    break;
+                case 200:
+                    valor = HttpStatusCode.OK.ToString();
+                    break;
+                case 409:
+                    valor = $"{HttpStatusCode.Conflict} en la trama.";
+                    break;
+                default:
+                    valor = valorCalculadoTramaRecibida.ToString();
+                    break;
+            }
+            return valor;
         }
 
         public async Task<ReporteDTO> ReportByDate(ReportFilterRequest reporte)
@@ -76,7 +101,7 @@ namespace lestoma.Data.Repositories
                 {
                     Usuario = x.Session,
                     Componente = x.ComponenteLaboratorio.NombreComponente,
-                    SetPoint = x.ValorCalculadoTramaEnviada == null ? "N/A" : x.ValorCalculadoTramaEnviada.ToString(),
+                    SetPointIn = x.ValorCalculadoTramaEnviada == null ? "N/A" : x.ValorCalculadoTramaEnviada.ToString(),
                     Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                     FechaDispositivo = x.FechaCreacionDispositivo,
                     FechaServidor = x.FechaCreacionServer,
@@ -114,7 +139,7 @@ namespace lestoma.Data.Repositories
                 {
                     Usuario = x.Session,
                     Componente = x.ComponenteLaboratorio.NombreComponente,
-                    SetPoint = x.ValorCalculadoTramaEnviada == null ? "N/A" : x.ValorCalculadoTramaEnviada.ToString(),
+                    SetPointIn = x.ValorCalculadoTramaEnviada == null ? "N/A" : x.ValorCalculadoTramaEnviada.ToString(),
                     Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                     FechaDispositivo = x.FechaCreacionDispositivo,
                     FechaServidor = x.FechaCreacionServer,

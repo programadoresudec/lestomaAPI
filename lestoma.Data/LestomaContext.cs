@@ -3,6 +3,7 @@ using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
+using lestoma.CommonUtils.Listados;
 using lestoma.Entidades.Models;
 using lestoma.Entidades.ModelsReports;
 using Microsoft.EntityFrameworkCore;
@@ -125,6 +126,36 @@ namespace lestoma.Data
             base.OnModelCreating(modelBuilder);
         }
 
+
+        #endregion
+
+        #region Auditoria de tablas
+        public void ProcesarAuditoria()
+        {
+            foreach (var item in ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added && e.Entity is ECamposAuditoria))
+            {
+                var entidad = item.Entity as ECamposAuditoria;
+                entidad.Ip = _camposAuditoria.ObtenerIp();
+                entidad.Session = _camposAuditoria.ObtenerUsuarioActual();
+                entidad.TipoDeAplicacion = _camposAuditoria.ObtenerTipoDeAplicacion();
+                entidad.FechaCreacionServer = DateTime.Now;
+            }
+
+            foreach (var item in ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Modified && e.Entity is ECamposAuditoria))
+            {
+                var entidad = item.Entity as ECamposAuditoria;
+                entidad.Ip = _camposAuditoria.ObtenerIp();
+                entidad.Session = _camposAuditoria.ObtenerUsuarioActual();
+                entidad.TipoDeAplicacion = _camposAuditoria.ObtenerTipoDeAplicacion();
+                entidad.FechaCreacionServer = DateTime.Now;
+            }
+        }
+        #endregion
+
+
+        #region Data generica
         private void SeeData(ModelBuilder modelBuilder)
         {
 
@@ -200,10 +231,20 @@ namespace lestoma.Data
                 TipoDeAplicacion = aplicacion
             };
 
+            var ajuste = new EModuloComponente()
+            {
+                Id = Guid.NewGuid(),
+                Nombre = "SET_POINT/CONTROL",
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
             modelBuilder.Entity<EModuloComponente>()
                 .HasData(new List<EModuloComponente>
                 {
-                    actuador,sensor
+                    actuador,sensor,ajuste
                 });
             #endregion
 
@@ -426,30 +467,23 @@ namespace lestoma.Data
             #endregion
 
             #region data componentes
-            var jsonEstadoOnOff = JsonSerializer.Serialize(new EstadoComponente()
+
+            ListadoEstadoComponente listadoEstadoComponente = new ListadoEstadoComponente();
+
+            List<string> listaJson = new List<string>();
+
+            foreach (var item in listadoEstadoComponente.Listado)
             {
+                listaJson.Add(JsonSerializer.Serialize(item));
+            }
 
-                Id = Guid.NewGuid(),
-                TipoEstado = "ON-OFF",
-                ByteFuncion = "F0",
-
-            });
-
-
-            var jsonEstadoLectura = JsonSerializer.Serialize(new EstadoComponente()
-            {
-
-                Id = Guid.NewGuid(),
-                TipoEstado = "LECTURA",
-                ByteFuncion = "0F",
-            });
 
             var bombaDeOxigeno = new EComponenteLaboratorio()
             {
                 Id = Guid.NewGuid(),
                 NombreComponente = "BOMBA DE OXIGENO",
                 ActividadId = alimentacionPeces.Id,
-                JsonEstadoComponente = jsonEstadoOnOff,
+                JsonEstadoComponente = listaJson[0],
                 UpaId = upa1.Id,
                 ModuloComponenteId = actuador.Id,
                 FechaCreacionServer = DateTime.Now,
@@ -463,7 +497,7 @@ namespace lestoma.Data
                 Id = Guid.NewGuid(),
                 NombreComponente = "LUZ ESTANQUE",
                 ActividadId = alimentacionPeces.Id,
-                JsonEstadoComponente = jsonEstadoOnOff,
+                JsonEstadoComponente = listaJson[0],
                 UpaId = upa1.Id,
                 ModuloComponenteId = actuador.Id,
                 FechaCreacionServer = DateTime.Now,
@@ -477,7 +511,7 @@ namespace lestoma.Data
                 Id = Guid.NewGuid(),
                 NombreComponente = "DOSIFICADOR DE ALIMENTO",
                 ActividadId = alimentacionPeces.Id,
-                JsonEstadoComponente = jsonEstadoOnOff,
+                JsonEstadoComponente = listaJson[0],
                 UpaId = upa1.Id,
                 ModuloComponenteId = actuador.Id,
                 FechaCreacionServer = DateTime.Now,
@@ -491,7 +525,7 @@ namespace lestoma.Data
                 Id = Guid.NewGuid(),
                 NombreComponente = "TEMPERATURA H2O",
                 ActividadId = controlAgua.Id,
-                JsonEstadoComponente = jsonEstadoLectura,
+                JsonEstadoComponente = listaJson[1],
                 UpaId = upa1.Id,
                 ModuloComponenteId = sensor.Id,
                 FechaCreacionServer = DateTime.Now,
@@ -505,7 +539,7 @@ namespace lestoma.Data
                 Id = Guid.NewGuid(),
                 NombreComponente = "PH",
                 ActividadId = controlAgua.Id,
-                JsonEstadoComponente = jsonEstadoLectura,
+                JsonEstadoComponente = listaJson[1],
                 UpaId = upa1.Id,
                 ModuloComponenteId = sensor.Id,
                 FechaCreacionServer = DateTime.Now,
@@ -519,9 +553,23 @@ namespace lestoma.Data
                 Id = Guid.NewGuid(),
                 NombreComponente = "NIVEL TANQUE",
                 ActividadId = controlAgua.Id,
-                JsonEstadoComponente = jsonEstadoLectura,
+                JsonEstadoComponente = listaJson[1],
                 UpaId = upa1.Id,
                 ModuloComponenteId = sensor.Id,
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion
+            };
+
+            var ajustetemperaturaH20 = new EComponenteLaboratorio()
+            {
+                Id = Guid.NewGuid(),
+                NombreComponente = "SP_TEMPERATURA H2O",
+                ActividadId = controlAgua.Id,
+                JsonEstadoComponente = listaJson[2],
+                UpaId = upa1.Id,
+                ModuloComponenteId = ajuste.Id,
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
                 Session = usersession,
@@ -532,7 +580,8 @@ namespace lestoma.Data
             modelBuilder.Entity<EComponenteLaboratorio>()
                 .HasData(new List<EComponenteLaboratorio>
                 {
-                    bombaDeOxigeno,luzEstanque,dosificadorAlimento,temperaturaH20,PH,nivelTanque
+                    bombaDeOxigeno,luzEstanque,dosificadorAlimento,temperaturaH20,PH,
+                    nivelTanque,ajustetemperaturaH20
                 });
             #endregion
 
@@ -541,8 +590,10 @@ namespace lestoma.Data
             {
                 Id = Guid.NewGuid(),
                 ComponenteLaboratorioId = bombaDeOxigeno.Id,
-                TramaEnviada = "4901F000000000006180",
+                TramaRecibida = "49803CE33F8000008FC8",
+                TramaEnviada = "6FDAF029000000009834",
                 FechaCreacionServer = DateTime.Now,
+                ValorCalculadoTramaRecibida = 1,
                 Ip = ip,
                 Session = usersession,
                 TipoDeAplicacion = aplicacion,
@@ -554,7 +605,9 @@ namespace lestoma.Data
             {
                 Id = Guid.NewGuid(),
                 ComponenteLaboratorioId = luzEstanque.Id,
-                TramaEnviada = "6F01F000000000005302",
+                TramaRecibida = "496D3C083F80000096D1",
+                TramaEnviada = "495DF08E000000007B74",
+                ValorCalculadoTramaRecibida = 1,
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
                 Session = usersession,
@@ -564,37 +617,61 @@ namespace lestoma.Data
                 TipoDeComunicacionId = broadCast.Id,
             };
 
+            var detalle3 = new ELaboratorio()
+            {
+                Id = Guid.NewGuid(),
+                ComponenteLaboratorioId = PH.Id,
+                TramaRecibida = "6FB2F0DC410E66663E8F",
+                ValorCalculadoTramaRecibida = 8.9f,
+                TramaEnviada = "493E0FA6000000007453",
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion,
+                FechaCreacionDispositivo = DateTime.Now,
+                EstadoInternet = true,
+                TipoDeComunicacionId = peerToPeer.Id,
+            };
+
+            var detalle4 = new ELaboratorio()
+            {
+                Id = Guid.NewGuid(),
+                ComponenteLaboratorioId = PH.Id,
+                TramaRecibida = "6FEFF08440D66666F1A3",
+                ValorCalculadoTramaRecibida = 6.7f,
+                TramaEnviada = "493E0FA6000000007453",
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion,
+                FechaCreacionDispositivo = DateTime.Now,
+                EstadoInternet = true,
+                TipoDeComunicacionId = peerToPeer.Id,
+            };
+
+            var detalle5 = new ELaboratorio()
+            {
+                Id = Guid.NewGuid(),
+                ComponenteLaboratorioId = ajustetemperaturaH20.Id,
+                TramaRecibida = "6FEEF0D8434800001CA9",
+                ValorCalculadoTramaRecibida = 200,
+                ValorCalculadoTramaEnviada = 24,
+                TramaEnviada = "49F2F04541C00000A19A",
+                FechaCreacionServer = DateTime.Now,
+                Ip = ip,
+                Session = usersession,
+                TipoDeAplicacion = aplicacion,
+                FechaCreacionDispositivo = DateTime.Now,
+                EstadoInternet = true,
+                TipoDeComunicacionId = peerToPeer.Id,
+            };
+
             modelBuilder.Entity<ELaboratorio>()
                 .HasData(new List<ELaboratorio>
                 {
-                    detalle1,detalle2
+                    detalle1, detalle2, detalle3, detalle4, detalle5
                 });
             #endregion
-        }
-        #endregion
-
-        #region Auditoria de tablas
-        public void ProcesarAuditoria()
-        {
-            foreach (var item in ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added && e.Entity is ECamposAuditoria))
-            {
-                var entidad = item.Entity as ECamposAuditoria;
-                entidad.Ip = _camposAuditoria.ObtenerIp();
-                entidad.Session = _camposAuditoria.ObtenerUsuarioActual();
-                entidad.TipoDeAplicacion = _camposAuditoria.ObtenerTipoDeAplicacion();
-                entidad.FechaCreacionServer = DateTime.Now;
-            }
-
-            foreach (var item in ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Modified && e.Entity is ECamposAuditoria))
-            {
-                var entidad = item.Entity as ECamposAuditoria;
-                entidad.Ip = _camposAuditoria.ObtenerIp();
-                entidad.Session = _camposAuditoria.ObtenerUsuarioActual();
-                entidad.TipoDeAplicacion = _camposAuditoria.ObtenerTipoDeAplicacion();
-                entidad.FechaCreacionServer = DateTime.Now;
-            }
         }
         #endregion
     }

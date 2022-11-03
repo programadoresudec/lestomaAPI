@@ -24,9 +24,9 @@ namespace lestoma.Pruebas
             var primerByte = Reutilizables.StringToByteArray("49 F0");
 
 
-            List<byte> byteArray = new List<byte>() { 111, random[0], 240, random[1], 0, 0, 0, 0 };
+            List<byte> byteArray = new List<byte>() { 73, random[0], 240, random[1], 0, 0, 0, 0 };
 
-            var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(0);
+            var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(24);
 
             byteArray[4] = bytesFlotante[0];
             byteArray[5] = bytesFlotante[1];
