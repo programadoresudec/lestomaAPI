@@ -20,6 +20,7 @@ namespace lestoma.CommonUtils.DTOs
         public string Componente { get; set; }
         public string Modulo { get; set; }
         public string Estado { get; set; }
-        public string SetPoint { get; set; }
+        public string SetPointIn { get; set; }
+        public string SetPointOut { get; set; }
     }
 }
