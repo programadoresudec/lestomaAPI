@@ -1,19 +1,12 @@
 ﻿using AutoMapper;
-using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
-using lestoma.Logica.LogicaService;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
@@ -52,9 +45,8 @@ namespace lestoma.Api.Controllers
         {
             var upaActividadDTO = Mapear<CrearDetalleUpaActividadRequest, EUpaActividad>(entidad);
             var response = await _detalleService.UpdateInCascade(upaActividadDTO);
-
-            return CreatedAtAction(null, response);
-        }
+            return Ok(response);
+        } 
 
         [HttpGet("lista-actividades-by-upa-usuario")]
         public async Task<IActionResult> GetActividadesByUpaUser([FromQuery] UpaUserFilterRequest filtro)
@@ -62,6 +54,5 @@ namespace lestoma.Api.Controllers
             var query = await _detalleService.GetActivitiesByUpaUserId(filtro);
             return Ok(query);
         }
-
     }
 }

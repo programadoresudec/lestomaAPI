@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.Office2010.Excel;
 using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
@@ -119,7 +118,7 @@ namespace lestoma.Api.Controllers
                     sIds.Add(idActividad);
                 }
             }
-          
+
             return sIds;
         }
 

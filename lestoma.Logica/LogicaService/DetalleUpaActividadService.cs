@@ -1,10 +1,10 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +14,7 @@ using System.Threading.Tasks;
 namespace lestoma.Logica.LogicaService
 {
     public class DetalleUpaActividadService : IDetalleUpaActividadService
-
     {
-        private readonly ResponseDTO _respuesta = new();
-
         private readonly UpaActividadRepository _upasActividadesRepository;
         public DetalleUpaActividadService(UpaActividadRepository upasActividadesRepository)
         {
@@ -27,12 +24,7 @@ namespace lestoma.Logica.LogicaService
         public async Task<ResponseDTO> UpdateInCascade(EUpaActividad entidad)
         {
             await _upasActividadesRepository.UpdateRelation(entidad);
-            return new ResponseDTO
-            {
-                IsExito = true,
-                MensajeHttp = "Se ha editado satisfactoriamente.",
-                StatusCode = (int)HttpStatusCode.Created
-            };
+            return Responses.SetOkMessageEditResponse(entidad);
         }
 
         public async Task<ResponseDTO> CreateInCascade(EUpaActividad entidad)
@@ -41,12 +33,7 @@ namespace lestoma.Logica.LogicaService
             if (tieneUpa)
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El usuario ya tiene asignada una upa.");
             await _upasActividadesRepository.CreateRelation(entidad);
-            return new ResponseDTO
-            {
-                IsExito = true,
-                MensajeHttp = "Se ha creado satisfactoriamente.",
-                StatusCode = (int)HttpStatusCode.Created
-            };
+            return Responses.SetCreatedResponse(entidad);
         }
 
         public async Task<IEnumerable<EUpaActividad>> GetAll()
@@ -71,7 +58,5 @@ namespace lestoma.Logica.LogicaService
         {
             return await _upasActividadesRepository.GetActivitiesByUpaUserId(filtro);
         }
-
-
     }
 }

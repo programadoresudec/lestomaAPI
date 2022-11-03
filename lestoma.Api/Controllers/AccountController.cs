@@ -1,25 +1,20 @@
 ﻿using AutoMapper;
 using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
-using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using DocumentFormat.OpenXml.Spreadsheet;
-using lestoma.CommonUtils.Enums;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace lestoma.Api.Controllers
 {

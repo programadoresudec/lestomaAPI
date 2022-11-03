@@ -38,15 +38,7 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                var httpClientHandler = new HttpClientHandler();
-
-                httpClientHandler.ServerCertificateCustomValidationCallback =
-                    (message, certificate, chain, sslPolicyErrors) => true;
-
-                HttpClient client = new HttpClient(httpClientHandler)
-                {
-                    BaseAddress = new Uri(urlBase),
-                };
+                HttpClient client = GetHttpClient(urlBase);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
                 ResponseMessage = await client.GetAsync(controller);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
@@ -97,16 +89,7 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                var httpClientHandler = new HttpClientHandler();
-
-                httpClientHandler.ServerCertificateCustomValidationCallback =
-                    (message, certificate, chain, sslPolicyErrors) => true;
-
-                HttpClient client = new HttpClient(httpClientHandler)
-                {
-                    Timeout = TimeSpan.FromSeconds(45),
-                    BaseAddress = new Uri(urlBase),
-                };
+                HttpClient client = GetHttpClient(urlBase);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
                 ResponseMessage = await client.GetAsync(controller);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
@@ -156,19 +139,9 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-
-                var httpClientHandler = new HttpClientHandler();
-
-                httpClientHandler.ServerCertificateCustomValidationCallback =
-                    (message, certificate, chain, sslPolicyErrors) => true;
-
+                HttpClient client = GetHttpClient(urlBase);
                 string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpClient client = new HttpClient(httpClientHandler)
-                {
-                    Timeout = TimeSpan.FromSeconds(45),
-                    BaseAddress = new Uri(urlBase),
-                };
                 ResponseMessage = await client.PostAsync(controller, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
@@ -202,18 +175,9 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
+                HttpClient client = GetHttpClient(urlBase);
                 string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                var httpClientHandler = new HttpClientHandler();
-
-                httpClientHandler.ServerCertificateCustomValidationCallback =
-                    (message, certificate, chain, sslPolicyErrors) => true;
-
-                HttpClient client = new HttpClient(httpClientHandler)
-                {
-                    BaseAddress = new Uri(urlBase),
-                };
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
                 ResponseMessage = await client.PostAsync(controller, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
@@ -252,15 +216,7 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                var httpClientHandler = new HttpClientHandler();
-
-                httpClientHandler.ServerCertificateCustomValidationCallback =
-                    (message, certificate, chain, sslPolicyErrors) => true;
-
-                HttpClient client = new HttpClient(httpClientHandler)
-                {
-                    BaseAddress = new Uri(urlBase)
-                };
+                HttpClient client = GetHttpClient(urlBase);
                 string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 ResponseMessage = await client.PutAsync(controller, content);
@@ -296,17 +252,9 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
+                HttpClient client = GetHttpClient(urlBase);
                 string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var httpClientHandler = new HttpClientHandler();
-
-                httpClientHandler.ServerCertificateCustomValidationCallback =
-                    (message, certificate, chain, sslPolicyErrors) => true;
-
-                HttpClient client = new HttpClient(httpClientHandler)
-                {
-                    BaseAddress = new Uri(urlBase),
-                };
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
                 ResponseMessage = await client.PutAsync(controller, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
@@ -339,16 +287,7 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                var httpClientHandler = new HttpClientHandler();
-
-                httpClientHandler.ServerCertificateCustomValidationCallback =
-                    (message, certificate, chain, sslPolicyErrors) => true;
-
-                HttpClient client = new HttpClient(httpClientHandler)
-                {
-                    Timeout = TimeSpan.FromSeconds(45),
-                    BaseAddress = new Uri(urlBase),
-                };
+                HttpClient client = GetHttpClient(urlBase);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
                 ResponseMessage = await client.DeleteAsync($"{controller}/{id}");
                 if (!ResponseMessage.IsSuccessStatusCode)
@@ -391,23 +330,13 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-
+                HttpClient client = GetHttpClient(urlBase);
                 TipoAplicacionRequest tipoAplicacionRequest = new TipoAplicacionRequest
                 {
                     TipoAplicacion = (int)TipoAplicacion.AppMovil
                 };
                 var json = JsonConvert.SerializeObject(tipoAplicacionRequest);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var httpClientHandler = new HttpClientHandler();
-
-                httpClientHandler.ServerCertificateCustomValidationCallback =
-                    (message, certificate, chain, sslPolicyErrors) => true;
-
-                HttpClient client = new HttpClient(httpClientHandler)
-                {
-                    Timeout = TimeSpan.FromSeconds(45),
-                    BaseAddress = new Uri(urlBase),
-                };
                 ResponseMessage = await client.PostAsync("Account/refresh-token", content);
                 ResponseMessage.EnsureSuccessStatusCode();
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
@@ -421,7 +350,6 @@ namespace lestoma.CommonUtils.Services
                 Debug.WriteLine(ex.Message);
             }
         }
-        #endregion
 
         #region mostrar Mensaje Personalizado para la solicitud del service
 
@@ -570,5 +498,30 @@ namespace lestoma.CommonUtils.Services
 
         #endregion
 
+        private static HttpClient GetHttpClient(string urlBase)
+        {
+#if !DEBUG
+                var httpClientHandler = new HttpClientHandler();
+
+                httpClientHandler.ServerCertificateCustomValidationCallback =
+                    (message, certificate, chain, sslPolicyErrors) => true;
+                 
+                return new HttpClient(httpClientHandler)
+                {
+                    Timeout = TimeSpan.FromSeconds(45),
+                    BaseAddress = new Uri(urlBase),
+                };
+
+#endif
+
+#if DEBUG
+            return new HttpClient()
+            {
+                Timeout = TimeSpan.FromSeconds(45),
+                BaseAddress = new Uri(urlBase),
+            };
+#endif
+        }
+        #endregion
     }
 }
