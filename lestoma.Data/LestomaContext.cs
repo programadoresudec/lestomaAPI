@@ -154,7 +154,6 @@ namespace lestoma.Data
         }
         #endregion
 
-
         #region Data generica
         private void SeeData(ModelBuilder modelBuilder)
         {
@@ -622,7 +621,7 @@ namespace lestoma.Data
                 Id = Guid.NewGuid(),
                 ComponenteLaboratorioId = PH.Id,
                 TramaRecibida = "6FB2F0DC410E66663E8F",
-                ValorCalculadoTramaRecibida = 8.9f,
+                ValorCalculadoTramaRecibida = 8.9,
                 TramaEnviada = "493E0FA6000000007453",
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
@@ -638,7 +637,7 @@ namespace lestoma.Data
                 Id = Guid.NewGuid(),
                 ComponenteLaboratorioId = PH.Id,
                 TramaRecibida = "6FEFF08440D66666F1A3",
-                ValorCalculadoTramaRecibida = 6.7f,
+                ValorCalculadoTramaRecibida = 6.7,
                 TramaEnviada = "493E0FA6000000007453",
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
