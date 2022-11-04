@@ -115,8 +115,8 @@ namespace lestoma.Api.Helpers
                     worksheet.Cell(currentRow, 4).Value = "Fecha del Dispositivo";
                     worksheet.Cell(currentRow, 5).Value = "Modulo";
                     worksheet.Cell(currentRow, 6).Value = "Componente";
-                    worksheet.Cell(currentRow, 7).Value = "SetPointIn";
-                    worksheet.Cell(currentRow, 8).Value = "SetPointOut";
+                    worksheet.Cell(currentRow, 7).Value = "Set-Point De Entrada";
+                    worksheet.Cell(currentRow, 8).Value = "SetPoint De Salida";
                     worksheet.Cell(currentRow, 9).Value = "Estado";
                     // Data
                     foreach (var item in reporte.Reporte)
@@ -129,7 +129,17 @@ namespace lestoma.Api.Helpers
                         worksheet.Cell(currentRow, 5).Value = item.Modulo;
                         worksheet.Cell(currentRow, 6).Value = item.Componente;
                         worksheet.Cell(currentRow, 7).Value = item.SetPointIn;
-                        worksheet.Cell(currentRow, 8).Value = item.SetPointOut;
+
+                        double setPointOut;
+                        if (double.TryParse(item.SetPointOut, out double valor))
+                        {
+                            setPointOut = valor;
+                            worksheet.Cell(currentRow, 8).Value = setPointOut;
+                        }
+                        else
+                        {
+                            worksheet.Cell(currentRow, 8).Value = item.SetPointOut;
+                        }
                         worksheet.Cell(currentRow, 9).Value = item.Estado;
                     }
                     worksheet.ColumnsUsed().AdjustToContents();

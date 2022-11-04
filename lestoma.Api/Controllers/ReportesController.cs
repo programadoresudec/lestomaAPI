@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using Hangfire;
 using lestoma.Api.Core;
-using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
@@ -37,12 +36,7 @@ namespace lestoma.Api.Controllers
             RecurringJob.AddOrUpdate<IReporteService>("Enviar-reporte-diario", servicio => servicio.GetDailyReport(),
                 Cron.Daily(filtro.Hour, filtro.Minute), TimeZoneInfo.Local);
 
-            return Ok(new ResponseDTO
-            {
-                IsExito = true,
-                MensajeHttp = "Se ha generado correctamente el job.",
-                StatusCode = (int)HttpStatusCode.OK,
-            });
+            return Accepted(Responses.SetAcceptedResponse(null, "Se ha generado correctamente la tarea recurrente."));
         }
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         [HttpPost("by-date")]
@@ -59,13 +53,9 @@ namespace lestoma.Api.Controllers
                 TimeSpan.FromSeconds(2));
             var EmailDesencryptedUser = EmailDesencrypted();
             _backgroundJobClient.ContinueJobWith<IReporteService>(jobId, service => service.SendReportByFilter(EmailDesencryptedUser));
-            return Ok(new ResponseDTO
-            {
-                MensajeHttp = "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado.",
-                IsExito = true,
-                StatusCode = (int)HttpStatusCode.OK
-            });
-
+            return Accepted(
+                Responses.SetAcceptedResponse(null,
+                "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado."));
         }
 
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
@@ -82,12 +72,10 @@ namespace lestoma.Api.Controllers
                 TimeSpan.FromSeconds(2));
             var EmailDesencryptedUser = EmailDesencrypted();
             _backgroundJobClient.ContinueJobWith<IReporteService>(jobId, service => service.SendReportByFilter(EmailDesencryptedUser));
-            return Ok(new ResponseDTO
-            {
-                MensajeHttp = "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado.",
-                IsExito = true,
-                StatusCode = (int)HttpStatusCode.OK
-            });
+
+            return Accepted(
+             Responses.SetAcceptedResponse(null,
+             "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado."));
         }
     }
 }

@@ -1,15 +1,12 @@
 ﻿using Hangfire.Dashboard;
 using lestoma.CommonUtils.Constants;
-using lestoma.CommonUtils.Core;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.MyException;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
-using System.Security.Claims;
 
 namespace lestoma.Api.Core
 {
