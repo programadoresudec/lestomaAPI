@@ -24,6 +24,12 @@ namespace lestoma.Api.Helpers
 
             CreateMap<EditComponenteRequest, EComponenteLaboratorio>()
                 .ForMember(d => d.NombreComponente, o => o.MapFrom(s => s.Nombre));
+
+            CreateMap<LaboratorioRequestOffline, ELaboratorio>()
+               .ForMember(d => d.ComponenteLaboratorioId, o => o.MapFrom(s => s.ComponenteId))
+               .ForMember(d => d.TipoDeComunicacionId, o => o.MapFrom(s => s.TipoCOMId))
+               .ForMember(d => d.ValorCalculadoTramaEnviada, o => o.MapFrom(s => s.SetPointIn))
+               .ForMember(d => d.ValorCalculadoTramaRecibida, o => o.MapFrom(s => s.SetPointOut));
             #endregion
 
             #region DTO a entidad 
