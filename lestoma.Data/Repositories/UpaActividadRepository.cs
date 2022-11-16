@@ -29,7 +29,13 @@ namespace lestoma.Data.Repositories
                     foreach (var item in entidad.Actividades)
                     {
                         entidad.ActividadId = item.Id;
-                        _db.Add(entidad);
+                        var objeto = new EUpaActividad
+                        {
+                            ActividadId = item.Id,
+                            UpaId = entidad.UpaId,
+                            UsuarioId = entidad.UsuarioId,
+                        };
+                        _db.Add(objeto);
                     }
                     await _db.SaveChangesAsync();
                     transaction.Commit();
@@ -48,14 +54,19 @@ namespace lestoma.Data.Repositories
             {
                 try
                 {
-                    var list = await _db.TablaUpasConActividades.Where(x => x.UpaId == entidad.UpaId).ToListAsync();
+                    var list = await _db.TablaUpasConActividades.Where(x => x.UsuarioId == entidad.UsuarioId).ToListAsync();
                     if (list.Count > 0)
                         _db.TablaUpasConActividades.RemoveRange(list);
 
                     foreach (var item in entidad.Actividades)
                     {
-                        entidad.ActividadId = item.Id;
-                        _db.Add(entidad);
+                        var objeto = new EUpaActividad
+                        {
+                            ActividadId = item.Id,
+                            UpaId = entidad.UpaId,
+                            UsuarioId = entidad.UsuarioId,
+                        };
+                        _db.Add(objeto);
                     }
                     await _db.SaveChangesAsync();
                     transaction.Commit();
@@ -70,15 +81,51 @@ namespace lestoma.Data.Repositories
         public IQueryable<DetalleUpaActividadDTO> GetAllRelation()
         {
 
-            string consulta = $@"SELECT upa_id, usuario_id,u.nombre_upa, u.cantidad_actividades, us.nombre, 
-                                us.apellido, max(ua.fecha_creacion_server) as fecha_creacion_server,
-                                max(ua.session) as session,max(ua.ip) as ip,max(ua.tipo_de_aplicacion) as tipo_de_aplicacion 
-                                FROM superadmin.upa_actividad ua
-                                INNER JOIN superadmin.upa u on u.id = ua.upa_id
-                                INNER JOIN usuarios.usuario us on us.id = ua.usuario_id
-                                group by upa_id, usuario_id,u.nombre_upa, us.nombre, us.apellido, u.cantidad_actividades";
+            //var queryef = _db.TablaUpasConActividades.GroupBy(x => new { upaId = x.UpaId, usuarioId = x.UsuarioId }).Select(x => new DetalleUpaActividadDTO
+            //{
+            //    UsuarioId = x.Key.usuarioId,
+            //    UpaId = x.Key.upaId,
+            //    Upa = new InfoUpa
+            //    {
+            //        CantidadActividades = (short)_db.TablaUpasConActividades.Where(y => y.UsuarioId == x.Key.usuarioId).Count(),
+            //        Nombre = _db.TablaUpas.Where(y => y.Id == x.Key.upaId).Select(y => y.Nombre).FirstOrDefault(),
+            //    },
+            //    User = _db.TablaUsuarios.Where(y => y.Id == x.Key.usuarioId).Select(y => new InfoUser
+            //    {
+            //        Nombre = y.Nombre,
+            //        Apellido = y.Apellido
+            //    }).FirstOrDefault(),
+            //});
+
+            string consulta = $@"SELECT detalle.upa_id,
+                                        detalle.usuario_id,
+                                        upa.nombre_upa,
+                                        us.nombre,
+                                        us.apellido,
+                                        max(detalle.fecha_creacion_server) as fecha_creacion_server,
+                                        max(detalle.session)               as session,
+                                        max(detalle.ip)                    as ip,
+                                        max(detalle.tipo_de_aplicacion)    as tipo_de_aplicacion
+                                 FROM superadmin.upa_actividad detalle
+                                          INNER JOIN superadmin.upa upa on upa.id = detalle.upa_id
+                                          INNER JOIN usuarios.usuario us on us.id = detalle.usuario_id
+                                 group by detalle.upa_id, detalle.usuario_id, upa.nombre_upa, us.nombre, us.apellido";
 
             var listado = _db.TablaUpasConActividades.FromSqlRaw(consulta);
+            //var listado = _db.TablaUpasConActividades.FromSqlInterpolated($@"SELECT detalle.upa_id,
+            //                                                                        detalle.usuario_id,
+            //                                                                        count(detalle.actividad_id)        as ActividadesAsignadas,
+            //                                                                        upa.nombre_upa,
+            //                                                                        us.nombre,
+            //                                                                        us.apellido,
+            //                                                                        max(detalle.fecha_creacion_server) as fecha_creacion_server,
+            //                                                                        max(detalle.session)               as session,
+            //                                                                        max(detalle.ip)                    as ip,
+            //                                                                        max(detalle.tipo_de_aplicacion)    as tipo_de_aplicacion
+            //                                                                 FROM superadmin.upa_actividad detalle
+            //                                                                          INNER JOIN superadmin.upa upa on upa.id = detalle.upa_id
+            //                                                                          INNER JOIN usuarios.usuario us on us.id = detalle.usuario_id
+            //                                                                 group by detalle.upa_id, detalle.usuario_id, upa.nombre_upa, us.nombre, us.apellido");
 
             if (listado.Count() == 0)
             {
@@ -96,7 +143,7 @@ namespace lestoma.Data.Repositories
                 },
                 Upa = new InfoUpa
                 {
-                    CantidadActividades = x.Upa.CantidadActividades,
+                    CantidadActividades = (short)_db.TablaUpasConActividades.Where(y => y.UsuarioId == x.UsuarioId).Count(),
                     Nombre = x.Upa.Nombre
                 },
                 TipoDeAplicacion = x.TipoDeAplicacion,

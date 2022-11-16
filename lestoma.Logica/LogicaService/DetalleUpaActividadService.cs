@@ -44,8 +44,6 @@ namespace lestoma.Logica.LogicaService
         public IQueryable<DetalleUpaActividadDTO> GetAllForPagination()
         {
             var query = _upasActividadesRepository.GetAllRelation();
-            if (!query.Any())
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay detalles.");
             return query;
         }
 

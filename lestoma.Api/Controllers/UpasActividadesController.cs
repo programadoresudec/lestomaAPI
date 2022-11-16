@@ -36,7 +36,6 @@ namespace lestoma.Api.Controllers
         {
             var upaActividadDTO = Mapear<CrearDetalleUpaActividadRequest, EUpaActividad>(entidad);
             var response = await _detalleService.CreateInCascade(upaActividadDTO);
-
             return CreatedAtAction(null, response);
         }
 

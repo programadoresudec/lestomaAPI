@@ -11,5 +11,7 @@ namespace lestoma.Entidades.Models
         public IEnumerable<ActividadRequest> Actividades { get; set; }
         [NotMapped]
         public UserDTO User { get; set; }
+        [NotMapped]
+        public short ActividadesAsignadas { get; set; }
     }
 }
