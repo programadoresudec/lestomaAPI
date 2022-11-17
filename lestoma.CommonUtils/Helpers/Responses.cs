@@ -36,6 +36,15 @@ namespace lestoma.CommonUtils.Helpers
             return pResponse;
         }
 
+        public static ResponseDTO SetLLaveFkUsedResponse(string Mensaje)
+        {
+            ResponseDTO pResponse = new ResponseDTO();
+            pResponse.StatusCode = (int)HttpStatusCode.NotImplemented;
+            pResponse.MensajeHttp = Mensaje;
+            pResponse.IsExito = false;
+            return pResponse;
+        }
+
         public static ResponseDTO SetAcceptedResponse(Object pData = null, string mensaje = "Se ha aceptado satisfactoriamente.")
         {
             ResponseDTO pResponse = new ResponseDTO();

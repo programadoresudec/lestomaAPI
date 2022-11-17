@@ -1,4 +1,5 @@
 ﻿
+using lestoma.CommonUtils.DTOs;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
@@ -20,6 +21,13 @@ namespace lestoma.CommonUtils.MyException
         {
             this.StatusCode = statusCode;
         }
+
+        public HttpStatusCodeException(ResponseDTO response)
+            : base(response.MensajeHttp)
+        {
+            this.StatusCode = (HttpStatusCode)response.StatusCode;
+        }
+
 
         public HttpStatusCodeException(HttpStatusCode statusCode, Exception inner)
             : this(statusCode, inner.ToString()) { }

@@ -271,6 +271,7 @@ namespace lestoma.CommonUtils.Services
             }
             catch (Exception ex)
             {
+
                 var jsonError = JsonConvert.SerializeObject(new ResponseDTO
                 {
                     IsExito = false,
@@ -290,6 +291,11 @@ namespace lestoma.CommonUtils.Services
                 HttpClient client = GetHttpClient(urlBase);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
                 ResponseMessage = await client.DeleteAsync($"{controller}/{id}");
+                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(jsonString))
+                {
+                    Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                }
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
                     return new ResponseDTO
@@ -299,7 +305,7 @@ namespace lestoma.CommonUtils.Services
                         MensajeHttp = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
-                else if (ResponseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await RefreshToken(urlBase);
                     await DeleteAsyncWithToken(urlBase, controller, id, _tokenNuevo);
@@ -313,6 +319,7 @@ namespace lestoma.CommonUtils.Services
             }
             catch (Exception ex)
             {
+
                 var jsonError = JsonConvert.SerializeObject(new ResponseDTO
                 {
                     IsExito = false,

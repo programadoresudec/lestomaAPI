@@ -7,6 +7,7 @@ using lestoma.CommonUtils.Listados;
 using lestoma.Entidades.Models;
 using lestoma.Entidades.ModelsReports;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +71,6 @@ namespace lestoma.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-
             #region Schema superadmin
             modelBuilder.Entity<EActividad>().ToTable("actividad", "superadmin");
             modelBuilder.Entity<EUpa>().ToTable("upa", "superadmin");
@@ -122,11 +122,16 @@ namespace lestoma.Data
 
             #endregion
 
+            var cascadeFks = modelBuilder.Model.GetEntityTypes().SelectMany(t => t.GetForeignKeys())
+                .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
+            foreach (var item in cascadeFks)
+            {
+                item.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+
             SeeData(modelBuilder);
             base.OnModelCreating(modelBuilder);
         }
-
-
         #endregion
 
         #region Auditoria de tablas

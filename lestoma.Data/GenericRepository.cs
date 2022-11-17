@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using lestoma.CommonUtils.Helpers;
+using lestoma.CommonUtils.MyException;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -139,19 +142,21 @@ namespace lestoma.Data
 
         public void ObtenerException(Exception ex, T entidad)
         {
-            var udpateException = GetInnerException<DbUpdateException>(ex);
+
             var pgsqlException = GetInnerException<PostgresException>(ex);
-            if (udpateException != null)
+            if (pgsqlException != null)
             {
-                throw new Exception($"{nameof(entidad)} no se ha podido crear: {udpateException}");
-            }
-            else if (pgsqlException != null)
-            {
-                throw new Exception($"{nameof(entidad)} no se ha podido crear: {pgsqlException}");
+                switch (pgsqlException.SqlState)
+                {
+                    case PostgresErrorCodes.ForeignKeyViolation:
+                        throw new HttpStatusCodeException(Responses.SetLLaveFkUsedResponse($"[Hay relaciones con el recurso a eliminar] con la tabla {pgsqlException.TableName}"));
+                    default:
+                        throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, @$"Error: {pgsqlException.Message}");
+                }
             }
             else
             {
-                throw new Exception($"{nameof(entidad)} {ex.Message}");
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, @$"Error: {ex.Message}");
             }
         }
         #endregion
