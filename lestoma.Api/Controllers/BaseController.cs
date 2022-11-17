@@ -132,8 +132,6 @@ namespace lestoma.Api.Controllers
                 sIdRol = RolId;
                 IsSuperAdmin = sIdRol == (int)TipoRol.SuperAdministrador;
             }
-
-
             return IsSuperAdmin;
         }
         #endregion

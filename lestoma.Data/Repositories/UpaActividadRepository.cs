@@ -170,7 +170,8 @@ namespace lestoma.Data.Repositories
 
         public async Task<List<NameDTO>> GetActivitiesByUpaUserId(UpaUserFilterRequest filtro)
         {
-            var query = await _db.TablaUpasConActividades.Include(x => x.Actividad).Where(x => x.UpaId == filtro.UpaId && x.UsuarioId == filtro.UsuarioId)
+            var query = await _db.TablaUpasConActividades.Include(x => x.Actividad)
+                .Where(x => x.UpaId == filtro.UpaId && x.UsuarioId == filtro.UsuarioId)
                 .Select(x => new NameDTO
                 {
                     Id = x.ActividadId,

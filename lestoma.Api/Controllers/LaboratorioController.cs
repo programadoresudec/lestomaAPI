@@ -83,6 +83,7 @@ namespace lestoma.Api.Controllers
             return Ok(data);
         }
 
+        
         [HttpPost("sincronizar-data-del-laboratorio-offline")]
         public IActionResult SyncLabDataOffline(IEnumerable<LaboratorioRequestOffline> datosOfOffline)
         {
