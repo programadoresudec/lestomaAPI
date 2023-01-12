@@ -7,7 +7,6 @@ using lestoma.CommonUtils.Listados;
 using lestoma.Entidades.Models;
 using lestoma.Entidades.ModelsReports;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Hangfire;
-using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
@@ -75,7 +74,7 @@ namespace lestoma.Api.Controllers
             return Ok(data);
         }
 
-        [HttpGet("data-para-sincronizar-modo-offline-por-upa")]
+        [HttpGet("data-sincronizada-modo-offline-upa")]
         public async Task<IActionResult> GetDataBySyncToMobileByUpaId()
         {
             var upaId = UpaId();
@@ -83,8 +82,8 @@ namespace lestoma.Api.Controllers
             return Ok(data);
         }
 
-        
-        [HttpPost("sincronizar-data-del-laboratorio-offline")]
+
+        [HttpPost("sincronizar-data-modo-offline")]
         public IActionResult SyncLabDataOffline(IEnumerable<LaboratorioRequestOffline> datosOfOffline)
         {
             var EmailDesencryptedUser = EmailDesencrypted();
