@@ -33,6 +33,44 @@ namespace lestoma.CommonUtils.Services
         }
         #endregion
 
+        #region Get httpclient
+        private static HttpClient GetHttpClient(string urlBase)
+        {
+#if !DEBUG
+                var httpClientHandler = new HttpClientHandler();
+
+                httpClientHandler.ServerCertificateCustomValidationCallback =
+                    (message, certificate, chain, sslPolicyErrors) => true;
+                 
+                return new HttpClient(httpClientHandler)
+                {
+                    Timeout = TimeSpan.FromSeconds(45),
+                    BaseAddress = new Uri(urlBase),
+                };
+
+#endif
+
+#if DEBUG
+            var httpClientHandler = new HttpClientHandler();
+
+            httpClientHandler.ServerCertificateCustomValidationCallback =
+                (message, certificate, chain, sslPolicyErrors) => true;
+
+            return new HttpClient(httpClientHandler)
+            {
+                Timeout = TimeSpan.FromSeconds(45),
+                BaseAddress = new Uri(urlBase),
+            };
+
+            //return new HttpClient()
+            //{
+            //    Timeout = TimeSpan.FromSeconds(45),
+            //    BaseAddress = new Uri(urlBase),
+            //};
+#endif
+        } 
+        #endregion
+
         #region GetList Api service with token
         public async Task<ResponseDTO> GetListAsyncWithToken<T>(string urlBase, string controller, string token)
         {
@@ -357,9 +395,9 @@ namespace lestoma.CommonUtils.Services
                 Debug.WriteLine(ex.Message);
             }
         }
+        #endregion
 
         #region mostrar Mensaje Personalizado para la solicitud del service
-
         private string mostrarMensajePersonalizadoStatus(System.Net.HttpStatusCode statusCode, string mensajeDeLaApi)
         {
             string mensaje = string.Empty;
@@ -501,34 +539,7 @@ namespace lestoma.CommonUtils.Services
             }
             return mensaje;
         }
-
-
         #endregion
 
-        private static HttpClient GetHttpClient(string urlBase)
-        {
-#if !DEBUG
-                var httpClientHandler = new HttpClientHandler();
-
-                httpClientHandler.ServerCertificateCustomValidationCallback =
-                    (message, certificate, chain, sslPolicyErrors) => true;
-                 
-                return new HttpClient(httpClientHandler)
-                {
-                    Timeout = TimeSpan.FromSeconds(45),
-                    BaseAddress = new Uri(urlBase),
-                };
-
-#endif
-
-#if DEBUG
-            return new HttpClient()
-            {
-                Timeout = TimeSpan.FromSeconds(45),
-                BaseAddress = new Uri(urlBase),
-            };
-#endif
-        }
-        #endregion
     }
 }
