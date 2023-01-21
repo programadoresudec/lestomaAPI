@@ -11,7 +11,6 @@ namespace lestoma.Pruebas
 
         static void Main(string[] args)
         {
-
             ListadoEstadoComponente listado = new ListadoEstadoComponente();
             foreach (var item in listado.Listado)
             {

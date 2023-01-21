@@ -41,7 +41,6 @@ namespace lestoma.Api.Helpers
               .ForMember(d => d.Estado, o => o.MapFrom(s => s.EstadoUsuario));
             CreateMap<EUpa, UpaDTO>();
             CreateMap<EModuloComponente, ModuloDTO>();
-            CreateMap<EComponenteLaboratorio, ComponenteDTO>();
             CreateMap<EActividad, ActividadDTO>();
             CreateMap<EUpaActividad, DetalleUpaActividadDTO>();
             CreateMap<EBuzon, MoreInfoBuzonDTO>().ForMember(d => d.Detalle, o => o.MapFrom(s => DeserializarObject<DetalleBuzon>(s.Descripcion)));

@@ -148,13 +148,13 @@ namespace lestoma.Logica.LogicaService
                     await _mailHelper.SendMail(usuario.Email, "Activación de Cuenta", String.Empty,
                          "Hola: ¡Su activación de la cuenta será pronto!",
                          "Su usuario se activará de acuerdo al super administrador.",
-                         string.Empty, $"Enviamos este correo electrónico a {usuario.Email} porque te registraste en LESTOMA APP.");
+                         string.Empty, $"Enviamos este correo electrónico a {usuario.Email} porque te registraste en LESTOMA APP.", true);
 
                     await _mailHelper.SendMail(Constants.EMAIL_SUPER_ADMIN, $"Activación de cuenta: de {usuario.Email}", String.Empty,
                        "Hola: ¡Super Administrador!",
                        $"Debe activar la cuenta del auxiliar con correo: {usuario.Email} que se registro el dia: " +
                        $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
-                       string.Empty, $"LESTOMA APP");
+                       string.Empty, $"LESTOMA APP", true);
                 }
                 else if (!ownRegister)
                 {
@@ -163,13 +163,13 @@ namespace lestoma.Logica.LogicaService
                     await _mailHelper.SendMail(usuario.Email, "Se ha creado una cuenta en LESTOMA APP", String.Empty,
                        "Hola: ¡Logueate y conoce LESTOMA APP!",
                        $"Su usuario es: {usuario.Email} Contraseña: {clave}",
-                       string.Empty, $"Enviamos este correo electrónico a {usuario.Email} porque te agregaron en LESTOMA APP.");
+                       string.Empty, $"Enviamos este correo electrónico a {usuario.Email} porque te agregaron en LESTOMA APP.", true);
 
                     await _mailHelper.SendMail(Constants.EMAIL_SUPER_ADMIN, $"Registraste la cuenta: de {usuario.Email}", String.Empty,
                       "Hola: ¡Super Administrador!",
                       $"registraste el usuario con correo {usuario.Email} y rol {rol} el dia: " +
                       $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
-                      string.Empty, $"LESTOMA APP");
+                      string.Empty, $"LESTOMA APP", true);
                 }
             }
             return _respuesta;

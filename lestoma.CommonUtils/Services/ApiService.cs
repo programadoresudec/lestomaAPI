@@ -51,22 +51,22 @@ namespace lestoma.CommonUtils.Services
 #endif
 
 #if DEBUG
-            var httpClientHandler = new HttpClientHandler();
+            //var httpClientHandler = new HttpClientHandler();
 
-            httpClientHandler.ServerCertificateCustomValidationCallback =
-                (message, certificate, chain, sslPolicyErrors) => true;
+            //httpClientHandler.ServerCertificateCustomValidationCallback =
+            //    (message, certificate, chain, sslPolicyErrors) => true;
 
-            return new HttpClient(httpClientHandler)
-            {
-                Timeout = TimeSpan.FromSeconds(45),
-                BaseAddress = new Uri(urlBase),
-            };
-
-            //return new HttpClient()
+            //return new HttpClient(httpClientHandler)
             //{
             //    Timeout = TimeSpan.FromSeconds(45),
             //    BaseAddress = new Uri(urlBase),
             //};
+
+            return new HttpClient()
+            {
+                Timeout = TimeSpan.FromSeconds(45),
+                BaseAddress = new Uri(urlBase),
+            };
 #endif
         } 
         #endregion
