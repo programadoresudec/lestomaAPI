@@ -105,7 +105,7 @@ namespace lestoma.Data.Repositories
                     {
                         Id = x.ObjetoJsonEstado.Id,
                         TipoEstado = x.ObjetoJsonEstado.TipoEstado,
-                        ByteFuncion = x.ObjetoJsonEstado.ByteFuncion
+                        ByteHexaFuncion = x.ObjetoJsonEstado.ByteFuncion
                     }
                 }).FirstOrDefaultAsync();
         }

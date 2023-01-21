@@ -22,7 +22,6 @@ namespace lestoma.Pruebas
             var tercerByte = Reutilizables.ByteArrayToHexString(new byte[] { 222 });
             var primerByte = Reutilizables.StringToByteArray("49 F0");
 
-
             List<byte> byteArray = new List<byte>() { 73, random[0], 240, random[1], 0, 0, 0, 0 };
 
             var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(24);
