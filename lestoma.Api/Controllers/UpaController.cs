@@ -42,11 +42,13 @@ namespace lestoma.Api.Controllers
             var upas = Mapear<List<EUpa>, List<UpaDTO>>(query.ToList());
             return Ok(upas);
         }
-        [HttpGet("listado-nombres")]
 
-        public IActionResult GetUpasNombres()
+
+        [HttpGet("listar-nombres")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador, TipoRol.Auxiliar)]
+        public async Task<IActionResult> GetUpasNombres()
         {
-            var query = _upaService.GetUpasJustNames();
+            var query = await _upaService.GetUpasJustNames();
             return Ok(query);
         }
 

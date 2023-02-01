@@ -100,9 +100,9 @@ namespace lestoma.Logica.LogicaService
             await _upaRepository.Delete((EUpa)entidad.Data);
         }
 
-        public List<NameDTO> GetUpasJustNames()
+        public async Task<IEnumerable<NameDTO>> GetUpasJustNames()
         {
-            return _upaRepository.GetUpasJustNames();
+            return await _upaRepository.GetUpasJustNames();
         }
     }
 }

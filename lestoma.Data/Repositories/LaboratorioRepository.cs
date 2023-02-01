@@ -1,5 +1,4 @@
 using lestoma.CommonUtils.DTOs;
-using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.Repositories

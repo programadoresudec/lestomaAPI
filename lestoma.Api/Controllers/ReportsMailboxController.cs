@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using lestoma.Api.Core;
 using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
@@ -31,6 +33,7 @@ namespace lestoma.Api.Controllers
             _almacenadorArchivos = almacenadorArchivos;
         }
 
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         [HttpGet("paginar")]
         public async Task<IActionResult> GetReportesBuzonPaginado([FromQuery] Paginacion paginacion)
         {
@@ -39,8 +42,9 @@ namespace lestoma.Api.Controllers
             var paginador = Paginador<BuzonDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
             return Ok(paginador);
         }
-        [AllowAnonymous]
-        [HttpGet("info/{id:int}")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
+
+        [HttpGet("info/id")]
         public async Task<IActionResult> GetBuzonById(int id)
         {
             var buzon = await _buzonService.GetMailBoxById(id);

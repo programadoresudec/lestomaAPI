@@ -98,5 +98,10 @@ namespace lestoma.Logica.LogicaService
             var entidad = await GetById(id);
             await _moduloRepository.Delete((EModuloComponente)entidad.Data);
         }
+
+        public async Task<IEnumerable<NameDTO>> GetModulosJustNames()
+        {
+           return await _moduloRepository.GetModulosJustNames();
+        }
     }
 }

@@ -20,11 +20,11 @@ namespace lestoma.Data.Repositories
         {
             if (!insertOrUpdate)
             {
-                return await _db.TablaUpas.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()));
+                return await _dbSet.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()));
             }
             else
             {
-                return await _db.TablaUpas.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()) && x.Id != id);
+                return await _dbSet.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()) && x.Id != id);
             }
 
         }
@@ -38,14 +38,13 @@ namespace lestoma.Data.Repositories
             return await _db.TablaSuperAdministradores.FirstOrDefaultAsync(x => x.UsuarioId == user.Id);
         }
 
-        public List<NameDTO> GetUpasJustNames()
+        public async Task<IEnumerable<NameDTO>> GetUpasJustNames()
         {
-            var users = _db.TablaUpas.FromSqlRaw("SELECT id, nombre_upa FROM superadmin.upa").OrderBy(x => x.Nombre);
-            var query = users.Select(x => new NameDTO
+            var query = await _dbSet.Select(x => new NameDTO
             {
                 Id = x.Id,
                 Nombre = x.Nombre,
-            }).ToList();
+            }).OrderBy(x => x.Nombre).ToListAsync();
             return query;
         }
     }

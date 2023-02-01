@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using lestoma.Api.Core;
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
@@ -12,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
 {
-    //[Authorize(Roles = RolesEstaticos.SUPERADMIN)]
+
     [Route("api/actividades")]
     [ApiController]
     public class ActividadController : BaseController
@@ -23,7 +25,7 @@ namespace lestoma.Api.Controllers
         {
             _actividadService = actividadService;
         }
-
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpGet("paginar")]
         public async Task<IActionResult> GetActividadesPaginado([FromQuery] Paginacion paginacion)
         {
@@ -32,7 +34,7 @@ namespace lestoma.Api.Controllers
             var paginador = Paginador<ActividadDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
             return Ok(paginador);
         }
-
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpGet("listado")]
         public async Task<IActionResult> ListaActividades()
         {
@@ -41,14 +43,15 @@ namespace lestoma.Api.Controllers
             return Ok(actividades);
         }
 
-        [HttpGet("listado-nombres")]
-        public IActionResult GetActividadesNombres()
+        [HttpGet("listar-nombres")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador, TipoRol.Auxiliar)]
+        public async Task<IActionResult> GetActividadesNombres()
         {
-            var query = _actividadService.GetActividadesJustNames();
+            var query = await _actividadService.GetActividadesJustNames();
             return Ok(query);
         }
 
-
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpGet("{id}")]
         public async Task<IActionResult> getActividad(Guid id)
         {
@@ -57,6 +60,8 @@ namespace lestoma.Api.Controllers
             response.Data = actividadDTOSalida;
             return Ok(response);
         }
+
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpPost("crear")]
         public async Task<IActionResult> Crear(ActividadRequest actividad)
         {
@@ -64,7 +69,7 @@ namespace lestoma.Api.Controllers
             var response = await _actividadService.Create(objeto);
             return Created(string.Empty, response);
         }
-
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpPut("editar")]
         public async Task<IActionResult> Editar(ActividadRequest actividad)
         {
@@ -72,6 +77,8 @@ namespace lestoma.Api.Controllers
             var response = await _actividadService.Update(objeto);
             return Ok(response);
         }
+
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Eliminar(Guid id)
         {

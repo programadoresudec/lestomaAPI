@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace lestoma.Data.Repositories
 {
@@ -42,17 +41,14 @@ namespace lestoma.Data.Repositories
             return await _db.TablaSuperAdministradores.FirstOrDefaultAsync(x => x.UsuarioId == user.Id);
         }
 
-        public List<NameDTO> GetComponentesJustNames()
+        public async Task<IEnumerable<NameDTO>> GetComponentesJustNames()
         {
-            var comp = _dbSet.FromSqlRaw("SELECT id, nombre FROM laboratorio_lestoma.componente_laboratorio").OrderBy(x => x.NombreComponente);
-            var query = comp.Select(x => new NameDTO
+            var query = await _dbSet.Select(x => new NameDTO
             {
                 Id = x.Id,
                 Nombre = x.NombreComponente,
-
-            }).ToList();
+            }).OrderBy(x => x.Nombre).ToListAsync();
             return query;
-
         }
 
         public IQueryable<ListadoComponenteDTO> GetAllFilter(Guid upaId)

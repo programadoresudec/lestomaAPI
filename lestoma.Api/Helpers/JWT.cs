@@ -66,7 +66,7 @@ namespace lestoma.Api.Helpers
                 claims.Add(new Claim(ClaimsConfig.UPA_ID, user.UpaId.ToString()));
 
                 // agregar con ID
-                if (actividades.Count > 0)
+                if (actividades.Any())
                 {
                     foreach (var item in actividades)
                     {

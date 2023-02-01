@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using lestoma.Api.Core;
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
 using lestoma.CommonUtils.Requests.Filters;
@@ -7,6 +9,7 @@ using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
@@ -23,6 +26,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpGet("paginar")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> GetDetallePaginado([FromQuery] Paginacion paginacion)
         {
             var queryable = _detalleService.GetAllForPagination();
@@ -32,6 +36,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpPost("crear")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> CrearDetalle(CrearDetalleUpaActividadRequest entidad)
         {
             var upaActividadDTO = Mapear<CrearDetalleUpaActividadRequest, EUpaActividad>(entidad);
@@ -40,6 +45,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpPut("editar")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> EditarDetalle(CrearDetalleUpaActividadRequest entidad)
         {
             var upaActividadDTO = Mapear<CrearDetalleUpaActividadRequest, EUpaActividad>(entidad);
@@ -47,10 +53,19 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         } 
 
-        [HttpGet("lista-actividades-by-upa-usuario")]
+        [HttpGet("listar-actividades-by-upa-usuario")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> GetActividadesByUpaUser([FromQuery] UpaUserFilterRequest filtro)
         {
             var query = await _detalleService.GetActivitiesByUpaUserId(filtro);
+            return Ok(query);
+        }
+
+        [HttpGet("listar-actividades-by-upa/{id}")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        public async Task<IActionResult> GetActividadesByUpa(Guid id)
+        {
+            var query = await _detalleService.GetActivitiesByUpaId(id);
             return Ok(query);
         }
     }

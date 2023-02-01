@@ -1,4 +1,5 @@
-﻿using DinkToPdf;
+﻿using Amazon.SimpleEmail;
+using DinkToPdf;
 using DinkToPdf.Contracts;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.Data;
@@ -49,6 +50,11 @@ namespace lestoma.Api.Helpers
             services.AddScoped<LaboratorioRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             #endregion
+
+            #region Injection de SDK AWS AmazonSimpleEmail
+            services.AddAWSService<IAmazonSimpleEmailService>();
+            #endregion
+
 
             return services;
         }

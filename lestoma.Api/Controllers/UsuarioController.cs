@@ -57,7 +57,7 @@ namespace lestoma.Api.Controllers
 
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         [HttpGet("search/{id}")]
-        public async Task<IActionResult> getUsuario(int id)
+        public async Task<IActionResult> GetUsuario(int id)
         {
             var response = await _service.GetByIdAsync(id);
             var usuarioDTOSalida = Mapear<EUsuario, InfoUserDTO>((EUsuario)response.Data);

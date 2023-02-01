@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 namespace lestoma.Api.Controllers
 {
     [Route("api/modulos")]
-    [AuthorizeRoles(TipoRol.SuperAdministrador)]
     [ApiController]
     public class ModuloController : BaseController
     {
@@ -25,7 +24,7 @@ namespace lestoma.Api.Controllers
         {
             _moduloService = moduloService;
         }
-
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpGet("paginar")]
         public async Task<IActionResult> GetModulosPaginado([FromQuery] Paginacion paginacion)
         {
@@ -34,7 +33,7 @@ namespace lestoma.Api.Controllers
             var paginador = Paginador<ModuloDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
             return Ok(paginador);
         }
-
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpGet("listado")]
         public async Task<IActionResult> GetModulos()
         {
@@ -43,6 +42,14 @@ namespace lestoma.Api.Controllers
             return Ok(modulos);
         }
 
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Auxiliar, TipoRol.Administrador)]
+        [HttpGet("listar-nombres")]
+        public async Task<IActionResult> GetNombresModulos()
+        {
+            var query = await _moduloService.GetModulosJustNames();
+            return Ok(query);
+        }
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetModulo(Guid id)
         {
@@ -51,7 +58,7 @@ namespace lestoma.Api.Controllers
             response.Data = moduloDTOSalida;
             return Ok(response);
         }
-
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpPost("crear")]
         public async Task<IActionResult> CrearModulo(ModuloRequest modulo)
         {
@@ -61,6 +68,7 @@ namespace lestoma.Api.Controllers
             response.Data = upaDTOSalida;
             return CreatedAtAction(nameof(GetModulo), new { id = ((ModuloRequest)response.Data).Id }, response);
         }
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpPut("editar")]
         public async Task<IActionResult> EditarModulo(ModuloRequest modulo)
         {
@@ -70,6 +78,7 @@ namespace lestoma.Api.Controllers
             response.Data = moduloDTOSalida;
             return Ok(response);
         }
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> EliminarModulo(Guid id)
         {

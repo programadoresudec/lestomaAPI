@@ -1,4 +1,6 @@
-﻿using lestoma.CommonUtils.Constants;
+﻿using Amazon.SimpleEmail;
+using Amazon.SimpleEmail.Model;
+using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
@@ -29,13 +31,16 @@ namespace lestoma.Logica.LogicaService
         private readonly AplicacionRepository _aplicacionRepository;
         private readonly UpaActividadRepository _upaActividadRepository;
         private readonly IMailHelper _mailHelper;
-        public UsuarioService(UsuarioRepository usuarioRepository, IMailHelper mailHelper,
+        private readonly IAmazonSimpleEmailService _amazonSimpleEmailService;
+        public UsuarioService(UsuarioRepository usuarioRepository, IMailHelper mailHelper, IAmazonSimpleEmailService amazonSimpleEmailService,
             AplicacionRepository aplicacionRepository, UpaActividadRepository upaActividadRepository)
         {
             _usuarioRepository = usuarioRepository;
             _mailHelper = mailHelper;
             _aplicacionRepository = aplicacionRepository;
             _upaActividadRepository = upaActividadRepository;
+            _amazonSimpleEmailService = amazonSimpleEmailService;
+
         }
 
         public async Task<ResponseDTO> Login(LoginRequest login, string ip)
@@ -130,7 +135,6 @@ namespace lestoma.Logica.LogicaService
                     usuario.RolId = (int)TipoRol.Auxiliar;
                 }
                 var hash = HashHelper.Hash(usuario.Clave);
-                var clave = usuario.Clave;
                 usuario.Apellido = usuario.Apellido.Trim();
                 usuario.Nombre = usuario.Nombre.Trim();
                 usuario.Clave = hash.Password;
@@ -139,37 +143,44 @@ namespace lestoma.Logica.LogicaService
                 {
                     usuario.EstadoId = usuario.RolId == (int)TipoRol.Auxiliar ? (int)TipoEstadoUsuario.CheckCuenta : (int)TipoEstadoUsuario.Activado;
                 }
-                await _usuarioRepository.Create(usuario);
-                _respuesta.IsExito = true;
-                _respuesta.StatusCode = (int)HttpStatusCode.Created;
-                _respuesta.MensajeHttp = ownRegister ? "Se ha registrado satisfactoriamente." : "creado el usuario con exito.";
-                if (usuario.RolId == (int)TipoRol.Auxiliar && ownRegister)
+
+                var response = await _amazonSimpleEmailService.VerifyEmailIdentityAsync(new VerifyEmailIdentityRequest { EmailAddress = usuario.Email });
+
+                if (response.HttpStatusCode == HttpStatusCode.OK)
                 {
-                    await _mailHelper.SendMail(usuario.Email, "Activación de Cuenta", String.Empty,
-                         "Hola: ¡Su activación de la cuenta será pronto!",
-                         "Su usuario se activará de acuerdo al super administrador.",
-                         string.Empty, $"Enviamos este correo electrónico a {usuario.Email} porque te registraste en LESTOMA APP.", true);
+                    await _usuarioRepository.Create(usuario);
+                    _respuesta.IsExito = true;
+                    _respuesta.StatusCode = (int)HttpStatusCode.Created;
+                    _respuesta.MensajeHttp = ownRegister ? "Se ha registrado satisfactoriamente, para completar el registro siga las instrucciones en el correo electrónico enviado."
+                        : "creado el usuario con exito.";
+                    if (usuario.RolId == (int)TipoRol.Auxiliar && ownRegister)
+                    {
+                        //await _mailHelper.SendMail(usuario.Email, "Activación de Cuenta", String.Empty,
+                        //     "Hola: ¡Su activación de la cuenta será pronto!",
+                        //     "Su usuario se activará de acuerdo al super administrador.",
+                        //     string.Empty, $"Enviamos este correo electrónico a {usuario.Email} porque te registraste en LESTOMA APP.", true);
 
-                    await _mailHelper.SendMail(Constants.EMAIL_SUPER_ADMIN, $"Activación de cuenta: de {usuario.Email}", String.Empty,
-                       "Hola: ¡Super Administrador!",
-                       $"Debe activar la cuenta del auxiliar con correo: {usuario.Email} que se registro el dia: " +
-                       $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
-                       string.Empty, $"LESTOMA APP", true);
-                }
-                else if (!ownRegister)
-                {
-                    string rol = usuario.RolId == (int)TipoRol.Auxiliar ? TipoRol.Auxiliar.ToString() : TipoRol.Administrador.ToString();
+                        await _mailHelper.SendMail(Constants.EMAIL_SUPER_ADMIN, $"Activación de cuenta: de {usuario.Email}", String.Empty,
+                           "Hola: ¡Super Administrador!",
+                           $"Debe activar la cuenta del auxiliar con correo: {usuario.Email} que se registro el dia: " +
+                           $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
+                           string.Empty, $"LESTOMA APP", true);
+                    }
+                    else if (!ownRegister)
+                    {
+                        string rol = usuario.RolId == (int)TipoRol.Auxiliar ? TipoRol.Auxiliar.ToString() : TipoRol.Administrador.ToString();
 
-                    await _mailHelper.SendMail(usuario.Email, "Se ha creado una cuenta en LESTOMA APP", String.Empty,
-                       "Hola: ¡Logueate y conoce LESTOMA APP!",
-                       $"Su usuario es: {usuario.Email} Contraseña: {clave}",
-                       string.Empty, $"Enviamos este correo electrónico a {usuario.Email} porque te agregaron en LESTOMA APP.", true);
+                        //await _mailHelper.SendMail(usuario.Email, "Se ha creado una cuenta en LESTOMA APP", String.Empty,
+                        //   "Hola: ¡Logueate y conoce LESTOMA APP!",
+                        //   $"Su usuario es: {usuario.Email} Contraseña: {clave}",
+                        //   string.Empty, $"Enviamos este correo electrónico a {usuario.Email} porque te agregaron en LESTOMA APP.", true);
 
-                    await _mailHelper.SendMail(Constants.EMAIL_SUPER_ADMIN, $"Registraste la cuenta: de {usuario.Email}", String.Empty,
-                      "Hola: ¡Super Administrador!",
-                      $"registraste el usuario con correo {usuario.Email} y rol {rol} el dia: " +
-                      $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
-                      string.Empty, $"LESTOMA APP", true);
+                        await _mailHelper.SendMail(Constants.EMAIL_SUPER_ADMIN, $"Registraste la cuenta: de {usuario.Email}", String.Empty,
+                          "Hola: ¡Super Administrador!",
+                          $"registraste el usuario con correo {usuario.Email} y rol {rol} el dia: " +
+                          $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
+                          string.Empty, $"LESTOMA APP", true);
+                    }
                 }
             }
             return _respuesta;

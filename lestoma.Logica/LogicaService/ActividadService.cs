@@ -74,9 +74,9 @@ namespace lestoma.Logica.LogicaService
             await _actividadRepository.Delete((EActividad)entidad.Data);
         }
 
-        public List<NameDTO> GetActividadesJustNames()
+        public async Task<IEnumerable<NameDTO>> GetActividadesJustNames()
         {
-            return _actividadRepository.GetActivitiesJustNames();
+            return await _actividadRepository.GetActivitiesJustNames();
         }
     }
 }

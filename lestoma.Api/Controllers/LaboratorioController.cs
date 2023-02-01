@@ -44,7 +44,7 @@ namespace lestoma.Api.Controllers
 
         }
 
-        [HttpGet("get-modulos-by-upa-actividades-usuario")]
+        [HttpGet("listar-modulos-upa-actividad-por-usuario")]
         public async Task<IActionResult> GetModulosByUpaAndUserId()
         {
             var filtro1 = new UpaUserFilterRequest
@@ -55,7 +55,7 @@ namespace lestoma.Api.Controllers
 
             var activities = await _detalleUpaActividad.GetActivitiesByUpaUserId(filtro1);
 
-            if (activities.Count == 0)
+            if (!activities.Any())
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El usuario no tiene actividades asignadas.");
 
             UpaActivitiesFilterRequest filtro = new UpaActivitiesFilterRequest
@@ -67,7 +67,7 @@ namespace lestoma.Api.Controllers
             return Ok(data);
         }
 
-        [HttpGet("get-componentes-by-modulo/{Id}")]
+        [HttpGet("listar-componentes-modulo/{Id}")]
         public async Task<IActionResult> GetComponentesByModuloId(Guid Id)
         {
             var data = await _laboratorioService.GetComponentsByModuleId(Id);

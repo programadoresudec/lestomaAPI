@@ -1,6 +1,9 @@
+using lestoma.CommonUtils.DTOs;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.Repositories
@@ -16,14 +19,24 @@ namespace lestoma.Data.Repositories
         {
             if (!insertOrUpdate && id == Guid.Empty)
             {
-                return await _db.TablaModuloComponentes.AnyAsync(x => x.Nombre.ToLower().Trim().Equals(nombre.ToLower().Trim()));
+                return await _dbSet.AnyAsync(x => x.Nombre.ToLower().Trim().Equals(nombre.ToLower().Trim()));
             }
             else
             {
-                return await _db.TablaModuloComponentes.AnyAsync(x => x.Nombre.ToLower().Trim().
+                return await _dbSet.AnyAsync(x => x.Nombre.ToLower().Trim().
                 Equals(nombre.ToLower().Trim()) && x.Id != id);
             }
 
+        }
+
+        public async Task<IEnumerable<NameDTO>> GetModulosJustNames()
+        {
+            var modulos = await _dbSet.Select(x => new NameDTO
+            {
+                Id = x.Id,
+                Nombre = x.Nombre
+            }).ToListAsync();
+            return modulos;
         }
     }
 }

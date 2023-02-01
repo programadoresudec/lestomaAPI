@@ -162,13 +162,7 @@ namespace lestoma.Data.Repositories
                      .Where(x => x.UsuarioId == id).Select(x => x.UpaId).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<string>> GetActivities(int id, Guid UpaId)
-        {
-            return await _db.TablaUpasConActividades.Include(x => x.Actividad)
-                .Where(x => x.UsuarioId == id && x.UpaId == UpaId).Select(x => x.Actividad.Nombre).ToListAsync();
-        }
-
-        public async Task<List<NameDTO>> GetActivitiesByUpaUserId(UpaUserFilterRequest filtro)
+        public async Task<IEnumerable<NameDTO>> GetActivitiesByUpaUserId(UpaUserFilterRequest filtro)
         {
             var query = await _db.TablaUpasConActividades.Include(x => x.Actividad)
                 .Where(x => x.UpaId == filtro.UpaId && x.UsuarioId == filtro.UsuarioId)
@@ -178,6 +172,19 @@ namespace lestoma.Data.Repositories
                     Nombre = x.Actividad.Nombre
                 }).ToListAsync();
             return query;
+        }
+
+        public async Task<IEnumerable<NameDTO>> GetActivitiesByUpaId(Guid idUpa)
+        {
+            return await (from upaActividad in _db.TablaUpasConActividades
+                          join Actividad in _db.TablaActividades on upaActividad.ActividadId equals Actividad.Id
+                          where upaActividad.UpaId == idUpa
+                          group Actividad by new { Actividad.Id, Actividad.Nombre } into grupo
+                          select new NameDTO
+                          {
+                              Id = grupo.Key.Id,
+                              Nombre = grupo.Key.Nombre
+                          }).ToListAsync();
         }
     }
 }

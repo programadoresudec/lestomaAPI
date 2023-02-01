@@ -82,7 +82,7 @@ namespace lestoma.Api.Controllers
             //if (data.Rol.Id == (int)TipoRol.SuperAdministrador)
             //    await SignInUserHangfire($"{data.Nombre} {data.Apellido}");
 
-            return Created(string.Empty, Respuesta);
+            return Ok(Respuesta);
         }
         #endregion
 

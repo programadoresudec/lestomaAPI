@@ -15,6 +15,7 @@ namespace lestoma.Logica.Interfaces
         Task<ResponseDTO> UpdateInCascade(EUpaActividad entidad);
         Task<Guid> GetUpaByUserId(int userId);
         IQueryable<DetalleUpaActividadDTO> GetAllForPagination();
-        Task<List<NameDTO>> GetActivitiesByUpaUserId(UpaUserFilterRequest filtro);
+        Task<IEnumerable<NameDTO>> GetActivitiesByUpaUserId(UpaUserFilterRequest filtro);
+        Task<IEnumerable<NameDTO>> GetActivitiesByUpaId(Guid idUpa);
     }
 }

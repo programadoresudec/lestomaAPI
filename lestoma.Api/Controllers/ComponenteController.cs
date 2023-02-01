@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using lestoma.Api.Core;
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,7 +17,6 @@ namespace lestoma.Api.Controllers
 {
     [Route("api/componentes")]
     [ApiController]
-    [AllowAnonymous]
     public class ComponenteController : BaseController
     {
         private readonly IComponenteService _componentService;
@@ -27,6 +27,7 @@ namespace lestoma.Api.Controllers
 
         }
         [HttpGet("paginar")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> GetAllFilter([FromQuery] ComponentFilterRequest filtro)
         {
             var upaId = UpaId();
@@ -41,17 +42,17 @@ namespace lestoma.Api.Controllers
         }
 
 
-        [HttpGet("list-by-nombre")]
-        public IActionResult GetComponentesNombres()
+        [HttpGet("listar-nombres")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador, TipoRol.Auxiliar)]
+        public async Task<IActionResult> GetComponentesNombres()
         {
-            var query = _componentService.GetComponentesJustNames();
+            var query = await _componentService.GetComponentesJustNames();
             return Ok(query);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetComponente(Guid id)
         {
             var response = await _componentService.GetById(id);
-            response.Data = (InfoComponenteDTO)response.Data;
             return Ok(response);
         }
 
@@ -61,7 +62,7 @@ namespace lestoma.Api.Controllers
         {
             var compDTO = Mapear<CreateComponenteRequest, EComponenteLaboratorio>(comp);
             var response = await _componentService.Create(compDTO);
-            return Created(string.Empty,response);
+            return Created(string.Empty, response);
         }
 
         [HttpPut("editar")]

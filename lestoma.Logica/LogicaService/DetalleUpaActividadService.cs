@@ -52,9 +52,14 @@ namespace lestoma.Logica.LogicaService
             return await _upasActividadesRepository.GetUpaByUserId(UserId);
         }
 
-        public async Task<List<NameDTO>> GetActivitiesByUpaUserId(UpaUserFilterRequest filtro)
+        public async Task<IEnumerable<NameDTO>> GetActivitiesByUpaUserId(UpaUserFilterRequest filtro)
         {
             return await _upasActividadesRepository.GetActivitiesByUpaUserId(filtro);
+        }
+
+        public async Task<IEnumerable<NameDTO>> GetActivitiesByUpaId(Guid idUpa)
+        {
+            return await _upasActividadesRepository.GetActivitiesByUpaId(idUpa);
         }
     }
 }

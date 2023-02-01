@@ -20,23 +20,22 @@ namespace lestoma.Data.Repositories
         {
             if (!insertOrUpdate && id == Guid.Empty)
             {
-                return await _db.TablaActividades.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()));
+                return await _dbSet.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()));
             }
             else
             {
-                return await _db.TablaActividades.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()) && x.Id != id);
+                return await _dbSet.AnyAsync(x => x.Nombre.ToLower().Equals(nombre.ToLower()) && x.Id != id);
             }
 
         }
 
-        public List<NameDTO> GetActivitiesJustNames()
+        public async Task<IEnumerable<NameDTO>> GetActivitiesJustNames()
         {
-            var users = _db.TablaActividades.FromSqlRaw("SELECT id, nombre_actividad FROM superadmin.actividad").OrderBy(x => x.Nombre);
-            var query = users.Select(x => new NameDTO
+            var query = await _dbSet.Select(x => new NameDTO
             {
                 Id = x.Id,
                 Nombre = x.Nombre,
-            }).ToList();
+            }).OrderBy(x => x.Nombre).ToListAsync();
             return query;
         }
     }

@@ -17,23 +17,26 @@ namespace lestoma.CommonUtils.Services
 {
     public class ApiService : IApiService
     {
-
         public HttpResponseMessage ResponseMessage { get; set; }
         private string _tokenNuevo;
         public ResponseDTO Respuesta { get; set; }
 
         #region Check conexion para consumo de servicios por internet
+
         public bool CheckConnection()
         {
             if (CrossConnectivity.Current.IsConnected)
             {
                 return true;
             }
+
             return false;
         }
+
         #endregion
 
         #region Get httpclient
+
         private static HttpClient GetHttpClient(string urlBase)
         {
 #if !DEBUG
@@ -51,27 +54,29 @@ namespace lestoma.CommonUtils.Services
 #endif
 
 #if DEBUG
-            //var httpClientHandler = new HttpClientHandler();
+            var httpClientHandler = new HttpClientHandler();
 
-            //httpClientHandler.ServerCertificateCustomValidationCallback =
-            //    (message, certificate, chain, sslPolicyErrors) => true;
+            httpClientHandler.ServerCertificateCustomValidationCallback =
+                (message, certificate, chain, sslPolicyErrors) => true;
 
-            //return new HttpClient(httpClientHandler)
-            //{
-            //    Timeout = TimeSpan.FromSeconds(45),
-            //    BaseAddress = new Uri(urlBase),
-            //};
-
-            return new HttpClient()
+            return new HttpClient(httpClientHandler)
             {
                 Timeout = TimeSpan.FromSeconds(45),
                 BaseAddress = new Uri(urlBase),
             };
+
+            //return new HttpClient()
+            //{
+            //    Timeout = TimeSpan.FromSeconds(45),
+            //    BaseAddress = new Uri(urlBase),
+            //};
 #endif
-        } 
+        }
+
         #endregion
 
         #region GetList Api service with token
+
         public async Task<ResponseDTO> GetListAsyncWithToken<T>(string urlBase, string controller, string token)
         {
             try
@@ -85,14 +90,16 @@ namespace lestoma.CommonUtils.Services
                     return new ResponseDTO
                     {
                         IsExito = false,
-                        MensajeHttp = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                        MensajeHttp =
+                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
-                else if (ResponseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await RefreshToken(urlBase);
                     await GetListAsyncWithToken<T>(urlBase, controller, _tokenNuevo);
                 }
+
                 T item = JsonConvert.DeserializeObject<T>(jsonString);
                 if (item == null)
                 {
@@ -102,6 +109,7 @@ namespace lestoma.CommonUtils.Services
                         MensajeHttp = "No hay contenido."
                     };
                 }
+
                 return new ResponseDTO
                 {
                     IsExito = true,
@@ -113,8 +121,58 @@ namespace lestoma.CommonUtils.Services
                 var jsonError = JsonConvert.SerializeObject(new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
+                    StatusCode = ResponseMessage != null
+                        ? (int)ResponseMessage.StatusCode
+                        : (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ResponseMessage != null
+                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        : ex.Message
+                });
+                throw new Exception(jsonError);
+            }
+        }
+
+        #endregion
+
+        #region Get By Id Api service with token
+
+        public async Task<ResponseDTO> GetByIdAsyncWithToken<T>(string urlBase, string controller, string token)
+        {
+            try
+            {
+                HttpClient client = GetHttpClient(urlBase);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                ResponseMessage = await client.GetAsync(controller);
+                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
+                if (!ResponseMessage.IsSuccessStatusCode)
+                {
+                    return new ResponseDTO
+                    {
+                        IsExito = false,
+                        MensajeHttp =
+                          mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                    };
+                }
+                else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    await RefreshToken(urlBase);
+                    await GetByIdAsyncWithToken<T>(urlBase, controller, _tokenNuevo);
+                }
+
+                ResponseDTO item = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                return item;
+            }
+            catch (Exception ex)
+            {
+                var jsonError = JsonConvert.SerializeObject(new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = ResponseMessage != null
+                        ? (int)ResponseMessage.StatusCode
+                        : (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ResponseMessage != null
+                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        : ex.Message
                 });
                 throw new Exception(jsonError);
             }
@@ -123,6 +181,7 @@ namespace lestoma.CommonUtils.Services
         #endregion
 
         #region Get paginado Api service with token
+
         public async Task<ResponseDTO> GetPaginadoAsyncWithToken<T>(string urlBase, string controller, string token)
         {
             try
@@ -136,14 +195,16 @@ namespace lestoma.CommonUtils.Services
                     return new ResponseDTO
                     {
                         IsExito = false,
-                        MensajeHttp = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                        MensajeHttp =
+                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
-                else if (ResponseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await RefreshToken(urlBase);
                     await GetListAsyncWithToken<T>(urlBase, controller, _tokenNuevo);
                 }
+
                 Paginador<T> item = JsonConvert.DeserializeObject<Paginador<T>>(jsonString);
                 if (item == null)
                 {
@@ -153,6 +214,7 @@ namespace lestoma.CommonUtils.Services
                         MensajeHttp = "No hay contenido."
                     };
                 }
+
                 return new ResponseDTO
                 {
                     IsExito = true,
@@ -164,15 +226,21 @@ namespace lestoma.CommonUtils.Services
                 var jsonError = JsonConvert.SerializeObject(new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
+                    StatusCode = ResponseMessage != null
+                        ? (int)ResponseMessage.StatusCode
+                        : (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ResponseMessage != null
+                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        : ex.Message
                 });
                 throw new Exception(jsonError);
             }
         }
+
         #endregion
 
         #region Post Api service
+
         public async Task<ResponseDTO> PostAsync<T>(string urlBase, string controller, T model)
         {
             try
@@ -189,7 +257,8 @@ namespace lestoma.CommonUtils.Services
                     {
                         IsExito = false,
                         StatusCode = (int)ResponseMessage.StatusCode,
-                        MensajeHttp = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                        MensajeHttp =
+                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
 
@@ -200,15 +269,21 @@ namespace lestoma.CommonUtils.Services
                 var jsonError = JsonConvert.SerializeObject(new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
+                    StatusCode = ResponseMessage != null
+                        ? (int)ResponseMessage.StatusCode
+                        : (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ResponseMessage != null
+                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        : ex.Message
                 });
                 throw new Exception(jsonError);
             }
         }
+
         #endregion
 
         #region Post Api service with token
+
         public async Task<ResponseDTO> PostAsyncWithToken<T>(string urlBase, string controller, T model, string token)
         {
             try
@@ -225,10 +300,11 @@ namespace lestoma.CommonUtils.Services
                     return new ResponseDTO
                     {
                         IsExito = false,
-                        MensajeHttp = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                        MensajeHttp =
+                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
-                else if (ResponseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await RefreshToken(urlBase);
                     await PostAsyncWithToken(urlBase, controller, model, _tokenNuevo);
@@ -241,15 +317,21 @@ namespace lestoma.CommonUtils.Services
                 var jsonError = JsonConvert.SerializeObject(new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
+                    StatusCode = ResponseMessage != null
+                        ? (int)ResponseMessage.StatusCode
+                        : (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ResponseMessage != null
+                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        : ex.Message
                 });
                 throw new Exception(jsonError);
             }
         }
+
         #endregion
 
         #region Put Api service
+
         public async Task<ResponseDTO> PutAsync<T>(string urlBase, string controller, T model)
         {
             try
@@ -266,7 +348,8 @@ namespace lestoma.CommonUtils.Services
                     {
                         IsExito = false,
                         StatusCode = (int)ResponseMessage.StatusCode,
-                        MensajeHttp = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                        MensajeHttp =
+                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
 
@@ -277,15 +360,21 @@ namespace lestoma.CommonUtils.Services
                 var jsonError = JsonConvert.SerializeObject(new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
+                    StatusCode = ResponseMessage != null
+                        ? (int)ResponseMessage.StatusCode
+                        : (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ResponseMessage != null
+                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        : ex.Message
                 });
                 throw new Exception(jsonError);
             }
         }
+
         #endregion
 
         #region Put Api service with token
+
         public async Task<ResponseDTO> PutAsyncWithToken<T>(string urlBase, string controller, T model, string token)
         {
             try
@@ -302,26 +391,33 @@ namespace lestoma.CommonUtils.Services
                     return new ResponseDTO
                     {
                         IsExito = false,
-                        MensajeHttp = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                        MensajeHttp =
+                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
+
                 return Respuesta;
             }
             catch (Exception ex)
             {
-
                 var jsonError = JsonConvert.SerializeObject(new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
+                    StatusCode = ResponseMessage != null
+                        ? (int)ResponseMessage.StatusCode
+                        : (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ResponseMessage != null
+                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        : ex.Message
                 });
                 throw new Exception(jsonError);
             }
         }
+
         #endregion
 
         #region Delete Api service with token
+
         public async Task<ResponseDTO> DeleteAsyncWithToken(string urlBase, string controller, object id, string token)
         {
             try
@@ -334,13 +430,15 @@ namespace lestoma.CommonUtils.Services
                 {
                     Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                 }
+
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
                     return new ResponseDTO
                     {
                         IsExito = false,
                         StatusCode = (int)ResponseMessage.StatusCode,
-                        MensajeHttp = mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                        MensajeHttp =
+                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
@@ -357,12 +455,15 @@ namespace lestoma.CommonUtils.Services
             }
             catch (Exception ex)
             {
-
                 var jsonError = JsonConvert.SerializeObject(new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null ? (int)ResponseMessage.StatusCode : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty) : ex.Message
+                    StatusCode = ResponseMessage != null
+                        ? (int)ResponseMessage.StatusCode
+                        : (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ResponseMessage != null
+                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        : ex.Message
                 });
                 throw new Exception(jsonError);
             }
@@ -371,6 +472,7 @@ namespace lestoma.CommonUtils.Services
         #endregion
 
         #region RefreshToken
+
         private async Task RefreshToken(string urlBase)
         {
             try
@@ -395,9 +497,11 @@ namespace lestoma.CommonUtils.Services
                 Debug.WriteLine(ex.Message);
             }
         }
+
         #endregion
 
         #region mostrar Mensaje Personalizado para la solicitud del service
+
         private string mostrarMensajePersonalizadoStatus(System.Net.HttpStatusCode statusCode, string mensajeDeLaApi)
         {
             string mensaje = string.Empty;
@@ -488,7 +592,8 @@ namespace lestoma.CommonUtils.Services
                         mensaje = "este error es ambiguo no esta en uso comuniquese con el ingeniero";
                         break;
                     case System.Net.HttpStatusCode.PreconditionFailed:
-                        mensaje = "el server no puede cumplir con alguna condicion impuesta por el navegador en su peticion";
+                        mensaje =
+                            "el server no puede cumplir con alguna condicion impuesta por el navegador en su peticion";
                         break;
                     case System.Net.HttpStatusCode.ProxyAuthenticationRequired:
                         mensaje = "el sever acepta la peticion pero se requiere la autenticacion del proxy";
@@ -537,9 +642,10 @@ namespace lestoma.CommonUtils.Services
                         break;
                 }
             }
+
             return mensaje;
         }
-        #endregion
 
+        #endregion
     }
 }

@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.100.58" />
     <PackageReference Include="DinkToPdf" Version="1.0.8" />
   </ItemGroup>
 
