@@ -30,11 +30,14 @@ namespace lestoma.Api.Controllers
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> GetAllFilter([FromQuery] ComponentFilterRequest filtro)
         {
-            var upaId = UpaId();
-            if (upaId != Guid.Empty)
+            if (filtro.UpaId == Guid.Empty)
             {
-                filtro.UpaId = upaId;
-            }
+                var upaId = UpaId();
+                if (upaId != Guid.Empty)
+                {
+                    filtro.UpaId = upaId;
+                }
+            } 
             var queryable = _componentService.GetAllFilter(filtro.UpaId);
             var listado = await queryable.Paginar(filtro.Paginacion).ToListAsync();
             var paginador = Paginador<ListadoComponenteDTO>.CrearPaginador(queryable.Count(), listado, filtro.Paginacion);
@@ -50,14 +53,15 @@ namespace lestoma.Api.Controllers
             return Ok(query);
         }
         [HttpGet("{id}")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> GetComponente(Guid id)
         {
             var response = await _componentService.GetById(id);
             return Ok(response);
         }
-
+        
         [HttpPost("crear")]
-
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> CrearComponente([FromBody] CreateComponenteRequest comp)
         {
             var compDTO = Mapear<CreateComponenteRequest, EComponenteLaboratorio>(comp);
@@ -66,6 +70,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpPut("editar")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> EditarComponente([FromBody] EditComponenteRequest comp)
         {
             var compDTO = Mapear<EditComponenteRequest, EComponenteLaboratorio>(comp);
@@ -73,6 +78,7 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
         [HttpDelete("{id}")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> EliminarComponente(Guid id)
         {
             await _componentService.Delete(id);

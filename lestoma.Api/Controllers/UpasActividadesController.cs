@@ -53,7 +53,7 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         } 
 
-        [HttpGet("listar-actividades-by-upa-usuario")]
+        [HttpGet("listar-actividades-upa-usuario")]
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> GetActividadesByUpaUser([FromQuery] UpaUserFilterRequest filtro)
         {

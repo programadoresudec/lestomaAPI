@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace lestoma.Data.Migrations
 {
-    public partial class DataInitial : Migration
+    public partial class Initial01022023 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -476,9 +476,9 @@ namespace lestoma.Data.Migrations
                 columns: new[] { "id", "fecha_creacion_server", "ip", "nombre_modulo", "session", "tipo_de_aplicacion" },
                 values: new object[,]
                 {
-                    { new Guid("b2ba13fa-d96f-495b-b1a3-f42eb7b32796"), new DateTime(2022, 11, 17, 16, 12, 4, 547, DateTimeKind.Local).AddTicks(4582), "10.201.240.243", "SENSORES", "Anonimo", "Local" },
-                    { new Guid("33d6e193-2fbe-4118-882f-c002183d4aa2"), new DateTime(2022, 11, 17, 16, 12, 4, 547, DateTimeKind.Local).AddTicks(4593), "10.201.240.243", "SET_POINT/CONTROL", "Anonimo", "Local" },
-                    { new Guid("d3e33310-61ce-4ac2-90c1-c4286631a0f7"), new DateTime(2022, 11, 17, 16, 12, 4, 547, DateTimeKind.Local).AddTicks(3042), "10.201.240.243", "ACTUADORES", "Anonimo", "Local" }
+                    { new Guid("c4425a21-86da-4cef-9623-28882135c403"), new DateTime(2023, 2, 1, 14, 45, 58, 599, DateTimeKind.Local).AddTicks(4894), "172.30.96.1", "SENSORES", "Anonimo", "Local" },
+                    { new Guid("48cc18e5-59cc-4c95-91fc-853ec233b225"), new DateTime(2023, 2, 1, 14, 45, 58, 599, DateTimeKind.Local).AddTicks(4906), "172.30.96.1", "SET_POINT/CONTROL", "Anonimo", "Local" },
+                    { new Guid("c1a18a89-4f8f-4d50-9279-93135483e329"), new DateTime(2023, 2, 1, 14, 45, 58, 599, DateTimeKind.Local).AddTicks(3488), "172.30.96.1", "ACTUADORES", "Anonimo", "Local" }
                 });
 
             migrationBuilder.InsertData(
@@ -507,15 +507,19 @@ namespace lestoma.Data.Migrations
                 columns: new[] { "id", "fecha_creacion_server", "ip", "nombre_actividad", "session", "tipo_de_aplicacion" },
                 values: new object[,]
                 {
-                    { new Guid("767f6153-1f32-4bff-bc91-78ee96666691"), new DateTime(2022, 11, 17, 16, 12, 4, 590, DateTimeKind.Local).AddTicks(5225), "10.201.240.243", "control de agua", "Anonimo", "Local" },
-                    { new Guid("06b110dc-51d7-474c-85c0-e0e03a237ef7"), new DateTime(2022, 11, 17, 16, 12, 4, 590, DateTimeKind.Local).AddTicks(5245), "10.201.240.243", "alimentacion de peces", "Anonimo", "Local" }
+                    { new Guid("c071a713-b2d3-4dcf-be15-e3ca1a4d436b"), new DateTime(2023, 2, 1, 14, 45, 58, 659, DateTimeKind.Local).AddTicks(5169), "172.30.96.1", "control de agua", "Anonimo", "Local" },
+                    { new Guid("4cc1a161-776c-48f5-8081-05343c247469"), new DateTime(2023, 2, 1, 14, 45, 58, 659, DateTimeKind.Local).AddTicks(5193), "172.30.96.1", "alimentacion de peces", "Anonimo", "Local" }
                 });
 
             migrationBuilder.InsertData(
                 schema: "superadmin",
                 table: "super_administrador",
                 columns: new[] { "id", "usuario_id" },
-                values: new object[] { (short)1, (short)1 });
+                values: new object[,]
+                {
+                    { (short)1, (short)1 },
+                    { (short)2, (short)2 }
+                });
 
             migrationBuilder.InsertData(
                 schema: "superadmin",
@@ -523,8 +527,8 @@ namespace lestoma.Data.Migrations
                 columns: new[] { "id", "cantidad_actividades", "descripcion", "fecha_creacion_server", "ip", "nombre_upa", "session", "superadmin_id", "tipo_de_aplicacion" },
                 values: new object[,]
                 {
-                    { new Guid("a0dc4b17-ff25-4fc5-b687-1b23cef12ce0"), (short)5, "queda ubicada en facatativá", new DateTime(2022, 11, 17, 16, 12, 4, 590, DateTimeKind.Local).AddTicks(3359), "10.201.240.243", "finca el vergel", "Anonimo", 1, "Local" },
-                    { new Guid("e33757f8-ab9a-4143-82c5-ff3ed987e681"), (short)2, "queda ubicada en la universidad cundinamarca extensión nfaca", new DateTime(2022, 11, 17, 16, 12, 4, 590, DateTimeKind.Local).AddTicks(3382), "10.201.240.243", "ucundinamarca", "Anonimo", 1, "Local" }
+                    { new Guid("91f86319-dea2-46d8-8c3d-2065b9297962"), (short)5, "queda ubicada en facatativá", new DateTime(2023, 2, 1, 14, 45, 58, 659, DateTimeKind.Local).AddTicks(3151), "172.30.96.1", "finca el vergel", "Anonimo", 1, "Local" },
+                    { new Guid("2ace840c-862b-4b32-b583-622587a8e06f"), (short)2, "queda ubicada en la universidad cundinamarca extensión faca", new DateTime(2023, 2, 1, 14, 45, 58, 659, DateTimeKind.Local).AddTicks(3189), "172.30.96.1", "ucundinamarca", "Anonimo", 1, "Local" }
                 });
 
             migrationBuilder.InsertData(
@@ -556,13 +560,13 @@ namespace lestoma.Data.Migrations
                 columns: new[] { "id", "actividad_id", "fecha_creacion_server", "ip", "descripcion_estado", "modulo_componente_id", "nombre_componente", "session", "tipo_de_aplicacion", "upa_id" },
                 values: new object[,]
                 {
-                    { new Guid("c5b4d156-ffa1-4bc1-840e-12dcebf0c674"), new Guid("06b110dc-51d7-474c-85c0-e0e03a237ef7"), new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(1968), "10.201.240.243", "{\"Id\":\"98a74bd5-7390-4244-8b2e-255d3707071d\",\"TipoEstado\":\"ON-OFF\",\"ByteFuncion\":\"F0\"}", new Guid("d3e33310-61ce-4ac2-90c1-c4286631a0f7"), "BOMBA DE OXIGENO", "Anonimo", "Local", new Guid("a0dc4b17-ff25-4fc5-b687-1b23cef12ce0") },
-                    { new Guid("12eb8005-3487-451c-9edb-4bc90a946f32"), new Guid("06b110dc-51d7-474c-85c0-e0e03a237ef7"), new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(2108), "10.201.240.243", "{\"Id\":\"98a74bd5-7390-4244-8b2e-255d3707071d\",\"TipoEstado\":\"ON-OFF\",\"ByteFuncion\":\"F0\"}", new Guid("d3e33310-61ce-4ac2-90c1-c4286631a0f7"), "LUZ ESTANQUE", "Anonimo", "Local", new Guid("a0dc4b17-ff25-4fc5-b687-1b23cef12ce0") },
-                    { new Guid("38f5aa9e-e090-45fa-b910-4168ba1d1357"), new Guid("06b110dc-51d7-474c-85c0-e0e03a237ef7"), new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(2115), "10.201.240.243", "{\"Id\":\"98a74bd5-7390-4244-8b2e-255d3707071d\",\"TipoEstado\":\"ON-OFF\",\"ByteFuncion\":\"F0\"}", new Guid("d3e33310-61ce-4ac2-90c1-c4286631a0f7"), "DOSIFICADOR DE ALIMENTO", "Anonimo", "Local", new Guid("a0dc4b17-ff25-4fc5-b687-1b23cef12ce0") },
-                    { new Guid("8f27b34e-a81f-4c10-b502-ebefc9a88e5c"), new Guid("767f6153-1f32-4bff-bc91-78ee96666691"), new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(2120), "10.201.240.243", "{\"Id\":\"f5f738c7-0dba-48ee-afea-b22530160653\",\"TipoEstado\":\"LECTURA\",\"ByteFuncion\":\"0F\"}", new Guid("b2ba13fa-d96f-495b-b1a3-f42eb7b32796"), "TEMPERATURA H2O", "Anonimo", "Local", new Guid("a0dc4b17-ff25-4fc5-b687-1b23cef12ce0") },
-                    { new Guid("c3138870-41b0-4f5e-a791-5dcc710e935a"), new Guid("767f6153-1f32-4bff-bc91-78ee96666691"), new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(2123), "10.201.240.243", "{\"Id\":\"f5f738c7-0dba-48ee-afea-b22530160653\",\"TipoEstado\":\"LECTURA\",\"ByteFuncion\":\"0F\"}", new Guid("b2ba13fa-d96f-495b-b1a3-f42eb7b32796"), "PH", "Anonimo", "Local", new Guid("a0dc4b17-ff25-4fc5-b687-1b23cef12ce0") },
-                    { new Guid("97101379-3f44-4eb0-913f-2c262a4fe745"), new Guid("767f6153-1f32-4bff-bc91-78ee96666691"), new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(2126), "10.201.240.243", "{\"Id\":\"f5f738c7-0dba-48ee-afea-b22530160653\",\"TipoEstado\":\"LECTURA\",\"ByteFuncion\":\"0F\"}", new Guid("b2ba13fa-d96f-495b-b1a3-f42eb7b32796"), "NIVEL TANQUE", "Anonimo", "Local", new Guid("a0dc4b17-ff25-4fc5-b687-1b23cef12ce0") },
-                    { new Guid("4144685c-7349-4bac-876a-d8d94e49ed69"), new Guid("767f6153-1f32-4bff-bc91-78ee96666691"), new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(2130), "10.201.240.243", "{\"Id\":\"c781773b-7d7c-47f7-b5d0-34a4943ba907\",\"TipoEstado\":\"AJUSTE\",\"ByteFuncion\":\"F0\"}", new Guid("33d6e193-2fbe-4118-882f-c002183d4aa2"), "SP_TEMPERATURA H2O", "Anonimo", "Local", new Guid("a0dc4b17-ff25-4fc5-b687-1b23cef12ce0") }
+                    { new Guid("ad50972d-6421-4853-ac04-2e33c7f01540"), new Guid("4cc1a161-776c-48f5-8081-05343c247469"), new DateTime(2023, 2, 1, 14, 45, 58, 853, DateTimeKind.Local).AddTicks(8556), "172.30.96.1", "{\"Id\":\"98a74bd5-7390-4244-8b2e-255d3707071d\",\"TipoEstado\":\"ON-OFF\",\"ByteHexaFuncion\":\"F0\",\"ByteDecimalFuncion\":240}", new Guid("c1a18a89-4f8f-4d50-9279-93135483e329"), "BOMBA DE OXIGENO", "Anonimo", "Local", new Guid("91f86319-dea2-46d8-8c3d-2065b9297962") },
+                    { new Guid("9564116f-7904-4548-b99d-1e129c97441c"), new Guid("4cc1a161-776c-48f5-8081-05343c247469"), new DateTime(2023, 2, 1, 14, 45, 58, 853, DateTimeKind.Local).AddTicks(8613), "172.30.96.1", "{\"Id\":\"98a74bd5-7390-4244-8b2e-255d3707071d\",\"TipoEstado\":\"ON-OFF\",\"ByteHexaFuncion\":\"F0\",\"ByteDecimalFuncion\":240}", new Guid("c1a18a89-4f8f-4d50-9279-93135483e329"), "LUZ ESTANQUE", "Anonimo", "Local", new Guid("91f86319-dea2-46d8-8c3d-2065b9297962") },
+                    { new Guid("4b78e7fb-fa05-4de4-837b-0b6b1fd689f8"), new Guid("4cc1a161-776c-48f5-8081-05343c247469"), new DateTime(2023, 2, 1, 14, 45, 58, 853, DateTimeKind.Local).AddTicks(8623), "172.30.96.1", "{\"Id\":\"98a74bd5-7390-4244-8b2e-255d3707071d\",\"TipoEstado\":\"ON-OFF\",\"ByteHexaFuncion\":\"F0\",\"ByteDecimalFuncion\":240}", new Guid("c1a18a89-4f8f-4d50-9279-93135483e329"), "DOSIFICADOR DE ALIMENTO", "Anonimo", "Local", new Guid("91f86319-dea2-46d8-8c3d-2065b9297962") },
+                    { new Guid("a17c1b85-ad09-4208-9954-eb5b4b08ea13"), new Guid("c071a713-b2d3-4dcf-be15-e3ca1a4d436b"), new DateTime(2023, 2, 1, 14, 45, 58, 853, DateTimeKind.Local).AddTicks(8628), "172.30.96.1", "{\"Id\":\"f5f738c7-0dba-48ee-afea-b22530160653\",\"TipoEstado\":\"LECTURA\",\"ByteHexaFuncion\":\"0F\",\"ByteDecimalFuncion\":15}", new Guid("c4425a21-86da-4cef-9623-28882135c403"), "TEMPERATURA H2O", "Anonimo", "Local", new Guid("91f86319-dea2-46d8-8c3d-2065b9297962") },
+                    { new Guid("dd162b75-cfac-47bf-8865-2eafabecc6a0"), new Guid("c071a713-b2d3-4dcf-be15-e3ca1a4d436b"), new DateTime(2023, 2, 1, 14, 45, 58, 853, DateTimeKind.Local).AddTicks(8632), "172.30.96.1", "{\"Id\":\"f5f738c7-0dba-48ee-afea-b22530160653\",\"TipoEstado\":\"LECTURA\",\"ByteHexaFuncion\":\"0F\",\"ByteDecimalFuncion\":15}", new Guid("c4425a21-86da-4cef-9623-28882135c403"), "PH", "Anonimo", "Local", new Guid("91f86319-dea2-46d8-8c3d-2065b9297962") },
+                    { new Guid("7e0fe3e1-4e48-4aae-a833-4c8a1987bb12"), new Guid("c071a713-b2d3-4dcf-be15-e3ca1a4d436b"), new DateTime(2023, 2, 1, 14, 45, 58, 853, DateTimeKind.Local).AddTicks(8635), "172.30.96.1", "{\"Id\":\"f5f738c7-0dba-48ee-afea-b22530160653\",\"TipoEstado\":\"LECTURA\",\"ByteHexaFuncion\":\"0F\",\"ByteDecimalFuncion\":15}", new Guid("c4425a21-86da-4cef-9623-28882135c403"), "NIVEL TANQUE", "Anonimo", "Local", new Guid("91f86319-dea2-46d8-8c3d-2065b9297962") },
+                    { new Guid("cbaad725-cacc-4ab1-b54e-91cb9414b953"), new Guid("c071a713-b2d3-4dcf-be15-e3ca1a4d436b"), new DateTime(2023, 2, 1, 14, 45, 58, 853, DateTimeKind.Local).AddTicks(8639), "172.30.96.1", "{\"Id\":\"c781773b-7d7c-47f7-b5d0-34a4943ba907\",\"TipoEstado\":\"AJUSTE\",\"ByteHexaFuncion\":\"F0\",\"ByteDecimalFuncion\":240}", new Guid("48cc18e5-59cc-4c95-91fc-853ec233b225"), "SP_TEMPERATURA H2O", "Anonimo", "Local", new Guid("91f86319-dea2-46d8-8c3d-2065b9297962") }
                 });
 
             migrationBuilder.InsertData(
@@ -571,10 +575,11 @@ namespace lestoma.Data.Migrations
                 columns: new[] { "id", "apellido", "clave", "codigo_recuperacion", "email", "estado_id", "fecha_creacion_server", "vencimiento_codigo_recuperacion", "ip", "nombre", "rol_id", "semilla", "session", "tipo_de_aplicacion" },
                 values: new object[,]
                 {
-                    { 1, "Lestoma", "FMTdH4GAJiDffypi7wCq840EYtGeuw3/CT0EOZz7FHw=", null, "diegop177@hotmail.com", 2, new DateTime(2022, 11, 17, 16, 12, 4, 575, DateTimeKind.Local).AddTicks(2979), null, "10.201.240.243", "Super Admin", 1, "Ka6/7yd7UYQ/dv+da2OL2Q==", "Anonimo", "Local" },
-                    { 2, "Lestoma", "iZfYdY0T7CeB/M4kZ3VuoG4qc37iX16x/Cqm8lzNTAU=", null, "diegoarturo1598@hotmail.com", 2, new DateTime(2022, 11, 17, 16, 12, 4, 582, DateTimeKind.Local).AddTicks(8656), null, "10.201.240.243", "Administrador", 2, "fpW+3+hEHJykTMx0T3KEOw==", "Anonimo", "Local" },
-                    { 3, "Lestoma", "ljEhaEXbLX2VGgzr2PdHiCQmO0/iPzWYJGMfHcZSqmI=", null, "programadoresuc@outlook.com", 2, new DateTime(2022, 11, 17, 16, 12, 4, 589, DateTimeKind.Local).AddTicks(6737), null, "10.201.240.243", "Auxiliar 1", 3, "1giJOaKKcfoYyXBo0Fo5Gg==", "Anonimo", "Local" },
-                    { 4, "Lestoma", "ljEhaEXbLX2VGgzr2PdHiCQmO0/iPzWYJGMfHcZSqmI=", null, "auxiliar2@gmail.com", 2, new DateTime(2022, 11, 17, 16, 12, 4, 589, DateTimeKind.Local).AddTicks(6746), null, "10.201.240.243", "Auxiliar 2", 3, "1giJOaKKcfoYyXBo0Fo5Gg==", "Anonimo", "Local" }
+                    { 2, "Lestoma-APP", "vXbhVJqYXTKJhsUfgepmlREF3WZXVNRFSFVkDrIxQaI=", null, "diegop177@hotmail.com", 2, new DateTime(2023, 2, 1, 14, 45, 58, 644, DateTimeKind.Local).AddTicks(1054), null, "172.30.96.1", "Diego-Super", 1, "9NFnwgZRTJr61A3ymVq4sA==", "Anonimo", "Local" },
+                    { 1, "Movil", "vXbhVJqYXTKJhsUfgepmlREF3WZXVNRFSFVkDrIxQaI=", null, "lestomaudecmovil@gmail.com", 2, new DateTime(2023, 2, 1, 14, 45, 58, 643, DateTimeKind.Local).AddTicks(7621), null, "172.30.96.1", "Lestoma-APP", 1, "9NFnwgZRTJr61A3ymVq4sA==", "Anonimo", "Local" },
+                    { 3, "Lestoma", "A5HzwpwJIuYyDvaDL1RFes/ORX7PUmnU+LSGK8hChXc=", null, "diegoarturo1598@hotmail.com", 2, new DateTime(2023, 2, 1, 14, 45, 58, 651, DateTimeKind.Local).AddTicks(1435), null, "172.30.96.1", "Administrador", 2, "3CM+4ymQ6qe0KqrKndcRBw==", "Anonimo", "Local" },
+                    { 4, "Lestoma", "Z2Ykx/Ilz7kLhisdZNSl3YVQIJLM2fP6QII/WrXPKhU=", null, "programadoresuc@outlook.com", 2, new DateTime(2023, 2, 1, 14, 45, 58, 658, DateTimeKind.Local).AddTicks(4479), null, "172.30.96.1", "Auxiliar 1", 3, "nl4cgYNV4yg9BRw070b4vw==", "Anonimo", "Local" },
+                    { 5, "Lestoma", "Z2Ykx/Ilz7kLhisdZNSl3YVQIJLM2fP6QII/WrXPKhU=", null, "tudec2020@gmail.com", 2, new DateTime(2023, 2, 1, 14, 45, 58, 658, DateTimeKind.Local).AddTicks(4511), null, "172.30.96.1", "Auxiliar 2", 3, "nl4cgYNV4yg9BRw070b4vw==", "Anonimo", "Local" }
                 });
 
             migrationBuilder.InsertData(
@@ -583,11 +588,11 @@ namespace lestoma.Data.Migrations
                 columns: new[] { "id", "componente_laboratorio_id", "estado_internet", "fecha_creacion_dispositivo", "fecha_creacion_server", "ip", "session", "tipo_de_aplicacion", "tipo_com_id", "trama_enviada", "trama_recibida", "dato_trama_enviada", "dato_trama_recibida" },
                 values: new object[,]
                 {
-                    { new Guid("8b3dd5a2-73e2-4004-9191-2959fe41435f"), new Guid("c5b4d156-ffa1-4bc1-840e-12dcebf0c674"), true, new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(7140), new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(5949), "10.201.240.243", "Anonimo", "Local", 1, "6FDAF029000000009834", "49803CE33F8000008FC8", null, 1.0 },
-                    { new Guid("3fa00e14-22ce-4cb0-bd70-a260c2f94c00"), new Guid("12eb8005-3487-451c-9edb-4bc90a946f32"), true, new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(8902), new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(8892), "10.201.240.243", "Anonimo", "Local", 2, "495DF08E000000007B74", "496D3C083F80000096D1", null, 1.0 },
-                    { new Guid("4ccf1912-580e-4e31-8173-6a71417f31eb"), new Guid("c3138870-41b0-4f5e-a791-5dcc710e935a"), true, new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(8910), new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(8909), "10.201.240.243", "Anonimo", "Local", 1, "493E0FA6000000007453", "6FB2F0DC410E66663E8F", null, 8.9000000000000004 },
-                    { new Guid("42677cc4-d78a-4c3a-a049-d574f52c4da4"), new Guid("c3138870-41b0-4f5e-a791-5dcc710e935a"), true, new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(8915), new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(8913), "10.201.240.243", "Anonimo", "Local", 1, "493E0FA6000000007453", "6FEFF08440D66666F1A3", null, 6.7000000000000002 },
-                    { new Guid("fe8b1d01-5e88-4974-86db-9e4475d64e61"), new Guid("4144685c-7349-4bac-876a-d8d94e49ed69"), true, new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(9358), new DateTime(2022, 11, 17, 16, 12, 4, 705, DateTimeKind.Local).AddTicks(9349), "10.201.240.243", "Anonimo", "Local", 1, "49F2F04541C00000A19A", "6FEEF0D8434800001CA9", 24.0, 200.0 }
+                    { new Guid("c5738d6d-8dde-4b48-a0f0-2b2c2ffc54b9"), new Guid("ad50972d-6421-4853-ac04-2e33c7f01540"), true, new DateTime(2023, 2, 1, 14, 45, 58, 854, DateTimeKind.Local).AddTicks(3115), new DateTime(2023, 2, 1, 14, 45, 58, 854, DateTimeKind.Local).AddTicks(2255), "172.30.96.1", "Anonimo", "Local", 1, "6FDAF029000000009834", "49803CE33F8000008FC8", null, 1.0 },
+                    { new Guid("d558b2e6-0187-4fa9-99eb-cff4e6b87c2c"), new Guid("9564116f-7904-4548-b99d-1e129c97441c"), true, new DateTime(2023, 2, 1, 14, 45, 58, 854, DateTimeKind.Local).AddTicks(4561), new DateTime(2023, 2, 1, 14, 45, 58, 854, DateTimeKind.Local).AddTicks(4552), "172.30.96.1", "Anonimo", "Local", 2, "495DF08E000000007B74", "496D3C083F80000096D1", null, 1.0 },
+                    { new Guid("58cc3185-1867-41c3-99d8-d21f06a54b05"), new Guid("dd162b75-cfac-47bf-8865-2eafabecc6a0"), true, new DateTime(2023, 2, 1, 14, 45, 58, 854, DateTimeKind.Local).AddTicks(4568), new DateTime(2023, 2, 1, 14, 45, 58, 854, DateTimeKind.Local).AddTicks(4567), "172.30.96.1", "Anonimo", "Local", 1, "493E0FA6000000007453", "6FB2F0DC410E66663E8F", null, 8.9000000000000004 },
+                    { new Guid("0a87b909-c249-48c2-9541-f341114507bf"), new Guid("dd162b75-cfac-47bf-8865-2eafabecc6a0"), true, new DateTime(2023, 2, 1, 14, 45, 58, 854, DateTimeKind.Local).AddTicks(4574), new DateTime(2023, 2, 1, 14, 45, 58, 854, DateTimeKind.Local).AddTicks(4573), "172.30.96.1", "Anonimo", "Local", 1, "493E0FA6000000007453", "6FEFF08440D66666F1A3", null, 6.7000000000000002 },
+                    { new Guid("e4c74b36-b696-4164-91dd-40c50efe9001"), new Guid("cbaad725-cacc-4ab1-b54e-91cb9414b953"), true, new DateTime(2023, 2, 1, 14, 45, 58, 854, DateTimeKind.Local).AddTicks(5011), new DateTime(2023, 2, 1, 14, 45, 58, 854, DateTimeKind.Local).AddTicks(5003), "172.30.96.1", "Anonimo", "Local", 1, "49F2F04541C00000A19A", "6FEEF0D8434800001CA9", 24.0, 200.0 }
                 });
 
             migrationBuilder.InsertData(
@@ -596,12 +601,12 @@ namespace lestoma.Data.Migrations
                 columns: new[] { "actividad_id", "upa_id", "usuario_id", "fecha_creacion_server", "ip", "session", "tipo_de_aplicacion" },
                 values: new object[,]
                 {
-                    { new Guid("767f6153-1f32-4bff-bc91-78ee96666691"), new Guid("a0dc4b17-ff25-4fc5-b687-1b23cef12ce0"), 2, new DateTime(2022, 11, 17, 16, 12, 4, 590, DateTimeKind.Local).AddTicks(8736), "10.201.240.243", "Anonimo", "Local" },
-                    { new Guid("06b110dc-51d7-474c-85c0-e0e03a237ef7"), new Guid("a0dc4b17-ff25-4fc5-b687-1b23cef12ce0"), 2, new DateTime(2022, 11, 17, 16, 12, 4, 590, DateTimeKind.Local).AddTicks(8869), "10.201.240.243", "Anonimo", "Local" },
-                    { new Guid("767f6153-1f32-4bff-bc91-78ee96666691"), new Guid("a0dc4b17-ff25-4fc5-b687-1b23cef12ce0"), 3, new DateTime(2022, 11, 17, 16, 12, 4, 590, DateTimeKind.Local).AddTicks(8875), "10.201.240.243", "Anonimo", "Local" },
-                    { new Guid("06b110dc-51d7-474c-85c0-e0e03a237ef7"), new Guid("a0dc4b17-ff25-4fc5-b687-1b23cef12ce0"), 3, new DateTime(2022, 11, 17, 16, 12, 4, 590, DateTimeKind.Local).AddTicks(8877), "10.201.240.243", "Anonimo", "Local" },
-                    { new Guid("767f6153-1f32-4bff-bc91-78ee96666691"), new Guid("e33757f8-ab9a-4143-82c5-ff3ed987e681"), 4, new DateTime(2022, 11, 17, 16, 12, 4, 590, DateTimeKind.Local).AddTicks(8880), "10.201.240.243", "Anonimo", "Local" },
-                    { new Guid("06b110dc-51d7-474c-85c0-e0e03a237ef7"), new Guid("e33757f8-ab9a-4143-82c5-ff3ed987e681"), 4, new DateTime(2022, 11, 17, 16, 12, 4, 590, DateTimeKind.Local).AddTicks(8882), "10.201.240.243", "Anonimo", "Local" }
+                    { new Guid("c071a713-b2d3-4dcf-be15-e3ca1a4d436b"), new Guid("91f86319-dea2-46d8-8c3d-2065b9297962"), 3, new DateTime(2023, 2, 1, 14, 45, 58, 659, DateTimeKind.Local).AddTicks(8260), "172.30.96.1", "Anonimo", "Local" },
+                    { new Guid("4cc1a161-776c-48f5-8081-05343c247469"), new Guid("91f86319-dea2-46d8-8c3d-2065b9297962"), 3, new DateTime(2023, 2, 1, 14, 45, 58, 659, DateTimeKind.Local).AddTicks(8278), "172.30.96.1", "Anonimo", "Local" },
+                    { new Guid("c071a713-b2d3-4dcf-be15-e3ca1a4d436b"), new Guid("91f86319-dea2-46d8-8c3d-2065b9297962"), 4, new DateTime(2023, 2, 1, 14, 45, 58, 659, DateTimeKind.Local).AddTicks(8282), "172.30.96.1", "Anonimo", "Local" },
+                    { new Guid("4cc1a161-776c-48f5-8081-05343c247469"), new Guid("91f86319-dea2-46d8-8c3d-2065b9297962"), 4, new DateTime(2023, 2, 1, 14, 45, 58, 659, DateTimeKind.Local).AddTicks(8284), "172.30.96.1", "Anonimo", "Local" },
+                    { new Guid("c071a713-b2d3-4dcf-be15-e3ca1a4d436b"), new Guid("2ace840c-862b-4b32-b583-622587a8e06f"), 5, new DateTime(2023, 2, 1, 14, 45, 58, 659, DateTimeKind.Local).AddTicks(8287), "172.30.96.1", "Anonimo", "Local" },
+                    { new Guid("4cc1a161-776c-48f5-8081-05343c247469"), new Guid("2ace840c-862b-4b32-b583-622587a8e06f"), 5, new DateTime(2023, 2, 1, 14, 45, 58, 659, DateTimeKind.Local).AddTicks(8289), "172.30.96.1", "Anonimo", "Local" }
                 });
 
             migrationBuilder.CreateIndex(

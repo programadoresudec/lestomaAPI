@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.MyException;
@@ -201,6 +202,22 @@ namespace lestoma.Api.Controllers
             return Ok(Respuesta);
         }
         #endregion
+
+
+        #region Activar Notificaciones por correo
+        [HttpPost("activar-notificaciones-por-correo")]
+        [Authorize]
+        public async Task<IActionResult> ActivarNotificacionesCorreo()
+        {
+            string email = EmailDesencrypted();
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                Respuesta = await _usuarioService.ActivateNotificationsMail(email);
+            }
+            return Ok(Respuesta);
+        }
+        #endregion
+
 
         private async Task SignInUserHangfire(string username)
         {

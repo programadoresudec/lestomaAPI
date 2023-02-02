@@ -26,5 +26,6 @@ namespace lestoma.Logica.Interfaces
         Task<IEnumerable<InfoUserDTO>> GetInfoUsers();
         Task<IEnumerable<EstadoDTO>> GetUserStatuses();
         Task<IEnumerable<RolDTO>> GetUserRoles();
+        Task<ResponseDTO> ActivateNotificationsMail(string email);
     }
 }
