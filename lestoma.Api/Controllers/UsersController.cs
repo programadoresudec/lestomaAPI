@@ -13,11 +13,11 @@ namespace lestoma.Api.Controllers
 
     [Route("api/usuarios")]
     [ApiController]
-    public class UsuarioController : BaseController
+    public class UsersController : BaseController
     {
         private readonly IUsuarioService _service;
 
-        public UsuarioController(IUsuarioService usuarioService, IMapper mapper)
+        public UsersController(IUsuarioService usuarioService, IMapper mapper)
             : base(mapper)
         {
             _service = usuarioService;

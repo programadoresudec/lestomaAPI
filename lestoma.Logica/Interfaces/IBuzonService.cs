@@ -1,7 +1,5 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
-using lestoma.Entidades.Models;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,6 +9,6 @@ namespace lestoma.Logica.Interfaces
     {
         IQueryable<BuzonDTO> GetAllForPagination();
         Task<ResponseDTO> CreateMailBox(BuzonCreacionRequest buzonCreacion);
-        Task<EBuzon> GetMailBoxById(int id);
+        Task<ResponseDTO> GetMailBoxById(int id);
     }
 }

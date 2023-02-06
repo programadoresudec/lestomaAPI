@@ -1,4 +1,5 @@
-﻿using lestoma.CommonUtils.DTOs;
+﻿using lestoma.CommonUtils.Core;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
 using MailKit.Net.Smtp;
@@ -18,15 +19,17 @@ namespace lestoma.Api.Helpers
     {
         private readonly IWebHostEnvironment _env;
         private readonly IConfiguration _configuration;
+        private readonly ILoggerManager _logger;
         private readonly string _from;
         private readonly string _emailFrom;
         private readonly string _smtp;
         private readonly string _port;
         private readonly string _password;
         private readonly string folderPlantilla;
-        public MailHelper(IWebHostEnvironment env, IConfiguration configuration)
+        public MailHelper(IWebHostEnvironment env, IConfiguration configuration, ILoggerManager logger)
         {
             _env = env;
+            _logger = logger;
             _configuration = configuration;
             _from = Encryption.EncryptDecrypt.Decrypt(_configuration["Mail:From"]);
             _emailFrom = Encryption.EncryptDecrypt.Decrypt(_configuration["Mail:EmailFrom"]);
@@ -81,6 +84,7 @@ namespace lestoma.Api.Helpers
                 {
                     throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"Error: No se pudo enviar el correo, {ex.Message}");
                 }
+                _logger.LogError(ex.Message, ex);
             }
         }
 
@@ -146,6 +150,7 @@ namespace lestoma.Api.Helpers
                 {
                     throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"Error: No se pudo enviar el correo, {ex.Message}");
                 }
+                _logger.LogError(ex.Message, ex);
             }
         }
         #endregion
@@ -200,6 +205,7 @@ namespace lestoma.Api.Helpers
                 {
                     throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"Error: No se pudo enviar el correo, {ex.Message}");
                 }
+                _logger.LogError(ex.Message, ex);
             }
 
         }

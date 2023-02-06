@@ -43,12 +43,10 @@ namespace lestoma.Api.Helpers
             CreateMap<EModuloComponente, ModuloDTO>();
             CreateMap<EActividad, ActividadDTO>();
             CreateMap<EUpaActividad, DetalleUpaActividadDTO>();
-            CreateMap<EBuzon, MoreInfoBuzonDTO>().ForMember(d => d.Detalle, o => o.MapFrom(s => DeserializarObject<DetalleBuzon>(s.Descripcion)));
             CreateMap<EUsuario, UserDTO>().ForMember(d => d.RolId, o => o.MapFrom(s => s.Rol.Id))
                 .ForMember(d => d.NombreRol, o => o.MapFrom(s => s.Rol.NombreRol));
             #endregion
         }
-
 
         private T DeserializarObject<T>(string descripcion)
         {

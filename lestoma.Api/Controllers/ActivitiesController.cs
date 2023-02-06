@@ -17,10 +17,10 @@ namespace lestoma.Api.Controllers
 
     [Route("api/actividades")]
     [ApiController]
-    public class ActividadController : BaseController
+    public class ActivitiesController : BaseController
     {
         private readonly IActividadService _actividadService;
-        public ActividadController(IMapper mapper, IActividadService actividadService)
+        public ActivitiesController(IMapper mapper, IActividadService actividadService)
             : base(mapper)
         {
             _actividadService = actividadService;

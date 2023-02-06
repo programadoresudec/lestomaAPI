@@ -16,10 +16,10 @@ namespace lestoma.Api.Controllers
 {
     [Route("api/upas")]
     [ApiController]
-    public class UpaController : BaseController
+    public class UpasController : BaseController
     {
         private readonly IUpaService _upaService;
-        public UpaController(IMapper mapper, IUpaService upaService)
+        public UpasController(IMapper mapper, IUpaService upaService)
             : base(mapper)
         {
             _upaService = upaService;

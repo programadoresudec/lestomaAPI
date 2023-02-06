@@ -10,8 +10,4 @@ namespace lestoma.CommonUtils.DTOs
         public string Upa { get; set; }
         public UserDTO User { get; set; } = new UserDTO();
     }
-    public class MoreInfoBuzonDTO
-    {
-        public DetalleBuzon Detalle { get; set; }
-    }
 }

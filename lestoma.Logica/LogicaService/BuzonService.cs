@@ -1,11 +1,10 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Json;
@@ -41,15 +40,15 @@ namespace lestoma.Logica.LogicaService
             return _respuesta;
         }
 
-     
-        public async Task<EBuzon> GetMailBoxById(int id)
+
+        public async Task<ResponseDTO> GetMailBoxById(int id)
         {
-            var data = await _buzonRepository.GetById(id);
+            var data = await _buzonRepository.GetMailBoxById(id);
             if (data == null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
             }
-            return data;
+            return Responses.SetOkResponse(data);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace lestoma.CommonUtils.Interfaces
     {
         Task<ResponseDTO> GetPaginadoAsyncWithToken<T>(string urlBase, string controller, string token);
         Task<ResponseDTO> GetListAsyncWithToken<T>(string urlBase, string controller, string token);
-        Task<ResponseDTO> GetByIdAsyncWithToken<T>(string urlBase, string controller, string token);
+        Task<ResponseDTO> GetByIdAsyncWithToken(string urlBase, string controller, string token);
         Task<ResponseDTO> PostAsync<T>(string urlBase, string controller, T model);
         Task<ResponseDTO> PutAsync<T>(string urlBase, string controller, T model);
         Task<ResponseDTO> DeleteAsyncWithToken(string urlBase, string controller, object id, string token);

@@ -136,7 +136,7 @@ namespace lestoma.CommonUtils.Services
 
         #region Get By Id Api service with token
 
-        public async Task<ResponseDTO> GetByIdAsyncWithToken<T>(string urlBase, string controller, string token)
+        public async Task<ResponseDTO> GetByIdAsyncWithToken(string urlBase, string controller, string token)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace lestoma.CommonUtils.Services
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await RefreshToken(urlBase);
-                    await GetByIdAsyncWithToken<T>(urlBase, controller, _tokenNuevo);
+                    await GetByIdAsyncWithToken(urlBase, controller, _tokenNuevo);
                 }
 
                 ResponseDTO item = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);

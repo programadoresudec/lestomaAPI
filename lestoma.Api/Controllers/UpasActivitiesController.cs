@@ -16,10 +16,10 @@ namespace lestoma.Api.Controllers
 {
     [Route("api/detalle-upas-actividades")]
     [ApiController]
-    public class UpasActividadesController : BaseController
+    public class UpasActivitiesController : BaseController
     {
         private readonly IDetalleUpaActividadService _detalleService;
-        public UpasActividadesController(IMapper mapper, IDetalleUpaActividadService upasActividadesService)
+        public UpasActivitiesController(IMapper mapper, IDetalleUpaActividadService upasActividadesService)
             : base(mapper)
         {
             _detalleService = upasActividadesService;

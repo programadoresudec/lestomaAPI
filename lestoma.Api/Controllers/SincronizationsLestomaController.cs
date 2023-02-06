@@ -20,14 +20,14 @@ namespace lestoma.Api.Controllers
     [Route("api/laboratorio-lestoma")]
     [Authorize]
     [ApiController]
-    public class LaboratorioController : BaseController
+    public class SincronizationsLestomaController : BaseController
     {
 
         private readonly ILaboratorioService _laboratorioService;
         private readonly IDetalleUpaActividadService _detalleUpaActividad;
         private readonly IBackgroundJobClient _backgroundJobClient;
         #region Constructor
-        public LaboratorioController(IMapper mapper, ILaboratorioService laboratorioService,
+        public SincronizationsLestomaController(IMapper mapper, ILaboratorioService laboratorioService,
             IBackgroundJobClient backgroundJobClient, IDataProtectionProvider protectorProvider, IDetalleUpaActividadService detalleUpaActividad)
             : base(mapper, protectorProvider)
         {

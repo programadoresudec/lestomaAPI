@@ -42,14 +42,14 @@ namespace lestoma.Api.Controllers
             var paginador = Paginador<BuzonDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
             return Ok(paginador);
         }
-        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
 
-        [HttpGet("info/id")]
+     
+        [HttpGet("info/{id}")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> GetBuzonById(int id)
         {
-            var buzon = await _buzonService.GetMailBoxById(id);
-            var buzonDTO = Mapear<EBuzon, MoreInfoBuzonDTO>(buzon);
-            return Ok(buzonDTO);
+            var buzonInfo = await _buzonService.GetMailBoxById(id);
+            return Ok(buzonInfo);
         }
 
         [HttpPost("create")]

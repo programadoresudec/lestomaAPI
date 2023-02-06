@@ -1,22 +1,16 @@
 ﻿using lestoma.CommonUtils.DTOs;
-using lestoma.CommonUtils.Enums;
-using lestoma.CommonUtils.Helpers;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace lestoma.CommonUtils.Requests
 {
     public class BuzonCreacionRequest : AuditoriaDTO
     {
         public int UsuarioId { get; set; }
-        public DetalleBuzon Detalle { get; set; } = new DetalleBuzon();
+        public DetalleBuzonDTO Detalle { get; set; } = new DetalleBuzonDTO();
         public byte[] Imagen { get; set; }
         public string Extension { get; set; }
     }
 
-    public class DetalleBuzon
+    public class DetalleBuzonDTO
     {
         public string Titulo { get; set; }
         public string Descripcion { get; set; }

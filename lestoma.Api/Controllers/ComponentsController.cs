@@ -17,10 +17,10 @@ namespace lestoma.Api.Controllers
 {
     [Route("api/componentes")]
     [ApiController]
-    public class ComponenteController : BaseController
+    public class ComponentsController : BaseController
     {
         private readonly IComponenteService _componentService;
-        public ComponenteController(IMapper mapper, IComponenteService componenteService)
+        public ComponentsController(IMapper mapper, IComponenteService componenteService)
             : base(mapper)
         {
             _componentService = componenteService;

@@ -1,10 +1,11 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
-
 namespace lestoma.Data.Repositories
 {
     public class BuzonRepository : GenericRepository<EBuzon>
@@ -14,6 +15,16 @@ namespace lestoma.Data.Repositories
         {
             _db = db;
         }
+
+        public async Task<DetalleBuzonDTO> GetMailBoxById(int id)
+        {
+            var data = await _db.TablaBuzonReportes.Where(x => x.Id == id).Select(y => y.Descripcion)
+                .FirstOrDefaultAsync();
+            if (data == null)
+                return null;
+            return JsonSerializer.Deserialize<DetalleBuzonDTO>(data);
+        }
+
         public IQueryable<BuzonDTO> ListarBuzonConUsuario()
         {
             var lista = from buzon in _db.TablaBuzonReportes
@@ -36,6 +47,10 @@ namespace lestoma.Data.Repositories
                 },
                 FechaCreacionServer = m.buzon.FechaCreacionServer,
                 Ip = m.buzon.Ip,
+                Session = m.buzon.Session,
+                TipoDeAplicacion = m.buzon.TipoDeAplicacion,
+                Titulo = _db.TablaBuzonReportes.FromSqlRaw("SELECT buzon.descripcion::JSONB->>'Titulo' as descripcion FROM reportes.buzon buzon")
+                .Select(x => x.Descripcion).FirstOrDefault(),
                 Upa = (from upa in _db.TablaUpas
                        join detalle in _db.TablaUpasConActividades on upa.Id equals detalle.UpaId
                        where m.user.Id == detalle.UsuarioId

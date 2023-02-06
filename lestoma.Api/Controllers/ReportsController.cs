@@ -15,12 +15,12 @@ namespace lestoma.Api.Controllers
     [Route("api/reportes-laboratorio")]
     [ApiController]
 
-    public class ReportesController : BaseController
+    public class ReportsController : BaseController
     {
         private readonly IReporteService _reporteService;
         private readonly IBackgroundJobClient _backgroundJobClient;
         #region Constructor
-        public ReportesController(IMapper mapper, IReporteService reporteService,
+        public ReportsController(IMapper mapper, IReporteService reporteService,
             IBackgroundJobClient backgroundJobClient, IDataProtectionProvider protectorProvider)
             : base(mapper, protectorProvider)
         {
