@@ -393,5 +393,15 @@ namespace lestoma.Logica.LogicaService
             }
             return Responses.SetOkResponse(null, "No se pudo activar las notificaciones via ¡Email!.");
         }
+
+        public async Task<ResponseDTO> DesactivateNotificationsMail(string email)
+        {
+            var response = await _amazonSimpleEmailService.DeleteIdentityAsync(new DeleteIdentityRequest { Identity = email });
+            if (response.HttpStatusCode == HttpStatusCode.OK)
+            {
+                return Responses.SetOkResponse(null, "Se han desactivado las notificaciones via ¡Email!.");
+            }
+            throw new HttpStatusCodeException(HttpStatusCode.Conflict, "No se encuentra activado las notificaciones Via ¡Email!.");
+        }
     }
 }

@@ -3,7 +3,6 @@ using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
 
 namespace lestoma.Logica.Interfaces
 {
@@ -27,5 +26,6 @@ namespace lestoma.Logica.Interfaces
         Task<IEnumerable<EstadoDTO>> GetUserStatuses();
         Task<IEnumerable<RolDTO>> GetUserRoles();
         Task<ResponseDTO> ActivateNotificationsMail(string email);
+        Task<ResponseDTO> DesactivateNotificationsMail(string email);
     }
 }

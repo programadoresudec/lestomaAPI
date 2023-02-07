@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.Spreadsheet;
 using lestoma.Api.Helpers;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.MyException;
@@ -112,10 +111,10 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
-        #region LogOut
-        [HttpPost("LogOut")]
+        #region Logout cerrar sesión
+        [HttpPost("Logout")]
         [Authorize]
-        public async Task<IActionResult> LogOut([FromBody] TokenRefreshDTO model)
+        public async Task<IActionResult> Logout([FromBody] TokenRefreshDTO model)
         {
             // accept token from request body or cookie
             if (!model.Token.Equals(Request.Cookies["refreshToken"]))
@@ -151,7 +150,7 @@ namespace lestoma.Api.Controllers
         #endregion
 
         #region registrarse
-        [HttpPost("registro")]
+        [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Registrarse(UsuarioRequest usuario)
         {
@@ -203,14 +202,13 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
-
         #region Activar Notificaciones por correo
-        [HttpPost("activar-notificaciones-por-correo")]
+        [HttpPost("enable-notifications-by-mail")]
         [Authorize]
         public async Task<IActionResult> ActivarNotificacionesCorreo()
         {
             string email = EmailDesencrypted();
-            if (string.IsNullOrWhiteSpace(email))
+            if (!string.IsNullOrWhiteSpace(email))
             {
                 Respuesta = await _usuarioService.ActivateNotificationsMail(email);
             }
@@ -218,23 +216,19 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
-
-        private async Task SignInUserHangfire(string username)
+        #region Desactivar Notificaciones por correo
+        [HttpPost("disable-notifications-by-mail")]
+        [Authorize]
+        public async Task<IActionResult> DesactivarNotificacionesCorreo()
         {
-            var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
-            identity.AddClaim(new Claim(ClaimTypes.Name, username ?? string.Empty));
-
-            var principal = new ClaimsPrincipal(identity);
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                principal,
-                new AuthenticationProperties
-                {
-                    IsPersistent = true,
-                    AllowRefresh = true,
-                    ExpiresUtc = DateTime.UtcNow.AddDays(1)
-                });
+            string email = EmailDesencrypted();
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                Respuesta = await _usuarioService.DesactivateNotificationsMail(email);
+            }
+            return Ok(Respuesta);
         }
+        #endregion
     }
 }
 
