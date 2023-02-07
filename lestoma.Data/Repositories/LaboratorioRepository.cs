@@ -45,7 +45,7 @@ namespace lestoma.Data.Repositories
                 }).ToListAsync();
         }
 
-        public async Task<IEnumerable<NameDTO>> GetModulosByUpaAndActivitiesOfUser(UpaActivitiesFilterRequest filtro)
+        public async Task<IEnumerable<NameDTO>> GetModulesByUpaActivitiesUserId(UpaActivitiesFilterRequest filtro)
         {
             var query = await (from componente in _db.TablaComponentesLaboratorio
                                join modulo in _db.TablaModuloComponentes on componente.ModuloComponenteId equals modulo.Id

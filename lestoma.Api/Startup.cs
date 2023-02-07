@@ -1,3 +1,4 @@
+using Amazon.Runtime;
 using AutoMapper;
 using Hangfire;
 using Hangfire.Dashboard;
@@ -136,8 +137,17 @@ namespace lestoma.Api
                         };
                     });
 
+                //AWSOptions Credentials
+                var awsSettings = Configuration.GetSection("AWS").Get<AwsSettings>();
+                var awsOption = Configuration.GetAWSOptions();
+                awsOption.Credentials = new BasicAWSCredentials(Encryption.EncryptDecrypt.Decrypt(awsSettings.AccesskeyId),
+                    Encryption.EncryptDecrypt.Decrypt(awsSettings.SecretAccessKey));
+                services.AddDefaultAWSOptions(awsOption);
+
+
                 // Inyección de dependencias a partir de una inversión de control.
                 IoC.AddDependency(services);
+
                 services.AddHttpContextAccessor();
                 var mapperConfig = new MapperConfiguration(m =>
                 {

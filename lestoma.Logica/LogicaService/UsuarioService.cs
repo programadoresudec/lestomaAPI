@@ -386,6 +386,7 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<ResponseDTO> ActivateNotificationsMail(string email)
         {
+
             var response = await _amazonSimpleEmailService.VerifyEmailIdentityAsync(new VerifyEmailIdentityRequest { EmailAddress = email });
             if (response.HttpStatusCode == HttpStatusCode.OK)
             {

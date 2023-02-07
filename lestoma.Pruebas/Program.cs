@@ -7,7 +7,6 @@ namespace lestoma.Pruebas
 {
     class Program
     {
-
         static void Main(string[] args)
         {
             ListadoEstadoComponente listado = new ListadoEstadoComponente();
