@@ -9,6 +9,8 @@ using AutoMapper;
 using lestoma.Logica.Interfaces;
 using System.Linq;
 using Microsoft.AspNetCore.DataProtection;
+using lestoma.CommonUtils.DTOs;
+using System.Collections.Generic;
 
 namespace lestoma.Api.Controllers
 {
@@ -19,34 +21,45 @@ namespace lestoma.Api.Controllers
     {
         private readonly IDetalleUpaActividadService _detalleUpaActividadService;
         private readonly ILaboratorioService _laboratorioService;
+        private readonly IModuloService _moduloService;
         public LaboratoryLestomaController(IMapper mapper, IDataProtectionProvider protectorProvider,
-            IDetalleUpaActividadService detalleUpaActividadService, ILaboratorioService laboratorioService)
+            IDetalleUpaActividadService detalleUpaActividadService, ILaboratorioService laboratorioService, IModuloService moduloService)
             : base(mapper, protectorProvider)
         {
             _detalleUpaActividadService = detalleUpaActividadService;
             _laboratorioService = laboratorioService;
+            _moduloService = moduloService;
         }
 
         [HttpGet("listar-modulos-upa-actividad-por-usuario")]
         public async Task<IActionResult> GetModulosByUpaAndUserId()
         {
-            var filtro1 = new UpaUserFilterRequest
+            IEnumerable<NameDTO> data;
+            if (IsSuperAdmin())
             {
-                UpaId = UpaId(),
-                UsuarioId = UserIdDesencrypted()
-            };
-
-            var activities = await _detalleUpaActividadService.GetActivitiesByUpaUserId(filtro1);
-
-            if (!activities.Any())
-                throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El usuario no tiene actividades asignadas.");
-
-            UpaActivitiesFilterRequest filtro = new UpaActivitiesFilterRequest
+                data = await _moduloService.GetModulosJustNames();
+            }
+            else
             {
-                ActividadesId = activities.Select(x => x.Id).ToList(),
-                UpaId = UpaId()
-            };
-            var data = await _laboratorioService.GetModulesByUpaActivitiesUserId(filtro);
+                var filtro1 = new UpaUserFilterRequest
+                {
+                    UpaId = UpaId(),
+                    UsuarioId = UserIdDesencrypted()
+                };
+
+                var activities = await _detalleUpaActividadService.GetActivitiesByUpaUserId(filtro1);
+
+                if (!activities.Any())
+                    throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El usuario no tiene actividades asignadas.");
+
+                UpaActivitiesFilterRequest filtro = new UpaActivitiesFilterRequest
+                {
+                    ActividadesId = activities.Select(x => x.Id).ToList(),
+                    UpaId = UpaId()
+                };
+                data = await _laboratorioService.GetModulesByUpaActivitiesUserId(filtro);
+            }
+        
             return Ok(data);
         }
 

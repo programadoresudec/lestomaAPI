@@ -27,7 +27,7 @@ namespace lestoma.Api.Controllers
 
         }
         [HttpGet("paginar")]
-        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> GetAllFilter([FromQuery] ComponentFilterRequest filtro)
         {
             if (filtro.UpaId == Guid.Empty)
@@ -37,7 +37,7 @@ namespace lestoma.Api.Controllers
                 {
                     filtro.UpaId = upaId;
                 }
-            } 
+            }
             var queryable = _componentService.GetAllFilter(filtro.UpaId);
             var listado = await queryable.Paginar(filtro.Paginacion).ToListAsync();
             var paginador = Paginador<ListadoComponenteDTO>.CrearPaginador(queryable.Count(), listado, filtro.Paginacion);
@@ -59,7 +59,7 @@ namespace lestoma.Api.Controllers
             var response = await _componentService.GetById(id);
             return Ok(response);
         }
-        
+
         [HttpPost("crear")]
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> CrearComponente([FromBody] CreateComponenteRequest comp)

@@ -5,15 +5,12 @@ using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers

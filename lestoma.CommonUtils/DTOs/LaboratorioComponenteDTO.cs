@@ -9,4 +9,11 @@ namespace lestoma.CommonUtils.DTOs
         public string JsonEstado { get; set; }
         public EstadoComponenteDTO EstadoComponente => JsonConvert.DeserializeObject<EstadoComponenteDTO>(this.JsonEstado);
     }
+
+    public class ComponentePorModuloDTO : NameDTO
+    {
+        public string Actividad { get; set; }
+
+        public EstadoComponenteDTO EstadoComponente;
+    }
 }
