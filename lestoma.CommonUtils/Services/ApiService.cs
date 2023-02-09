@@ -87,6 +87,7 @@ namespace lestoma.CommonUtils.Services
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
+                    Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                     return new ResponseDTO
                     {
                         IsExito = false,
@@ -146,6 +147,7 @@ namespace lestoma.CommonUtils.Services
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
+                    Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                     return new ResponseDTO
                     {
                         IsExito = false,
@@ -192,6 +194,7 @@ namespace lestoma.CommonUtils.Services
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
+                    Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                     return new ResponseDTO
                     {
                         IsExito = false,
