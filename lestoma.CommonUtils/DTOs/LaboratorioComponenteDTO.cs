@@ -14,6 +14,6 @@ namespace lestoma.CommonUtils.DTOs
     {
         public string Actividad { get; set; }
 
-        public EstadoComponenteDTO EstadoComponente;
+        public EstadoComponenteDTO EstadoComponente { get; set; }
     }
 }
