@@ -66,13 +66,13 @@ namespace lestoma.CommonUtils.Services
 
         #region GetList Api service with token
 
-        public async Task<ResponseDTO> GetListAsyncWithToken<T>(string urlBase, string controller, string token)
+        public async Task<ResponseDTO> GetListAsyncWithToken<T>(string urlBase, string nameService, string token)
         {
             try
             {
                 HttpClient client = GetHttpClient(urlBase);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.GetAsync(controller);
+                ResponseMessage = await client.GetAsync(nameService);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
@@ -87,7 +87,7 @@ namespace lestoma.CommonUtils.Services
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await RefreshToken(urlBase);
-                    await GetListAsyncWithToken<T>(urlBase, controller, _tokenNuevo);
+                    await GetListAsyncWithToken<T>(urlBase, nameService, _tokenNuevo);
                 }
 
                 T item = JsonConvert.DeserializeObject<T>(jsonString);
@@ -126,13 +126,13 @@ namespace lestoma.CommonUtils.Services
 
         #region Get By Id Api service with token
 
-        public async Task<ResponseDTO> GetByIdAsyncWithToken(string urlBase, string controller, string token)
+        public async Task<ResponseDTO> GetByIdAsyncWithToken(string urlBase, string nameService, string token)
         {
             try
             {
                 HttpClient client = GetHttpClient(urlBase);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.GetAsync(controller);
+                ResponseMessage = await client.GetAsync(nameService);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
@@ -147,7 +147,7 @@ namespace lestoma.CommonUtils.Services
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await RefreshToken(urlBase);
-                    await GetByIdAsyncWithToken(urlBase, controller, _tokenNuevo);
+                    await GetByIdAsyncWithToken(urlBase, nameService, _tokenNuevo);
                 }
 
                 ResponseDTO item = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
@@ -173,13 +173,13 @@ namespace lestoma.CommonUtils.Services
 
         #region Get paginado Api service with token
 
-        public async Task<ResponseDTO> GetPaginadoAsyncWithToken<T>(string urlBase, string controller, string token)
+        public async Task<ResponseDTO> GetPaginadoAsyncWithToken<T>(string urlBase, string nameService, string token)
         {
             try
             {
                 HttpClient client = GetHttpClient(urlBase);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.GetAsync(controller);
+                ResponseMessage = await client.GetAsync(nameService);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
@@ -194,7 +194,7 @@ namespace lestoma.CommonUtils.Services
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await RefreshToken(urlBase);
-                    await GetListAsyncWithToken<T>(urlBase, controller, _tokenNuevo);
+                    await GetListAsyncWithToken<T>(urlBase, nameService, _tokenNuevo);
                 }
 
                 Paginador<T> item = JsonConvert.DeserializeObject<Paginador<T>>(jsonString);
@@ -233,14 +233,14 @@ namespace lestoma.CommonUtils.Services
 
         #region Post Api service
 
-        public async Task<ResponseDTO> PostAsync<T>(string urlBase, string controller, T model)
+        public async Task<ResponseDTO> PostAsync<T>(string urlBase, string nameService, T model)
         {
             try
             {
                 HttpClient client = GetHttpClient(urlBase);
                 string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                ResponseMessage = await client.PostAsync(controller, content);
+                ResponseMessage = await client.PostAsync(nameService, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
@@ -275,8 +275,7 @@ namespace lestoma.CommonUtils.Services
         #endregion
 
         #region Post Api service with token
-
-        public async Task<ResponseDTO> PostAsyncWithToken<T>(string urlBase, string controller, T model, string token)
+        public async Task<ResponseDTO> PostAsyncWithToken<T>(string urlBase, string nameService, T model, string token)
         {
             try
             {
@@ -284,7 +283,7 @@ namespace lestoma.CommonUtils.Services
                 string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.PostAsync(controller, content);
+                ResponseMessage = await client.PostAsync(nameService, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
@@ -299,7 +298,52 @@ namespace lestoma.CommonUtils.Services
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await RefreshToken(urlBase);
-                    await PostAsyncWithToken(urlBase, controller, model, _tokenNuevo);
+                    await PostAsyncWithToken(urlBase, nameService, model, _tokenNuevo);
+                }
+
+                return Respuesta;
+            }
+            catch (Exception ex)
+            {
+                var jsonError = JsonConvert.SerializeObject(new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = ResponseMessage != null
+                        ? (int)ResponseMessage.StatusCode
+                        : (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ResponseMessage != null
+                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        : ex.Message
+                });
+                throw new Exception(jsonError);
+            }
+        }
+
+        #endregion
+
+        #region Post Api without body service with token
+        public async Task<ResponseDTO> PostWithoutBodyAsyncWithToken(string urlBase, string nameService, string token)
+        {
+            try
+            {
+                HttpClient client = GetHttpClient(urlBase);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                ResponseMessage = await client.PostAsync(nameService, null);
+                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
+                Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                if (!ResponseMessage.IsSuccessStatusCode)
+                {
+                    return new ResponseDTO
+                    {
+                        IsExito = false,
+                        MensajeHttp =
+                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                    };
+                }
+                else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    await RefreshToken(urlBase);
+                    await PostWithoutBodyAsyncWithToken(urlBase, nameService, _tokenNuevo);
                 }
 
                 return Respuesta;
@@ -324,14 +368,14 @@ namespace lestoma.CommonUtils.Services
 
         #region Put Api service
 
-        public async Task<ResponseDTO> PutAsync<T>(string urlBase, string controller, T model)
+        public async Task<ResponseDTO> PutAsync<T>(string urlBase, string nameService, T model)
         {
             try
             {
                 HttpClient client = GetHttpClient(urlBase);
                 string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                ResponseMessage = await client.PutAsync(controller, content);
+                ResponseMessage = await client.PutAsync(nameService, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
@@ -367,7 +411,7 @@ namespace lestoma.CommonUtils.Services
 
         #region Put Api service with token
 
-        public async Task<ResponseDTO> PutAsyncWithToken<T>(string urlBase, string controller, T model, string token)
+        public async Task<ResponseDTO> PutAsyncWithToken<T>(string urlBase, string nameService, T model, string token)
         {
             try
             {
@@ -375,7 +419,7 @@ namespace lestoma.CommonUtils.Services
                 string json = JsonConvert.SerializeObject(model);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.PutAsync(controller, content);
+                ResponseMessage = await client.PutAsync(nameService, content);
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
@@ -410,13 +454,13 @@ namespace lestoma.CommonUtils.Services
 
         #region Delete Api service with token
 
-        public async Task<ResponseDTO> DeleteAsyncWithToken(string urlBase, string controller, object id, string token)
+        public async Task<ResponseDTO> DeleteAsyncWithToken(string urlBase, string nameService, object id, string token)
         {
             try
             {
                 HttpClient client = GetHttpClient(urlBase);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.DeleteAsync($"{controller}/{id}");
+                ResponseMessage = await client.DeleteAsync($"{nameService}/{id}");
                 string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
                 if (!string.IsNullOrWhiteSpace(jsonString))
                 {
@@ -436,7 +480,7 @@ namespace lestoma.CommonUtils.Services
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await RefreshToken(urlBase);
-                    await DeleteAsyncWithToken(urlBase, controller, id, _tokenNuevo);
+                    await DeleteAsyncWithToken(urlBase, nameService, id, _tokenNuevo);
                 }
 
                 return new ResponseDTO
