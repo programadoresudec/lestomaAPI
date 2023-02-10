@@ -94,7 +94,7 @@ namespace lestoma.CommonUtils.Services
                 {
                     return new ResponseDTO
                     {
-                        IsExito = true,
+                        IsExito = false,
                         MensajeHttp = "No hay contenido."
                     };
                 }
@@ -199,7 +199,7 @@ namespace lestoma.CommonUtils.Services
                 {
                     return new ResponseDTO
                     {
-                        IsExito = true,
+                        IsExito = false,
                         MensajeHttp = "No hay contenido."
                     };
                 }
