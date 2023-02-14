@@ -65,12 +65,13 @@ namespace lestoma.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Logeo(LoginRequest logeo)
         {
-            Respuesta = await _usuarioService.Login(logeo, IpAddress());
+            Respuesta = await _usuarioService.Login(logeo);
             var data = (EUsuario)Respuesta.Data;
             data.AplicacionId = logeo.TipoAplicacion;
             data.TipoDeAplicacion = await _usuarioService.GetApplicationType(logeo.TipoAplicacion);
             data.Email = _protector.Protect(data.Email);
             data.UserId = _protector.Protect(data.Id.ToString());
+            data.Ip = _protector.Protect(logeo.Ip);
             TokenDTO usuario = await _jwt.GenerateJwtToken(data);
             Respuesta.Data = usuario;
             SetTokenCookie(usuario.RefreshToken);
@@ -208,6 +209,20 @@ namespace lestoma.Api.Controllers
             if (!string.IsNullOrWhiteSpace(email))
             {
                 Respuesta = await _usuarioService.ActivateNotificationsMail(email);
+            }
+            return Ok(Respuesta);
+        }
+        #endregion
+
+        #region Usuario tiene activa las notificaciones por email
+        [HttpPost("is-active-notifications-by-mail")]
+        [Authorize]
+        public async Task<IActionResult> UsuarioActivoConNotificacionesMail()
+        {
+            string email = EmailDesencrypted();
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                Respuesta = await _usuarioService.UserIsActiveWithNotificationsMail(email);
             }
             return Ok(Respuesta);
         }

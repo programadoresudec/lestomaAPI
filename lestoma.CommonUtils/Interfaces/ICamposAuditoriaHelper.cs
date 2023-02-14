@@ -6,8 +6,8 @@ namespace lestoma.CommonUtils.Interfaces
 {
     public interface IAuditoriaHelper
     {
-        string ObtenerIp();
-        string ObtenerUsuarioActual();
-        string ObtenerTipoDeAplicacion();
+        string GetDesencrytedIp();
+        string GetUsuarioActual();
+        string GetTipoDeAplicacion();
     }
 }

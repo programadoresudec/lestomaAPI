@@ -123,7 +123,7 @@ namespace lestoma.Data
             }
             
             /// guarda data generica al hacer migration de database
-            SeedData.SaveData(modelBuilder, _camposAuditoria.ObtenerIp(), _camposAuditoria.ObtenerTipoDeAplicacion(), _camposAuditoria.ObtenerUsuarioActual());
+            SeedData.SaveData(modelBuilder, _camposAuditoria.GetDesencrytedIp(), _camposAuditoria.GetTipoDeAplicacion(), _camposAuditoria.GetUsuarioActual());
             
             base.OnModelCreating(modelBuilder);
         }
@@ -136,9 +136,9 @@ namespace lestoma.Data
                 .Where(e => e.State == EntityState.Added && e.Entity is ECamposAuditoria))
             {
                 var entidad = item.Entity as ECamposAuditoria;
-                entidad.Ip = _camposAuditoria.ObtenerIp();
-                entidad.Session = _camposAuditoria.ObtenerUsuarioActual();
-                entidad.TipoDeAplicacion = _camposAuditoria.ObtenerTipoDeAplicacion();
+                entidad.Ip = _camposAuditoria.GetDesencrytedIp();
+                entidad.Session = _camposAuditoria.GetUsuarioActual();
+                entidad.TipoDeAplicacion = _camposAuditoria.GetTipoDeAplicacion();
                 entidad.FechaCreacionServer = DateTime.Now;
             }
 
@@ -146,9 +146,9 @@ namespace lestoma.Data
                 .Where(e => e.State == EntityState.Modified && e.Entity is ECamposAuditoria))
             {
                 var entidad = item.Entity as ECamposAuditoria;
-                entidad.Ip = _camposAuditoria.ObtenerIp();
-                entidad.Session = _camposAuditoria.ObtenerUsuarioActual();
-                entidad.TipoDeAplicacion = _camposAuditoria.ObtenerTipoDeAplicacion();
+                entidad.Ip = _camposAuditoria.GetDesencrytedIp();
+                entidad.Session = _camposAuditoria.GetUsuarioActual();
+                entidad.TipoDeAplicacion = _camposAuditoria.GetTipoDeAplicacion();
                 entidad.FechaCreacionServer = DateTime.Now;
             }
         }

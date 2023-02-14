@@ -42,7 +42,7 @@ namespace lestoma.Logica.LogicaService
 
         }
 
-        public async Task<ResponseDTO> Login(LoginRequest login, string ip)
+        public async Task<ResponseDTO> Login(LoginRequest login)
         {
             var aplication = await _aplicacionRepository.AnyWithCondition(x => x.Id == login.TipoAplicacion);
             if (!aplication)
@@ -61,7 +61,7 @@ namespace lestoma.Logica.LogicaService
                 if (HashHelper.CheckHash(login.Clave, user.Clave, user.Salt))
                 {
                     _respuesta.MensajeHttp = "Ha iniciado satisfactoriamente.";
-                    var refreshToken = generateRefreshToken(login.TipoAplicacion, user.Id, ip);
+                    var refreshToken = generateRefreshToken(login.TipoAplicacion, user.Id, login.Ip);
                     user.RefreshToken = refreshToken.Token;
                     user.UpaId = upaId;
                     _respuesta.Data = user;
@@ -392,7 +392,27 @@ namespace lestoma.Logica.LogicaService
             {
                 return Responses.SetOkResponse(null, "Siga las instrucciones del correo enviado para activar las notificaciones via ¡Email!.");
             }
-            return Responses.SetOkResponse(null, "No se pudo activar las notificaciones via ¡Email!.");
+            return Responses.SetOkResponse(null, "No es posible activar las notificaciones via ¡Email!.");
+        }
+
+        public async Task<ResponseDTO> UserIsActiveWithNotificationsMail(string email)
+        {
+
+            var response = await _amazonSimpleEmailService.GetIdentityVerificationAttributesAsync(new GetIdentityVerificationAttributesRequest { Identities = { email } });
+            if (response.HttpStatusCode == HttpStatusCode.OK && response.VerificationAttributes.Count > 0)
+            {
+                IdentityVerificationAttributes identityVerificationAttributes;
+                if (response.VerificationAttributes.TryGetValue(email, out identityVerificationAttributes))
+                {
+                    bool sucess = identityVerificationAttributes.VerificationStatus.Value == "Success" ? true : false;
+                    return Responses.SetOkResponse(new HasNotificationsDTO
+                    {
+                        IsActive = sucess,
+                        VerificationStatus = identityVerificationAttributes.VerificationStatus.Value
+                    }, $"Está en estado {identityVerificationAttributes.VerificationStatus.Value} con las notificaciones via Email.");
+                }
+            }
+            return Responses.SetOkResponse(new HasNotificationsDTO { IsActive = false, VerificationStatus = "NotExists" }, "No se encuentra activo en AWS.");
         }
 
         public async Task<ResponseDTO> DesactivateNotificationsMail(string email)
@@ -402,7 +422,7 @@ namespace lestoma.Logica.LogicaService
             {
                 return Responses.SetOkResponse(null, "Se han desactivado las notificaciones via ¡Email!.");
             }
-            throw new HttpStatusCodeException(HttpStatusCode.Conflict, "No se encuentra activado las notificaciones Via ¡Email!.");
+            throw new HttpStatusCodeException(HttpStatusCode.Conflict, "No se encuentra activado con las notificaciones Via ¡Email!.");
         }
     }
 }

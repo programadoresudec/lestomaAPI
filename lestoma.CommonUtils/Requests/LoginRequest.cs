@@ -11,6 +11,7 @@ namespace lestoma.CommonUtils.Requests
         public string Clave { get; set; }
         [Required]
         public int TipoAplicacion { get; set; }
+        public string Ip { get; set; }
     }
     public class TipoAplicacionRequest
     {

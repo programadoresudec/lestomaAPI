@@ -55,17 +55,20 @@ namespace lestoma.Api.Helpers
                     UsuarioId = user.Id
                 };
                 var actividades = await _detalleUpaActividadService.GetActivitiesByUpaUserId(request);
-                var claims = new List<Claim>();
-                claims.Add(new Claim(ClaimsConfig.ROL_ID, user.Rol.Id.ToString()));
-                claims.Add(new Claim(ClaimTypes.Role, user.Rol.NombreRol));
-                claims.Add(new Claim(ClaimTypes.Email, user.Email));
-                claims.Add(new Claim(ClaimTypes.Sid, user.UserId));
-                claims.Add(new Claim(ClaimTypes.NameIdentifier, $"{user.Nombre} {user.Apellido}"));
-                claims.Add(new Claim(ClaimTypes.Authentication, user.TipoDeAplicacion));
-                claims.Add(new Claim(ClaimsConfig.APLICACION_ID, user.AplicacionId.ToString()));
-                claims.Add(new Claim(ClaimsConfig.UPA_ID, user.UpaId.ToString()));
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimsConfig.ROL_ID, user.Rol.Id.ToString()),
+                    new Claim(ClaimTypes.Role, user.Rol.NombreRol),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Sid, user.UserId),
+                    new Claim(ClaimTypes.NameIdentifier, $"{user.Nombre} {user.Apellido}"),
+                    new Claim(ClaimTypes.Authentication, user.TipoDeAplicacion),
+                    new Claim(ClaimsConfig.APLICACION_ID, user.AplicacionId.ToString()),
+                    new Claim(ClaimsConfig.UPA_ID, user.UpaId.ToString()),
+                    new Claim(ClaimsConfig.IP, user.Ip.ToString())
+                };
 
-                // agregar con ID
+                // agregar actividades ID
                 if (actividades.Any())
                 {
                     foreach (var item in actividades)

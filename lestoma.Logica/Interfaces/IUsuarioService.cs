@@ -8,7 +8,7 @@ namespace lestoma.Logica.Interfaces
 {
     public interface IUsuarioService
     {
-        Task<ResponseDTO> Login(LoginRequest login, string ip);
+        Task<ResponseDTO> Login(LoginRequest login);
         Task<ResponseDTO> RegisterUser(EUsuario usuario, bool ownRegister = true);
         Task<ResponseDTO> UpdateUser(EUsuario usuario);
         Task<ResponseDTO> ChangePassword(ChangePasswordRequest usuario);
@@ -27,5 +27,6 @@ namespace lestoma.Logica.Interfaces
         Task<IEnumerable<RolDTO>> GetUserRoles();
         Task<ResponseDTO> ActivateNotificationsMail(string email);
         Task<ResponseDTO> DesactivateNotificationsMail(string email);
+        Task<ResponseDTO> UserIsActiveWithNotificationsMail(string email);
     }
 }

@@ -10,5 +10,6 @@ namespace lestoma.CommonUtils.Constants
         public const string APLICACION_ID = "aplicacionId";
         public const string ROL_ID = "rolId";
         public const string UPA_ID = "upaId";
+        public const string IP = "myIp";
     }
 }

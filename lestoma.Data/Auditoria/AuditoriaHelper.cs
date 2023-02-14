@@ -1,10 +1,10 @@
 ﻿using lestoma.Api.Helpers;
+using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.Core;
 using lestoma.CommonUtils.Interfaces;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Net;
-using System.Net.Sockets;
 using System.Security.Claims;
 
 namespace lestoma.Data.Auditoria
@@ -12,39 +12,50 @@ namespace lestoma.Data.Auditoria
     public class AuditoriaHelper : IAuditoriaHelper, IClaimsTransformation
     {
         private readonly ILoggerManager _logger;
-        private HttpContext hcontext;
+        private HttpContext _hcontext;
+        protected readonly IDataProtector _protector;
 
-        public AuditoriaHelper(IHttpContextAccessor hacess, ILoggerManager logger)
+        public AuditoriaHelper(IHttpContextAccessor hacess, ILoggerManager logger, IDataProtectionProvider protectorProvider)
         {
-            hcontext = hacess.HttpContext;
+            _hcontext = hacess.HttpContext;
             _logger = logger;
+            _protector = protectorProvider.CreateProtector(Constants.PROTECT_USER);
         }
-        public string ObtenerIp()
+        public string GetDesencrytedIp()
         {
-            string IP4Address = String.Empty;
-            foreach (IPAddress IPA in Dns.GetHostAddresses(Dns.GetHostName()))
+            try
             {
-                if (IPA.AddressFamily == AddressFamily.InterNetwork)
+                string IP4Address = String.Empty;
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity();
+                if (_hcontext != null)
                 {
-                    IP4Address = IPA.ToString();
-                    break;
+                    claimsIdentity = TransformAsync(_hcontext.User);
+
                 }
+                var claim = claimsIdentity?.FindFirst(x => x.Type == ClaimsConfig.IP);
+                return claim == null ? "N/A" : string.IsNullOrEmpty(claim.Value) ? "N/A" : claim.Value;
             }
-            return IP4Address;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return "N/A";
+            }
+
+
         }
 
-        public string ObtenerTipoDeAplicacion()
+        public string GetTipoDeAplicacion()
         {
             try
             {
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity();
-                if (hcontext != null)
+                if (_hcontext != null)
                 {
-                    claimsIdentity = TransformAsync(hcontext.User);
+                    claimsIdentity = TransformAsync(_hcontext.User);
 
                 }
-                var claim = claimsIdentity == null ? null : claimsIdentity.FindFirst(ClaimTypes.Authentication);
-                return claim == null ? "Local" : string.IsNullOrEmpty(claim.Value) ? "Local" : claim.Value; ;
+                var claim = claimsIdentity?.FindFirst(ClaimTypes.Authentication);
+                return claim == null ? "Local" : string.IsNullOrEmpty(claim.Value) ? "Local" : claim.Value;
             }
             catch (Exception ex)
             {
@@ -53,17 +64,17 @@ namespace lestoma.Data.Auditoria
             }
         }
 
-        public string ObtenerUsuarioActual()
+        public string GetUsuarioActual()
         {
             try
             {
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity();
-                if (hcontext != null)
+                if (_hcontext != null)
                 {
-                    claimsIdentity = TransformAsync(hcontext.User);
+                    claimsIdentity = TransformAsync(_hcontext.User);
 
                 }
-                var claim = claimsIdentity == null ? null : claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+                var claim = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier);
                 return claim == null ? "Anonimo" : string.IsNullOrEmpty(claim.Value) ? "Anonimo" : claim.Value;
             }
             catch (Exception ex)
