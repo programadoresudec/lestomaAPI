@@ -57,8 +57,8 @@ namespace lestoma.Api.Controllers
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> GetActividadesByUpaUser([FromQuery] UpaUserFilterRequest filtro)
         {
-            if (!IsSuperAdmin())
-            {
+            if (!IsSuperAdmin() && filtro.UpaId == Guid.Empty)
+            { 
                 filtro.UpaId = UpaId();
             }
             var query = await _detalleService.GetActivitiesByUpaUserId(filtro);
