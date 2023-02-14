@@ -33,7 +33,9 @@ namespace lestoma.Data.Auditoria
 
                 }
                 var claim = claimsIdentity?.FindFirst(x => x.Type == ClaimsConfig.IP);
-                return claim == null ? "N/A" : string.IsNullOrEmpty(claim.Value) ? "N/A" : claim.Value;
+                return claim == null ? "N/A" :
+
+                    string.IsNullOrEmpty(claim.Value) ? "N/A" : _protector.Unprotect(claim.Value);
             }
             catch (Exception ex)
             {

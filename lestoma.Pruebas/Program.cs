@@ -2,6 +2,7 @@
 using lestoma.CommonUtils.Listados;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace lestoma.Pruebas
 {
@@ -22,7 +23,7 @@ namespace lestoma.Pruebas
 
             List<byte> byteArray = new List<byte>() { 73, random[0], 240, random[1], 0, 0, 0, 0 };
 
-            var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(24);
+            var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(6);
 
             byteArray[4] = bytesFlotante[0];
             byteArray[5] = bytesFlotante[1];
@@ -38,6 +39,14 @@ namespace lestoma.Pruebas
             byteArray.Add(crc[0]);
 
             string tramaCompleta = Reutilizables.ByteArrayToHexString(byteArray.ToArray());
+
+            byte[] bytesTramaCompleta = Reutilizables.StringToByteArray(tramaCompleta);
+            foreach (var item in bytesTramaCompleta)
+            {
+                var currentElement = bytesTramaCompleta.Select((value, index) => (value, index))
+                        .Where(s => s.value == item).FirstOrDefault().index;
+                Console.WriteLine($"byte [{currentElement}] {item}");
+            }
 
             Console.WriteLine($"TRAMA COMPLETA: {tramaCompleta} CRC: {tramaCompleta[16]}{tramaCompleta[17]}" +
                 $"{tramaCompleta[18]}{tramaCompleta[19]}");

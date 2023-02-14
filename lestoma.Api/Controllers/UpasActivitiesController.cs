@@ -51,12 +51,16 @@ namespace lestoma.Api.Controllers
             var upaActividadDTO = Mapear<CrearDetalleUpaActividadRequest, EUpaActividad>(entidad);
             var response = await _detalleService.UpdateInCascade(upaActividadDTO);
             return Ok(response);
-        } 
+        }
 
         [HttpGet("listar-actividades-upa-usuario")]
-        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> GetActividadesByUpaUser([FromQuery] UpaUserFilterRequest filtro)
         {
+            if (!IsSuperAdmin())
+            {
+                filtro.UpaId = UpaId();
+            }
             var query = await _detalleService.GetActivitiesByUpaUserId(filtro);
             return Ok(query);
         }

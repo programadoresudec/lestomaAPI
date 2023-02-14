@@ -64,6 +64,10 @@ namespace lestoma.Api.Controllers
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> CrearComponente([FromBody] CreateComponenteRequest comp)
         {
+            if (!IsSuperAdmin() && comp.UpaId == Guid.Empty)
+            {
+                comp.UpaId = UpaId();
+            }
             var compDTO = Mapear<CreateComponenteRequest, EComponenteLaboratorio>(comp);
             var response = await _componentService.Create(compDTO);
             return Created(string.Empty, response);
@@ -73,6 +77,10 @@ namespace lestoma.Api.Controllers
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> EditarComponente([FromBody] EditComponenteRequest comp)
         {
+            if (!IsSuperAdmin() && comp.UpaId == Guid.Empty)
+            {
+                comp.UpaId = UpaId();
+            }
             var compDTO = Mapear<EditComponenteRequest, EComponenteLaboratorio>(comp);
             var response = await _componentService.Update(compDTO);
             return Ok(response);
