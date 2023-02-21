@@ -9,6 +9,7 @@ namespace lestoma.CommonUtils.Helpers
         private const string _estadoComponente = "estadoComponente";
         private const string _isLogin = "isLogin";
         private const string _isOnNotificationsEmail = "isOn";
+        private const string _filtroFecha = "FiltroFecha";
         private static readonly string _stringDefault = string.Empty;
         private static readonly bool _boolDefault = false;
 
@@ -18,6 +19,12 @@ namespace lestoma.CommonUtils.Helpers
         {
             get => AppSettings.GetValueOrDefault(_token, _stringDefault);
             set => AppSettings.AddOrUpdateValue(_token, value);
+        }
+
+        public static string FiltroFecha
+        {
+            get => AppSettings.GetValueOrDefault(_filtroFecha, _stringDefault);
+            set => AppSettings.AddOrUpdateValue(_filtroFecha, value);
         }
 
         public static bool IsOnNotificationsViaMail

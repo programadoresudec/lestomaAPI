@@ -1,4 +1,5 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace lestoma.Logica.Interfaces
     public interface IComponenteService : IGenericCRUD<EComponenteLaboratorio, Guid>
     {
         Task<IEnumerable<NameDTO>> GetComponentesJustNames();
-        IQueryable<ListadoComponenteDTO> GetAllFilter(Guid upaId);
+        IQueryable<ListadoComponenteDTO> GetAllFilter(UpaActivitiesFilterRequest upaActivitiesFilter);
     }
 
 }

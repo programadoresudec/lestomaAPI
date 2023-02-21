@@ -1,6 +1,7 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
@@ -94,9 +95,9 @@ namespace lestoma.Logica.LogicaService
             return listado;
         }
 
-        public IQueryable<ListadoComponenteDTO> GetAllFilter(Guid upaId)
+        public IQueryable<ListadoComponenteDTO> GetAllFilter(UpaActivitiesFilterRequest upaActivitiesFilter)
         {
-            var listado = _componenteRepo.GetAllFilter(upaId);
+            var listado = _componenteRepo.GetAllFilter(upaActivitiesFilter);
             if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");

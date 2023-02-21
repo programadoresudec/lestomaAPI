@@ -14,7 +14,7 @@ namespace lestoma.CommonUtils.Helpers
         public static string GenerarCodigoVerificacion()
         {
             string codigo = string.Empty;
-            string[] letras = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
+            string[] letras = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
             Random EleccionAleatoria = new Random();
 
             for (int i = 0; i < LONGITUD_CODIGO; i++)
@@ -69,7 +69,7 @@ namespace lestoma.CommonUtils.Helpers
             {
                 Byte[] BytesRandom = new Byte[2];
                 rg.GetBytes(BytesRandom);
-                return BytesRandom;           
+                return BytesRandom;
             }
         }
         public static byte[] IEEEFloatingPointToByte(float floatingPoint)

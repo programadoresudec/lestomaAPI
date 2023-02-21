@@ -7,9 +7,12 @@ using lestoma.CommonUtils.Requests;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using lestoma.Logica.LogicaService;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,9 +23,12 @@ namespace lestoma.Api.Controllers
     public class ComponentsController : BaseController
     {
         private readonly IComponenteService _componentService;
-        public ComponentsController(IMapper mapper, IComponenteService componenteService)
-            : base(mapper)
+        private readonly IDetalleUpaActividadService _detalleUpaActividadService;
+        public ComponentsController(IMapper mapper, IDataProtectionProvider protectorProvider,
+            IComponenteService componenteService, IDetalleUpaActividadService detalleUpaActividadService)
+            : base(mapper, protectorProvider)
         {
+            _detalleUpaActividadService = detalleUpaActividadService;
             _componentService = componenteService;
 
         }
@@ -30,15 +36,28 @@ namespace lestoma.Api.Controllers
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> GetAllFilter([FromQuery] ComponentFilterRequest filtro)
         {
-            if (filtro.UpaId == Guid.Empty)
+            IEnumerable<NameDTO> actividades = null;
+            UpaActivitiesFilterRequest UpaActivitiesfilter = new();
+            if (!IsSuperAdmin() && filtro.UpaId == Guid.Empty)
             {
-                var upaId = UpaId();
-                if (upaId != Guid.Empty)
+                filtro.UpaId = UpaId();
+                actividades = await _detalleUpaActividadService.GetActivitiesByUpaUserId(new UpaUserFilterRequest
                 {
-                    filtro.UpaId = upaId;
-                }
+                    UpaId = filtro.UpaId,
+                    UsuarioId = UserIdDesencrypted()
+                });
+                UpaActivitiesfilter = new()
+                {
+                    ActividadesId = actividades.Any() ? actividades.Select(x => x.Id).ToList() : null,
+                    UpaId = UpaId()
+                };
             }
-            var queryable = _componentService.GetAllFilter(filtro.UpaId);
+            else
+            {
+                UpaActivitiesfilter.UpaId = filtro.UpaId;
+            }
+
+            var queryable = _componentService.GetAllFilter(UpaActivitiesfilter);
             var listado = await queryable.Paginar(filtro.Paginacion).ToListAsync();
             var paginador = Paginador<ListadoComponenteDTO>.CrearPaginador(queryable.Count(), listado, filtro.Paginacion);
             return Ok(paginador);

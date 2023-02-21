@@ -219,7 +219,7 @@ namespace lestoma.Logica.LogicaService
                 _respuesta.Data = new ForgotPasswordDTO { Email = user.Email, CodigoVerificacion = user.CodigoRecuperacion };
                 _respuesta.IsExito = true;
                 _respuesta.MensajeHttp = "Revise su correo eléctronico.";
-                await _mailHelper.SendMail(user.Email, "Recuperación de contraseña", user.CodigoRecuperacion,
+                await _mailHelper.SendMail(user.Email, $"{user.CodigoRecuperacion} es tu código de recuperación de contraseña", user.CodigoRecuperacion,
                     "Hola: ¡Cambia Tu Contraseña!",
                     "Verifica con el codigo tu cuenta para reestablecer la contraseña. el codigo tiene una duración de 2 horas.",
                     string.Empty, "Si no has intentado cambiar la contraseña con esta dirección de email recientemente," +

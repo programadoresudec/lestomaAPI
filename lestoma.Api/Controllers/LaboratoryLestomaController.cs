@@ -41,13 +41,13 @@ namespace lestoma.Api.Controllers
             }
             else
             {
-                var filtro1 = new UpaUserFilterRequest
+                var UpaUserFilter = new UpaUserFilterRequest
                 {
                     UpaId = UpaId(),
                     UsuarioId = UserIdDesencrypted()
                 };
 
-                var activities = await _detalleUpaActividadService.GetActivitiesByUpaUserId(filtro1);
+                var activities = await _detalleUpaActividadService.GetActivitiesByUpaUserId(UpaUserFilter);
 
                 if (!activities.Any())
                     throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El usuario no tiene actividades asignadas.");

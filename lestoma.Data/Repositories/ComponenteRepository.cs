@@ -1,5 +1,6 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -51,14 +52,20 @@ namespace lestoma.Data.Repositories
             return query;
         }
 
-        public IQueryable<ListadoComponenteDTO> GetAllFilter(Guid upaId)
+        public IQueryable<ListadoComponenteDTO> GetAllFilter(UpaActivitiesFilterRequest upaActivitiesFilter)
         {
             var query = _dbSet.AsNoTracking();
-            if (upaId != Guid.Empty)
+            if (upaActivitiesFilter.UpaId != Guid.Empty)
             {
-                query = query.Where(x => x.UpaId == upaId);
+                query = query.Where(x => x.UpaId == upaActivitiesFilter.UpaId);
             }
-
+            if (upaActivitiesFilter.ActividadesId != null)
+            {
+                if (upaActivitiesFilter.ActividadesId.Any())
+                {
+                    query = query.Where(x => upaActivitiesFilter.ActividadesId.Contains(x.ActividadId));
+                }
+            }
             var listado = query.Select(x => new ListadoComponenteDTO
             {
                 Actividad = x.Actividad.Nombre,

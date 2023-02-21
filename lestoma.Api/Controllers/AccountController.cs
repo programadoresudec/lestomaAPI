@@ -71,7 +71,14 @@ namespace lestoma.Api.Controllers
             data.TipoDeAplicacion = await _usuarioService.GetApplicationType(logeo.TipoAplicacion);
             data.Email = _protector.Protect(data.Email);
             data.UserId = _protector.Protect(data.Id.ToString());
-            data.Ip = _protector.Protect(logeo.Ip);
+            if (!string.IsNullOrWhiteSpace(logeo.Ip))
+            {
+                data.Ip = _protector.Protect(logeo.Ip);
+            }
+            else
+            {
+                data.Ip = IpAddress();
+            } 
             TokenDTO usuario = await _jwt.GenerateJwtToken(data);
             Respuesta.Data = usuario;
             SetTokenCookie(usuario.RefreshToken);
