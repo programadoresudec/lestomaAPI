@@ -46,11 +46,8 @@ namespace lestoma.Api.Controllers
                     UpaId = filtro.UpaId,
                     UsuarioId = UserIdDesencrypted()
                 });
-                UpaActivitiesfilter = new()
-                {
-                    ActividadesId = actividades.Any() ? actividades.Select(x => x.Id).ToList() : null,
-                    UpaId = UpaId()
-                };
+                UpaActivitiesfilter.ActividadesId = actividades.Any() ? actividades.Select(x => x.Id).ToList() : null;
+                UpaActivitiesfilter.UpaId = UpaId();
             }
             else
             {
@@ -68,9 +65,34 @@ namespace lestoma.Api.Controllers
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador, TipoRol.Auxiliar)]
         public async Task<IActionResult> GetComponentesNombres()
         {
-            var query = await _componentService.GetComponentesJustNames();
+            var query = await _componentService.GetComponentsJustNames();
             return Ok(query);
         }
+
+        [HttpGet("listar-nombres-por-upa/{upaId}")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
+        public async Task<IActionResult> GetComponentesByUpa(Guid upaId)
+        {
+            IEnumerable<NameDTO> actividades = null;
+            UpaActivitiesFilterRequest UpaActivitiesfilter = new UpaActivitiesFilterRequest();
+            if (!IsSuperAdmin())
+            {
+                actividades = await _detalleUpaActividadService.GetActivitiesByUpaUserId(new UpaUserFilterRequest
+                {
+                    UpaId = UpaId(),
+                    UsuarioId = UserIdDesencrypted()
+                });
+                UpaActivitiesfilter.ActividadesId = actividades.Any() ? actividades.Select(x => x.Id).ToList() : null;
+                UpaActivitiesfilter.UpaId = UpaId();
+            }
+            else
+            {
+                UpaActivitiesfilter.UpaId = upaId;
+            }
+            var query = await _componentService.GetComponentsJustNamesById(UpaActivitiesfilter, IsSuperAdmin());
+            return Ok(query);
+        }
+
         [HttpGet("{id}")]
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> GetComponente(Guid id)

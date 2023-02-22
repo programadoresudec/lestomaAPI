@@ -44,10 +44,9 @@ namespace lestoma.Logica.LogicaService
         }
 
 
-        public async Task<IEnumerable<NameDTO>> GetComponentesJustNames()
+        public async Task<IEnumerable<NameDTO>> GetComponentsJustNames()
         {
             return await _componenteRepo.GetComponentesJustNames();
-
         }
 
         public async Task<ResponseDTO> GetById(Guid id)
@@ -132,6 +131,10 @@ namespace lestoma.Logica.LogicaService
             }
         }
 
+        public async Task<IEnumerable<NameDTO>> GetComponentsJustNamesById(UpaActivitiesFilterRequest upaActivitiesfilter, bool IsAdmin)
+        {
+            return await _componenteRepo.GetComponentesPorUpaId(upaActivitiesfilter, IsAdmin);
+        }
     }
 
 

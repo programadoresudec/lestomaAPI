@@ -132,7 +132,8 @@ namespace lestoma.Logica.LogicaService
         public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByDate(ReportFilterRequest filtro, bool isSuper)
         {
             var file = GetFile(filtro.TipoFormato);
-            await ExistUpa(filtro.UpaId);
+            if (filtro.UpaId != Guid.Empty)
+                await ExistUpa(filtro.UpaId);
             var listado = await _repositorio.ReportByDate(filtro);
             if (listado.Reporte.Count == 0)
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
@@ -190,7 +191,7 @@ namespace lestoma.Logica.LogicaService
             {
                 await _mailHelper.SendMailWithOneFile(email, string.Empty, $"Reporte {DateTime.Now:dd/MM/yyyy}",
                     archivo, $"Se anexa el reporte generado.", string.Empty,
-                   "Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.",string.Empty, 
+                   "Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.", string.Empty,
                    "<strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
                 _logger.LogInformation($"Enviado el reporte a {email}");
             }
@@ -198,7 +199,7 @@ namespace lestoma.Logica.LogicaService
             {
                 _logger.LogInformation($"No hay reportes para generar.");
             }
-        } 
+        }
         #endregion
 
         private async Task ExistUpa(Guid upaId)

@@ -10,8 +10,9 @@ namespace lestoma.Logica.Interfaces
 {
     public interface IComponenteService : IGenericCRUD<EComponenteLaboratorio, Guid>
     {
-        Task<IEnumerable<NameDTO>> GetComponentesJustNames();
+        Task<IEnumerable<NameDTO>> GetComponentsJustNames();
         IQueryable<ListadoComponenteDTO> GetAllFilter(UpaActivitiesFilterRequest upaActivitiesFilter);
+        Task<IEnumerable<NameDTO>> GetComponentsJustNamesById(UpaActivitiesFilterRequest upaActivitiesfilter, bool IsAdmin);
     }
 
 }

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace lestoma.Data.Repositories
 {
@@ -111,6 +112,28 @@ namespace lestoma.Data.Repositories
                         ByteHexaFuncion = x.ObjetoJsonEstado.ByteFuncion
                     }
                 }).FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<NameDTO>> GetComponentesPorUpaId(UpaActivitiesFilterRequest upaActivitiesfilter, bool IsAdmin)
+        {
+            if (IsAdmin)
+            {
+                var query = _dbSet.AsNoTracking();
+                if (upaActivitiesfilter.UpaId != Guid.Empty)
+                {
+                    query = query.Where(x => x.UpaId == upaActivitiesfilter.UpaId);
+                }
+                return await query.Select(x => new NameDTO
+                {
+                    Id = x.Id,
+                    Nombre = x.NombreComponente
+                }).ToListAsync();
+            }
+            return await _dbSet.Where(x => x.UpaId == upaActivitiesfilter.UpaId && upaActivitiesfilter.ActividadesId.Contains(x.ActividadId)).Select(x => new NameDTO
+            {
+                Id = x.Id,
+                Nombre = x.NombreComponente
+            }).ToListAsync();
         }
     }
 }
