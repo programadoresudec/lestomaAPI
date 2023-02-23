@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
 {
-    [Route("api/reportes-laboratorio")]
+    [Route("api/reports-laboratory")]
     [ApiController]
 
     public class ReportsController : BaseController

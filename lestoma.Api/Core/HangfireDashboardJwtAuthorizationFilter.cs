@@ -55,7 +55,7 @@ namespace lestoma.Api.Core
                     return false;
                 if (int.TryParse(rolId, out int RolId))
                 {
-                    IdRol = RolId;
+                    IdRol = RolId;  
                 }
 
                 return IdRol == (int)TipoRol.SuperAdministrador;
