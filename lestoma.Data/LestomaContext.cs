@@ -65,7 +65,10 @@ namespace lestoma.Data
 
             #region Schema superadmin
             modelBuilder.Entity<EActividad>().ToTable("actividad", "superadmin");
-            modelBuilder.Entity<EUpa>().ToTable("upa", "superadmin");
+            modelBuilder.Entity<EUpa>().ToTable("upa", "superadmin").HasMany(g => g.ProtocolosCOM)
+                .WithOne(s => s.Upa)
+                .HasForeignKey(s => s.UpaId)
+                .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<EUpaActividad>().ToTable("upa_actividad", "superadmin")
            .HasKey(x => new { x.UpaId, x.ActividadId, x.UsuarioId });
             #endregion

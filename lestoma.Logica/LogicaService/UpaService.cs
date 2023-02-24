@@ -3,6 +3,7 @@ using lestoma.CommonUtils.MyException;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,8 @@ namespace lestoma.Logica.LogicaService
 
         public IQueryable<EUpa> GetAllForPagination()
         {
-            var listado = _upaRepository.GetAllAsQueryable();
+            var listado = _upaRepository.GetAllAsQueryable().Include(x => x.ProtocolosCOM);
+            var lista = listado.ToList();
             if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");

@@ -52,17 +52,6 @@ namespace lestoma.Data
                 });
             #endregion
 
-            #region data protocolo
-            var peerToPeer = new EProtocoloCOM() { Id = 1, Nombre = "Peer to Peer", Sigla = "PP", PrimerByteTrama = "49" };
-            var broadCast = new EProtocoloCOM() { Id = 2, Nombre = "Broad Cast", Sigla = "BS", PrimerByteTrama = "6F" };
-
-            modelBuilder.Entity<EProtocoloCOM>()
-                .HasData(new List<EProtocoloCOM>
-                {
-                    peerToPeer,broadCast
-                });
-            #endregion
-
             #region data modulos
             var actuador = new EModuloComponente()
             {
@@ -239,6 +228,20 @@ namespace lestoma.Data
                 });
             #endregion
 
+            #region data protocolo
+            var peerToPeerUpa1 = new EProtocoloCOM() { Id = 1, UpaId = upa1.Id, Nombre = "Peer to Peer", Sigla = "PP", PrimerByteTrama = Reutilizables.StringToByteArray("49")[0] };
+            var broadCastUpa1 = new EProtocoloCOM() { Id = 2, UpaId = upa1.Id, Nombre = "Broad Cast", Sigla = "BS", PrimerByteTrama = Reutilizables.StringToByteArray("6F")[0] };
+
+            var peerToPeerUpa2 = new EProtocoloCOM() { Id = 3, UpaId = upa2.Id, Nombre = "Peer to Peer", Sigla = "PP", PrimerByteTrama = Reutilizables.StringToByteArray("49")[0] };
+            var broadCastUpa2 = new EProtocoloCOM() { Id = 4, UpaId = upa2.Id, Nombre = "Broad Cast", Sigla = "BS", PrimerByteTrama = Reutilizables.StringToByteArray("6F")[0] };
+
+            modelBuilder.Entity<EProtocoloCOM>()
+                .HasData(new List<EProtocoloCOM>
+                {
+                    peerToPeerUpa1,broadCastUpa1,peerToPeerUpa2,broadCastUpa2
+                });
+            #endregion
+
             #region data actividades
             var controlAgua = new EActividad()
             {
@@ -349,7 +352,6 @@ namespace lestoma.Data
                 listaJson.Add(JsonSerializer.Serialize(item));
             }
 
-
             var bombaDeOxigeno = new EComponenteLaboratorio()
             {
                 Id = Guid.NewGuid(),
@@ -361,7 +363,8 @@ namespace lestoma.Data
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
                 Session = usersession,
-                TipoDeAplicacion = aplicacion
+                TipoDeAplicacion = aplicacion,
+                DireccionRegistro = byte.MinValue,
             };
 
             var luzEstanque = new EComponenteLaboratorio()
@@ -375,8 +378,11 @@ namespace lestoma.Data
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
                 Session = usersession,
-                TipoDeAplicacion = aplicacion
+                TipoDeAplicacion = aplicacion,
+                DireccionRegistro = byte.MinValue + 1,
             };
+
+            var ramdom2 = Reutilizables.RandomByteDireccionEsclavoAndRegistro();
 
             var dosificadorAlimento = new EComponenteLaboratorio()
             {
@@ -389,7 +395,8 @@ namespace lestoma.Data
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
                 Session = usersession,
-                TipoDeAplicacion = aplicacion
+                TipoDeAplicacion = aplicacion,
+                DireccionRegistro = byte.MinValue + 3,
             };
 
             var temperaturaH20 = new EComponenteLaboratorio()
@@ -403,7 +410,8 @@ namespace lestoma.Data
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
                 Session = usersession,
-                TipoDeAplicacion = aplicacion
+                TipoDeAplicacion = aplicacion,
+                DireccionRegistro = byte.MinValue + 2,
             };
 
             var PH = new EComponenteLaboratorio()
@@ -417,7 +425,8 @@ namespace lestoma.Data
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
                 Session = usersession,
-                TipoDeAplicacion = aplicacion
+                TipoDeAplicacion = aplicacion,
+                DireccionRegistro = byte.MinValue,
             };
 
             var nivelTanque = new EComponenteLaboratorio()
@@ -431,7 +440,8 @@ namespace lestoma.Data
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
                 Session = usersession,
-                TipoDeAplicacion = aplicacion
+                TipoDeAplicacion = aplicacion,
+                DireccionRegistro = byte.MinValue + 1,
             };
 
             var ajustetemperaturaH20 = new EComponenteLaboratorio()
@@ -445,7 +455,8 @@ namespace lestoma.Data
                 FechaCreacionServer = DateTime.Now,
                 Ip = ip,
                 Session = usersession,
-                TipoDeAplicacion = aplicacion
+                TipoDeAplicacion = aplicacion,
+                DireccionRegistro = byte.MinValue + 7,
             };
 
 
@@ -470,8 +481,7 @@ namespace lestoma.Data
                 Session = usersession,
                 TipoDeAplicacion = aplicacion,
                 FechaCreacionDispositivo = DateTime.Now,
-                EstadoInternet = true,
-                TipoDeComunicacionId = peerToPeer.Id,
+                EstadoInternet = true
             };
             var detalle2 = new ELaboratorio()
             {
@@ -485,8 +495,7 @@ namespace lestoma.Data
                 Session = usersession,
                 TipoDeAplicacion = aplicacion,
                 FechaCreacionDispositivo = DateTime.Now,
-                EstadoInternet = true,
-                TipoDeComunicacionId = broadCast.Id,
+                EstadoInternet = true
             };
 
             var detalle3 = new ELaboratorio()
@@ -501,8 +510,7 @@ namespace lestoma.Data
                 Session = usersession,
                 TipoDeAplicacion = aplicacion,
                 FechaCreacionDispositivo = DateTime.Now,
-                EstadoInternet = true,
-                TipoDeComunicacionId = peerToPeer.Id,
+                EstadoInternet = true
             };
 
             var detalle4 = new ELaboratorio()
@@ -517,8 +525,7 @@ namespace lestoma.Data
                 Session = usersession,
                 TipoDeAplicacion = aplicacion,
                 FechaCreacionDispositivo = DateTime.Now,
-                EstadoInternet = true,
-                TipoDeComunicacionId = peerToPeer.Id,
+                EstadoInternet = true
             };
 
             var detalle5 = new ELaboratorio()
@@ -534,8 +541,7 @@ namespace lestoma.Data
                 Session = usersession,
                 TipoDeAplicacion = aplicacion,
                 FechaCreacionDispositivo = DateTime.Now,
-                EstadoInternet = true,
-                TipoDeComunicacionId = peerToPeer.Id,
+                EstadoInternet = true
             };
 
             modelBuilder.Entity<ELaboratorio>()

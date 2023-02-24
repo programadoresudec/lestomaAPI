@@ -26,6 +26,9 @@ namespace lestoma.Entidades.Models
         [Column("descripcion_estado", TypeName = "jsonb")]
         [Required(ErrorMessage = "Campo requerido.")]
         public string JsonEstadoComponente { get; set; }
+        [Column("direccion_registro", TypeName = "smallint")]
+        [Required(ErrorMessage = "Campo requerido.")]
+        public byte DireccionRegistro { get; set; }
         public EUpa Upa { get; set; }
         public EActividad Actividad { get; set; }
         public EModuloComponente ModuloComponente { get; set; }

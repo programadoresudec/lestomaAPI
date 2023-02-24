@@ -1,5 +1,7 @@
-﻿using lestoma.CommonUtils.Interfaces;
+﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace lestoma.CommonUtils.Requests
@@ -13,5 +15,8 @@ namespace lestoma.CommonUtils.Requests
         [Required]
         public short CantidadActividades { get; set; }
         public Guid Id { get; set; }
+        [Required]
+        public ICollection<ProtocoloDTO> ProtocolosCOM { get; set; }
+
     }
 }

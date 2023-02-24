@@ -15,9 +15,6 @@ namespace lestoma.Entidades.Models
         [Column("componente_laboratorio_id")]
         [Required(ErrorMessage = "Campo requerido.")]
         public Guid ComponenteLaboratorioId { get; set; }
-        [Column("tipo_com_id")]
-        [Required(ErrorMessage = "Campo requerido.")]
-        public int TipoDeComunicacionId { get; set; }
         [Column("dato_trama_enviada")]
         public double? ValorCalculadoTramaEnviada { get; set; }
         [Column("dato_trama_recibida")]

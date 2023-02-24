@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace lestoma.Data.Repositories
 {
@@ -78,7 +77,8 @@ namespace lestoma.Data.Repositories
                 Id = x.Id,
                 JsonEstadoComponente = x.JsonEstadoComponente,
                 TipoDeAplicacion = x.TipoDeAplicacion,
-                Upa = x.Upa.Nombre
+                Upa = x.Upa.Nombre,
+                DireccionRegistro = x.DireccionRegistro
             });
             return listado;
         }
@@ -110,7 +110,8 @@ namespace lestoma.Data.Repositories
                         Id = x.ObjetoJsonEstado.Id,
                         TipoEstado = x.ObjetoJsonEstado.TipoEstado,
                         ByteHexaFuncion = x.ObjetoJsonEstado.ByteFuncion
-                    }
+                    },
+                    DireccionDeRegistro = x.DireccionRegistro
                 }).FirstOrDefaultAsync();
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,6 +8,10 @@ namespace lestoma.Entidades.Models
     [Table("upa", Schema = "superadmin")]
     public partial class EUpa : ECamposAuditoria
     {
+        public EUpa()
+        {
+            ProtocolosCOM = new HashSet<EProtocoloCOM>();
+        }
         [Key]
         [Column("id")]
         public Guid Id { get; set; }
@@ -22,5 +27,6 @@ namespace lestoma.Entidades.Models
         [Column("cantidad_actividades")]
         [Required(ErrorMessage = "Campo requerido.")]
         public short CantidadActividades { get; set; }
+        public ICollection<EProtocoloCOM>  ProtocolosCOM { get; set; }
     }
 }

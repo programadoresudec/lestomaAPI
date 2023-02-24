@@ -9,7 +9,6 @@ namespace lestoma.CommonUtils.Requests
     {
         public Guid Id { get; set; }
         public Guid ComponenteId { get; set; }
-        public int TipoCOMId { get; set; }
         public string TramaEnviada { get; set; }
         public string TramaRecibida { get; set; }  
         public double SetPointIn { get; set; }

@@ -43,7 +43,6 @@ namespace lestoma.Logica.LogicaService
             return Responses.SetCreatedResponse(entidad);
         }
 
-
         public async Task<IEnumerable<NameDTO>> GetComponentsJustNames()
         {
             return await _componenteRepo.GetComponentesJustNames();
@@ -120,6 +119,14 @@ namespace lestoma.Logica.LogicaService
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el modulo.");
             }
+            var existeDireccionRegistro = await _componenteRepo.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
+                                                                      && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente == entidad.NombreComponente 
+                                                                      && x.DireccionRegistro == entidad.DireccionRegistro);
+            if (existeDireccionRegistro)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Ya se encuentra registrado un componente con la misma dirección de registro con los mismos parametros.");
+            }
+
             if (IsCreated)
             {
                 var existeRepetido = await _componenteRepo.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId

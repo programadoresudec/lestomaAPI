@@ -11,6 +11,7 @@ namespace lestoma.CommonUtils.DTOs
         public NameDTO Upa { get; set; }
         public NameDTO Modulo { get; set; }
         public EstadoComponenteDTO EstadoComponente { get; set; }
+        public byte DireccionDeRegistro { get; set; }
 
     }
 }

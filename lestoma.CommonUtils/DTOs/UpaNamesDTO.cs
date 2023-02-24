@@ -11,4 +11,9 @@ namespace lestoma.CommonUtils.DTOs
         public string Nombre { get; set; }
         public Guid Id { get; set; }
     }
+    public class NameProtocoloDTO
+    {
+        public string Nombre { get; set; }
+        public int Id { get; set; }
+    }
 }

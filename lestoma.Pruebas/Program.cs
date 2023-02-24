@@ -18,6 +18,10 @@ namespace lestoma.Pruebas
 
             var random = Reutilizables.RandomByteDireccionEsclavoAndRegistro();
 
+            Guid componente = Guid.NewGuid();
+
+
+
             var tercerByte = Reutilizables.ByteArrayToHexString(new byte[] { 222 });
             var primerByte = Reutilizables.StringToByteArray("49 F0");
 

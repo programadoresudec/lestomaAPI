@@ -20,6 +20,8 @@ namespace lestoma.CommonUtils.Requests
         public Guid UpaId { get; set; }
         [Required(ErrorMessage = "El id del modulo es requerido.")]
         public Guid ModuloComponenteId { get; set; }
+        [Required(ErrorMessage = "la dirección de registro del componente es requerido.")]
+        public byte DireccionRegistro { get; set; }
 
         public string ConvertirJson()
         {

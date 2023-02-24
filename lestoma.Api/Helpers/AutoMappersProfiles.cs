@@ -2,7 +2,6 @@
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
-using System.Text.Json;
 
 namespace lestoma.Api.Helpers
 {
@@ -13,6 +12,7 @@ namespace lestoma.Api.Helpers
             #region Request a entidad
             CreateMap<UsuarioRequest, EUsuario>().ReverseMap();
             CreateMap<UpaRequest, EUpa>().ReverseMap();
+            CreateMap<ProtocoloDTO, EProtocoloCOM>().ReverseMap();
             CreateMap<RegistroRequest, EUsuario>();
             CreateMap<RegistroUpdateRequest, EUsuario>().ForMember(d => d.Id, o => o.MapFrom(s => s.UsuarioId));
             CreateMap<ActividadRequest, EActividad>().ReverseMap();
@@ -27,7 +27,6 @@ namespace lestoma.Api.Helpers
 
             CreateMap<LaboratorioRequestOffline, ELaboratorio>()
                .ForMember(d => d.ComponenteLaboratorioId, o => o.MapFrom(s => s.ComponenteId))
-               .ForMember(d => d.TipoDeComunicacionId, o => o.MapFrom(s => s.TipoCOMId))
                .ForMember(d => d.ValorCalculadoTramaEnviada, o => o.MapFrom(s => s.SetPointIn))
                .ForMember(d => d.ValorCalculadoTramaRecibida, o => o.MapFrom(s => s.SetPointOut));
             #endregion
@@ -48,9 +47,9 @@ namespace lestoma.Api.Helpers
             #endregion
         }
 
-        private T DeserializarObject<T>(string descripcion)
-        {
-            return JsonSerializer.Deserialize<T>(descripcion);
-        }
+        //private T DeserializarObject<T>(string descripcion)
+        //{
+        //    return JsonSerializer.Deserialize<T>(descripcion);
+        //}
     }
 }
