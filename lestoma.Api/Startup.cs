@@ -7,11 +7,13 @@ using lestoma.Api.Core;
 using lestoma.Api.Helpers;
 using lestoma.Api.Middleware;
 using lestoma.CommonUtils.Core;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Helpers;
 using lestoma.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +23,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
+using System.Net;
 using System.Text;
 
 namespace lestoma.Api
@@ -72,6 +75,19 @@ namespace lestoma.Api
                 var context = new CustomAssemblyLoadContext();
                 context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox.dll"));
 
+                services.Configure<ApiBehaviorOptions>(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        var result = new ResponseDTO
+                        {
+                            MensajeHttp = "Error de entrada en los atributos",
+                            StatusCode = (int)HttpStatusCode.BadRequest,
+                            ErrorsEntries = context.ModelState.ModelStateErrorsToString()
+                        }.ToString();
+                        return new BadRequestObjectResult(result);
+                    };
+                });
 
                 var appSettingsSection = Configuration.GetSection("AppSettings");
                 services.Configure<AppSettings>(appSettingsSection);
@@ -232,7 +248,7 @@ namespace lestoma.Api
                .UsePostgreSqlStorage(connection, new PostgreSqlStorageOptions
                {
                    DistributedLockTimeout = TimeSpan.FromMinutes(5),
-                   SchemaName = "HangFire",
+                   SchemaName = "hangfire_lestoma",
                    InvisibilityTimeout = TimeSpan.FromMinutes(5),
                }));
 

@@ -37,6 +37,7 @@ namespace lestoma.Api.Middleware
             }
         }
 
+
         private Task HandleExceptionAsync(HttpContext context, HttpStatusCodeException exception)
         {
             context.Response.ContentType = "application/json";
@@ -56,7 +57,7 @@ namespace lestoma.Api.Middleware
             {
                 result = new ResponseDTO()
                 {
-                    MensajeHttp = "Ha ocurrido un error en la aplicación " + _webHostEnvironment.ApplicationName + "  Error: " + exception.Message,
+                    MensajeHttp = $"Ha ocurrido un error en la aplicación {_webHostEnvironment.ApplicationName} Error: {exception.Message}",
                     StatusCode = (int)HttpStatusCode.BadRequest
                 }.ToString();
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -70,7 +71,7 @@ namespace lestoma.Api.Middleware
             context.Response.ContentType = "application/json";
             string result = new ResponseDTO()
             {
-                MensajeHttp = "Ha ocurrido un error en la aplicación " + _webHostEnvironment.ApplicationName + "  Error: " + exception.Message,
+                MensajeHttp = $"Ha ocurrido un error en la aplicación {_webHostEnvironment.ApplicationName} Error: {exception.Message}",
                 StatusCode = (int)HttpStatusCode.InternalServerError
             }.ToString();
             _logger.LogError(result, exception);

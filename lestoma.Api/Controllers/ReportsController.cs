@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Bibliography;
 using Hangfire;
 using lestoma.Api.Core;
+using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests.Filters;
@@ -29,14 +31,27 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
+
+
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        [HttpGet("get-daily-time")]
+        public async Task<IActionResult> GetDailyReportTime()
+        {
+            var response = await _reporteService.GetDailyReportTime();
+            return Ok(response);
+        }
+
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpPost("daily")]
         public IActionResult ReportDaily([FromBody] ReportDailyFilterRequest filtro)
         {
-            RecurringJob.AddOrUpdate<IReporteService>("Enviar-reporte-diario", servicio => servicio.GetDailyReport(),
-                Cron.Daily(filtro.Hour, filtro.Minute), TimeZoneInfo.Local);
+            // Zona 710 SA Pacific Standard Time (UTC-05:00) Bogota, Lima, Quito
+            TimeZoneInfo tzone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
 
-            return Accepted(Responses.SetAcceptedResponse(null, "Se ha generado correctamente la tarea recurrente."));
+            RecurringJob.AddOrUpdate<IReporteService>(Constants.KEY_REPORT_DAILY, servicio => servicio.GetDailyReport(),
+                Cron.Daily(filtro.Hour, filtro.Minute), tzone);
+
+            return Accepted(Responses.SetAcceptedResponse(null, "Se ha generado correctamente la tarea recurrente, revise el dashboard de Hangfire."));
         }
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         [HttpPost("by-date")]

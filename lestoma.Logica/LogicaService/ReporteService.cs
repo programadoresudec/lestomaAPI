@@ -1,7 +1,9 @@
-﻿using lestoma.CommonUtils.Constants;
+﻿using Hangfire;
+using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.Core;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
@@ -36,7 +38,9 @@ namespace lestoma.Logica.LogicaService
             _generateReports = generateReports;
             _componenteRepository = componenteRepository;
         }
+
         #region Obtiene la data del reporte diario
+        [AutomaticRetry(Attempts = 2)]
         public async Task<ResponseDTO> GetDailyReport()
         {
             var filtro = new DateFilterRequest
@@ -148,6 +152,7 @@ namespace lestoma.Logica.LogicaService
         #endregion
 
         #region Genera el reporte por fecha inicial y fecha final dependiendo el formato dado
+        [AutomaticRetry(Attempts = 2)]
         public ArchivoDTO GenerateReportByDate(ReporteDTO reporte,
             ArchivoDTO archivo, ReportFilterRequest filtro, bool isSuper)
         {
@@ -169,6 +174,7 @@ namespace lestoma.Logica.LogicaService
         #endregion
 
         #region Genera el reporte por componentes dependiendo el formato dado
+        [AutomaticRetry(Attempts = 2)]
         public ArchivoDTO GenerateReportByComponents(ReporteDTO reporte,
             ArchivoDTO archivo, ReportComponentFilterRequest filtro, bool isSuper)
         {
@@ -184,6 +190,7 @@ namespace lestoma.Logica.LogicaService
         #endregion
 
         #region Envia el reporte dado el filtro correspondiente
+        [AutomaticRetry(Attempts = 2)]
         public async Task SendReportByFilter(string email)
         {
             _logger.LogInformation($"obteniendo el reporte");
@@ -230,6 +237,15 @@ namespace lestoma.Logica.LogicaService
                     break;
             }
             return (Mime, FileName);
+        }
+
+        public async Task<ResponseDTO> GetDailyReportTime()
+        {
+            var time = await _repositorio.GetDailyReportTime(Constants.KEY_REPORT_DAILY);
+            if (time == null)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se pudo encontrar la hora del job.");
+
+            return Responses.SetOkResponse(new TimeJobDTO { Time = time.Value });
         }
     }
 }

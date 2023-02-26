@@ -13,5 +13,6 @@ namespace lestoma.Logica.Interfaces
         Task<ResponseDTO> GetDailyReport();
         Task SendReportByFilter(string email);
         Task<ResponseDTO> GenerateDailyReport(ReporteDTO reporte);
+        Task<ResponseDTO> GetDailyReportTime();
     }
 }

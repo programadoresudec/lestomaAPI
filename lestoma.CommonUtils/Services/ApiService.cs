@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Plugin.Connectivity;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -81,7 +82,7 @@ namespace lestoma.CommonUtils.Services
                     {
                         IsExito = false,
                         MensajeHttp =
-                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                            MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
@@ -115,7 +116,7 @@ namespace lestoma.CommonUtils.Services
                         ? (int)ResponseMessage.StatusCode
                         : (int)HttpStatusCode.InternalServerError,
                     MensajeHttp = ResponseMessage != null
-                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
                         : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -126,7 +127,7 @@ namespace lestoma.CommonUtils.Services
 
         #region Get By Id Api service with token
 
-        public async Task<ResponseDTO> GetByIdAsyncWithToken(string urlBase, string nameService, string token)
+        public async Task<ResponseDTO> GetAsyncWithToken(string urlBase, string nameService, string token)
         {
             try
             {
@@ -141,13 +142,13 @@ namespace lestoma.CommonUtils.Services
                     {
                         IsExito = false,
                         MensajeHttp =
-                          mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                          MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await RefreshToken(urlBase);
-                    await GetByIdAsyncWithToken(urlBase, nameService, _tokenNuevo);
+                    await GetAsyncWithToken(urlBase, nameService, _tokenNuevo);
                 }
 
                 ResponseDTO item = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
@@ -162,7 +163,7 @@ namespace lestoma.CommonUtils.Services
                         ? (int)ResponseMessage.StatusCode
                         : (int)HttpStatusCode.InternalServerError,
                     MensajeHttp = ResponseMessage != null
-                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
                         : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -188,7 +189,7 @@ namespace lestoma.CommonUtils.Services
                     {
                         IsExito = false,
                         MensajeHttp =
-                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                            MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
@@ -222,7 +223,7 @@ namespace lestoma.CommonUtils.Services
                         ? (int)ResponseMessage.StatusCode
                         : (int)HttpStatusCode.InternalServerError,
                     MensajeHttp = ResponseMessage != null
-                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
                         : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -245,12 +246,20 @@ namespace lestoma.CommonUtils.Services
                 Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
+                    if (Respuesta.ErrorsEntries != null)
+                    {
+                        return new ResponseDTO
+                        {
+                            IsExito = false,
+                            StatusCode = (int)ResponseMessage.StatusCode,
+                            MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
+                        };
+                    }
                     return new ResponseDTO
                     {
                         IsExito = false,
                         StatusCode = (int)ResponseMessage.StatusCode,
-                        MensajeHttp =
-                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                        MensajeHttp = MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
 
@@ -265,7 +274,7 @@ namespace lestoma.CommonUtils.Services
                         ? (int)ResponseMessage.StatusCode
                         : (int)HttpStatusCode.InternalServerError,
                     MensajeHttp = ResponseMessage != null
-                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
                         : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -288,11 +297,20 @@ namespace lestoma.CommonUtils.Services
                 Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
+                    if (Respuesta.ErrorsEntries != null)
+                    {
+                        return new ResponseDTO
+                        {
+                            IsExito = false,
+                            StatusCode = (int)ResponseMessage.StatusCode,
+                            MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
+                        };
+                    }
                     return new ResponseDTO
                     {
                         IsExito = false,
-                        MensajeHttp =
-                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                        StatusCode = (int)ResponseMessage.StatusCode,
+                        MensajeHttp = MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
@@ -305,17 +323,17 @@ namespace lestoma.CommonUtils.Services
             }
             catch (Exception ex)
             {
-                var jsonError = JsonConvert.SerializeObject(new ResponseDTO
+                var jsonError = new ResponseDTO
                 {
                     IsExito = false,
                     StatusCode = ResponseMessage != null
-                        ? (int)ResponseMessage.StatusCode
-                        : (int)HttpStatusCode.InternalServerError,
+                         ? (int)ResponseMessage.StatusCode
+                         : (int)HttpStatusCode.InternalServerError,
                     MensajeHttp = ResponseMessage != null
-                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
-                        : ex.Message
-                });
-                throw new Exception(jsonError);
+                         ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                         : ex.Message
+                };
+                throw new Exception(jsonError.ToString());
             }
         }
 
@@ -336,8 +354,8 @@ namespace lestoma.CommonUtils.Services
                     return new ResponseDTO
                     {
                         IsExito = false,
-                        MensajeHttp =
-                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                        StatusCode = (int)ResponseMessage.StatusCode,
+                        MensajeHttp = MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
@@ -357,7 +375,7 @@ namespace lestoma.CommonUtils.Services
                         ? (int)ResponseMessage.StatusCode
                         : (int)HttpStatusCode.InternalServerError,
                     MensajeHttp = ResponseMessage != null
-                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
                         : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -380,12 +398,21 @@ namespace lestoma.CommonUtils.Services
                 Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
+
+                    if (Respuesta.ErrorsEntries != null)
+                    {
+                        return new ResponseDTO
+                        {
+                            IsExito = false,
+                            StatusCode = (int)ResponseMessage.StatusCode,
+                            MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
+                        };
+                    }
                     return new ResponseDTO
                     {
                         IsExito = false,
                         StatusCode = (int)ResponseMessage.StatusCode,
-                        MensajeHttp =
-                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                        MensajeHttp = MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
 
@@ -400,7 +427,7 @@ namespace lestoma.CommonUtils.Services
                         ? (int)ResponseMessage.StatusCode
                         : (int)HttpStatusCode.InternalServerError,
                     MensajeHttp = ResponseMessage != null
-                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
                         : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -424,11 +451,19 @@ namespace lestoma.CommonUtils.Services
                 Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                 if (!ResponseMessage.IsSuccessStatusCode)
                 {
+                    if (Respuesta.ErrorsEntries != null)
+                    {
+                        return new ResponseDTO
+                        {
+                            IsExito = false,
+                            StatusCode = (int)ResponseMessage.StatusCode,
+                            MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
+                        };
+                    }
                     return new ResponseDTO
                     {
                         IsExito = false,
-                        MensajeHttp =
-                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                        MensajeHttp = MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
 
@@ -443,7 +478,7 @@ namespace lestoma.CommonUtils.Services
                         ? (int)ResponseMessage.StatusCode
                         : (int)HttpStatusCode.InternalServerError,
                     MensajeHttp = ResponseMessage != null
-                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
                         : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -474,7 +509,7 @@ namespace lestoma.CommonUtils.Services
                         IsExito = false,
                         StatusCode = (int)ResponseMessage.StatusCode,
                         MensajeHttp =
-                            mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
+                            MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
                     };
                 }
                 else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
@@ -498,7 +533,7 @@ namespace lestoma.CommonUtils.Services
                         ? (int)ResponseMessage.StatusCode
                         : (int)HttpStatusCode.InternalServerError,
                     MensajeHttp = ResponseMessage != null
-                        ? mostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
+                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
                         : ex.Message
                 });
                 throw new Exception(jsonError);
@@ -538,147 +573,141 @@ namespace lestoma.CommonUtils.Services
 
         #region mostrar Mensaje Personalizado para la solicitud del service
 
-        private string mostrarMensajePersonalizadoStatus(System.Net.HttpStatusCode statusCode, string mensajeDeLaApi)
+        private string MostrarMensajePersonalizadoStatus(HttpStatusCode statusCode, string mensajeDeLaApi)
         {
             string mensaje = string.Empty;
             if (!string.IsNullOrWhiteSpace(mensajeDeLaApi))
+                return mensajeDeLaApi;
+            switch (statusCode)
             {
-                mensaje = mensajeDeLaApi;
+                case HttpStatusCode.Accepted:
+                    mensaje = "La solicitud fue aceptada";
+                    break;
+                case HttpStatusCode.Ambiguous:
+                    mensaje = "url ambiguo";
+                    break;
+                case HttpStatusCode.BadGateway:
+                    mensaje = "respuesta no valida";
+                    break;
+                case HttpStatusCode.BadRequest:
+                    mensaje = "La solicitud malformada";
+                    break;
+                case HttpStatusCode.Conflict:
+                    mensaje = "conflicto con el estado actual del server";
+                    break;
+                case HttpStatusCode.Continue:
+                    mensaje = "todo va bien por ahora continua";
+                    break;
+                case HttpStatusCode.Created:
+                    mensaje = "Solicitud con exito y se creo un recurso";
+                    break;
+                case HttpStatusCode.ExpectationFailed:
+                    mensaje = "el expect solicitada no puede ser cumplida";
+                    break;
+                case HttpStatusCode.Forbidden:
+                    mensaje = "no posees los permisos necesarios";
+                    break;
+                case HttpStatusCode.Found:
+                    mensaje = "url cambiado temporalmente";
+                    break;
+                case HttpStatusCode.GatewayTimeout:
+                    mensaje = " tiempo de respuesta null ";
+                    break;
+                case HttpStatusCode.Gone:
+                    mensaje = "contenido borrado  del server";
+                    break;
+                case HttpStatusCode.HttpVersionNotSupported:
+                    mensaje = "el servidor no soporta la version http";
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    mensaje = "error interno del server";
+                    break;
+                case HttpStatusCode.LengthRequired:
+                    mensaje = "rechazo del server por cabecera inadecuada";
+                    break;
+                case HttpStatusCode.MethodNotAllowed:
+                    mensaje = "metodo de solicitud no soportado";
+                    break;
+                case HttpStatusCode.Moved:
+                    mensaje = "peticiones movidas a la url dada";
+                    break;
+                case HttpStatusCode.NoContent:
+                    mensaje = "su peticion no tiene ningun contenido";
+                    break;
+                case HttpStatusCode.NonAuthoritativeInformation:
+                    mensaje = "peticion obtenida de otro server al solicitado";
+                    break;
+                case HttpStatusCode.NotAcceptable:
+                    mensaje = "el servidor no puede responder los datos en ningun valor aceptado";
+                    break;
+                case HttpStatusCode.NotFound:
+                    mensaje = "Petición no encontrada.";
+                    break;
+                case HttpStatusCode.NotImplemented:
+                    mensaje = "el server no soporta alguna funcionalidad";
+                    break;
+                case HttpStatusCode.NotModified:
+                    mensaje = "peticion  o url modificada";
+                    break;
+                case HttpStatusCode.OK:
+                    mensaje = "Solicitud realizada correctamente";
+                    break;
+                case HttpStatusCode.PartialContent:
+                    mensaje = "la peticion serivira parcialmente el contenido solicitado";
+                    break;
+                case HttpStatusCode.PaymentRequired:
+                    mensaje = "este error es ambiguo no esta en uso comuniquese con el ingeniero";
+                    break;
+                case HttpStatusCode.PreconditionFailed:
+                    mensaje =
+                        "el server no puede cumplir con alguna condicion impuesta por el navegador en su peticion";
+                    break;
+                case HttpStatusCode.ProxyAuthenticationRequired:
+                    mensaje = "el sever acepta la peticion pero se requiere la autenticacion del proxy";
+                    break;
+                case HttpStatusCode.RedirectKeepVerb:
+                    mensaje = "la información de la solicitud se encuentra en el URI especificado en el encabezado";
+                    break;
+                case HttpStatusCode.RedirectMethod:
+                    mensaje = "rediriguiendo automáticamente al cliente al URI especificado  ";
+                    break;
+                case HttpStatusCode.RequestedRangeNotSatisfiable:
+                    mensaje = "la parte del archivo el server no la tiene ";
+                    break;
+                case HttpStatusCode.RequestEntityTooLarge:
+                    mensaje = "la peticion del navegador es demasiado larga el server no lo procesa";
+                    break;
+                case HttpStatusCode.RequestTimeout:
+                    mensaje = "fallo al continuar la peticion";
+                    break;
+                case HttpStatusCode.RequestUriTooLong:
+                    mensaje = "el server no procesa la peticion por lo larga que esta";
+                    break;
+                case HttpStatusCode.ResetContent:
+                    mensaje = "el  request se proceso correctamente pero no devuelve ningun contenido";
+                    break;
+                case HttpStatusCode.ServiceUnavailable:
+                    mensaje = " el servidor no está disponible temporalmente";
+                    break;
+                case HttpStatusCode.SwitchingProtocols:
+                    mensaje = "está cambiando la versión del protocolo o el protocolo.";
+                    break;
+                case HttpStatusCode.Unauthorized:
+                    mensaje = "el recurso solicitado requiere autenticación. ";
+                    break;
+                case HttpStatusCode.UnsupportedMediaType:
+                    mensaje = "indica que la solicitud es de un tipo no admitido.";
+                    break;
+                case HttpStatusCode.Unused:
+                    mensaje = "no esta ulilizado";
+                    break;
+                case HttpStatusCode.UpgradeRequired:
+                    mensaje = " el cliente debe cambiar a un protocolo diferente como TLS / 1.0";
+                    break;
+                case HttpStatusCode.UseProxy:
+                    mensaje = "recurso solicitado solo a travez de proxy";
+                    break;
             }
-            else
-            {
-                switch (statusCode)
-                {
-                    case System.Net.HttpStatusCode.Accepted:
-                        mensaje = "La solicitud fue aceptada";
-                        break;
-                    case System.Net.HttpStatusCode.Ambiguous:
-                        mensaje = "url ambiguo";
-                        break;
-                    case System.Net.HttpStatusCode.BadGateway:
-                        mensaje = "respuesta no valida";
-                        break;
-                    case System.Net.HttpStatusCode.BadRequest:
-                        mensaje = "La solicitud malformada";
-                        break;
-                    case System.Net.HttpStatusCode.Conflict:
-                        mensaje = "conflicto con el estado actual del server";
-                        break;
-                    case System.Net.HttpStatusCode.Continue:
-                        mensaje = "todo va bien por ahora continua";
-                        break;
-                    case System.Net.HttpStatusCode.Created:
-                        mensaje = "Solicitud con exito y se creo un recurso";
-                        break;
-                    case System.Net.HttpStatusCode.ExpectationFailed:
-                        mensaje = "el expect solicitada no puede ser cumplida";
-                        break;
-                    case System.Net.HttpStatusCode.Forbidden:
-                        mensaje = "no posees los permisos necesarios";
-                        break;
-                    case System.Net.HttpStatusCode.Found:
-                        mensaje = "url cambiado temporalmente";
-                        break;
-                    case System.Net.HttpStatusCode.GatewayTimeout:
-                        mensaje = " tiempo de respuesta null ";
-                        break;
-                    case System.Net.HttpStatusCode.Gone:
-                        mensaje = "contenido borrado  del server";
-                        break;
-                    case System.Net.HttpStatusCode.HttpVersionNotSupported:
-                        mensaje = "el servidor no soporta la version http";
-                        break;
-                    case System.Net.HttpStatusCode.InternalServerError:
-                        mensaje = "error interno del server";
-                        break;
-                    case System.Net.HttpStatusCode.LengthRequired:
-                        mensaje = "rechazo del server por cabecera inadecuada";
-                        break;
-                    case System.Net.HttpStatusCode.MethodNotAllowed:
-                        mensaje = "metodo de solicitud no soportado";
-                        break;
-                    case System.Net.HttpStatusCode.Moved:
-                        mensaje = "peticiones movidas a la url dada";
-                        break;
-                    case System.Net.HttpStatusCode.NoContent:
-                        mensaje = "su peticion no tiene ningun contenido";
-                        break;
-                    case System.Net.HttpStatusCode.NonAuthoritativeInformation:
-                        mensaje = "peticion obtenida de otro server al solicitado";
-                        break;
-                    case System.Net.HttpStatusCode.NotAcceptable:
-                        mensaje = "el servidor no puede responder los datos en ningun valor aceptado";
-                        break;
-                    case System.Net.HttpStatusCode.NotFound:
-                        mensaje = "Petición no encontrada.";
-                        break;
-                    case System.Net.HttpStatusCode.NotImplemented:
-                        mensaje = "el server no soporta alguna funcionalidad";
-                        break;
-                    case System.Net.HttpStatusCode.NotModified:
-                        mensaje = "peticion  o url modificada";
-                        break;
-                    case System.Net.HttpStatusCode.OK:
-                        mensaje = "Solicitud realizada correctamente";
-                        break;
-                    case System.Net.HttpStatusCode.PartialContent:
-                        mensaje = "la peticion serivira parcialmente el contenido solicitado";
-                        break;
-                    case System.Net.HttpStatusCode.PaymentRequired:
-                        mensaje = "este error es ambiguo no esta en uso comuniquese con el ingeniero";
-                        break;
-                    case System.Net.HttpStatusCode.PreconditionFailed:
-                        mensaje =
-                            "el server no puede cumplir con alguna condicion impuesta por el navegador en su peticion";
-                        break;
-                    case System.Net.HttpStatusCode.ProxyAuthenticationRequired:
-                        mensaje = "el sever acepta la peticion pero se requiere la autenticacion del proxy";
-                        break;
-                    case System.Net.HttpStatusCode.RedirectKeepVerb:
-                        mensaje = "la información de la solicitud se encuentra en el URI especificado en el encabezado";
-                        break;
-                    case System.Net.HttpStatusCode.RedirectMethod:
-                        mensaje = "rediriguiendo automáticamente al cliente al URI especificado  ";
-                        break;
-                    case System.Net.HttpStatusCode.RequestedRangeNotSatisfiable:
-                        mensaje = "la parte del archivo el server no la tiene ";
-                        break;
-                    case System.Net.HttpStatusCode.RequestEntityTooLarge:
-                        mensaje = "la peticion del navegador es demasiado larga el server no lo procesa";
-                        break;
-                    case System.Net.HttpStatusCode.RequestTimeout:
-                        mensaje = "fallo al continuar la peticion";
-                        break;
-                    case System.Net.HttpStatusCode.RequestUriTooLong:
-                        mensaje = "el server no procesa la peticion por lo larga que esta";
-                        break;
-                    case System.Net.HttpStatusCode.ResetContent:
-                        mensaje = "el  request se proceso correctamente pero no devuelve ningun contenido";
-                        break;
-                    case System.Net.HttpStatusCode.ServiceUnavailable:
-                        mensaje = " el servidor no está disponible temporalmente";
-                        break;
-                    case System.Net.HttpStatusCode.SwitchingProtocols:
-                        mensaje = "está cambiando la versión del protocolo o el protocolo.";
-                        break;
-                    case System.Net.HttpStatusCode.Unauthorized:
-                        mensaje = "el recurso solicitado requiere autenticación. ";
-                        break;
-                    case System.Net.HttpStatusCode.UnsupportedMediaType:
-                        mensaje = "indica que la solicitud es de un tipo no admitido.";
-                        break;
-                    case System.Net.HttpStatusCode.Unused:
-                        mensaje = "no esta ulilizado";
-                        break;
-                    case System.Net.HttpStatusCode.UpgradeRequired:
-                        mensaje = " el cliente debe cambiar a un protocolo diferente como TLS / 1.0";
-                        break;
-                    case System.Net.HttpStatusCode.UseProxy:
-                        mensaje = "recurso solicitado solo a travez de proxy";
-                        break;
-                }
-            }
-
             return mensaje;
         }
 

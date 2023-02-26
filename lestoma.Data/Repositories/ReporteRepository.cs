@@ -3,6 +3,8 @@ using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +62,7 @@ namespace lestoma.Data.Repositories
             return reporteDTO;
         }
 
-       
+
 
         public async Task<ReporteDTO> ReportByDate(ReportFilterRequest reporte)
         {
@@ -132,6 +134,35 @@ namespace lestoma.Data.Repositories
                 throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, @$"Error: {ex.Message}");
             }
             return reporteDTO;
+        }
+
+        public async Task<TimeSpan?> GetDailyReportTime(string kEY_REPORT_DAILY)
+        {
+            await using (NpgsqlConnection connection = new NpgsqlConnection(_db.Database.GetConnectionString()))
+            {
+                connection.Open();
+                var sql = "SELECT hg.score as fecha FROM hangfire_lestoma.set hg WHERE value = @key";
+
+                await using NpgsqlCommand command = connection.CreateCommand();
+                command.CommandText = sql;
+                command.Parameters.AddWithValue("@key", kEY_REPORT_DAILY);
+                NpgsqlDataReader reader = await command.ExecuteReaderAsync();
+                if (reader.HasRows)
+                {
+                    reader.Read();
+                    double value = (double)reader["fecha"];
+                    DateTime date = UnixTimeStampToDateTime(value);
+                    return new TimeSpan(date.Hour, date.Minute, date.Second);
+                }
+                return null;
+            }
+        }
+        private static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dateTime;
         }
     }
 }

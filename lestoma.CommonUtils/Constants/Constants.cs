@@ -22,6 +22,7 @@
         public const string REFRESH = "refresh";
         public const string PROTECT_USER = "UserInfo.Protector";
         public const string CACHE_REPORTE_KEY = "KEYREPORTE";
+        public const string KEY_REPORT_DAILY = "Enviar-reporte-diario";
         #endregion
 
         private static string Decript(string pwd)
