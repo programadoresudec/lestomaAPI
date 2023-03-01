@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31424.327
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.Api", "lestoma.Api\lestoma.Api.csproj", "{AB3F7DFF-08F0-4BCF-B113-C34CCCF42066}"
 EndProject
@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.Entidades", "lestom
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.CRC", "lestoma.CRC\lestoma.CRC.csproj", "{3CE9E339-1378-4CB0-B94C-3D7D18292E13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lestoma.Pruebas", "lestoma.Pruebas\lestoma.Pruebas.csproj", "{B24902AE-7A27-4370-911A-92980469956B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.Pruebas", "lestoma.Pruebas\lestoma.Pruebas.csproj", "{B24902AE-7A27-4370-911A-92980469956B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lestoma.Tests", "Lestoma.Tests\Lestoma.Tests.csproj", "{817A8F84-1343-4309-A9B7-803161B37A80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +113,18 @@ Global
 		{B24902AE-7A27-4370-911A-92980469956B}.Release|x64.Build.0 = Release|Any CPU
 		{B24902AE-7A27-4370-911A-92980469956B}.Release|x86.ActiveCfg = Release|Any CPU
 		{B24902AE-7A27-4370-911A-92980469956B}.Release|x86.Build.0 = Release|Any CPU
+		{817A8F84-1343-4309-A9B7-803161B37A80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{817A8F84-1343-4309-A9B7-803161B37A80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{817A8F84-1343-4309-A9B7-803161B37A80}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{817A8F84-1343-4309-A9B7-803161B37A80}.Debug|x64.Build.0 = Debug|Any CPU
+		{817A8F84-1343-4309-A9B7-803161B37A80}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{817A8F84-1343-4309-A9B7-803161B37A80}.Debug|x86.Build.0 = Debug|Any CPU
+		{817A8F84-1343-4309-A9B7-803161B37A80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{817A8F84-1343-4309-A9B7-803161B37A80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{817A8F84-1343-4309-A9B7-803161B37A80}.Release|x64.ActiveCfg = Release|Any CPU
+		{817A8F84-1343-4309-A9B7-803161B37A80}.Release|x64.Build.0 = Release|Any CPU
+		{817A8F84-1343-4309-A9B7-803161B37A80}.Release|x86.ActiveCfg = Release|Any CPU
+		{817A8F84-1343-4309-A9B7-803161B37A80}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

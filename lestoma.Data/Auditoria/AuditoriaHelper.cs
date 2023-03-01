@@ -66,7 +66,7 @@ namespace lestoma.Data.Auditoria
             }
         }
 
-        public string GetUsuarioActual()
+        public string GetSession()
         {
             try
             {

@@ -1,6 +1,5 @@
 ﻿using lestoma.CommonUtils.Interfaces;
 using lestoma.Entidades.Models;
-using lestoma.Entidades.ModelsReports;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -50,12 +49,6 @@ namespace lestoma.Data
         public DbSet<EModuloComponente> TablaModuloComponentes { get; set; }
         public DbSet<EProtocoloCOM> TablaProtocoloCOM { get; set; }
         public DbSet<EComponenteLaboratorio> TablaComponentesLaboratorio { get; set; }
-        public DbSet<EAlimentarPeces> TablaReporteAlimentarPeces { get; set; }
-        public DbSet<EControlAgua> TablaReporteControlAgua { get; set; }
-        public DbSet<EControlElectrico> TablaReporteControlElectrico { get; set; }
-        public DbSet<EControlEntorno> TablaReporteControlEntorno { get; set; }
-        public DbSet<EControlHidroponico> TablaReporteControlHidroponico { get; set; }
-        public DbSet<ERecirculacionAgua> TablaReporteRecirculacionAgua { get; set; }
 
         #endregion
 
@@ -106,15 +99,8 @@ namespace lestoma.Data
             modelBuilder.Entity<EProtocoloCOM>().ToTable("protocolo_com", "laboratorio_lestoma");
             #endregion
 
-            #region Schema Reportes
+            #region Schema buzon de Reportes
             modelBuilder.Entity<EBuzon>().ToTable("buzon", "reportes");
-            modelBuilder.Entity<EAlimentarPeces>().ToTable("alimentar_peces", "reportes");
-            modelBuilder.Entity<EControlAgua>().ToTable("control_de_agua", "reportes");
-            modelBuilder.Entity<EControlElectrico>().ToTable("control_electrico", "reportes");
-            modelBuilder.Entity<EControlEntorno>().ToTable("control_de_entorno", "reportes");
-            modelBuilder.Entity<EControlHidroponico>().ToTable("control_hidroponico", "reportes");
-            modelBuilder.Entity<ERecirculacionAgua>().ToTable("recirculacion_de_agua", "reportes");
-
             #endregion
 
             /// restringe el eliminar en cascada
@@ -124,10 +110,10 @@ namespace lestoma.Data
             {
                 item.DeleteBehavior = DeleteBehavior.Restrict;
             }
-            
+
             /// guarda data generica al hacer migration de database
-            SeedData.SaveData(modelBuilder, _camposAuditoria.GetDesencrytedIp(), _camposAuditoria.GetTipoDeAplicacion(), _camposAuditoria.GetUsuarioActual());
-            
+            SeedData.SaveData(modelBuilder, _camposAuditoria.GetDesencrytedIp(), _camposAuditoria.GetTipoDeAplicacion(), _camposAuditoria.GetSession());
+
             base.OnModelCreating(modelBuilder);
         }
         #endregion
@@ -140,7 +126,7 @@ namespace lestoma.Data
             {
                 var entidad = item.Entity as ECamposAuditoria;
                 entidad.Ip = _camposAuditoria.GetDesencrytedIp();
-                entidad.Session = _camposAuditoria.GetUsuarioActual();
+                entidad.Session = _camposAuditoria.GetSession();
                 entidad.TipoDeAplicacion = _camposAuditoria.GetTipoDeAplicacion();
                 entidad.FechaCreacionServer = DateTime.Now;
             }
@@ -150,9 +136,9 @@ namespace lestoma.Data
             {
                 var entidad = item.Entity as ECamposAuditoria;
                 entidad.Ip = _camposAuditoria.GetDesencrytedIp();
-                entidad.Session = _camposAuditoria.GetUsuarioActual();
+                entidad.Session = _camposAuditoria.GetSession();
                 entidad.TipoDeAplicacion = _camposAuditoria.GetTipoDeAplicacion();
-                entidad.FechaCreacionServer = DateTime.Now;
+                entidad.FechaActualizacionServer = DateTime.Now;
             }
         }
         #endregion

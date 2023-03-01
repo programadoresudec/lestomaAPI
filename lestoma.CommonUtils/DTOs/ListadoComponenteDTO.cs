@@ -24,6 +24,7 @@ namespace lestoma.CommonUtils.DTOs
         public string Actividad { get; set; }
         public string Upa { get; set; }
         public string Nombre { get; set; }
+        public byte DireccionRegistro { get; set; }
         public EstadoComponenteDTO TipoEstadoComponente { get; set; }
     }
 }

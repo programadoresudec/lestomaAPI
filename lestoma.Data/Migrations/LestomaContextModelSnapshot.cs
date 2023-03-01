@@ -26,6 +26,10 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<DateTime?>("FechaActualizacionServer")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("fecha_actualizacion_server");
+
                     b.Property<DateTime>("FechaCreacionServer")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("fecha_creacion_server");
@@ -57,8 +61,8 @@ namespace lestoma.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a457d4bd-3921-4a22-8d77-6d895de743c3"),
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 565, DateTimeKind.Local).AddTicks(513),
+                            Id = new Guid("5679927b-6e94-445a-9c9f-74c08178c262"),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 37, DateTimeKind.Local).AddTicks(9846),
                             Ip = "N/A",
                             Nombre = "control de agua",
                             Session = "Anonimo",
@@ -66,8 +70,8 @@ namespace lestoma.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("9d229436-a9c7-4849-a840-055af0c2b5a9"),
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 565, DateTimeKind.Local).AddTicks(567),
+                            Id = new Guid("f93a4811-fdb2-4234-959c-4c4ebb627ccb"),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 37, DateTimeKind.Local).AddTicks(9881),
                             Ip = "N/A",
                             Nombre = "alimentacion de peces",
                             Session = "Anonimo",
@@ -220,6 +224,10 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("smallint")
                         .HasColumnName("direccion_registro");
 
+                    b.Property<DateTime?>("FechaActualizacionServer")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("fecha_actualizacion_server");
+
                     b.Property<DateTime>("FechaCreacionServer")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("fecha_creacion_server");
@@ -270,101 +278,101 @@ namespace lestoma.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("003bbddd-22fa-468e-b0c8-b66ac1586cd4"),
-                            ActividadId = new Guid("9d229436-a9c7-4849-a840-055af0c2b5a9"),
+                            Id = new Guid("e95f08ab-6b4e-4d1f-aea7-85f0dc6848bf"),
+                            ActividadId = new Guid("f93a4811-fdb2-4234-959c-4c4ebb627ccb"),
                             DireccionRegistro = (byte)0,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 700, DateTimeKind.Local).AddTicks(1799),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 169, DateTimeKind.Local).AddTicks(9043),
                             Ip = "N/A",
-                            JsonEstadoComponente = "{\"Id\":\"98a74bd5-7390-4244-8b2e-255d3707071d\",\"TipoEstado\":\"ON-OFF\",\"ByteHexaFuncion\":\"F0\",\"ByteDecimalFuncion\":240}",
-                            ModuloComponenteId = new Guid("f7af0026-c029-4b24-b465-8e9f889ac9b8"),
+                            JsonEstadoComponente = "{\r\n  \"Id\": \"98a74bd5-7390-4244-8b2e-255d3707071d\",\r\n  \"TipoEstado\": \"ON-OFF\",\r\n  \"ByteHexaFuncion\": \"F0\",\r\n  \"ByteDecimalFuncion\": 240\r\n}",
+                            ModuloComponenteId = new Guid("7387b7ae-26af-434f-a83c-e29135629f97"),
                             NombreComponente = "BOMBA DE OXIGENO",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82")
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720")
                         },
                         new
                         {
-                            Id = new Guid("b7f743f6-6bfd-4aba-bfdf-e64bc5575ee9"),
-                            ActividadId = new Guid("9d229436-a9c7-4849-a840-055af0c2b5a9"),
+                            Id = new Guid("853929b3-bee1-4601-9cf0-8704d43fb771"),
+                            ActividadId = new Guid("f93a4811-fdb2-4234-959c-4c4ebb627ccb"),
                             DireccionRegistro = (byte)1,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 700, DateTimeKind.Local).AddTicks(2238),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 169, DateTimeKind.Local).AddTicks(9479),
                             Ip = "N/A",
-                            JsonEstadoComponente = "{\"Id\":\"98a74bd5-7390-4244-8b2e-255d3707071d\",\"TipoEstado\":\"ON-OFF\",\"ByteHexaFuncion\":\"F0\",\"ByteDecimalFuncion\":240}",
-                            ModuloComponenteId = new Guid("f7af0026-c029-4b24-b465-8e9f889ac9b8"),
+                            JsonEstadoComponente = "{\r\n  \"Id\": \"98a74bd5-7390-4244-8b2e-255d3707071d\",\r\n  \"TipoEstado\": \"ON-OFF\",\r\n  \"ByteHexaFuncion\": \"F0\",\r\n  \"ByteDecimalFuncion\": 240\r\n}",
+                            ModuloComponenteId = new Guid("7387b7ae-26af-434f-a83c-e29135629f97"),
                             NombreComponente = "LUZ ESTANQUE",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82")
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720")
                         },
                         new
                         {
-                            Id = new Guid("05bc358d-92ef-46a8-9588-918275f3a5ba"),
-                            ActividadId = new Guid("9d229436-a9c7-4849-a840-055af0c2b5a9"),
+                            Id = new Guid("4a8e6897-7a48-4f18-92c0-ad07b24a1aaf"),
+                            ActividadId = new Guid("f93a4811-fdb2-4234-959c-4c4ebb627ccb"),
                             DireccionRegistro = (byte)3,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 701, DateTimeKind.Local).AddTicks(4121),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 170, DateTimeKind.Local).AddTicks(9670),
                             Ip = "N/A",
-                            JsonEstadoComponente = "{\"Id\":\"98a74bd5-7390-4244-8b2e-255d3707071d\",\"TipoEstado\":\"ON-OFF\",\"ByteHexaFuncion\":\"F0\",\"ByteDecimalFuncion\":240}",
-                            ModuloComponenteId = new Guid("f7af0026-c029-4b24-b465-8e9f889ac9b8"),
+                            JsonEstadoComponente = "{\r\n  \"Id\": \"98a74bd5-7390-4244-8b2e-255d3707071d\",\r\n  \"TipoEstado\": \"ON-OFF\",\r\n  \"ByteHexaFuncion\": \"F0\",\r\n  \"ByteDecimalFuncion\": 240\r\n}",
+                            ModuloComponenteId = new Guid("7387b7ae-26af-434f-a83c-e29135629f97"),
                             NombreComponente = "DOSIFICADOR DE ALIMENTO",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82")
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720")
                         },
                         new
                         {
-                            Id = new Guid("100b0b78-1454-4034-b595-fc3099029e15"),
-                            ActividadId = new Guid("a457d4bd-3921-4a22-8d77-6d895de743c3"),
+                            Id = new Guid("629a5dcc-c2ec-4282-a619-3d52b0d5c5d2"),
+                            ActividadId = new Guid("5679927b-6e94-445a-9c9f-74c08178c262"),
                             DireccionRegistro = (byte)2,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 701, DateTimeKind.Local).AddTicks(4147),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 170, DateTimeKind.Local).AddTicks(9687),
                             Ip = "N/A",
-                            JsonEstadoComponente = "{\"Id\":\"f5f738c7-0dba-48ee-afea-b22530160653\",\"TipoEstado\":\"LECTURA\",\"ByteHexaFuncion\":\"0F\",\"ByteDecimalFuncion\":15}",
-                            ModuloComponenteId = new Guid("a0891542-c300-486e-b6e8-7f544804ba1b"),
+                            JsonEstadoComponente = "{\r\n  \"Id\": \"f5f738c7-0dba-48ee-afea-b22530160653\",\r\n  \"TipoEstado\": \"LECTURA\",\r\n  \"ByteHexaFuncion\": \"0F\",\r\n  \"ByteDecimalFuncion\": 15\r\n}",
+                            ModuloComponenteId = new Guid("05dc2a4b-7add-4d2a-94cd-f5be14472739"),
                             NombreComponente = "TEMPERATURA H2O",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82")
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720")
                         },
                         new
                         {
-                            Id = new Guid("2fb34f39-a4d5-446d-8dc8-f4fd71587ad8"),
-                            ActividadId = new Guid("a457d4bd-3921-4a22-8d77-6d895de743c3"),
+                            Id = new Guid("556a8400-6ca7-4986-b1a8-b5d9982e1ffd"),
+                            ActividadId = new Guid("5679927b-6e94-445a-9c9f-74c08178c262"),
                             DireccionRegistro = (byte)0,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 701, DateTimeKind.Local).AddTicks(4157),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 170, DateTimeKind.Local).AddTicks(9714),
                             Ip = "N/A",
-                            JsonEstadoComponente = "{\"Id\":\"f5f738c7-0dba-48ee-afea-b22530160653\",\"TipoEstado\":\"LECTURA\",\"ByteHexaFuncion\":\"0F\",\"ByteDecimalFuncion\":15}",
-                            ModuloComponenteId = new Guid("a0891542-c300-486e-b6e8-7f544804ba1b"),
+                            JsonEstadoComponente = "{\r\n  \"Id\": \"f5f738c7-0dba-48ee-afea-b22530160653\",\r\n  \"TipoEstado\": \"LECTURA\",\r\n  \"ByteHexaFuncion\": \"0F\",\r\n  \"ByteDecimalFuncion\": 15\r\n}",
+                            ModuloComponenteId = new Guid("05dc2a4b-7add-4d2a-94cd-f5be14472739"),
                             NombreComponente = "PH",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82")
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720")
                         },
                         new
                         {
-                            Id = new Guid("a1564c77-c91c-44f9-82b9-ea17530781c2"),
-                            ActividadId = new Guid("a457d4bd-3921-4a22-8d77-6d895de743c3"),
+                            Id = new Guid("8d0f4ea7-c228-4a2a-b804-5612bf31d997"),
+                            ActividadId = new Guid("5679927b-6e94-445a-9c9f-74c08178c262"),
                             DireccionRegistro = (byte)1,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 701, DateTimeKind.Local).AddTicks(4196),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 170, DateTimeKind.Local).AddTicks(9719),
                             Ip = "N/A",
-                            JsonEstadoComponente = "{\"Id\":\"f5f738c7-0dba-48ee-afea-b22530160653\",\"TipoEstado\":\"LECTURA\",\"ByteHexaFuncion\":\"0F\",\"ByteDecimalFuncion\":15}",
-                            ModuloComponenteId = new Guid("a0891542-c300-486e-b6e8-7f544804ba1b"),
+                            JsonEstadoComponente = "{\r\n  \"Id\": \"f5f738c7-0dba-48ee-afea-b22530160653\",\r\n  \"TipoEstado\": \"LECTURA\",\r\n  \"ByteHexaFuncion\": \"0F\",\r\n  \"ByteDecimalFuncion\": 15\r\n}",
+                            ModuloComponenteId = new Guid("05dc2a4b-7add-4d2a-94cd-f5be14472739"),
                             NombreComponente = "NIVEL TANQUE",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82")
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720")
                         },
                         new
                         {
-                            Id = new Guid("982114e1-3233-47a4-9587-f1c062078227"),
-                            ActividadId = new Guid("a457d4bd-3921-4a22-8d77-6d895de743c3"),
+                            Id = new Guid("6b693418-b841-4284-9315-6659b5d255e9"),
+                            ActividadId = new Guid("5679927b-6e94-445a-9c9f-74c08178c262"),
                             DireccionRegistro = (byte)7,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 701, DateTimeKind.Local).AddTicks(4205),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 170, DateTimeKind.Local).AddTicks(9725),
                             Ip = "N/A",
-                            JsonEstadoComponente = "{\"Id\":\"c781773b-7d7c-47f7-b5d0-34a4943ba907\",\"TipoEstado\":\"AJUSTE\",\"ByteHexaFuncion\":\"F0\",\"ByteDecimalFuncion\":240}",
-                            ModuloComponenteId = new Guid("d67960bc-152c-4a9d-adac-7dd0ec51b9dc"),
+                            JsonEstadoComponente = "{\r\n  \"Id\": \"c781773b-7d7c-47f7-b5d0-34a4943ba907\",\r\n  \"TipoEstado\": \"AJUSTE\",\r\n  \"ByteHexaFuncion\": \"F0\",\r\n  \"ByteDecimalFuncion\": 240\r\n}",
+                            ModuloComponenteId = new Guid("4edb4a8e-167b-4019-8e37-dd486051f4b3"),
                             NombreComponente = "SP_TEMPERATURA H2O",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82")
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720")
                         });
                 });
 
@@ -446,9 +454,6 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("tipo_de_aplicacion");
 
-                    b.Property<int?>("TipoDeComunicacionId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("TramaEnviada")
                         .HasColumnType("text")
                         .HasColumnName("trama_enviada");
@@ -469,18 +474,16 @@ namespace lestoma.Data.Migrations
 
                     b.HasIndex("ComponenteLaboratorioId");
 
-                    b.HasIndex("TipoDeComunicacionId");
-
                     b.ToTable("detalle_laboratorio", "laboratorio_lestoma");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("65bf6fc3-e7f4-4fe0-b523-a15c67e487dd"),
-                            ComponenteLaboratorioId = new Guid("003bbddd-22fa-468e-b0c8-b66ac1586cd4"),
+                            Id = new Guid("352d30b6-44c2-4da7-aace-8156dcff8589"),
+                            ComponenteLaboratorioId = new Guid("e95f08ab-6b4e-4d1f-aea7-85f0dc6848bf"),
                             EstadoInternet = true,
-                            FechaCreacionDispositivo = new DateTime(2023, 2, 23, 20, 39, 30, 702, DateTimeKind.Local).AddTicks(979),
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 701, DateTimeKind.Local).AddTicks(9853),
+                            FechaCreacionDispositivo = new DateTime(2023, 2, 27, 20, 51, 55, 171, DateTimeKind.Local).AddTicks(7767),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 171, DateTimeKind.Local).AddTicks(3764),
                             Ip = "N/A",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
@@ -490,11 +493,11 @@ namespace lestoma.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("837cca96-ca85-4fa0-8491-79b0732e9bcd"),
-                            ComponenteLaboratorioId = new Guid("b7f743f6-6bfd-4aba-bfdf-e64bc5575ee9"),
+                            Id = new Guid("13324fde-11cf-4756-9a30-88afe097d678"),
+                            ComponenteLaboratorioId = new Guid("853929b3-bee1-4601-9cf0-8704d43fb771"),
                             EstadoInternet = true,
-                            FechaCreacionDispositivo = new DateTime(2023, 2, 23, 20, 39, 30, 702, DateTimeKind.Local).AddTicks(1849),
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 702, DateTimeKind.Local).AddTicks(1839),
+                            FechaCreacionDispositivo = new DateTime(2023, 2, 27, 20, 51, 55, 171, DateTimeKind.Local).AddTicks(9054),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 171, DateTimeKind.Local).AddTicks(9040),
                             Ip = "N/A",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
@@ -504,11 +507,11 @@ namespace lestoma.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("3048fe79-ef3f-401a-b252-f74e7abaa9bd"),
-                            ComponenteLaboratorioId = new Guid("2fb34f39-a4d5-446d-8dc8-f4fd71587ad8"),
+                            Id = new Guid("f67d3f0c-3957-4a8a-9502-8f5ca567b86b"),
+                            ComponenteLaboratorioId = new Guid("556a8400-6ca7-4986-b1a8-b5d9982e1ffd"),
                             EstadoInternet = true,
-                            FechaCreacionDispositivo = new DateTime(2023, 2, 23, 20, 39, 30, 702, DateTimeKind.Local).AddTicks(1856),
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 702, DateTimeKind.Local).AddTicks(1854),
+                            FechaCreacionDispositivo = new DateTime(2023, 2, 27, 20, 51, 55, 171, DateTimeKind.Local).AddTicks(9065),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 171, DateTimeKind.Local).AddTicks(9063),
                             Ip = "N/A",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
@@ -518,11 +521,11 @@ namespace lestoma.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("0538cc1c-59a7-4f25-89ed-3b977d32b34a"),
-                            ComponenteLaboratorioId = new Guid("2fb34f39-a4d5-446d-8dc8-f4fd71587ad8"),
+                            Id = new Guid("d99db055-ef37-4e23-a63c-e910903ce182"),
+                            ComponenteLaboratorioId = new Guid("556a8400-6ca7-4986-b1a8-b5d9982e1ffd"),
                             EstadoInternet = true,
-                            FechaCreacionDispositivo = new DateTime(2023, 2, 23, 20, 39, 30, 702, DateTimeKind.Local).AddTicks(1860),
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 702, DateTimeKind.Local).AddTicks(1859),
+                            FechaCreacionDispositivo = new DateTime(2023, 2, 27, 20, 51, 55, 171, DateTimeKind.Local).AddTicks(9072),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 171, DateTimeKind.Local).AddTicks(9070),
                             Ip = "N/A",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
@@ -532,11 +535,11 @@ namespace lestoma.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("e61c3ed2-c32d-43dc-a329-ea5f50b10e0b"),
-                            ComponenteLaboratorioId = new Guid("982114e1-3233-47a4-9587-f1c062078227"),
+                            Id = new Guid("d4215f60-0b93-4a16-b951-08f75a43e03b"),
+                            ComponenteLaboratorioId = new Guid("6b693418-b841-4284-9315-6659b5d255e9"),
                             EstadoInternet = true,
-                            FechaCreacionDispositivo = new DateTime(2023, 2, 23, 20, 39, 30, 702, DateTimeKind.Local).AddTicks(2330),
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 702, DateTimeKind.Local).AddTicks(2322),
+                            FechaCreacionDispositivo = new DateTime(2023, 2, 27, 20, 51, 55, 172, DateTimeKind.Local).AddTicks(817),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 172, DateTimeKind.Local).AddTicks(797),
                             Ip = "N/A",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local",
@@ -553,6 +556,10 @@ namespace lestoma.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<DateTime?>("FechaActualizacionServer")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("fecha_actualizacion_server");
 
                     b.Property<DateTime>("FechaCreacionServer")
                         .HasColumnType("timestamp without time zone")
@@ -585,8 +592,8 @@ namespace lestoma.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f7af0026-c029-4b24-b465-8e9f889ac9b8"),
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 512, DateTimeKind.Local).AddTicks(3162),
+                            Id = new Guid("7387b7ae-26af-434f-a83c-e29135629f97"),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 54, 992, DateTimeKind.Local).AddTicks(1392),
                             Ip = "N/A",
                             Nombre = "ACTUADORES",
                             Session = "Anonimo",
@@ -594,8 +601,8 @@ namespace lestoma.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a0891542-c300-486e-b6e8-7f544804ba1b"),
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 512, DateTimeKind.Local).AddTicks(5830),
+                            Id = new Guid("05dc2a4b-7add-4d2a-94cd-f5be14472739"),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 54, 992, DateTimeKind.Local).AddTicks(3520),
                             Ip = "N/A",
                             Nombre = "SENSORES",
                             Session = "Anonimo",
@@ -603,8 +610,8 @@ namespace lestoma.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("d67960bc-152c-4a9d-adac-7dd0ec51b9dc"),
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 512, DateTimeKind.Local).AddTicks(5850),
+                            Id = new Guid("4edb4a8e-167b-4019-8e37-dd486051f4b3"),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 54, 992, DateTimeKind.Local).AddTicks(3533),
                             Ip = "N/A",
                             Nombre = "SET_POINT/CONTROL",
                             Session = "Anonimo",
@@ -652,7 +659,7 @@ namespace lestoma.Data.Migrations
                             Nombre = "Peer to Peer",
                             PrimerByteTrama = (byte)73,
                             Sigla = "PP",
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82")
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720")
                         },
                         new
                         {
@@ -660,7 +667,7 @@ namespace lestoma.Data.Migrations
                             Nombre = "Broad Cast",
                             PrimerByteTrama = (byte)111,
                             Sigla = "BS",
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82")
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720")
                         },
                         new
                         {
@@ -668,7 +675,7 @@ namespace lestoma.Data.Migrations
                             Nombre = "Peer to Peer",
                             PrimerByteTrama = (byte)73,
                             Sigla = "PP",
-                            UpaId = new Guid("7f73daea-1775-4a22-a58e-d050482f9dd7")
+                            UpaId = new Guid("9d935e26-2353-447e-97ba-5c3eccab9059")
                         },
                         new
                         {
@@ -676,7 +683,7 @@ namespace lestoma.Data.Migrations
                             Nombre = "Broad Cast",
                             PrimerByteTrama = (byte)111,
                             Sigla = "BS",
-                            UpaId = new Guid("7f73daea-1775-4a22-a58e-d050482f9dd7")
+                            UpaId = new Guid("9d935e26-2353-447e-97ba-5c3eccab9059")
                         });
                 });
 
@@ -760,6 +767,10 @@ namespace lestoma.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("descripcion");
 
+                    b.Property<DateTime?>("FechaActualizacionServer")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("fecha_actualizacion_server");
+
                     b.Property<DateTime>("FechaCreacionServer")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("fecha_creacion_server");
@@ -795,10 +806,10 @@ namespace lestoma.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82"),
+                            Id = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720"),
                             CantidadActividades = (short)5,
                             Descripcion = "queda ubicada en facatativá",
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 559, DateTimeKind.Local).AddTicks(1840),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 33, DateTimeKind.Local).AddTicks(6056),
                             Ip = "N/A",
                             Nombre = "finca el vergel",
                             Session = "Anonimo",
@@ -807,10 +818,10 @@ namespace lestoma.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("7f73daea-1775-4a22-a58e-d050482f9dd7"),
+                            Id = new Guid("9d935e26-2353-447e-97ba-5c3eccab9059"),
                             CantidadActividades = (short)2,
                             Descripcion = "queda ubicada en la universidad cundinamarca extensión faca",
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 559, DateTimeKind.Local).AddTicks(1919),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 33, DateTimeKind.Local).AddTicks(6093),
                             Ip = "N/A",
                             Nombre = "ucundinamarca",
                             Session = "Anonimo",
@@ -832,6 +843,10 @@ namespace lestoma.Data.Migrations
                     b.Property<int>("UsuarioId")
                         .HasColumnType("integer")
                         .HasColumnName("usuario_id");
+
+                    b.Property<DateTime?>("FechaActualizacionServer")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("fecha_actualizacion_server");
 
                     b.Property<DateTime>("FechaCreacionServer")
                         .HasColumnType("timestamp without time zone")
@@ -863,60 +878,60 @@ namespace lestoma.Data.Migrations
                     b.HasData(
                         new
                         {
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82"),
-                            ActividadId = new Guid("a457d4bd-3921-4a22-8d77-6d895de743c3"),
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720"),
+                            ActividadId = new Guid("5679927b-6e94-445a-9c9f-74c08178c262"),
                             UsuarioId = 3,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 565, DateTimeKind.Local).AddTicks(5705),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 38, DateTimeKind.Local).AddTicks(2873),
                             Ip = "N/A",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
                         new
                         {
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82"),
-                            ActividadId = new Guid("9d229436-a9c7-4849-a840-055af0c2b5a9"),
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720"),
+                            ActividadId = new Guid("f93a4811-fdb2-4234-959c-4c4ebb627ccb"),
                             UsuarioId = 3,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 565, DateTimeKind.Local).AddTicks(5726),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 38, DateTimeKind.Local).AddTicks(2889),
                             Ip = "N/A",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
                         new
                         {
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82"),
-                            ActividadId = new Guid("a457d4bd-3921-4a22-8d77-6d895de743c3"),
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720"),
+                            ActividadId = new Guid("5679927b-6e94-445a-9c9f-74c08178c262"),
                             UsuarioId = 4,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 565, DateTimeKind.Local).AddTicks(5732),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 38, DateTimeKind.Local).AddTicks(2892),
                             Ip = "N/A",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
                         new
                         {
-                            UpaId = new Guid("2cd48cd9-d3a3-4910-a430-474b42458b82"),
-                            ActividadId = new Guid("9d229436-a9c7-4849-a840-055af0c2b5a9"),
+                            UpaId = new Guid("d9e6e4cf-043f-4b0c-b960-6489f71e7720"),
+                            ActividadId = new Guid("f93a4811-fdb2-4234-959c-4c4ebb627ccb"),
                             UsuarioId = 4,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 565, DateTimeKind.Local).AddTicks(5735),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 38, DateTimeKind.Local).AddTicks(2895),
                             Ip = "N/A",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
                         new
                         {
-                            UpaId = new Guid("7f73daea-1775-4a22-a58e-d050482f9dd7"),
-                            ActividadId = new Guid("a457d4bd-3921-4a22-8d77-6d895de743c3"),
+                            UpaId = new Guid("9d935e26-2353-447e-97ba-5c3eccab9059"),
+                            ActividadId = new Guid("5679927b-6e94-445a-9c9f-74c08178c262"),
                             UsuarioId = 5,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 565, DateTimeKind.Local).AddTicks(5739),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 38, DateTimeKind.Local).AddTicks(2898),
                             Ip = "N/A",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
                         new
                         {
-                            UpaId = new Guid("7f73daea-1775-4a22-a58e-d050482f9dd7"),
-                            ActividadId = new Guid("9d229436-a9c7-4849-a840-055af0c2b5a9"),
+                            UpaId = new Guid("9d935e26-2353-447e-97ba-5c3eccab9059"),
+                            ActividadId = new Guid("f93a4811-fdb2-4234-959c-4c4ebb627ccb"),
                             UsuarioId = 5,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 565, DateTimeKind.Local).AddTicks(5743),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 38, DateTimeKind.Local).AddTicks(2900),
                             Ip = "N/A",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
@@ -953,6 +968,10 @@ namespace lestoma.Data.Migrations
                     b.Property<int>("EstadoId")
                         .HasColumnType("integer")
                         .HasColumnName("estado_id");
+
+                    b.Property<DateTime?>("FechaActualizacionServer")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("fecha_actualizacion_server");
 
                     b.Property<DateTime>("FechaCreacionServer")
                         .HasColumnType("timestamp without time zone")
@@ -1004,14 +1023,14 @@ namespace lestoma.Data.Migrations
                         {
                             Id = 2,
                             Apellido = "Lestoma-APP",
-                            Clave = "/+bAZfRo19ISeopIZznRcYFZiKKdQge0bTCgO+nYPTs=",
+                            Clave = "SqBCPAc/Va0ra6oJGBfhYVaZFSyixtuF72y7mSXxbuY=",
                             Email = "diegop177@hotmail.com",
                             EstadoId = 2,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 541, DateTimeKind.Local).AddTicks(4109),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 16, DateTimeKind.Local).AddTicks(9068),
                             Ip = "N/A",
                             Nombre = "Diego-Super",
                             RolId = 1,
-                            Salt = "EHjW1Ad4fzFth3q8KDXD9A==",
+                            Salt = "omvm2+Y4TJcdRZcKVDyUQA==",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
@@ -1019,14 +1038,14 @@ namespace lestoma.Data.Migrations
                         {
                             Id = 1,
                             Apellido = "Movil",
-                            Clave = "/+bAZfRo19ISeopIZznRcYFZiKKdQge0bTCgO+nYPTs=",
+                            Clave = "SqBCPAc/Va0ra6oJGBfhYVaZFSyixtuF72y7mSXxbuY=",
                             Email = "lestomaudecmovil@gmail.com",
                             EstadoId = 2,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 540, DateTimeKind.Local).AddTicks(9758),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 16, DateTimeKind.Local).AddTicks(5506),
                             Ip = "N/A",
                             Nombre = "Lestoma-APP",
                             RolId = 1,
-                            Salt = "EHjW1Ad4fzFth3q8KDXD9A==",
+                            Salt = "omvm2+Y4TJcdRZcKVDyUQA==",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
@@ -1034,14 +1053,14 @@ namespace lestoma.Data.Migrations
                         {
                             Id = 3,
                             Apellido = "Lestoma",
-                            Clave = "dvGgJ9o5nMlPSToK69ygyqhLbqpOW2Gfz+YDla3HHJI=",
+                            Clave = "25AA4SF9hb7eCuxBNmWHE0galR+GwmprI41LT5GjkGo=",
                             Email = "diegoarturo1598@hotmail.com",
                             EstadoId = 2,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 549, DateTimeKind.Local).AddTicks(4396),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 24, DateTimeKind.Local).AddTicks(7658),
                             Ip = "N/A",
                             Nombre = "Administrador",
                             RolId = 2,
-                            Salt = "/Xiw7gavBof1n369KxJEbw==",
+                            Salt = "zt9vX3AnKFO9ZMYM5OSPZA==",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
@@ -1049,14 +1068,14 @@ namespace lestoma.Data.Migrations
                         {
                             Id = 4,
                             Apellido = "Lestoma",
-                            Clave = "wtZMpvYqfF9xBzkhjiiQ/An2PGtDwnQQzvqZK7Sg3p4=",
+                            Clave = "2lSzmKUBtbnWulyFDr45UumQ7Pg7X96PPlobrXjECFM=",
                             Email = "programadoresuc@outlook.com",
                             EstadoId = 2,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 557, DateTimeKind.Local).AddTicks(4040),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 32, DateTimeKind.Local).AddTicks(5692),
                             Ip = "N/A",
                             Nombre = "Auxiliar 1",
                             RolId = 3,
-                            Salt = "+TqRSWfwd/Garx9tKWcypw==",
+                            Salt = "qWXTQ7izTdauqGVF/Oawxg==",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         },
@@ -1064,167 +1083,17 @@ namespace lestoma.Data.Migrations
                         {
                             Id = 5,
                             Apellido = "Lestoma",
-                            Clave = "wtZMpvYqfF9xBzkhjiiQ/An2PGtDwnQQzvqZK7Sg3p4=",
+                            Clave = "2lSzmKUBtbnWulyFDr45UumQ7Pg7X96PPlobrXjECFM=",
                             Email = "tudec2020@gmail.com",
                             EstadoId = 2,
-                            FechaCreacionServer = new DateTime(2023, 2, 23, 20, 39, 30, 557, DateTimeKind.Local).AddTicks(4091),
+                            FechaCreacionServer = new DateTime(2023, 2, 27, 20, 51, 55, 32, DateTimeKind.Local).AddTicks(5735),
                             Ip = "N/A",
                             Nombre = "Auxiliar 2",
                             RolId = 3,
-                            Salt = "+TqRSWfwd/Garx9tKWcypw==",
+                            Salt = "qWXTQ7izTdauqGVF/Oawxg==",
                             Session = "Anonimo",
                             TipoDeAplicacion = "Local"
                         });
-                });
-
-            modelBuilder.Entity("lestoma.Entidades.ModelsReports.EAlimentarPeces", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("AnteriorRegistroId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("anterior_registro_id");
-
-                    b.Property<string>("DetalleJson")
-                        .IsRequired()
-                        .HasColumnType("jsonb")
-                        .HasColumnName("detalle");
-
-                    b.Property<Guid>("DetalleLaboratorioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("detalle_laboratorio_id");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("alimentar_peces", "reportes");
-                });
-
-            modelBuilder.Entity("lestoma.Entidades.ModelsReports.EControlAgua", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("AnteriorRegistroId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("anterior_registro_id");
-
-                    b.Property<string>("DetalleJson")
-                        .IsRequired()
-                        .HasColumnType("jsonb")
-                        .HasColumnName("detalle");
-
-                    b.Property<Guid>("DetalleLaboratorioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("detalle_laboratorio_id");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("control_de_agua", "reportes");
-                });
-
-            modelBuilder.Entity("lestoma.Entidades.ModelsReports.EControlElectrico", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("AnteriorRegistroId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("anterior_registro_id");
-
-                    b.Property<string>("DetalleJson")
-                        .IsRequired()
-                        .HasColumnType("jsonb")
-                        .HasColumnName("detalle");
-
-                    b.Property<Guid>("DetalleLaboratorioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("detalle_laboratorio_id");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("control_electrico", "reportes");
-                });
-
-            modelBuilder.Entity("lestoma.Entidades.ModelsReports.EControlEntorno", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("AnteriorRegistroId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("anterior_registro_id");
-
-                    b.Property<string>("DetalleJson")
-                        .IsRequired()
-                        .HasColumnType("jsonb")
-                        .HasColumnName("detalle");
-
-                    b.Property<Guid>("DetalleLaboratorioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("detalle_laboratorio_id");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("control_de_entorno", "reportes");
-                });
-
-            modelBuilder.Entity("lestoma.Entidades.ModelsReports.EControlHidroponico", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("AnteriorRegistroId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("anterior_registro_id");
-
-                    b.Property<string>("DetalleJson")
-                        .IsRequired()
-                        .HasColumnType("jsonb")
-                        .HasColumnName("detalle");
-
-                    b.Property<Guid>("DetalleLaboratorioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("detalle_laboratorio_id");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("control_hidroponico", "reportes");
-                });
-
-            modelBuilder.Entity("lestoma.Entidades.ModelsReports.ERecirculacionAgua", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("AnteriorRegistroId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("anterior_registro_id");
-
-                    b.Property<string>("DetalleJson")
-                        .IsRequired()
-                        .HasColumnType("jsonb")
-                        .HasColumnName("detalle");
-
-                    b.Property<Guid>("DetalleLaboratorioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("detalle_laboratorio_id");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("recirculacion_de_agua", "reportes");
                 });
 
             modelBuilder.Entity("lestoma.Entidades.Models.EComponenteLaboratorio", b =>
@@ -1262,13 +1131,7 @@ namespace lestoma.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("lestoma.Entidades.Models.EProtocoloCOM", "TipoDeComunicacion")
-                        .WithMany()
-                        .HasForeignKey("TipoDeComunicacionId");
-
                     b.Navigation("ComponenteLaboratorio");
-
-                    b.Navigation("TipoDeComunicacion");
                 });
 
             modelBuilder.Entity("lestoma.Entidades.Models.EProtocoloCOM", b =>

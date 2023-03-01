@@ -1,8 +1,6 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Helpers;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace lestoma.CommonUtils.Listados
 {

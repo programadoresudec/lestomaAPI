@@ -32,7 +32,7 @@ namespace lestoma.CommonUtils.Requests
             {
                 this.TipoEstadoComponente.Id = Guid.NewGuid();
             }
-            return JsonConvert.SerializeObject(TipoEstadoComponente);
+            return JsonConvert.SerializeObject(TipoEstadoComponente, formatting: Formatting.Indented);
         }
     }
 

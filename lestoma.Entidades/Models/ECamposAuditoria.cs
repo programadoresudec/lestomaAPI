@@ -18,5 +18,7 @@ namespace lestoma.Entidades.Models
         [Column("fecha_creacion_server")]
         [Required(ErrorMessage = "Campo requerido.")]
         public DateTime FechaCreacionServer { get; set; }
+        [Column("fecha_actualizacion_server")]
+        public DateTime? FechaActualizacionServer { get; set; }
     }
 }

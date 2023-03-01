@@ -6,9 +6,14 @@
     <OutputType>Library</OutputType>
     <StartupObject></StartupObject>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Listados\JsonTest.json" />
+  </ItemGroup>
   
   <ItemGroup>
     <EmbeddedResource Include="Listados\EstadosDeComponentes.json" />
+    <EmbeddedResource Include="Listados\JsonTest.json" />
   </ItemGroup>
 
   <ItemGroup>

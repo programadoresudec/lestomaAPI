@@ -1,5 +1,4 @@
 ﻿using lestoma.CommonUtils.Helpers;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace lestoma.CommonUtils.DTOs
@@ -8,8 +7,6 @@ namespace lestoma.CommonUtils.DTOs
     {
         [Required(ErrorMessage = "Campo requerido.")]
         public string Nombre { get; set; }
-        [Required(ErrorMessage = "Campo requerido.")]
-        public Guid UpaId { get; set; }
         [Required(ErrorMessage = "Campo requerido.")]
         public byte PrimerByteTrama { get; set; }
         [Required(ErrorMessage = "Campo requerido.")]

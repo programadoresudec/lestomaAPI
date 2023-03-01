@@ -10,7 +10,7 @@ namespace lestoma.Pruebas
     {
         static void Main(string[] args)
         {
-            ListadoEstadoComponente listado = new ListadoEstadoComponente();
+            ListadoEstadoComponente listado = new();
             foreach (var item in listado.Listado)
             {
                 Console.WriteLine(item.TipoEstado);
@@ -25,9 +25,9 @@ namespace lestoma.Pruebas
             var tercerByte = Reutilizables.ByteArrayToHexString(new byte[] { 222 });
             var primerByte = Reutilizables.StringToByteArray("49 F0");
 
-            List<byte> byteArray = new List<byte>() { 73, random[0], 240, random[1], 0, 0, 0, 0 };
+            List<byte> byteArray = new List<byte>() { 111, random[0], 240, random[1], 0, 0, 0, 0 };
 
-            var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(6);
+            var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(35);
 
             byteArray[4] = bytesFlotante[0];
             byteArray[5] = bytesFlotante[1];

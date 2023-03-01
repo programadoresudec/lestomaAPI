@@ -61,7 +61,7 @@ namespace lestoma.Api
 
                 if (Environment.IsProduction())
                 {
-                    connectionString = Encryption.EncryptDecrypt.Decrypt(Configuration.GetConnectionString("PostgresConnection"));
+                    connectionString = Reutilizables.Decrypt(Configuration.GetConnectionString("PostgresConnection"));
                 }
                 else if (Environment.IsDevelopment())
                 {
@@ -156,8 +156,7 @@ namespace lestoma.Api
                 //AWSOptions Credentials
                 var awsSettings = Configuration.GetSection("AWS").Get<AwsSettings>();
                 var awsOption = Configuration.GetAWSOptions();
-                awsOption.Credentials = new BasicAWSCredentials(Encryption.EncryptDecrypt.Decrypt(awsSettings.AccesskeyId),
-                    Encryption.EncryptDecrypt.Decrypt(awsSettings.SecretAccessKey));
+                awsOption.Credentials = new BasicAWSCredentials(Reutilizables.Decrypt(awsSettings.AccesskeyId), Reutilizables.Decrypt(awsSettings.SecretAccessKey));
                 services.AddDefaultAWSOptions(awsOption);
 
 
@@ -186,19 +185,10 @@ namespace lestoma.Api
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             new HangFireRemove().WipeJobs();
-            string userDashboardHangfire = string.Empty;
-            string pwdDashboardHangfire = string.Empty;
 
             if (env.IsDevelopment())
             {
-                userDashboardHangfire = Configuration.GetSection("HangfireSettings:UserName").Value;
-                pwdDashboardHangfire = Configuration.GetSection("HangfireSettings:Password").Value;
                 app.UseDeveloperExceptionPage();
-            }
-            if (Environment.IsProduction())
-            {
-                userDashboardHangfire = Encryption.EncryptDecrypt.Decrypt(Configuration.GetSection("HangfireSettings:UserName").Value);
-                pwdDashboardHangfire = Encryption.EncryptDecrypt.Decrypt(Configuration.GetSection("HangfireSettings:Password").Value);
             }
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "lestoma.Api v1"));
@@ -212,8 +202,7 @@ namespace lestoma.Api
             app.UseDefaultFiles();
             app.UseStaticFiles(new StaticFileOptions()
             {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot"))
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot"))
             });
 
             app.UseRouting();

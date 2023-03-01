@@ -1,4 +1,5 @@
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.DTOs.Sync;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
@@ -18,31 +19,74 @@ namespace lestoma.Data.Repositories
             _db = db;
         }
 
-        public async Task<IEnumerable<DataComponentSyncDTO>> GetDataBySyncToMobileByUpaId(Guid upaId)
+        public async Task<IEnumerable<DataOnlineSyncDTO>> GetDataBySyncToMobileByUpaId(UpaActivitiesFilterRequest filtro, bool isSuperAdmin)
         {
-            return await _db.TablaComponentesLaboratorio.Include(modulo => modulo.ModuloComponente)
-                .Where(x => x.UpaId == upaId)
-                .Select(x => new DataComponentSyncDTO
-                {
-                    ActividadId = x.ActividadId,
-                    DescripcionEstadoJson = x.JsonEstadoComponente,
-                    Id = x.Id,
-                    UpaId = x.UpaId,
-                    NombreComponente = x.NombreComponente,
-                    FechaCreacionServer = x.FechaCreacionServer,
-                    Session = x.Session,
-                    TipoDeAplicacion = x.TipoDeAplicacion,
-                    Ip = x.Ip,
-                    Modulo = new ModuloDTO
-                    {
-                        Id = x.ModuloComponente.Id,
-                        FechaCreacionServer = x.ModuloComponente.FechaCreacionServer,
-                        Ip = x.ModuloComponente.Ip,
-                        Nombre = x.ModuloComponente.Nombre,
-                        Session = x.ModuloComponente.Session,
-                        TipoDeAplicacion = x.ModuloComponente.TipoDeAplicacion
-                    }
-                }).ToListAsync();
+
+            if (!isSuperAdmin)
+                return await (from componente in _db.TablaComponentesLaboratorio
+                              join modulo in _db.TablaModuloComponentes on componente.ModuloComponenteId equals modulo.Id
+                              join actividad in _db.TablaActividades on componente.ActividadId equals actividad.Id
+                              join upa in _db.TablaUpas on componente.UpaId equals upa.Id
+                              select new DataOnlineSyncDTO
+                              {
+                                  Id = componente.Id,
+                                  DescripcionEstadoJson = componente.JsonEstadoComponente,
+                                  Actividad = new NameDTO
+                                  {
+                                      Id = actividad.Id,
+                                      Nombre = actividad.Nombre
+                                  },
+                                  DireccionRegistro = componente.DireccionRegistro,
+                                  Modulo = new NameDTO
+                                  {
+                                      Id = modulo.Id,
+                                      Nombre = modulo.Nombre,
+                                  },
+                                  Upa = new NameDTO
+                                  {
+                                      Id = upa.Id,
+                                      Nombre = upa.Nombre,
+                                  },
+                                  Protocolos = _db.TablaProtocoloCOM.Where(x => x.UpaId == upa.Id).Select(y => new ProtocoloSyncDTO
+                                  {
+                                      Nombre = y.Nombre,
+                                      PrimerByteTrama = y.PrimerByteTrama
+                                  }).ToList(),
+                              }).ToListAsync();
+
+
+            return await (from componente in _db.TablaComponentesLaboratorio
+                          join modulo in _db.TablaModuloComponentes on componente.ModuloComponenteId equals modulo.Id
+                          join actividad in _db.TablaActividades on componente.ActividadId equals actividad.Id
+                          join upa in _db.TablaUpas on componente.UpaId equals upa.Id
+                          where componente.UpaId == filtro.UpaId && filtro.ActividadesId.Contains(componente.ActividadId)
+                          select new DataOnlineSyncDTO
+                          {
+                              Id = componente.Id,
+                              DescripcionEstadoJson = componente.JsonEstadoComponente,
+                              Actividad = new NameDTO
+                              {
+                                  Id = actividad.Id,
+                                  Nombre = actividad.Nombre
+                              },
+                              DireccionRegistro = componente.DireccionRegistro,
+                              Modulo = new NameDTO
+                              {
+                                  Id = modulo.Id,
+                                  Nombre = modulo.Nombre,
+                              },
+                              Upa = new NameDTO
+                              {
+                                  Id = upa.Id,
+                                  Nombre = upa.Nombre,
+                              },
+                              NombreComponente = componente.NombreComponente,
+                              Protocolos = _db.TablaProtocoloCOM.Where(x => x.UpaId == upa.Id).Select(y => new ProtocoloSyncDTO
+                              {
+                                  Nombre = y.Nombre,
+                                  PrimerByteTrama = y.PrimerByteTrama
+                              }).ToList(),
+                          }).ToListAsync();
         }
 
         public async Task<IEnumerable<NameDTO>> GetModulesByUpaActivitiesUserId(UpaActivitiesFilterRequest filtro)

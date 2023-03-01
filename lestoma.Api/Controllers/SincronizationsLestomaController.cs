@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using Hangfire;
+using lestoma.Api.Core;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
+using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
+using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +13,8 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Controllers
@@ -21,23 +27,45 @@ namespace lestoma.Api.Controllers
 
         private readonly ILaboratorioService _laboratorioService;
         private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly IDetalleUpaActividadService _detalleUpaActividadService;
         #region Constructor
         public SincronizationsLestomaController(IMapper mapper, IDataProtectionProvider protectorProvider,
-            ILaboratorioService laboratorioService, IBackgroundJobClient backgroundJobClient)
+            ILaboratorioService laboratorioService, IBackgroundJobClient backgroundJobClient, IDetalleUpaActividadService detalleUpaActividadService)
             : base(mapper, protectorProvider)
         {
             _laboratorioService = laboratorioService;
             _backgroundJobClient = backgroundJobClient;
-
+            _detalleUpaActividadService = detalleUpaActividadService;
         }
         #endregion
 
 
         [HttpGet("sync-data-online-to-database-device")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador, TipoRol.Auxiliar)]
         public async Task<IActionResult> SyncDeviceDatabase()
         {
-            var upaId = UpaId();
-            var data = await _laboratorioService.GetDataOfUserToSyncDeviceDatabase(upaId);
+            UpaActivitiesFilterRequest filtro = new UpaActivitiesFilterRequest();
+            if (!IsSuperAdmin())
+            {
+                var UpaUserFilter = new UpaUserFilterRequest
+                {
+                    UpaId = UpaId(),
+                    UsuarioId = UserIdDesencrypted()
+                };
+
+                var activities = await _detalleUpaActividadService.GetActivitiesByUpaUserId(UpaUserFilter);
+
+                if (!activities.Any())
+                    throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El usuario no tiene actividades asignadas.");
+
+                filtro = new UpaActivitiesFilterRequest
+                {
+                    ActividadesId = activities.Select(x => x.Id).ToList(),
+                    UpaId = UpaId()
+                };
+            }
+
+            var data = await _laboratorioService.GetDataOfUserToSyncDeviceDatabase(filtro, !IsSuperAdmin());
             return Ok(data);
         }
 

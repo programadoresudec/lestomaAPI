@@ -343,13 +343,13 @@ namespace lestoma.Data
 
             #region data componentes
 
-            ListadoEstadoComponente listadoEstadoComponente = new ListadoEstadoComponente();
-
-            List<string> listaJson = new List<string>();
+            ListadoEstadoComponente listadoEstadoComponente = new();
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            List<string> listaJson = new();
 
             foreach (var item in listadoEstadoComponente.Listado)
             {
-                listaJson.Add(JsonSerializer.Serialize(item));
+                listaJson.Add(JsonSerializer.Serialize(item, options));
             }
 
             var bombaDeOxigeno = new EComponenteLaboratorio()

@@ -103,5 +103,13 @@ namespace lestoma.CommonUtils.Helpers
                 return default;
             }
         }
+        public static string Decrypt(string param)
+        {
+            return Encryption.EncryptDecrypt.Decrypt(param);
+        }
+        public static string Encrypt(string param)
+        {
+            return Encryption.EncryptDecrypt.Encrypt(param);
+        }
     }
 }

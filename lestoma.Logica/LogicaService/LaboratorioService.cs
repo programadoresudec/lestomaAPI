@@ -1,4 +1,6 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.DTOs.Sync;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
@@ -18,8 +20,10 @@ namespace lestoma.Logica.LogicaService
         private readonly IMailHelper _mailHelper;
         private readonly UsuarioRepository _usuarioRepository;
         private readonly LaboratorioRepository _laboratorioRepository;
-        public LaboratorioService(IMailHelper mailHelper, UsuarioRepository usuarioRepository, LaboratorioRepository laboratorioRepository)
+        private readonly IAuditoriaHelper _camposAuditoria;
+        public LaboratorioService(IMailHelper mailHelper, UsuarioRepository usuarioRepository, LaboratorioRepository laboratorioRepository, IAuditoriaHelper auditoria)
         {
+            _camposAuditoria = auditoria;
             _mailHelper = mailHelper;
             _usuarioRepository = usuarioRepository;
             _laboratorioRepository = laboratorioRepository;
@@ -28,13 +32,12 @@ namespace lestoma.Logica.LogicaService
         {
 
             detalle.Id = Guid.NewGuid();
+            detalle.Session = _camposAuditoria.GetSession();
+            detalle.Ip = _camposAuditoria.GetDesencrytedIp();
+            detalle.FechaCreacionServer = DateTime.Now;
+            detalle.TipoDeAplicacion = _camposAuditoria.GetTipoDeAplicacion();
             await _laboratorioRepository.Create(detalle);
-            return new ResponseDTO
-            {
-                IsExito = true,
-                MensajeHttp = "Los datos offline fueron cargados con exito al servidor.",
-                StatusCode = (int)HttpStatusCode.Created
-            };
+            return Responses.SetCreatedResponse(detalle);
         }
 
         public async Task<ResponseDTO> BulkSyncDataOffline(IEnumerable<ELaboratorio> datosOffline)
@@ -69,11 +72,9 @@ namespace lestoma.Logica.LogicaService
 
         }
 
-        public async Task<IEnumerable<DataComponentSyncDTO>> GetDataOfUserToSyncDeviceDatabase(Guid upaId)
+        public async Task<IEnumerable<DataOnlineSyncDTO>> GetDataOfUserToSyncDeviceDatabase(UpaActivitiesFilterRequest filtro, bool isSuperAdmin)
         {
-            if (upaId == Guid.Empty)
-                throw new HttpStatusCodeException(HttpStatusCode.OK, $"No hay datos por migrar, usted no cuenta con una Upa asignada.");
-            return await _laboratorioRepository.GetDataBySyncToMobileByUpaId(upaId);
+            return await _laboratorioRepository.GetDataBySyncToMobileByUpaId(filtro, isSuperAdmin);
         }
 
         public async Task<IEnumerable<NameDTO>> GetModulesByUpaActivitiesUserId(UpaActivitiesFilterRequest filtro)
