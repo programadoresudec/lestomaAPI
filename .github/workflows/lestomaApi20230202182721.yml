@@ -47,18 +47,3 @@ jobs:
       run: dotnet build "${{ env.WORKING_DIRECTORY_TEST }}" --configuration ${{ env.CONFIGURATION }} --no-restore
     - name: Run Test
       run: dotnet test --no-build
-  deploy:
-    runs-on: windows-latest
-    needs: test
-    steps:
-    - name: Download artifact from build job
-      uses: actions/download-artifact@v2
-      with:
-        name: webapp
-        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-    - name: Deploy to Azure WebApp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.lestomaApi20230202182721_F7D7 }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
