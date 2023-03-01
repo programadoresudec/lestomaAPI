@@ -35,6 +35,14 @@ jobs:
     runs-on: windows-latest
     needs: build
     steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1.8.0
+      with:
+        include-prerelease: True
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+    - name: Restore
+      run: dotnet restore "${{ env.WORKING_DIRECTORY_TEST }}"  
     - name: Build
       run: dotnet build "${{ env.WORKING_DIRECTORY_TEST }}" --configuration ${{ env.CONFIGURATION }} --no-restore
     - name: Run Test
