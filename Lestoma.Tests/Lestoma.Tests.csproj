@@ -1,9 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+    <TargetFramework>net5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -23,9 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\lestoma.Api\lestoma.Api.csproj" />
-    <ProjectReference Include="..\lestoma.CommonUtils\lestoma.CommonUtils.csproj" />
-    <ProjectReference Include="..\lestoma.Data\lestoma.Data.csproj" />
-    <ProjectReference Include="..\lestoma.Logica\lestoma.Logica.csproj" />
   </ItemGroup>
 
 </Project>
