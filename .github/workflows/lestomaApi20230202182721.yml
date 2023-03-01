@@ -33,7 +33,6 @@ jobs:
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
   test:
     runs-on: windows-latest
-    needs: build
     steps:
     - name: Build
       run: dotnet build "${{ env.WORKING_DIRECTORY_TEST }}" --configuration ${{ env.CONFIGURATION }} --no-restore
