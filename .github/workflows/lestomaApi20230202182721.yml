@@ -33,6 +33,7 @@ jobs:
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
   test:
     runs-on: windows-latest
+    needs: build
     steps:
     - name: Build
       run: dotnet build "${{ env.WORKING_DIRECTORY_TEST }}" --configuration ${{ env.CONFIGURATION }} --no-restore
@@ -40,7 +41,7 @@ jobs:
       run: dotnet test --no-build
   deploy:
     runs-on: windows-latest
-    needs: build
+    needs: test
     steps:
     - name: Download artifact from build job
       uses: actions/download-artifact@v2
