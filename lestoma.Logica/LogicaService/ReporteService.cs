@@ -153,39 +153,36 @@ namespace lestoma.Logica.LogicaService
 
         #region Genera el reporte por fecha inicial y fecha final dependiendo el formato dado
         [AutomaticRetry(Attempts = 2)]
-        public ArchivoDTO GenerateReportByDate(ReporteDTO reporte,
-            ArchivoDTO archivo, ReportFilterRequest filtro, bool isSuper)
+        public async Task<ArchivoDTO> GenerateReportByDate(ReportFilterRequest filtro, bool isSuper)
         {
-            reporte.FiltroFecha = new DateFilterRequest()
+            var data = await GetReportByDate(filtro, isSuper);
+            data.reporte.FiltroFecha = new DateFilterRequest()
             {
                 FechaInicial = filtro.FechaInicial,
                 FechaFinal = filtro.FechaFinal
             };
-
-            var bytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, reporte, isSuper);
-            archivo.ArchivoBytes = bytes;
+            data.archivo.ArchivoBytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, data.reporte, isSuper);
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromSeconds(60))
                     .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
                     .SetPriority(CacheItemPriority.Normal);
-            _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
-            return archivo;
+            _cache.Set(Constants.CACHE_REPORTE_KEY, data.archivo, cacheEntryOptions);
+            return data.archivo;
         }
         #endregion
 
         #region Genera el reporte por componentes dependiendo el formato dado
         [AutomaticRetry(Attempts = 2)]
-        public ArchivoDTO GenerateReportByComponents(ReporteDTO reporte,
-            ArchivoDTO archivo, ReportComponentFilterRequest filtro, bool isSuper)
+        public async Task<ArchivoDTO> GenerateReportByComponents(ReportComponentFilterRequest filtro, bool isSuper)
         {
-            var bytes = _generateReports.GenerateReportByFormat(filtro.Filtro.TipoFormato, reporte, isSuper);
-            archivo.ArchivoBytes = bytes;
+            var data = await GetReportByComponents(filtro, isSuper);
+            data.archivo.ArchivoBytes = _generateReports.GenerateReportByFormat(filtro.Filtro.TipoFormato, data.reporte, isSuper);
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromSeconds(60))
                     .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
                     .SetPriority(CacheItemPriority.Normal);
-            _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
-            return archivo;
+            _cache.Set(Constants.CACHE_REPORTE_KEY, data.archivo, cacheEntryOptions);
+            return data.archivo;
         }
         #endregion
 
@@ -193,18 +190,25 @@ namespace lestoma.Logica.LogicaService
         [AutomaticRetry(Attempts = 2)]
         public async Task SendReportByFilter(string email)
         {
-            _logger.LogInformation($"obteniendo el reporte");
-            if (_cache.TryGetValue(Constants.CACHE_REPORTE_KEY, out ArchivoDTO archivo))
+            try
             {
-                await _mailHelper.SendMailWithOneFile(email, string.Empty, $"Reporte {DateTime.Now:dd/MM/yyyy}",
-                    archivo, $"Se anexa el reporte generado.", string.Empty,
-                   "Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.", string.Empty,
-                   "<strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
-                _logger.LogInformation($"Enviado el reporte a {email}");
+                _logger.LogInformation($"obteniendo el reporte...");
+                if (_cache.TryGetValue(Constants.CACHE_REPORTE_KEY, out ArchivoDTO archivo))
+                {
+                    await _mailHelper.SendMailWithOneFile(email, string.Empty, $"Reporte {DateTime.Now:dd/MM/yyyy}",
+                        archivo, $"Se anexa el reporte generado.", string.Empty,
+                        "Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.", string.Empty,
+                       "<strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
+                    _logger.LogInformation($"Enviado el reporte a {email}");
+                }
+                else
+                {
+                    _logger.LogInformation($"No hay reportes para generar.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogInformation($"No hay reportes para generar.");
+                _logger.LogError(ex.Message, ex);
             }
         }
         #endregion
@@ -228,11 +232,11 @@ namespace lestoma.Logica.LogicaService
                 case GrupoTipoArchivo.Imagen:
                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest, @"Formato invalido, solo se puede PDF y EXCEL");
                 case GrupoTipoArchivo.PDF:
-                    Mime = MediaTypeNames.Application.Pdf;
+                    Mime = MediaTypeNames.Application.Octet;
                     FileName = $"Reporte_{dateString}.pdf";
                     break;
                 case GrupoTipoArchivo.EXCEL:
-                    Mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    Mime = MediaTypeNames.Application.Octet;
                     FileName = $"Reporte_{dateString}.xlsx";
                     break;
             }

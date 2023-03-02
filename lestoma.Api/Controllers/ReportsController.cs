@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.Bibliography;
 using Hangfire;
 using lestoma.Api.Core;
 using lestoma.CommonUtils.Constants;
@@ -55,42 +54,36 @@ namespace lestoma.Api.Controllers
         }
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         [HttpPost("by-date")]
-        public async Task<IActionResult> ReportByDate([FromBody] ReportFilterRequest filtro)
+        public IActionResult ReportByDate([FromBody] ReportFilterRequest filtro)
         {
             var isSuper = IsSuperAdmin();
             if (!isSuper)
             {
                 filtro.UpaId = UpaId();
             }
-
-            var obj = await _reporteService.GetReportByDate(filtro, isSuper);
-            var jobId = _backgroundJobClient.Schedule<IReporteService>(service => service.GenerateReportByDate(obj.reporte, obj.archivo, filtro, isSuper),
-                TimeSpan.FromSeconds(2));
             var EmailDesencryptedUser = EmailDesencrypted();
+            //var reporte = await _reporteService.GenerateReportByDate(filtro, isSuper);
+            //await _reporteService.SendReportByFilter(EmailDesencryptedUser);
+            var jobId = _backgroundJobClient.Schedule<IReporteService>(service => service.GenerateReportByDate(filtro, isSuper), TimeSpan.FromSeconds(2));
             _backgroundJobClient.ContinueJobWith<IReporteService>(jobId, service => service.SendReportByFilter(EmailDesencryptedUser));
-            return Accepted(
-                Responses.SetAcceptedResponse(null,
-                "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado."));
+            return Accepted(Responses.SetAcceptedResponse(null, "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado."));
         }
 
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         [HttpPost("by-components")]
-        public async Task<IActionResult> ReportByComponents([FromBody] ReportComponentFilterRequest filtro)
+        public IActionResult ReportByComponents([FromBody] ReportComponentFilterRequest filtro)
         {
             var isSuper = IsSuperAdmin();
             if (!isSuper)
             {
                 filtro.Filtro.UpaId = UpaId();
             }
-            var obj = await _reporteService.GetReportByComponents(filtro, isSuper);
-            var jobId = _backgroundJobClient.Schedule<IReporteService>(service => service.GenerateReportByComponents(obj.reporte, obj.archivo, filtro, isSuper),
-                TimeSpan.FromSeconds(2));
             var EmailDesencryptedUser = EmailDesencrypted();
+            //var reporte = await _reporteService.GenerateReportByComponents(filtro, isSuper);
+            //await _reporteService.SendReportByFilter(EmailDesencryptedUser);
+            var jobId = _backgroundJobClient.Schedule<IReporteService>(service => service.GenerateReportByComponents(filtro, isSuper), TimeSpan.FromSeconds(2));
             _backgroundJobClient.ContinueJobWith<IReporteService>(jobId, service => service.SendReportByFilter(EmailDesencryptedUser));
-
-            return Accepted(
-             Responses.SetAcceptedResponse(null,
-             "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado."));
+            return Accepted(Responses.SetAcceptedResponse(null, "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado."));
         }
     }
 }

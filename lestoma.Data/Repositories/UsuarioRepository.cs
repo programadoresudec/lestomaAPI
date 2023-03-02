@@ -129,7 +129,8 @@ namespace lestoma.Data.Repositories
                  Ip = x.Ip,
                  Session = x.Session,
                  TipoDeAplicacion = x.TipoDeAplicacion,
-                 FechaCreacionServer = x.FechaCreacionServer
+                 FechaCreacionServer = x.FechaCreacionServer, 
+                 FechaActualizacionServer = x.FechaActualizacionServer
              }).ToListAsync();
         }
 

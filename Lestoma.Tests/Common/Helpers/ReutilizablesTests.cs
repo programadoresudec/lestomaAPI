@@ -24,7 +24,7 @@ namespace Lestoma.Tests.Common.Helpers
             Assert.Equal(valuedesencrypt, decript);
         }
         [Theory]
-        [InlineData("498BF01A40C00000", "97")]
+        [InlineData("498BF01A40C00000", "97E7")]
         [InlineData("4961F08540C00000", "4538")]
         [InlineData("498BF0D940C00000", "86A3")]
         [InlineData("49C8F05C420C0000", "1BDD")]

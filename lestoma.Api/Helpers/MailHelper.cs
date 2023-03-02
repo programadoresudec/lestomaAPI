@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace lestoma.Api.Helpers
@@ -131,7 +132,10 @@ namespace lestoma.Api.Helpers
                     archivo.ArchivoBytes = File.ReadAllBytes(carpeta);
                 }
 
-                bodyBuilder.Attachments.Add(Path.GetFileName(archivo.FileName), archivo.ArchivoBytes, new ContentType(archivo.MIME, Path.GetExtension(archivo.FileName)));
+                var mime = Path.GetExtension(archivo.FileName).Contains("pdf") ? MimeKit.ContentType.Parse(MediaTypeNames.Application.Pdf)
+                                                                               : MimeKit.ContentType.Parse(MediaTypeNames.Application.Octet);
+
+                bodyBuilder.Attachments.Add(fileName: Path.GetFileName(archivo.FileName), data: archivo.ArchivoBytes, mime);
 
                 mailMessage.Body = bodyBuilder.ToMessageBody();
 
@@ -185,8 +189,9 @@ namespace lestoma.Api.Helpers
                 {
                     foreach (var item in archivos)
                     {
-                        bodyBuilder.Attachments.Add(Path.GetFileName(item.FileName), item.ArchivoBytes,
-                            new ContentType(item.MIME, Path.GetExtension(item.FileName)));
+                        var mime = Path.GetExtension(item.FileName).Contains("pdf") ? MimeKit.ContentType.Parse(MediaTypeNames.Application.Pdf)
+                                                                                    : MimeKit.ContentType.Parse(MediaTypeNames.Application.Octet);
+                        bodyBuilder.Attachments.Add(Path.GetFileName(item.FileName), item.ArchivoBytes, mime);
                     }
                 }
                 mailMessage.Body = bodyBuilder.ToMessageBody();
