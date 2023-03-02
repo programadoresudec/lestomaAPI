@@ -8,10 +8,13 @@ using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Data.Repositories;
+using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -118,9 +121,9 @@ namespace lestoma.Logica.LogicaService
         public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByComponents(ReportComponentFilterRequest requestFilter, string email)
         {
             var (MIME, FILENAME) = GetFile(requestFilter.Filtro.TipoFormato);
-
+            string upa = string.Empty;
             if (requestFilter.Filtro.UpaId != Guid.Empty)
-                await ExistUpa(requestFilter.Filtro.UpaId);
+                upa = await ExistUpa(requestFilter.Filtro.UpaId);
 
             foreach (var item in requestFilter.ComponentesId)
             {
@@ -133,8 +136,9 @@ namespace lestoma.Logica.LogicaService
             var listado = await _repositorio.ReportByComponents(requestFilter);
             if (listado.Reporte.Count == 0)
             {
+                string mensaje = requestFilter.Filtro.UpaId == Guid.Empty ? "de las upas." : $"de la upa {upa}";
                 await _mailHelper.SendMail(email, "No hay datos para generar el reporte.", "No hay data.",
-                    "Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.",
+                       $"No hay datos {mensaje}",
                     $"No se genero ningun reporte con el filtro fecha inicial: {requestFilter.Filtro.FechaInicial} Fecha final: {requestFilter.Filtro.FechaFinal}", string.Empty,
                     "<strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
@@ -152,15 +156,16 @@ namespace lestoma.Logica.LogicaService
         public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByDate(ReportFilterRequest filtro, string email)
         {
             var (MIME, FILENAME) = GetFile(filtro.TipoFormato);
-
+            string upa = string.Empty;
             if (filtro.UpaId != Guid.Empty)
-                await ExistUpa(filtro.UpaId);
+                upa = await ExistUpa(filtro.UpaId);
 
             var listado = await _repositorio.ReportByDate(filtro);
             if (listado.Reporte.Count == 0)
             {
+                string mensaje = filtro.UpaId == Guid.Empty ? "de las upas." : $"de la upa {upa}";
                 await _mailHelper.SendMail(email, "No hay datos para generar el reporte.", "No hay data.",
-               "Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.",
+               $"No hay datos {mensaje}",
                $"No se genero ningun reporte con el filtro fecha inicial: {filtro.FechaInicial} Fecha final: {filtro.FechaFinal}", string.Empty,
                "<strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
@@ -234,15 +239,13 @@ namespace lestoma.Logica.LogicaService
         #endregion
 
         #region Verifica si existe la upa
-        private async Task ExistUpa(Guid upaId)
+        private async Task<string> ExistUpa(Guid upaId)
         {
-            if (upaId != Guid.Empty)
-            {
-                var existe = await _upaRepository.AnyWithCondition(x => x.Id == upaId);
-                if (!existe)
-                    throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se pudo encontrar la upa indicada.");
-            }
-        } 
+            var upa = await _upaRepository.WhereWithCondition(x => x.Id == upaId).Select(x => x.Nombre).FirstOrDefaultAsync();
+            if (string.IsNullOrWhiteSpace(upa))
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se pudo encontrar la upa indicada.");
+            return upa;
+        }
         #endregion
 
         #region Obtiene el grupo de archivo MIME y FileName
@@ -265,7 +268,7 @@ namespace lestoma.Logica.LogicaService
                     break;
             }
             return (Mime, FileName);
-        } 
+        }
         #endregion
 
     }
