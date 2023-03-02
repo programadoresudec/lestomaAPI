@@ -40,7 +40,6 @@ namespace lestoma.Logica.LogicaService
         }
 
         #region Obtiene la data del reporte diario
-        [AutomaticRetry(Attempts = 2)]
         public async Task<ResponseDTO> GetDailyReport()
         {
             var filtro = new DateFilterRequest
@@ -176,7 +175,6 @@ namespace lestoma.Logica.LogicaService
         #endregion
 
         #region Genera el reporte por fecha inicial y fecha final dependiendo el formato dado
-        [AutomaticRetry(Attempts = 2)]
         public async Task<ArchivoDTO> GenerateReportByDate(ReportFilterRequest filtro, bool isSuper, string email)
         {
             var (reporte, archivo) = await GetReportByDate(filtro, email);
@@ -196,7 +194,6 @@ namespace lestoma.Logica.LogicaService
         #endregion
 
         #region Genera el reporte por componentes dependiendo el formato dado
-        [AutomaticRetry(Attempts = 2)]
         public async Task<ArchivoDTO> GenerateReportByComponents(ReportComponentFilterRequest obj, bool isSuper, string email)
         {
             var (reporte, archivo) = await GetReportByComponents(obj, email);
@@ -211,7 +208,6 @@ namespace lestoma.Logica.LogicaService
         #endregion
 
         #region Envia el reporte dado el filtro correspondiente
-        [AutomaticRetry(Attempts = 2)]
         public async Task SendReportByFilter(string email)
         {
             try
