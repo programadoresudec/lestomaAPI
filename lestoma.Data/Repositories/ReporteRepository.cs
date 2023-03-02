@@ -4,7 +4,6 @@ using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -58,6 +58,17 @@ namespace lestoma.Logica.LogicaService
         }
         #endregion
 
+        #region Obtener tiempo de informe diario
+        public async Task<ResponseDTO> GetDailyReportTime()
+        {
+            var time = await _repositorio.GetDailyReportTime(Constants.KEY_REPORT_DAILY);
+            if (time == null)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se pudo encontrar la hora del job.");
+
+            return Responses.SetOkResponse(new TimeJobDTO { Time = time.Value });
+        }
+        #endregion
+
         #region Generar el documento PDF y Excel diariamente
         public async Task<ResponseDTO> GenerateDailyReport(ReporteDTO reporte)
         {
@@ -105,12 +116,14 @@ namespace lestoma.Logica.LogicaService
         #endregion
 
         #region Obtiene la data del reporte por fechas  upa y los componentes correspondientes
-        public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByComponents(ReportComponentFilterRequest filtro, bool isSuper)
+        public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByComponents(ReportComponentFilterRequest requestFilter, string email)
         {
-            var file = GetFile(filtro.Filtro.TipoFormato);
-            await ExistUpa(filtro.Filtro.UpaId);
+            var (MIME, FILENAME) = GetFile(requestFilter.Filtro.TipoFormato);
 
-            foreach (var item in filtro.ComponentesId)
+            if (requestFilter.Filtro.UpaId != Guid.Empty)
+                await ExistUpa(requestFilter.Filtro.UpaId);
+
+            foreach (var item in requestFilter.ComponentesId)
             {
                 bool existe = await _componenteRepository.AnyWithCondition(x => x.Id == item);
                 if (!existe)
@@ -118,34 +131,45 @@ namespace lestoma.Logica.LogicaService
                     throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Error: No se pudo encontrar el componente con el id: {item}");
                 }
             }
-            var listado = await _repositorio.ReportByComponents(filtro);
+            var listado = await _repositorio.ReportByComponents(requestFilter);
             if (listado.Reporte.Count == 0)
             {
+                await _mailHelper.SendMail(email, "No hay datos para generar el reporte.", "No hay data.",
+                    "Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.",
+                    $"No se genero ningun reporte con el filtro fecha inicial: {requestFilter.Filtro.FechaInicial} Fecha final: {requestFilter.Filtro.FechaFinal}", string.Empty,
+                    "<strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
             }
             ArchivoDTO archivo = new()
             {
-                FileName = file.FILENAME,
-                MIME = file.MIME
+                FileName = FILENAME,
+                MIME = MIME
             };
             return (listado, archivo);
         }
         #endregion
 
         #region Obtiene la data del reporte por fechas y upa
-        public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByDate(ReportFilterRequest filtro, bool isSuper)
+        public async Task<(ReporteDTO reporte, ArchivoDTO archivo)> GetReportByDate(ReportFilterRequest filtro, string email)
         {
-            var file = GetFile(filtro.TipoFormato);
+            var (MIME, FILENAME) = GetFile(filtro.TipoFormato);
+
             if (filtro.UpaId != Guid.Empty)
                 await ExistUpa(filtro.UpaId);
+
             var listado = await _repositorio.ReportByDate(filtro);
             if (listado.Reporte.Count == 0)
+            {
+                await _mailHelper.SendMail(email, "No hay datos para generar el reporte.", "No hay data.",
+               "Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.",
+               $"No se genero ningun reporte con el filtro fecha inicial: {filtro.FechaInicial} Fecha final: {filtro.FechaFinal}", string.Empty,
+               "<strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte.");
-
+            }
             ArchivoDTO archivo = new()
             {
-                FileName = file.FILENAME,
-                MIME = file.MIME
+                FileName = FILENAME,
+                MIME = MIME
             };
             return (listado, archivo);
         }
@@ -153,36 +177,36 @@ namespace lestoma.Logica.LogicaService
 
         #region Genera el reporte por fecha inicial y fecha final dependiendo el formato dado
         [AutomaticRetry(Attempts = 2)]
-        public async Task<ArchivoDTO> GenerateReportByDate(ReportFilterRequest filtro, bool isSuper)
+        public async Task<ArchivoDTO> GenerateReportByDate(ReportFilterRequest filtro, bool isSuper, string email)
         {
-            var data = await GetReportByDate(filtro, isSuper);
-            data.reporte.FiltroFecha = new DateFilterRequest()
+            var (reporte, archivo) = await GetReportByDate(filtro, email);
+            reporte.FiltroFecha = new DateFilterRequest()
             {
                 FechaInicial = filtro.FechaInicial,
                 FechaFinal = filtro.FechaFinal
             };
-            data.archivo.ArchivoBytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, data.reporte, isSuper);
+            archivo.ArchivoBytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, reporte, isSuper);
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromSeconds(60))
                     .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
                     .SetPriority(CacheItemPriority.Normal);
-            _cache.Set(Constants.CACHE_REPORTE_KEY, data.archivo, cacheEntryOptions);
-            return data.archivo;
+            _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
+            return archivo;
         }
         #endregion
 
         #region Genera el reporte por componentes dependiendo el formato dado
         [AutomaticRetry(Attempts = 2)]
-        public async Task<ArchivoDTO> GenerateReportByComponents(ReportComponentFilterRequest filtro, bool isSuper)
+        public async Task<ArchivoDTO> GenerateReportByComponents(ReportComponentFilterRequest obj, bool isSuper, string email)
         {
-            var data = await GetReportByComponents(filtro, isSuper);
-            data.archivo.ArchivoBytes = _generateReports.GenerateReportByFormat(filtro.Filtro.TipoFormato, data.reporte, isSuper);
+            var (reporte, archivo) = await GetReportByComponents(obj, email);
+            archivo.ArchivoBytes = _generateReports.GenerateReportByFormat(obj.Filtro.TipoFormato, reporte, isSuper);
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromSeconds(60))
                     .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
                     .SetPriority(CacheItemPriority.Normal);
-            _cache.Set(Constants.CACHE_REPORTE_KEY, data.archivo, cacheEntryOptions);
-            return data.archivo;
+            _cache.Set(Constants.CACHE_REPORTE_KEY, archivo, cacheEntryOptions);
+            return archivo;
         }
         #endregion
 
@@ -213,6 +237,7 @@ namespace lestoma.Logica.LogicaService
         }
         #endregion
 
+        #region Verifica si existe la upa
         private async Task ExistUpa(Guid upaId)
         {
             if (upaId != Guid.Empty)
@@ -221,7 +246,10 @@ namespace lestoma.Logica.LogicaService
                 if (!existe)
                     throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se pudo encontrar la upa indicada.");
             }
-        }
+        } 
+        #endregion
+
+        #region Obtiene el grupo de archivo MIME y FileName
         private static (string MIME, string FILENAME) GetFile(GrupoTipoArchivo grupoTipoArchivo)
         {
             string dateString = DateTime.Now.ToString("yyyy-MM-dd");
@@ -241,15 +269,8 @@ namespace lestoma.Logica.LogicaService
                     break;
             }
             return (Mime, FileName);
-        }
+        } 
+        #endregion
 
-        public async Task<ResponseDTO> GetDailyReportTime()
-        {
-            var time = await _repositorio.GetDailyReportTime(Constants.KEY_REPORT_DAILY);
-            if (time == null)
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se pudo encontrar la hora del job.");
-
-            return Responses.SetOkResponse(new TimeJobDTO { Time = time.Value });
-        }
     }
 }

@@ -58,15 +58,18 @@ namespace lestoma.Api.Controllers
         {
             var isSuper = IsSuperAdmin();
             if (!isSuper)
-            {
                 filtro.UpaId = UpaId();
-            }
+
             var EmailDesencryptedUser = EmailDesencrypted();
             //var reporte = await _reporteService.GenerateReportByDate(filtro, isSuper);
             //await _reporteService.SendReportByFilter(EmailDesencryptedUser);
-            var jobId = _backgroundJobClient.Schedule<IReporteService>(service => service.GenerateReportByDate(filtro, isSuper), TimeSpan.FromSeconds(2));
+            var jobId = _backgroundJobClient.Schedule<IReporteService>(service =>
+            service.GenerateReportByDate(filtro, isSuper, EmailDesencryptedUser), TimeSpan.FromSeconds(2));
+
             _backgroundJobClient.ContinueJobWith<IReporteService>(jobId, service => service.SendReportByFilter(EmailDesencryptedUser));
-            return Accepted(Responses.SetAcceptedResponse(null, "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado."));
+
+            return Accepted(Responses.SetAcceptedResponse(null, @"Generando el reporte..., se enviará un correo con el reporte.
+                                                                  ¡Aviso! si no hay datos se enviará un correo indicandolo."));
         }
 
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
@@ -75,15 +78,19 @@ namespace lestoma.Api.Controllers
         {
             var isSuper = IsSuperAdmin();
             if (!isSuper)
-            {
                 filtro.Filtro.UpaId = UpaId();
-            }
+
             var EmailDesencryptedUser = EmailDesencrypted();
             //var reporte = await _reporteService.GenerateReportByComponents(filtro, isSuper);
             //await _reporteService.SendReportByFilter(EmailDesencryptedUser);
-            var jobId = _backgroundJobClient.Schedule<IReporteService>(service => service.GenerateReportByComponents(filtro, isSuper), TimeSpan.FromSeconds(2));
+
+            var jobId = _backgroundJobClient.Schedule<IReporteService>(service =>
+            service.GenerateReportByComponents(filtro, isSuper, EmailDesencryptedUser), TimeSpan.FromSeconds(2));
+
             _backgroundJobClient.ContinueJobWith<IReporteService>(jobId, service => service.SendReportByFilter(EmailDesencryptedUser));
-            return Accepted(Responses.SetAcceptedResponse(null, "Se esta generando el reporte, pronto se enviará a su correo electrónico registrado."));
+
+            return Accepted(Responses.SetAcceptedResponse(null, @"Generando el reporte..., se enviará un correo con el reporte.
+                                                                  ¡Aviso! si no hay datos se enviará un correo indicandolo."));
         }
     }
 }
