@@ -125,14 +125,19 @@ namespace lestoma.Logica.LogicaService
             if (requestFilter.Filtro.UpaId != Guid.Empty)
                 upa = await ExistUpa(requestFilter.Filtro.UpaId);
 
-            foreach (var item in requestFilter.ComponentesId)
+
+            if (!requestFilter.ComponentesId.Contains(Guid.Empty))
             {
-                bool existe = await _componenteRepository.AnyWithCondition(x => x.Id == item);
-                if (!existe)
+                foreach (var item in requestFilter.ComponentesId)
                 {
-                    throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Error: No se pudo encontrar el componente con el id: {item}");
+                    bool existe = await _componenteRepository.AnyWithCondition(x => x.Id == item);
+                    if (!existe)
+                    {
+                        throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Error: No se pudo encontrar el componente con el id: {item}");
+                    }
                 }
             }
+           
             var listado = await _repositorio.ReportByComponents(requestFilter);
             if (listado.Reporte.Count == 0)
             {
@@ -188,6 +193,7 @@ namespace lestoma.Logica.LogicaService
                 FechaInicial = filtro.FechaInicial,
                 FechaFinal = filtro.FechaFinal
             };
+            reporte.UserGenerator = email;
             archivo.ArchivoBytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, reporte, isSuper);
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromSeconds(60))
@@ -202,6 +208,12 @@ namespace lestoma.Logica.LogicaService
         public async Task<ArchivoDTO> GenerateReportByComponents(ReportComponentFilterRequest obj, bool isSuper, string email)
         {
             var (reporte, archivo) = await GetReportByComponents(obj, email);
+            reporte.FiltroFecha = new DateFilterRequest()
+            {
+                FechaInicial = obj.Filtro.FechaInicial,
+                FechaFinal = obj.Filtro.FechaFinal
+            };
+            reporte.UserGenerator = email;
             archivo.ArchivoBytes = _generateReports.GenerateReportByFormat(obj.Filtro.TipoFormato, reporte, isSuper);
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromSeconds(60))

@@ -108,7 +108,8 @@ namespace lestoma.Data.Repositories
                 {
                     query = query.Where(x => x.ComponenteLaboratorio.UpaId == reporte.Filtro.UpaId);
                 }
-                if (reporte.ComponentesId.Count > 0)
+                var idTodos = reporte.ComponentesId.FirstOrDefault(x => x.Equals(Guid.Empty));
+                if (reporte.ComponentesId.Count > 0 && !reporte.ComponentesId.Contains(idTodos))
                 {
                     query = query.Where(x => reporte.ComponentesId.Contains(x.ComponenteLaboratorioId));
                 }

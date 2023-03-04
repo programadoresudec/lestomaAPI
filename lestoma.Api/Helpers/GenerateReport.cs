@@ -36,7 +36,7 @@ namespace lestoma.Api.Helpers
             </head>
                <br>
                <body>
-                 <div><strong>Generado el dia:</strong> @ReporteFecha</div>
+                 <div><strong>Generado el dia:</strong> @ReporteFecha por la persona @NombreUsuario</div>
                  <br>
                  <div><strong>Filtrado por las fechas</strong></div>
                  <div> @FechaInicial- @FechaFinal</div>
@@ -70,7 +70,7 @@ namespace lestoma.Api.Helpers
             </head>
                <br>
                <body>
-                 <div><strong>Generado el dia:</strong> @ReporteFecha</div>
+                   <div><strong>Generado el dia:</strong> @ReporteFecha por la persona @NombreUsuario</div>
                  <br>       
                  <div><strong>Upa:</strong> @NombreUpa</div>
                  <br>
