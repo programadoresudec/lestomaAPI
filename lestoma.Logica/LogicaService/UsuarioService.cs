@@ -10,6 +10,7 @@ using lestoma.CommonUtils.Requests;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -423,6 +424,14 @@ namespace lestoma.Logica.LogicaService
                 return Responses.SetOkResponse(null, "Se han desactivado las notificaciones via ¡Email!.");
             }
             throw new HttpStatusCodeException(HttpStatusCode.Conflict, "No se encuentra activado con las notificaciones Via ¡Email!.");
+        }
+
+        public async Task<ResponseDTO> GetUpaUserId(int idUser)
+        {
+            var obj = await _upaActividadRepository.WhereWithCondition(x => x.UsuarioId == idUser).Include(y => y.Upa).FirstOrDefaultAsync();
+            if (obj == null)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "El usuario no cuenta con una upa asignada.");
+            return Responses.SetOkResponse(new NameDTO { Id = obj.Upa.Id, Nombre = obj.Upa.Nombre });
         }
     }
 }

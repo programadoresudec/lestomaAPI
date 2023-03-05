@@ -5,6 +5,7 @@ using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -17,8 +18,8 @@ namespace lestoma.Api.Controllers
     {
         private readonly IUsuarioService _service;
 
-        public UsersController(IUsuarioService usuarioService, IMapper mapper)
-            : base(mapper)
+        public UsersController(IMapper mapper, IDataProtectionProvider protectorProvider, IUsuarioService usuarioService)
+            : base(mapper, protectorProvider)
         {
             _service = usuarioService;
         }
@@ -38,6 +39,16 @@ namespace lestoma.Api.Controllers
             var listado = await _service.GetInfoUsers();
             return Ok(listado);
         }
+
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador, TipoRol.Auxiliar)]
+        [HttpGet("upa-asignada")]
+        public async Task<IActionResult> GetUpaDelUsuario()
+        {
+            int idUser = UserIdDesencrypted();
+            var response = await _service.GetUpaUserId(idUser);
+            return Ok(response);
+        }
+
 
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpGet("listado-estados")]

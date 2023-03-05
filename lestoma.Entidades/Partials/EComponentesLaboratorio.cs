@@ -15,6 +15,6 @@ namespace lestoma.Entidades.Models
     {
         public Guid Id { get; set; }
         public string TipoEstado { get; set; }
-        public string ByteFuncion { get; set; }
+        public string ByteHexaFuncion { get; set; }
     }
 }

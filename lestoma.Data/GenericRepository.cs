@@ -46,6 +46,7 @@ namespace lestoma.Data
         }
         #endregion
 
+  
         #region Create In BD
         public async Task Create(T entidad)
         {

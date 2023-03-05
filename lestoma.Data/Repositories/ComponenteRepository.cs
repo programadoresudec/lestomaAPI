@@ -109,7 +109,7 @@ namespace lestoma.Data.Repositories
                     {
                         Id = x.ObjetoJsonEstado.Id,
                         TipoEstado = x.ObjetoJsonEstado.TipoEstado,
-                        ByteHexaFuncion = x.ObjetoJsonEstado.ByteFuncion
+                        ByteHexaFuncion = x.ObjetoJsonEstado.ByteHexaFuncion
                     },
                     DireccionDeRegistro = x.DireccionRegistro
                 }).FirstOrDefaultAsync();

@@ -28,5 +28,6 @@ namespace lestoma.Logica.Interfaces
         Task<ResponseDTO> ActivateNotificationsMail(string email);
         Task<ResponseDTO> DesactivateNotificationsMail(string email);
         Task<ResponseDTO> UserIsActiveWithNotificationsMail(string email);
+        Task<ResponseDTO> GetUpaUserId(int idUser);
     }
 }
