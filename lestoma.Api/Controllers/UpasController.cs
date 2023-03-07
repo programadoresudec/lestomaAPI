@@ -6,6 +6,7 @@ using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -19,8 +20,8 @@ namespace lestoma.Api.Controllers
     public class UpasController : BaseController
     {
         private readonly IUpaService _upaService;
-        public UpasController(IMapper mapper, IUpaService upaService)
-            : base(mapper)
+        public UpasController(IMapper mapper, IDataProtectionProvider protectorProvider, IUpaService upaService)
+            : base(mapper, protectorProvider)
         {
             _upaService = upaService;
         }
@@ -66,22 +67,37 @@ namespace lestoma.Api.Controllers
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> CrearUpa(UpaRequest upa)
         {
+            var idUser = UserIdDesencrypted();
             var upaDTO = Mapear<UpaRequest, EUpa>(upa);
+            var idsuperAdmin = await _upaService.GetSuperAdminId(idUser);
+            upaDTO.SuperAdminId = idsuperAdmin;
             var response = await _upaService.Create(upaDTO);
             var upaDTOSalida = Mapear<EUpa, UpaRequest>((EUpa)response.Data);
             response.Data = upaDTOSalida;
-            return CreatedAtAction(nameof(GetUpa), new { id = ((UpaRequest)response.Data).Id }, response);
+            return Created(string.Empty, response);
         }
         [HttpPut("editar")]
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
-        public async Task<IActionResult> EditarUpa(UpaRequest upa)
+        public async Task<IActionResult> EditarUpa(UpaEditRequest upa)
         {
-            var upaDTO = Mapear<UpaRequest, EUpa>(upa);
+            var upaDTO = Mapear<UpaEditRequest, EUpa>(upa);
             var response = await _upaService.Update(upaDTO);
-            var upaDTOSalida = Mapear<EUpa, UpaRequest>((EUpa)response.Data);
+            var upaDTOSalida = Mapear<EUpa, UpaEditRequest>((EUpa)response.Data);
             response.Data = upaDTOSalida;
             return Ok(response);
         }
+
+        [HttpPut("editar-protocolo")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        public async Task<IActionResult> EditarProtocolo(ProtocoloRequest request)
+        {
+            var protocolo = Mapear<ProtocoloRequest, EProtocoloCOM>(request);
+            var response = await _upaService.UpdateProtocol(protocolo);
+            var upaDTOSalida = Mapear<EProtocoloCOM, ProtocoloRequest>((EProtocoloCOM)response.Data);
+            response.Data = upaDTOSalida;
+            return Ok(response);
+        }
+
         [HttpDelete("{id}")]
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> EliminarUpa(Guid id)

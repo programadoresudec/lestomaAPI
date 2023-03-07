@@ -3,6 +3,7 @@ using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -130,11 +131,30 @@ namespace lestoma.Data.Repositories
                     Nombre = x.NombreComponente
                 }).ToListAsync();
             }
-            return await _dbSet.Where(x => x.UpaId == upaActivitiesfilter.UpaId && upaActivitiesfilter.ActividadesId.Contains(x.ActividadId)).Select(x => new NameDTO
+            return await _dbSet.Where(x => x.UpaId == upaActivitiesfilter.UpaId
+            && upaActivitiesfilter.ActividadesId.Contains(x.ActividadId)).Select(x => new NameDTO
             {
                 Id = x.Id,
                 Nombre = x.NombreComponente
             }).ToListAsync();
+        }
+
+        public async Task CreateMultiple(List<EComponenteLaboratorio> entidades)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _db.AddRangeAsync(entidades);
+                    await _db.SaveChangesAsync();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    ObtenerException(ex, entidades[0]);
+                }
+            }
         }
     }
 }

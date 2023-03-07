@@ -12,7 +12,8 @@ namespace lestoma.Api.Helpers
             #region Request a entidad
             CreateMap<UsuarioRequest, EUsuario>().ReverseMap();
             CreateMap<UpaRequest, EUpa>().ReverseMap();
-            CreateMap<ProtocoloDTO, EProtocoloCOM>().ReverseMap();
+            CreateMap<UpaEditRequest, EUpa>().ReverseMap();
+            CreateMap<ProtocoloRequest, EProtocoloCOM>().ReverseMap();
             CreateMap<RegistroRequest, EUsuario>();
             CreateMap<RegistroUpdateRequest, EUsuario>().ForMember(d => d.Id, o => o.MapFrom(s => s.UsuarioId));
             CreateMap<ActividadRequest, EActividad>().ReverseMap();

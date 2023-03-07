@@ -28,14 +28,9 @@ namespace lestoma.Data.Repositories
             }
 
         }
-        public async Task<ESuperAdministrador> GetSuperAdmin()
+        public async Task<ESuperAdministrador> GetSuperAdmin(int userId)
         {
-            var user = await _db.TablaUsuarios.FirstOrDefaultAsync(x => x.RolId == (int)TipoRol.SuperAdministrador);
-            if (user == null)
-            {
-                return null;
-            }
-            return await _db.TablaSuperAdministradores.FirstOrDefaultAsync(x => x.UsuarioId == user.Id);
+            return await _db.TablaSuperAdministradores.FirstOrDefaultAsync(x => x.UsuarioId == userId);
         }
 
         public async Task<IEnumerable<NameDTO>> GetUpasJustNames()

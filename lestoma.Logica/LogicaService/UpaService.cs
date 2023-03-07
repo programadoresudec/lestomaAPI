@@ -1,4 +1,5 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
@@ -14,10 +15,11 @@ namespace lestoma.Logica.LogicaService
 {
     public class UpaService : IUpaService
     {
-        private readonly ResponseDTO _respuesta = new();
         private readonly UpaRepository _upaRepository;
-        public UpaService(UpaRepository upaRepository)
+        private readonly ProtocoloRepository _protocoloRepository;
+        public UpaService(UpaRepository upaRepository, ProtocoloRepository protocoloRepository)
         {
+            _protocoloRepository = protocoloRepository;
             _upaRepository = upaRepository;
         }
 
@@ -45,56 +47,33 @@ namespace lestoma.Logica.LogicaService
         public async Task<ResponseDTO> GetById(Guid id)
         {
             var query = await _upaRepository.GetById(id);
-            if (query != null)
-            {
-                _respuesta.Data = query;
-                _respuesta.IsExito = true;
-                _respuesta.MensajeHttp = "Encontrado";
-            }
-            else
-            {
+            if (query == null)
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la upa.");
-            }
-            return _respuesta;
+
+            return Responses.SetOkResponse(query);
         }
+
         public async Task<ResponseDTO> Create(EUpa entidad)
         {
             bool existe = await _upaRepository.ExisteUpa(entidad.Nombre, entidad.Id);
             if (existe)
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El nombre ya esta en uso.");
-            var superadmin = await _upaRepository.GetSuperAdmin();
-            if (superadmin == null)
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "no hay Super Administradores.");
-            entidad.SuperAdminId = superadmin.Id;
             entidad.Id = Guid.NewGuid();
             await _upaRepository.Create(entidad);
-            _respuesta.IsExito = true;
-            _respuesta.Data = entidad;
-            _respuesta.StatusCode = (int)HttpStatusCode.Created;
-            _respuesta.MensajeHttp = "se ha creado satisfactoriamente.";
-            return _respuesta;
+            return Responses.SetCreatedResponse(entidad);
         }
         public async Task<ResponseDTO> Update(EUpa entidad)
         {
             var response = await GetById(entidad.Id);
             var upa = (EUpa)response.Data;
             bool existe = await _upaRepository.ExisteUpa(entidad.Nombre, upa.Id, true);
-            if (!existe)
-            {
-                upa.Nombre = entidad.Nombre;
-                upa.CantidadActividades = entidad.CantidadActividades;
-                upa.Descripcion = entidad.Descripcion;
-                await _upaRepository.Update(upa);
-                _respuesta.IsExito = true;
-                _respuesta.StatusCode = (int)HttpStatusCode.OK;
-                _respuesta.MensajeHttp = "se ha editado satisfactoriamente.";
-            }
-            else
-            {
+            if (existe)
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El nombre ya está en uso.");
-            }
-
-            return _respuesta;
+            upa.Nombre = entidad.Nombre;
+            upa.CantidadActividades = entidad.CantidadActividades;
+            upa.Descripcion = entidad.Descripcion;
+            await _upaRepository.Update(upa);
+            return Responses.SetOkResponse(upa);
         }
         public async Task Delete(Guid id)
         {
@@ -105,6 +84,27 @@ namespace lestoma.Logica.LogicaService
         public async Task<IEnumerable<NameDTO>> GetUpasJustNames()
         {
             return await _upaRepository.GetUpasJustNames();
+        }
+
+        public async Task<ResponseDTO> UpdateProtocol(EProtocoloCOM protocolo)
+        {
+            var protocolExist = await _protocoloRepository.FindWithCondition(x => x.Id == protocolo.Id);
+            if (protocolExist == null)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No existe el protocolo.");
+
+            protocolExist.Nombre = protocolo.Nombre;
+            protocolExist.PrimerByteTrama = protocolo.PrimerByteTrama;
+            protocolExist.Sigla = protocolo.Sigla;
+            await _protocoloRepository.Update(protocolExist);
+            return Responses.SetOkResponse(protocolExist);
+        }
+
+        public async Task<short> GetSuperAdminId(int userId)
+        {
+            var superadmin = await _upaRepository.GetSuperAdmin(userId);
+            if (superadmin == null)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "no existe el super administrador.");
+            return superadmin.Id;
         }
     }
 }

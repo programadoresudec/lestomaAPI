@@ -1,5 +1,7 @@
 ﻿using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
+using lestoma.CommonUtils.Listados;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Data.Repositories;
@@ -9,26 +11,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
 {
     public class ComponenteService : IComponenteService
     {
-        private ComponenteRepository _componenteRepo;
+        private ComponenteRepository _componenteRepository;
         private ActividadRepository _actividadRepo;
         private UpaRepository _upaRepo;
 
         public ComponenteService(ComponenteRepository componente, ActividadRepository _actividadRepository,
             UpaRepository upaRepository)
         {
-            _componenteRepo = componente;
+            _componenteRepository = componente;
             _actividadRepo = _actividadRepository;
             _upaRepo = upaRepository;
         }
         public async Task<IEnumerable<EComponenteLaboratorio>> GetAll()
         {
-            var listado = await _componenteRepo.GetAll();
+            var listado = await _componenteRepository.GetAll();
             if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido");
@@ -39,18 +42,38 @@ namespace lestoma.Logica.LogicaService
         {
             await Validaciones(entidad, true);
             entidad.Id = Guid.NewGuid();
-            await _componenteRepo.Create(entidad);
+            if (entidad.ObjetoJsonEstado.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.Lectura))
+            {
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                var jsonAjuste = JsonSerializer.Serialize(new ListadoEstadoComponente().GetEstadoAjuste(), options);
+
+                EComponenteLaboratorio entidadAjuste = new EComponenteLaboratorio
+                {
+                    ActividadId = entidad.ActividadId,
+                    DireccionRegistro = entidad.DireccionRegistro,
+                    Id = Guid.NewGuid(),
+                    UpaId = entidad.UpaId,
+                    NombreComponente = $"SP {entidad.NombreComponente}",
+                    JsonEstadoComponente = jsonAjuste,
+                    ModuloComponenteId = entidad.ModuloComponenteId
+                };
+                await _componenteRepository.CreateMultiple(new List<EComponenteLaboratorio> { entidad, entidadAjuste });
+            }
+            else
+            {
+                await _componenteRepository.Create(entidad);
+            }
             return Responses.SetCreatedResponse(entidad);
         }
 
         public async Task<IEnumerable<NameDTO>> GetComponentsJustNames()
         {
-            return await _componenteRepo.GetComponentesJustNames();
+            return await _componenteRepository.GetComponentesJustNames();
         }
 
         public async Task<ResponseDTO> GetById(Guid id)
         {
-            var query = await _componenteRepo.GetInfoById(id);
+            var query = await _componenteRepository.GetInfoById(id);
             if (query == null)
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el componente.");
             return Responses.SetOkResponse(query);
@@ -58,7 +81,7 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<ResponseDTO> Update(EComponenteLaboratorio entidad)
         {
-            var componente = await _componenteRepo.GetById(entidad.Id);
+            var componente = await _componenteRepository.GetById(entidad.Id);
             if (componente == null)
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el componente.");
 
@@ -71,21 +94,21 @@ namespace lestoma.Logica.LogicaService
             {
                 componente.JsonEstadoComponente = entidad.JsonEstadoComponente;
             }
-            await _componenteRepo.Update(componente);
+            await _componenteRepository.Update(componente);
             return Responses.SetOkMessageEditResponse(componente);
         }
 
         public async Task Delete(Guid id)
         {
-            var componente = await _componenteRepo.GetById(id);
+            var componente = await _componenteRepository.GetById(id);
             if (componente == null)
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el componente.");
-            await _componenteRepo.Delete(componente);
+            await _componenteRepository.Delete(componente);
         }
 
         public IQueryable<EComponenteLaboratorio> GetAllForPagination()
         {
-            var listado = _componenteRepo.GetAllAsQueryable();
+            var listado = _componenteRepository.GetAllAsQueryable();
             if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
@@ -95,7 +118,7 @@ namespace lestoma.Logica.LogicaService
 
         public IQueryable<ListadoComponenteDTO> GetAllFilter(UpaActivitiesFilterRequest upaActivitiesFilter)
         {
-            var listado = _componenteRepo.GetAllFilter(upaActivitiesFilter);
+            var listado = _componenteRepository.GetAllFilter(upaActivitiesFilter);
             if (!listado.Any())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
@@ -119,17 +142,17 @@ namespace lestoma.Logica.LogicaService
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el modulo.");
             }
-            var existeDireccionRegistro = await _componenteRepo.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
-                                                                      && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente == entidad.NombreComponente 
+            var existeDireccionRegistro = await _componenteRepository.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
+                                                                      && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente == entidad.NombreComponente
                                                                       && x.DireccionRegistro == entidad.DireccionRegistro);
             if (existeDireccionRegistro)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Ya se encuentra registrado un componente con la misma dirección de registro con los mismos parametros.");
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Ya se encuentra registrado un componente con la misma dirección de registro en la upa.");
             }
 
             if (IsCreated)
             {
-                var existeRepetido = await _componenteRepo.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
+                var existeRepetido = await _componenteRepository.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
                                                                       && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente == entidad.NombreComponente);
                 if (existeRepetido)
                 {
@@ -140,7 +163,7 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<IEnumerable<NameDTO>> GetComponentsJustNamesById(UpaActivitiesFilterRequest upaActivitiesfilter, bool IsAdmin)
         {
-            return await _componenteRepo.GetComponentesPorUpaId(upaActivitiesfilter, IsAdmin);
+            return await _componenteRepository.GetComponentesPorUpaId(upaActivitiesfilter, IsAdmin);
         }
     }
 
