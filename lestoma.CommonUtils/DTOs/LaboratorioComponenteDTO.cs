@@ -4,6 +4,7 @@ namespace lestoma.CommonUtils.DTOs
 {
     public class LaboratorioComponenteDTO : NameDTO
     {
+        public byte DireccionRegistro { get; set; }
         public string Actividad { get; set; }
         [JsonIgnore]
         public string JsonEstado { get; set; }
@@ -14,6 +15,11 @@ namespace lestoma.CommonUtils.DTOs
     {
         public string Actividad { get; set; }
 
+        public byte DireccionRegistro { get; set; }
+
         public EstadoComponenteDTO EstadoComponente { get; set; }
+
+
+
     }
 }

@@ -131,6 +131,7 @@ namespace lestoma.Data.Repositories
                                    Actividad = actividad.Nombre,
                                    Id = componente.Id,
                                    Nombre = componente.NombreComponente,
+                                   DireccionRegistro= componente.DireccionRegistro,
                                    JsonEstado = componente.JsonEstadoComponente
                                }).ToListAsync();
             return query;
