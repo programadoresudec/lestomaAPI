@@ -456,7 +456,7 @@ namespace lestoma.Data
                 Ip = ip,
                 Session = usersession,
                 TipoDeAplicacion = aplicacion,
-                DireccionRegistro = byte.MinValue + 7,
+                DireccionRegistro = byte.MinValue + 2,
             };
 
 

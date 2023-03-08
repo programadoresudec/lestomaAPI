@@ -7,6 +7,7 @@ using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,27 +43,7 @@ namespace lestoma.Logica.LogicaService
         {
             await Validaciones(entidad, true);
             entidad.Id = Guid.NewGuid();
-            if (entidad.ObjetoJsonEstado.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.Lectura))
-            {
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                var jsonAjuste = JsonSerializer.Serialize(new ListadoEstadoComponente().GetEstadoAjuste(), options);
-
-                EComponenteLaboratorio entidadAjuste = new EComponenteLaboratorio
-                {
-                    ActividadId = entidad.ActividadId,
-                    DireccionRegistro = entidad.DireccionRegistro,
-                    Id = Guid.NewGuid(),
-                    UpaId = entidad.UpaId,
-                    NombreComponente = $"SP {entidad.NombreComponente}",
-                    JsonEstadoComponente = jsonAjuste,
-                    ModuloComponenteId = entidad.ModuloComponenteId
-                };
-                await _componenteRepository.CreateMultiple(new List<EComponenteLaboratorio> { entidad, entidadAjuste });
-            }
-            else
-            {
-                await _componenteRepository.Create(entidad);
-            }
+            await _componenteRepository.Create(entidad);
             return Responses.SetCreatedResponse(entidad);
         }
 
@@ -142,22 +123,37 @@ namespace lestoma.Logica.LogicaService
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el modulo.");
             }
-            var existeDireccionRegistro = await _componenteRepository.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
-                                                                      && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente == entidad.NombreComponente
-                                                                      && x.DireccionRegistro == entidad.DireccionRegistro);
-            if (existeDireccionRegistro)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Ya se encuentra registrado un componente con la misma dirección de registro en la upa.");
-            }
 
             if (IsCreated)
             {
                 var existeRepetido = await _componenteRepository.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
-                                                                      && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente == entidad.NombreComponente);
+                                                                    && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente == entidad.NombreComponente);
                 if (existeRepetido)
                 {
                     throw new HttpStatusCodeException(HttpStatusCode.Conflict, "Ya se encuentra registrado un componente con los mismos parametros.");
                 }
+
+                if (entidad.ObjetoJsonEstado.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.Lectura)
+                         || entidad.ObjetoJsonEstado.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.Ajuste))
+                {
+                    var count = await _componenteRepository.WhereWithCondition(x => x.DireccionRegistro == entidad.DireccionRegistro).CountAsync();
+                    if (count >= 2)
+                    {
+                        throw new HttpStatusCodeException(HttpStatusCode.Conflict, "Ya existen los dos componentes(LECTURA-SETPOINT) con la dirección de registro.");
+                    }
+                }
+                else
+                {
+                    bool existeDireccionRegistro = await _componenteRepository.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
+                                                                            && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente == entidad.NombreComponente
+                                                                            && x.DireccionRegistro == entidad.DireccionRegistro);
+                    if (existeDireccionRegistro)
+                    {
+                        throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Ya se encuentra registrado un componente con la misma dirección de registro en la upa.");
+                    }
+                }
+
+
             }
         }
 
