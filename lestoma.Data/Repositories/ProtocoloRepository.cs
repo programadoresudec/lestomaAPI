@@ -1,6 +1,7 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,16 +15,14 @@ namespace lestoma.Data.Repositories
         {
             _db = db;
         }
-
-        public async Task<IEnumerable<NameProtocoloDTO>> GetProtocolsJustNames()
+        public async Task<IEnumerable<NameProtocoloDTO>> GetProtocolsByUpaId(Guid upaId)
         {
-            var query = await _dbSet.Select(x => new NameProtocoloDTO
+            return await _dbSet.Where(x => x.UpaId == upaId).Select(x => new NameProtocoloDTO
             {
                 Id = x.Id,
                 Nombre = x.Nombre,
-
+                PrimerByteTrama = x.PrimerByteTrama
             }).OrderBy(x => x.Nombre).ToListAsync();
-            return query;
         }
     }
 }

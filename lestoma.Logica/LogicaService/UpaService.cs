@@ -103,8 +103,17 @@ namespace lestoma.Logica.LogicaService
         {
             var superadmin = await _upaRepository.GetSuperAdmin(userId);
             if (superadmin == null)
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "no existe el super administrador.");
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No existe el super administrador.");
             return superadmin.Id;
+        }
+
+        public async Task<IEnumerable<NameProtocoloDTO>> GetProtocolsByUpaId(Guid upaId)
+        {
+            var existeUpa =  await _upaRepository.AnyWithCondition(x => x.Id == upaId);
+            if (!existeUpa)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No existe la upa.");
+
+            return await _protocoloRepository.GetProtocolsByUpaId(upaId);
         }
     }
 }

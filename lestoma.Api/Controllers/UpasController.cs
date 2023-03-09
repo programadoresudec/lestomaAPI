@@ -53,6 +53,18 @@ namespace lestoma.Api.Controllers
             return Ok(query);
         }
 
+        [HttpGet("listar-nombres-protocolo/{upaId}")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador, TipoRol.Auxiliar)]
+        public async Task<IActionResult> GetProtcolosNombresPorUpaId(Guid upaId)
+        {
+            if (!IsSuperAdmin() && upaId == Guid.Empty)
+            {
+                upaId = UpaId();
+            }
+            var query = await _upaService.GetProtocolsByUpaId(upaId);
+            return Ok(query);
+        }
+
         [HttpGet("{id}")]
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> GetUpa(Guid id)

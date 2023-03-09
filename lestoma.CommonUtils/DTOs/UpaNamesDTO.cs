@@ -13,7 +13,8 @@ namespace lestoma.CommonUtils.DTOs
     }
     public class NameProtocoloDTO
     {
-        public string Nombre { get; set; }
         public int Id { get; set; }
+        public string Nombre { get; set; }
+        public byte PrimerByteTrama { get; set; }
     }
 }
