@@ -7,6 +7,7 @@ namespace lestoma.CommonUtils.Helpers
     {
         private const string _token = "token";
         private const string _estadoComponente = "estadoComponente";
+        private const string _macBluetooth = "mac";
         private const string _isLogin = "isLogin";
         private const string _isOnNotificationsEmail = "isOn";
 
@@ -19,6 +20,12 @@ namespace lestoma.CommonUtils.Helpers
         {
             get => AppSettings.GetValueOrDefault(_token, _stringDefault);
             set => AppSettings.AddOrUpdateValue(_token, value);
+        }
+
+        public static string MacBluetooth
+        {
+            get => AppSettings.GetValueOrDefault(_macBluetooth, _stringDefault);
+            set => AppSettings.AddOrUpdateValue(_macBluetooth, value);
         }
 
         public static bool IsOnNotificationsViaMail

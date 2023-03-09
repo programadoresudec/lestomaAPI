@@ -30,7 +30,9 @@ namespace lestoma.Data
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            ProcesarAuditoria();
+
+            ProcesarAuditoria(acceptAllChangesOnSuccess);
+            acceptAllChangesOnSuccess = true;
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 
@@ -119,26 +121,40 @@ namespace lestoma.Data
         #endregion
 
         #region Auditoria de tablas
-        public void ProcesarAuditoria()
+        public void ProcesarAuditoria(bool acceptAllChangesOnSuccess = true)
         {
-            foreach (var item in ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added && e.Entity is ECamposAuditoria))
+            if (!acceptAllChangesOnSuccess)
             {
-                var entidad = item.Entity as ECamposAuditoria;
-                entidad.Ip = _camposAuditoria.GetDesencrytedIp();
-                entidad.Session = _camposAuditoria.GetSession();
-                entidad.TipoDeAplicacion = _camposAuditoria.GetTipoDeAplicacion();
-                entidad.FechaCreacionServer = DateTime.Now;
+                foreach (var item in ChangeTracker.Entries()
+                               .Where(e => e.State == EntityState.Added && e.Entity is ECamposAuditoria))
+                {
+                    var entidad = item.Entity as ECamposAuditoria;
+                    entidad.Ip = _camposAuditoria.GetDesencrytedIp();
+                    entidad.Session = _camposAuditoria.GetSession();
+                    entidad.TipoDeAplicacion = _camposAuditoria.GetTipoDeAplicacion();
+                }
             }
-
-            foreach (var item in ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Modified && e.Entity is ECamposAuditoria))
+            else
             {
-                var entidad = item.Entity as ECamposAuditoria;
-                entidad.Ip = _camposAuditoria.GetDesencrytedIp();
-                entidad.Session = _camposAuditoria.GetSession();
-                entidad.TipoDeAplicacion = _camposAuditoria.GetTipoDeAplicacion();
-                entidad.FechaActualizacionServer = DateTime.Now;
+                foreach (var item in ChangeTracker.Entries()
+                           .Where(e => e.State == EntityState.Added && e.Entity is ECamposAuditoria))
+                {
+                    var entidad = item.Entity as ECamposAuditoria;
+                    entidad.Ip = _camposAuditoria.GetDesencrytedIp();
+                    entidad.Session = _camposAuditoria.GetSession();
+                    entidad.TipoDeAplicacion = _camposAuditoria.GetTipoDeAplicacion();
+                    entidad.FechaCreacionServer = DateTime.Now;
+                }
+
+                foreach (var item in ChangeTracker.Entries()
+                    .Where(e => e.State == EntityState.Modified && e.Entity is ECamposAuditoria))
+                {
+                    var entidad = item.Entity as ECamposAuditoria;
+                    entidad.Ip = _camposAuditoria.GetDesencrytedIp();
+                    entidad.Session = _camposAuditoria.GetSession();
+                    entidad.TipoDeAplicacion = _camposAuditoria.GetTipoDeAplicacion();
+                    entidad.FechaActualizacionServer = DateTime.Now;
+                }
             }
         }
         #endregion
