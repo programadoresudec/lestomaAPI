@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -34,6 +36,12 @@ namespace lestoma.CommonUtils.Helpers
             }
             return codigo;
         }
+        public static IEnumerable<string> Split(string str, int chunkSize)
+        {
+            return Enumerable.Range(0, str.Length / chunkSize)
+                .Select(i => str.Substring(i * chunkSize, chunkSize));
+        }
+
         public static byte[] StringToByteArray(string hex)
         {
             hex = hex.Replace(" ", "");
@@ -110,6 +118,15 @@ namespace lestoma.CommonUtils.Helpers
         public static string Encrypt(string param)
         {
             return Encryption.EncryptDecrypt.Encrypt(param);
+        }
+
+        public static List<byte> TramaConCRC(List<byte> tramaOchoBytes)
+        {
+            var trama = ByteArrayToHexString(tramaOchoBytes.ToArray());
+            var crc = new CRCHelper().CalculateCrc16Modbus(trama);
+            tramaOchoBytes.Add(crc[1]);
+            tramaOchoBytes.Add(crc[0]);
+            return tramaOchoBytes;
         }
     }
 }
