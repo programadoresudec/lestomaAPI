@@ -71,6 +71,23 @@ namespace lestoma.CommonUtils.Helpers
             return BitConverter.ToSingle(Bytes, 0);
         }
 
+        public static float ConvertReceivedTramaToResult(string tramaRecibida)
+        {
+            List<string> tramaDividida = Split(tramaRecibida, 2).ToList();
+            List<byte> temperatura = new List<byte>();
+
+            for (int i = 0; i < tramaDividida.Count; i++)
+            {
+                if (i == 4 || i == 5 || i == 6 || i == 7)
+                {
+                    _ = new byte[1];
+                    byte[] byteTemperatura = StringToByteArray(tramaDividida[i]);
+                    temperatura.Add(byteTemperatura.ElementAt(0));
+                }
+            }
+            return ByteToIEEEFloatingPoint(temperatura.ToArray());
+        }
+
         public static Byte[] RandomByteDireccionEsclavoAndRegistro()
         {
             using (RNGCryptoServiceProvider rg = new RNGCryptoServiceProvider())

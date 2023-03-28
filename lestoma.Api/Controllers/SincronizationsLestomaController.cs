@@ -71,12 +71,11 @@ namespace lestoma.Api.Controllers
 
 
         [HttpPost("bulk-sync-data-offline")]
-        public IActionResult SyncLabDataOffline(IEnumerable<LaboratorioRequestOffline> datosOfOffline)
+        public IActionResult SyncLabDataOffline(IEnumerable<LaboratorioRequest> datosOfOffline)
         {
             var EmailDesencryptedUser = EmailDesencrypted();
-            var datosMapeados = Mapear<IEnumerable<LaboratorioRequestOffline>, IEnumerable<ELaboratorio>>(datosOfOffline);
-            var jobId = _backgroundJobClient.Schedule<ILaboratorioService>(service =>
-           service.BulkSyncDataOffline(datosMapeados), TimeSpan.FromSeconds(10));
+            var datosMapeados = Mapear<IEnumerable<LaboratorioRequest>, IEnumerable<ELaboratorio>>(datosOfOffline);
+            var jobId = _backgroundJobClient.Schedule<ILaboratorioService>(service => service.BulkSyncDataOffline(datosMapeados), TimeSpan.FromSeconds(10));
             _backgroundJobClient.ContinueJobWith<ILaboratorioService>(jobId, service => service.SendEmailFinishMerge(EmailDesencryptedUser));
             return Accepted(Responses.SetAcceptedResponse(null,
                 "Se esta generando la migración de datos, pronto le llegará un correo cuando termine."));

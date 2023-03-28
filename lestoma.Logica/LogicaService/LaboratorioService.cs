@@ -1,4 +1,5 @@
-﻿using lestoma.CommonUtils.DTOs;
+﻿using lestoma.CommonUtils.Core;
+using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.DTOs.Sync;
 using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
@@ -21,19 +22,26 @@ namespace lestoma.Logica.LogicaService
         private readonly UsuarioRepository _usuarioRepository;
         private readonly LaboratorioRepository _laboratorioRepository;
         private readonly IAuditoriaHelper _camposAuditoria;
-        public LaboratorioService(IMailHelper mailHelper, UsuarioRepository usuarioRepository, LaboratorioRepository laboratorioRepository, IAuditoriaHelper auditoria)
+        private readonly ILoggerManager _logger;
+        private readonly ComponenteRepository _componenteRepository;
+        public LaboratorioService(IMailHelper mailHelper, UsuarioRepository usuarioRepository, ComponenteRepository componenteRepository,
+            LaboratorioRepository laboratorioRepository, IAuditoriaHelper auditoria, ILoggerManager logger)
         {
             _camposAuditoria = auditoria;
             _mailHelper = mailHelper;
             _usuarioRepository = usuarioRepository;
             _laboratorioRepository = laboratorioRepository;
+            _logger = logger;
+            _componenteRepository = componenteRepository;
         }
         public async Task<ResponseDTO> CreateDetail(ELaboratorio detalle)
         {
-
+            var existeComponent = await _componenteRepository.AnyWithCondition(x => x.Id == detalle.ComponenteLaboratorioId);
+            if (!existeComponent)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encontro el componente.");
             detalle.Id = Guid.NewGuid();
             detalle.Session = _camposAuditoria.GetSession();
-            detalle.Ip = _camposAuditoria.GetDesencrytedIp();
+            detalle.Ip = string.IsNullOrWhiteSpace(detalle.Ip) ? _camposAuditoria.GetDesencrytedIp() : detalle.Ip;
             detalle.FechaCreacionServer = DateTime.Now;
             detalle.TipoDeAplicacion = _camposAuditoria.GetTipoDeAplicacion();
             await _laboratorioRepository.Create(detalle);
@@ -42,13 +50,16 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<ResponseDTO> BulkSyncDataOffline(IEnumerable<ELaboratorio> datosOffline)
         {
-            await _laboratorioRepository.MergeDetails(datosOffline);
-            return new ResponseDTO
+            try
             {
-                IsExito = true,
-                MensajeHttp = "Los datos offline fueron cargados con exito al servidor.",
-                StatusCode = (int)HttpStatusCode.Created
-            };
+                await _laboratorioRepository.MergeDetails(datosOffline);
+                return Responses.SetOkResponse("Los datos offline fueron cargados con exito al servidor.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Los datos offline no se migro al servidor.", ex);
+                throw;
+            }
         }
 
         public async Task SendEmailFinishMerge(string email)

@@ -1,16 +1,18 @@
-﻿using lestoma.CommonUtils.MyException;
+﻿using AutoMapper;
+using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.MyException;
+using lestoma.CommonUtils.Requests;
 using lestoma.CommonUtils.Requests.Filters;
+using lestoma.Entidades.Models;
+using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System;
-using AutoMapper;
-using lestoma.Logica.Interfaces;
-using System.Linq;
-using Microsoft.AspNetCore.DataProtection;
-using lestoma.CommonUtils.DTOs;
-using System.Collections.Generic;
 
 namespace lestoma.Api.Controllers
 {
@@ -59,7 +61,7 @@ namespace lestoma.Api.Controllers
                 };
                 data = await _laboratorioService.GetModulesByUpaActivitiesUserId(filtro);
             }
-        
+
             return Ok(data);
         }
 
@@ -68,6 +70,14 @@ namespace lestoma.Api.Controllers
         {
             var data = await _laboratorioService.GetComponentsByModuleId(Id);
             return Ok(data);
+        }
+
+        [HttpPost("crear-detalle")]
+        public async Task<IActionResult> AddDetail(LaboratorioRequest laboratorioRequest)
+        {
+            var datoMapeado = Mapear<LaboratorioRequest, ELaboratorio>(laboratorioRequest);
+            var response = await _laboratorioService.CreateDetail(datoMapeado);
+            return CreatedAtAction(null, response);
         }
     }
 }

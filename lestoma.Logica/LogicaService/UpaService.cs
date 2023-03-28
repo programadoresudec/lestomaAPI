@@ -73,7 +73,7 @@ namespace lestoma.Logica.LogicaService
             upa.CantidadActividades = entidad.CantidadActividades;
             upa.Descripcion = entidad.Descripcion;
             await _upaRepository.Update(upa);
-            return Responses.SetOkResponse(upa);
+            return Responses.SetOkMessageEditResponse(upa);
         }
         public async Task Delete(Guid id)
         {
@@ -96,7 +96,7 @@ namespace lestoma.Logica.LogicaService
             protocolExist.PrimerByteTrama = protocolo.PrimerByteTrama;
             protocolExist.Sigla = protocolo.Sigla;
             await _protocoloRepository.Update(protocolExist);
-            return Responses.SetOkResponse(protocolExist);
+            return Responses.SetOkMessageEditResponse(protocolExist);
         }
 
         public async Task<short> GetSuperAdminId(int userId)

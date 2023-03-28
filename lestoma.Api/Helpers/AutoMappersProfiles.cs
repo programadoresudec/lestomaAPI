@@ -2,6 +2,7 @@
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
+using System;
 
 namespace lestoma.Api.Helpers
 {
@@ -26,8 +27,10 @@ namespace lestoma.Api.Helpers
             CreateMap<EditComponenteRequest, EComponenteLaboratorio>()
                 .ForMember(d => d.NombreComponente, o => o.MapFrom(s => s.Nombre));
 
-            CreateMap<LaboratorioRequestOffline, ELaboratorio>()
+            CreateMap<LaboratorioRequest, ELaboratorio>()
+
                .ForMember(d => d.ComponenteLaboratorioId, o => o.MapFrom(s => s.ComponenteId))
+               .ForMember(d => d.FechaCreacionDispositivo, o => o.MapFrom(s => s.FechaCreacionDispositivo == null ? DateTime.Now : s.FechaCreacionDispositivo.Value))
                .ForMember(d => d.ValorCalculadoTramaEnviada, o => o.MapFrom(s => s.SetPointIn))
                .ForMember(d => d.ValorCalculadoTramaRecibida, o => o.MapFrom(s => s.SetPointOut));
             #endregion
