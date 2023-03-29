@@ -46,7 +46,7 @@ namespace lestoma.Data
         }
         #endregion
 
-  
+
         #region Create In BD
         public async Task Create(T entidad)
         {
@@ -92,6 +92,23 @@ namespace lestoma.Data
             catch (Exception ex)
             {
                 ObtenerException(ex, entidad);
+            }
+        }
+        #endregion
+
+        #region Delete In BD
+
+        public async Task DeleteByRange(IList<T> entidades)
+        {
+            if (entidades.Count == 0) throw new ArgumentNullException($"{nameof(entidades)} no debe ser vacia.");
+            try
+            {
+                _context.RemoveRange(entidades);
+                await SaveAllAsync();
+            }
+            catch (Exception ex)
+            {
+                ObtenerException(ex, entidades[0]);
             }
         }
         #endregion

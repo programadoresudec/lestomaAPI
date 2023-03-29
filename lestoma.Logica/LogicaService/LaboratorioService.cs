@@ -93,9 +93,9 @@ namespace lestoma.Logica.LogicaService
             return await _laboratorioRepository.GetModulesByUpaActivitiesUserId(filtro);
         }
 
-        public async Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByModuleId(Guid id)
+        public async Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByUpaAndModuleId(UpaModuleFilterRequest filtro)
         {
-            return await _laboratorioRepository.GetComponentsByModuleId(id);
+            return await _laboratorioRepository.GetComponentsByUpaAndModuleId(filtro);
         }
     }
 }

@@ -78,6 +78,8 @@ namespace lestoma.Logica.LogicaService
         public async Task Delete(Guid id)
         {
             var entidad = await GetById(id);
+            var protocolos = await _protocoloRepository.GetAllAsQueryable().Where(x => x.UpaId == ((EUpa)entidad.Data).Id).ToListAsync();
+            await _protocoloRepository.DeleteByRange(protocolos);
             await _upaRepository.Delete((EUpa)entidad.Data);
         }
 
@@ -109,7 +111,7 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<IEnumerable<NameProtocoloDTO>> GetProtocolsByUpaId(Guid upaId)
         {
-            var existeUpa =  await _upaRepository.AnyWithCondition(x => x.Id == upaId);
+            var existeUpa = await _upaRepository.AnyWithCondition(x => x.Id == upaId);
             if (!existeUpa)
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No existe la upa.");
 

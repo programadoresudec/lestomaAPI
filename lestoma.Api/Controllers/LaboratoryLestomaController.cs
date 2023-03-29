@@ -65,10 +65,10 @@ namespace lestoma.Api.Controllers
             return Ok(data);
         }
 
-        [HttpGet("listar-componentes-modulo/{Id}")]
-        public async Task<IActionResult> GetComponentesByModuloId(Guid Id)
+        [HttpGet("listar-componentes-upa-modulo")]
+        public async Task<IActionResult> GetComponentesByUpaAndModuloId([FromQuery] UpaModuleFilterRequest filtro)
         {
-            var data = await _laboratorioService.GetComponentsByModuleId(Id);
+            var data = await _laboratorioService.GetComponentsByUpaAndModuleId(filtro);
             return Ok(data);
         }
 
