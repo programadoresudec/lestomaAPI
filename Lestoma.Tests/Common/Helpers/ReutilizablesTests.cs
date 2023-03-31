@@ -52,11 +52,12 @@ namespace Lestoma.Tests.Common.Helpers
             Assert.Equal(salida, resultHexa);
         }
 
-
-
         [Theory]
         [InlineData("4901F0493F8000005350")]
         [InlineData("4901F04900000000AF5D")]
+        [InlineData("4904F04900000000AF08")]
+        [InlineData("6F97F01642480000F729")]
+
         public void CRCReceived_Return_CorrectFormat(string crcRecibido)
         {
             var response = Reutilizables.VerifyCRCOfReceivedTrama(crcRecibido);
