@@ -77,7 +77,7 @@ namespace lestoma.CommonUtils.Helpers
 
         public static ResponseDTO VerifyCRCOfReceivedTrama(string tramaRecibida)
         {
-            string primerosOchoBytes = tramaRecibida.Substring(0, 8);
+            string primerosOchoBytes = tramaRecibida.Substring(0, 16);
             string crcCurrent = tramaRecibida.Substring(tramaRecibida.Length - 4, 4);
             var crcResult = new CRCHelper().CalculateCrc16Modbus(primerosOchoBytes);
             var hexaCrcResult = ByteArrayToHexString(new byte[] { crcResult[1], crcResult[0] });

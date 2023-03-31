@@ -1,6 +1,7 @@
 ﻿using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Listados;
 using System.Collections.Generic;
+using System.Net;
 using Xunit;
 
 namespace Lestoma.Tests.Common.Helpers
@@ -49,6 +50,17 @@ namespace Lestoma.Tests.Common.Helpers
             Assert.NotNull(resultIEEE);
             string resultHexa = Reutilizables.ByteArrayToHexString(resultIEEE);
             Assert.Equal(salida, resultHexa);
+        }
+
+
+
+        [Theory]
+        [InlineData("4901F0493F8000005350")]
+        [InlineData("4901F04900000000AF5D")]
+        public void CRCReceived_Return_CorrectFormat(string crcRecibido)
+        {
+            var response = Reutilizables.VerifyCRCOfReceivedTrama(crcRecibido);
+            Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
