@@ -1,10 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using lestoma.CommonUtils.DTOs;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -71,10 +74,29 @@ namespace lestoma.CommonUtils.Helpers
             return BitConverter.ToSingle(Bytes, 0);
         }
 
+
+        public static ResponseDTO VerifyCRCOfReceivedTrama(string tramaRecibida)
+        {
+            string primerosOchoBytes = tramaRecibida.Substring(0, 8);
+            string crcCurrent = tramaRecibida.Substring(tramaRecibida.Length - 4, 4);
+            var crcResult = new CRCHelper().CalculateCrc16Modbus(primerosOchoBytes);
+            var hexaCrcResult = ByteArrayToHexString(new byte[] { crcResult[1], crcResult[0] });
+            if (!hexaCrcResult.Equals(crcCurrent))
+            {
+                return new ResponseDTO
+                {
+                    IsExito = false,
+                    MensajeHttp = "Datos Invalidos en la trama recibida.",
+                    StatusCode = (int)HttpStatusCode.Conflict
+                };
+            }
+            return Responses.SetOkResponse();
+        }
+
         public static float ConvertReceivedTramaToResult(string tramaRecibida)
         {
             List<string> tramaDividida = Split(tramaRecibida, 2).ToList();
-            List<byte> temperatura = new List<byte>();
+            List<byte> valor = new List<byte>();
 
             for (int i = 0; i < tramaDividida.Count; i++)
             {
@@ -82,10 +104,10 @@ namespace lestoma.CommonUtils.Helpers
                 {
                     _ = new byte[1];
                     byte[] byteTemperatura = StringToByteArray(tramaDividida[i]);
-                    temperatura.Add(byteTemperatura.ElementAt(0));
+                    valor.Add(byteTemperatura.ElementAt(0));
                 }
             }
-            return ByteToIEEEFloatingPoint(temperatura.ToArray());
+            return ByteToIEEEFloatingPoint(valor.ToArray());
         }
 
         public static Byte[] RandomByteDireccionEsclavoAndRegistro()
@@ -137,7 +159,7 @@ namespace lestoma.CommonUtils.Helpers
             return Encryption.EncryptDecrypt.Encrypt(param);
         }
 
-        public static List<byte> TramaConCRC(List<byte> tramaOchoBytes)
+        public static List<byte> TramaConCRC16Modbus(List<byte> tramaOchoBytes)
         {
             var trama = ByteArrayToHexString(tramaOchoBytes.ToArray());
             var crc = new CRCHelper().CalculateCrc16Modbus(trama);
