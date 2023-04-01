@@ -156,6 +156,23 @@ namespace lestoma.Data.Repositories
                 }
             }
         }
+
+        public async Task<List<int>> GetRegistrationAddressesByUpaModulo(UpaModuleActivityFilterRequest filterRequest, List<int> direccionesRegistro)
+        {
+            var direccionesUtilizadas = await _dbSet.Where(x => x.UpaId == filterRequest.UpaId && x.ActividadId == filterRequest.ActividadId
+                                        && x.ModuloComponenteId == filterRequest.ModuloId).Select(y => y.DireccionRegistro).ToListAsync();
+
+            var direccionesNoUtilizadas = new List<int>();
+
+            foreach (var direccionRegistro in direccionesRegistro)
+            {
+                if (!direccionesUtilizadas.Contains((byte)direccionRegistro))
+                {
+                    direccionesNoUtilizadas.Add(direccionRegistro);
+                }
+            }
+            return direccionesNoUtilizadas;
+        }
     }
 }
 

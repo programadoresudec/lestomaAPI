@@ -389,11 +389,9 @@ namespace lestoma.Logica.LogicaService
         {
 
             var response = await _amazonSimpleEmailService.VerifyEmailIdentityAsync(new VerifyEmailIdentityRequest { EmailAddress = email });
-            if (response.HttpStatusCode == HttpStatusCode.OK)
-            {
-                return Responses.SetOkResponse(null, "Siga las instrucciones del correo enviado para activar las notificaciones via ¡Email!.");
-            }
-            return Responses.SetOkResponse(null, "No es posible activar las notificaciones via ¡Email!.");
+            return response.HttpStatusCode == HttpStatusCode.OK
+                ? Responses.SetOkResponse(null, "Siga las instrucciones del correo enviado para activar las notificaciones via ¡Email!.")
+                : Responses.SetOkResponse(null, "No es posible activar las notificaciones via ¡Email!.");
         }
 
         public async Task<ResponseDTO> UserIsActiveWithNotificationsMail(string email)
@@ -419,19 +417,17 @@ namespace lestoma.Logica.LogicaService
         public async Task<ResponseDTO> DesactivateNotificationsMail(string email)
         {
             var response = await _amazonSimpleEmailService.DeleteIdentityAsync(new DeleteIdentityRequest { Identity = email });
-            if (response.HttpStatusCode == HttpStatusCode.OK)
-            {
-                return Responses.SetOkResponse(null, "Se han desactivado las notificaciones via ¡Email!.");
-            }
-            throw new HttpStatusCodeException(HttpStatusCode.Conflict, "No se encuentra activado con las notificaciones Via ¡Email!.");
+            return response.HttpStatusCode == HttpStatusCode.OK
+                ? Responses.SetOkResponse(null, "Se han desactivado las notificaciones via ¡Email!.")
+                : throw new HttpStatusCodeException(HttpStatusCode.Conflict, "No se encuentra activado con las notificaciones Via ¡Email!.");
         }
 
         public async Task<ResponseDTO> GetUpaUserId(int idUser)
         {
             var obj = await _upaActividadRepository.WhereWithCondition(x => x.UsuarioId == idUser).Include(y => y.Upa).FirstOrDefaultAsync();
-            if (obj == null)
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "El usuario no cuenta con una upa asignada.");
-            return Responses.SetOkResponse(new NameDTO { Id = obj.Upa.Id, Nombre = obj.Upa.Nombre });
+            return obj == null
+                ? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "El usuario no cuenta con una upa asignada.")
+                : Responses.SetOkResponse(new NameDTO { Id = obj.Upa.Id, Nombre = obj.Upa.Nombre });
         }
     }
 }

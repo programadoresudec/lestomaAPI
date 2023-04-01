@@ -48,11 +48,9 @@ namespace lestoma.Logica.LogicaService
         public async Task<ResponseDTO> GetMailBoxById(int id)
         {
             var data = await _buzonRepository.GetMailBoxById(id);
-            if (data == null)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
-            }
-            return Responses.SetOkResponse(data);
+            return data == null
+                ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.")
+                : Responses.SetOkResponse(data);
         }
     }
 }

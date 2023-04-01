@@ -26,31 +26,21 @@ namespace lestoma.Logica.LogicaService
         public async Task<IEnumerable<EUpa>> GetAll()
         {
             var listado = await _upaRepository.GetAll();
-            if (!listado.Any())
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
-            }
-            return listado;
+            return !listado.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.") : listado;
         }
 
         public IQueryable<EUpa> GetAllForPagination()
         {
             var listado = _upaRepository.GetAllAsQueryable().Include(x => x.ProtocolosCOM);
-            var lista = listado.ToList();
-            if (!listado.Any())
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
-            }
-            return listado;
+            return !listado.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.") : (IQueryable<EUpa>)listado;
         }
 
         public async Task<ResponseDTO> GetById(Guid id)
         {
-            var query = await _upaRepository.GetById(id);
-            if (query == null)
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la upa.");
-
-            return Responses.SetOkResponse(query);
+            var upa = await _upaRepository.WhereWithCondition(x => x.Id == id).Include(x => x.ProtocolosCOM).FirstOrDefaultAsync();
+            return upa == null
+                ? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la upa.")
+                : Responses.SetOkResponse(upa);
         }
 
         public async Task<ResponseDTO> Create(EUpa entidad)
@@ -79,7 +69,11 @@ namespace lestoma.Logica.LogicaService
         {
             var entidad = await GetById(id);
             var protocolos = await _protocoloRepository.GetAllAsQueryable().Where(x => x.UpaId == ((EUpa)entidad.Data).Id).ToListAsync();
-            await _protocoloRepository.DeleteByRange(protocolos);
+            if (protocolos.Count > 0)
+            {
+                await _protocoloRepository.DeleteByRange(protocolos);
+            }
+
             await _upaRepository.Delete((EUpa)entidad.Data);
         }
 
@@ -104,18 +98,17 @@ namespace lestoma.Logica.LogicaService
         public async Task<short> GetSuperAdminId(int userId)
         {
             var superadmin = await _upaRepository.GetSuperAdmin(userId);
-            if (superadmin == null)
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No existe el super administrador.");
-            return superadmin.Id;
+            return superadmin == null
+                ? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No existe el super administrador.")
+                : superadmin.Id;
         }
 
         public async Task<IEnumerable<NameProtocoloDTO>> GetProtocolsByUpaId(Guid upaId)
         {
             var existeUpa = await _upaRepository.AnyWithCondition(x => x.Id == upaId);
-            if (!existeUpa)
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No existe la upa.");
-
-            return await _protocoloRepository.GetProtocolsByUpaId(upaId);
+            return !existeUpa
+                ? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No existe la upa.")
+                : await _protocoloRepository.GetProtocolsByUpaId(upaId);
         }
     }
 }

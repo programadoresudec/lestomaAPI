@@ -1,7 +1,6 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
-using lestoma.CommonUtils.Listados;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Data.Repositories;
@@ -12,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
@@ -20,28 +18,26 @@ namespace lestoma.Logica.LogicaService
     public class ComponenteService : IComponenteService
     {
         private ComponenteRepository _componenteRepository;
-        private ActividadRepository _actividadRepo;
-        private UpaRepository _upaRepo;
+        private ActividadRepository _actividadRepository;
+        private UpaRepository _upaRepository;
+        private ModuloRepository _moduloRepository;
 
         public ComponenteService(ComponenteRepository componente, ActividadRepository _actividadRepository,
-            UpaRepository upaRepository)
+            UpaRepository upaRepository, ModuloRepository moduloRepository)
         {
             _componenteRepository = componente;
-            _actividadRepo = _actividadRepository;
-            _upaRepo = upaRepository;
+            this._actividadRepository = _actividadRepository;
+            _upaRepository = upaRepository;
+            _moduloRepository = moduloRepository;
         }
         public async Task<IEnumerable<EComponenteLaboratorio>> GetAll()
         {
             var listado = await _componenteRepository.GetAll();
-            if (!listado.Any())
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido");
-            }
-            return listado;
+            return !listado.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido") : listado;
         }
         public async Task<ResponseDTO> Create(EComponenteLaboratorio entidad)
         {
-            await Validaciones(entidad, true);
+            await Validations(entidad, true);
             entidad.Id = Guid.NewGuid();
             await _componenteRepository.Create(entidad);
             return Responses.SetCreatedResponse(entidad);
@@ -54,10 +50,10 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<ResponseDTO> GetById(Guid id)
         {
-            var query = await _componenteRepository.GetInfoById(id);
-            if (query == null)
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el componente.");
-            return Responses.SetOkResponse(query);
+            var componente = await _componenteRepository.GetInfoById(id);
+            return componente == null
+                ? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el componente.")
+                : Responses.SetOkResponse(componente);
         }
 
         public async Task<ResponseDTO> Update(EComponenteLaboratorio entidad)
@@ -66,7 +62,7 @@ namespace lestoma.Logica.LogicaService
             if (componente == null)
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el componente.");
 
-            await Validaciones(entidad);
+            await Validations(entidad);
             componente.NombreComponente = entidad.NombreComponente;
             componente.ActividadId = entidad.ActividadId;
             componente.UpaId = entidad.UpaId;
@@ -90,11 +86,7 @@ namespace lestoma.Logica.LogicaService
         public IQueryable<EComponenteLaboratorio> GetAllForPagination()
         {
             var listado = _componenteRepository.GetAllAsQueryable();
-            if (!listado.Any())
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
-            }
-            return listado;
+            return !listado.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.") : listado;
         }
 
         public IQueryable<ListadoComponenteDTO> GetAllFilter(UpaActivitiesFilterRequest upaActivitiesFilter)
@@ -106,33 +98,44 @@ namespace lestoma.Logica.LogicaService
             }
             return listado;
         }
-        private async Task Validaciones(EComponenteLaboratorio entidad, bool IsCreated = false)
+        private async Task Validations(EComponenteLaboratorio entidad, bool IsCreated = false)
         {
-            var existeActividad = await _actividadRepo.AnyWithCondition(x => x.Id == entidad.ActividadId);
+            bool existeActividad = await _actividadRepository.AnyWithCondition(x => x.Id == entidad.ActividadId);
             if (!existeActividad)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la actividad.");
             }
-            var existeUpa = await _upaRepo.AnyWithCondition(x => x.Id == entidad.UpaId);
+            bool existeUpa = await _upaRepository.AnyWithCondition(x => x.Id == entidad.UpaId);
             if (!existeUpa)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la upa.");
             }
-            var existeModulo = await _actividadRepo.AnyWithCondition(x => x.Id == entidad.ActividadId);
+            bool existeModulo = await _moduloRepository.AnyWithCondition(x => x.Id == entidad.ModuloComponenteId);
             if (!existeModulo)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el modulo.");
             }
 
+            bool existeRepetido;
             if (IsCreated)
             {
-                var existeRepetido = await _componenteRepository.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
-                                                                    && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente == entidad.NombreComponente);
-                if (existeRepetido)
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.Conflict, "Ya se encuentra registrado un componente con los mismos parametros.");
-                }
+                existeRepetido = await _componenteRepository.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
+                                                                      && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente
+                                                                      == entidad.NombreComponente);
+            }
+            else
+            {
+                existeRepetido = await _componenteRepository.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
+                                                               && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente
+                                                               == entidad.NombreComponente && x.Id != entidad.Id);
+            }
+            if (existeRepetido)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, $"Ya existe un componente con el mismo nombre {entidad.NombreComponente} de la upa y modulo escogido.");
+            }
 
+            if (IsCreated)
+            {
                 if (entidad.ObjetoJsonEstado.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.Lectura)
                          || entidad.ObjetoJsonEstado.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.Ajuste))
                 {
@@ -152,14 +155,54 @@ namespace lestoma.Logica.LogicaService
                         throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Ya se encuentra registrado un componente con la misma dirección de registro en la upa.");
                     }
                 }
-
-
             }
         }
 
         public async Task<IEnumerable<NameDTO>> GetComponentsJustNamesById(UpaActivitiesFilterRequest upaActivitiesfilter, bool IsAdmin)
         {
             return await _componenteRepository.GetComponentesPorUpaId(upaActivitiesfilter, IsAdmin);
+        }
+
+        public async Task<ResponseDTO> UpdateByAdmin(EComponenteLaboratorio entidad)
+        {
+            var componente = await _componenteRepository.GetById(entidad.Id);
+            if (componente == null)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el componente.");
+
+            bool existeRepetido = await _componenteRepository.AnyWithCondition(x => x.ActividadId == componente.ActividadId && x.UpaId == componente.UpaId
+                                                              && x.ModuloComponenteId == componente.ModuloComponenteId && x.NombreComponente
+                                                              == entidad.NombreComponente && x.Id != entidad.Id);
+            if (existeRepetido)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, $"Ya existe un componente con el mismo nombre {entidad.NombreComponente} de la upa y modulo escogido.");
+            }
+            componente.NombreComponente = entidad.NombreComponente;
+            await _componenteRepository.Update(componente);
+            return Responses.SetOkMessageEditResponse(componente);
+        }
+
+        public async Task<List<int>> GetRegistrationAddressesByUpaModulo(UpaModuleActivityFilterRequest FilterRequest)
+        {
+            var direccionesRegistro = Enumerable.Range(0, 256).ToList();
+            bool existeUpa = await _upaRepository.AnyWithCondition(x => x.Id == FilterRequest.UpaId);
+
+            if (!existeUpa)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la upa.");
+            }
+            bool existeModulo = await _moduloRepository.AnyWithCondition(x => x.Id == FilterRequest.ModuloId);
+
+            if (!existeModulo)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el modulo.");
+            }
+            bool existeActividad = await _actividadRepository.AnyWithCondition(x => x.Id == FilterRequest.ActividadId);
+
+            if (!existeActividad)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la actividad.");
+            }
+            return await _componenteRepository.GetRegistrationAddressesByUpaModulo(FilterRequest, direccionesRegistro);
         }
     }
 

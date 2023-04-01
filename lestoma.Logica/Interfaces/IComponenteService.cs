@@ -13,6 +13,8 @@ namespace lestoma.Logica.Interfaces
         Task<IEnumerable<NameDTO>> GetComponentsJustNames();
         IQueryable<ListadoComponenteDTO> GetAllFilter(UpaActivitiesFilterRequest upaActivitiesFilter);
         Task<IEnumerable<NameDTO>> GetComponentsJustNamesById(UpaActivitiesFilterRequest upaActivitiesfilter, bool IsAdmin);
+        Task<ResponseDTO> UpdateByAdmin(EComponenteLaboratorio compDTO);
+        Task<List<int>> GetRegistrationAddressesByUpaModulo(UpaModuleActivityFilterRequest FilterRequest);
     }
 
 }

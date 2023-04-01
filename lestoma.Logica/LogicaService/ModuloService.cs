@@ -1,4 +1,5 @@
 using lestoma.CommonUtils.DTOs;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
@@ -13,7 +14,6 @@ namespace lestoma.Logica.LogicaService
 {
     public class ModuloService : IModuloService
     {
-        private readonly ResponseDTO _respuesta = new();
         private readonly ModuloRepository _moduloRepository;
         public ModuloService(ModuloRepository moduloRepository)
         {
@@ -23,75 +23,41 @@ namespace lestoma.Logica.LogicaService
         public async Task<IEnumerable<EModuloComponente>> GetAll()
         {
             var listado = await _moduloRepository.GetAll();
-            if (!listado.Any())
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
-            }
-            return listado;
+            return !listado.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.") : listado;
         }
 
         public IQueryable<EModuloComponente> GetAllForPagination()
         {
             var listado = _moduloRepository.GetAllAsQueryable();
-            if (!listado.Any())
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.");
-            }
-            return listado;
+            return !listado.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.") : listado;
         }
 
         public async Task<ResponseDTO> GetById(Guid id)
         {
-            var query = await _moduloRepository.GetById(id);
-            if (query != null)
-            {
-                _respuesta.Data = query;
-                _respuesta.StatusCode = (int)HttpStatusCode.OK;
-                _respuesta.IsExito = true;
-                _respuesta.MensajeHttp = "Encontrado";
-            }
-            else
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el modulo requerido.");
-            }
-            return _respuesta;
+            var modulo = await _moduloRepository.GetById(id);
+            return modulo == null
+                ? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra el modulo requerido.")
+                : Responses.SetOkResponse(modulo);
         }
         public async Task<ResponseDTO> Create(EModuloComponente entidad)
         {
             bool existe = await _moduloRepository.ExisteModulo(entidad.Nombre, Guid.Empty);
-            if (!existe)
-            {
-                await _moduloRepository.Create(entidad);
-                _respuesta.IsExito = true;
-                _respuesta.Data = entidad;
-                _respuesta.StatusCode = (int)HttpStatusCode.Created;
-                _respuesta.MensajeHttp = "se ha creado satisfactoriamente.";
-            }
-            else
-            {
+            if (existe)
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El nombre ya esta en uso.");
-            }
-            return _respuesta;
+
+            await _moduloRepository.Create(entidad);
+            return Responses.SetCreatedResponse(entidad);
         }
         public async Task<ResponseDTO> Update(EModuloComponente entidad)
         {
             var response = await GetById(entidad.Id);
             var Modulo = (EModuloComponente)response.Data;
             bool existe = await _moduloRepository.ExisteModulo(entidad.Nombre, Modulo.Id, true);
-            if (!existe)
-            {
-                Modulo.Nombre = entidad.Nombre;
-                await _moduloRepository.Update(Modulo);
-                _respuesta.IsExito = true;
-                _respuesta.StatusCode = (int)HttpStatusCode.OK;
-                _respuesta.MensajeHttp = "se ha editado satisfactoriamente.";
-            }
-            else
-            {
+            if (existe)
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict, "El nombre ya está en uso.");
-            }
-
-            return _respuesta;
+            Modulo.Nombre = entidad.Nombre;
+            await _moduloRepository.Update(Modulo);
+            return Responses.SetOkMessageEditResponse(Modulo);
         }
         public async Task Delete(Guid id)
         {
@@ -101,7 +67,7 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<IEnumerable<NameDTO>> GetModulosJustNames()
         {
-           return await _moduloRepository.GetModulosJustNames();
+            return await _moduloRepository.GetModulosJustNames();
         }
     }
 }

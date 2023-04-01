@@ -102,6 +102,15 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
 
+
+        [HttpGet("direcciones-de-registro-upa-modulo")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
+        public async Task<IActionResult> GetDireccionesRegistroByUpaModulo([FromQuery] UpaModuleActivityFilterRequest upaModuleFilterRequest)
+        {
+            var response = await _componentService.GetRegistrationAddressesByUpaModulo(upaModuleFilterRequest);
+            return Ok(response);
+        }
+
         [HttpPost("crear")]
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> CrearComponente([FromBody] CreateComponenteRequest comp)
@@ -115,18 +124,25 @@ namespace lestoma.Api.Controllers
             return Created(string.Empty, response);
         }
 
-        [HttpPut("editar")]
-        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
-        public async Task<IActionResult> EditarComponente([FromBody] EditComponenteRequest comp)
+        [HttpPut("editar-super-admin")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        public async Task<IActionResult> EditarComponenteSuper([FromBody] EditComponenteRequest comp)
         {
-            if (!IsSuperAdmin() && comp.UpaId == Guid.Empty)
-            {
-                comp.UpaId = UpaId();
-            }
             var compDTO = Mapear<EditComponenteRequest, EComponenteLaboratorio>(comp);
             var response = await _componentService.Update(compDTO);
             return Ok(response);
         }
+
+        [HttpPut("editar-admin")]
+        [AuthorizeRoles(TipoRol.Administrador)]
+        public async Task<IActionResult> EditarComponenteAdmin([FromBody] EditComponenteRequest comp)
+        {
+            comp.UpaId = UpaId();
+            var compDTO = Mapear<EditComponenteRequest, EComponenteLaboratorio>(comp);
+            var response = await _componentService.UpdateByAdmin(compDTO);
+            return Ok(response);
+        }
+
         [HttpDelete("{id}")]
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> EliminarComponente(Guid id)
@@ -134,5 +150,6 @@ namespace lestoma.Api.Controllers
             await _componentService.Delete(id);
             return NoContent();
         }
+
     }
 }

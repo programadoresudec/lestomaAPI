@@ -40,6 +40,7 @@ namespace lestoma.CommonUtils.Requests
     {
         [Required(ErrorMessage = "El id del componente es requerido")]
         public Guid Id { get; set; }
+        [Required(ErrorMessage = "El nombre es requerido")]
         public string Nombre { get; set; }
         public EstadoComponenteDTO TipoEstadoComponente { get; set; }
         public string JsonEstadoComponente => ConvertirJson();
@@ -59,5 +60,13 @@ namespace lestoma.CommonUtils.Requests
             }
             return string.Empty;
         }
+    }
+
+    public class EditComponentAdminRequest : IId
+    {
+        [Required(ErrorMessage = "El id del componente es requerido")]
+        public Guid Id { get; set; }
+        [Required(ErrorMessage = "El nombre es requerido")]
+        public string Nombre { get; set; }
     }
 }

@@ -22,29 +22,20 @@ namespace lestoma.Logica.LogicaService
         public async Task<IEnumerable<EActividad>> GetAll()
         {
             var query = await _actividadRepository.GetAll();
-            if (query.Count() == 0)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay actividades.");
-            }
-            return query;
+            return !query.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay actividades.") : query;
         }
 
         public IQueryable<EActividad> GetAllForPagination()
         {
             var query = _actividadRepository.GetAllAsQueryable();
-            int variable = query.Count();
-            if (variable == 0)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay actividades.");
-            }
-            return query;
+            return !query.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay actividades.") : query;
         }
         public async Task<ResponseDTO> GetById(Guid id)
         {
-            var query = await _actividadRepository.GetById(id);
-            if (query == null)
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la actividad.");
-            return Responses.SetOkResponse(query);
+            var actividad = await _actividadRepository.GetById(id);
+            return actividad == null
+                ? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la actividad.")
+                : Responses.SetOkResponse(actividad);
         }
         public async Task<ResponseDTO> Create(EActividad entidad)
         {

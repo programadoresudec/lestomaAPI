@@ -96,7 +96,7 @@ namespace lestoma.Data
         }
         #endregion
 
-        #region Delete In BD
+        #region Delete By Range In BD
 
         public async Task DeleteByRange(IList<T> entidades)
         {
