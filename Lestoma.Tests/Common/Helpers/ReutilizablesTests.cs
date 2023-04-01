@@ -1,7 +1,9 @@
 ﻿using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Listados;
+using lestoma.CommonUtils.Requests.Filters;
 using System.Collections.Generic;
 using System.Net;
+using System.Reflection;
 using Xunit;
 
 namespace Lestoma.Tests.Common.Helpers
@@ -62,6 +64,22 @@ namespace Lestoma.Tests.Common.Helpers
         {
             var response = Reutilizables.VerifyCRCOfReceivedTrama(crcRecibido);
             Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
+        }
+
+
+        [Theory]
+        [InlineData("?UpaId=7d491ea0-bcb0-47ce-aeb5-c0cba7f045cb&ModuloId=2773e708-f03f-43df-8692-e47d0631c975&ActividadId=197c0024-0889-45ca-92a5-da800357bee2")]
+        public void GenerateQueryString_Return_CorrectFormat(string resultado)
+        {
+            var FilterRequest = new UpaModuleActivityFilterRequest
+            {
+                UpaId = System.Guid.Parse("7D491EA0-BCB0-47CE-AEB5-C0CBA7F045CB"),
+                ModuloId = System.Guid.Parse("2773E708-F03F-43DF-8692-E47D0631C975"),
+                ActividadId = System.Guid.Parse("197C0024-0889-45CA-92A5-DA800357BEE2")
+            };
+
+            string queryString = Reutilizables.GenerateQueryString(FilterRequest);
+            Assert.Equal(resultado, queryString);
         }
 
         [Fact]
