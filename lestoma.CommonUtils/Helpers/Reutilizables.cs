@@ -1,15 +1,15 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 
 namespace lestoma.CommonUtils.Helpers
 {
@@ -166,6 +166,14 @@ namespace lestoma.CommonUtils.Helpers
             tramaOchoBytes.Add(crc[1]);
             tramaOchoBytes.Add(crc[0]);
             return tramaOchoBytes;
+        }
+
+        public static string GenerateQueryString<T>(T obj)
+        {
+            var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var queryStringParams = properties.Select(p => $"{HttpUtility.UrlEncode(p.Name)}={HttpUtility.UrlEncode(p.GetValue(obj)?.ToString() ?? "")}");
+            var queryString = $"?{string.Join("&", queryStringParams)}";
+            return queryString;
         }
     }
 }
