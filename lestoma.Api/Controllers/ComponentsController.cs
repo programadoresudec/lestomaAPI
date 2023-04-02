@@ -107,6 +107,10 @@ namespace lestoma.Api.Controllers
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> GetDireccionesRegistroByUpaModulo([FromQuery] UpaModuleActivityFilterRequest upaModuleFilterRequest)
         {
+            if (!IsSuperAdmin() && upaModuleFilterRequest.UpaId == Guid.Empty)
+            {
+                upaModuleFilterRequest.UpaId = UpaId();
+            }
             var response = await _componentService.GetRegistrationAddressesByUpaModulo(upaModuleFilterRequest);
             return Ok(response);
         }

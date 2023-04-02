@@ -68,13 +68,7 @@ namespace lestoma.Logica.LogicaService
         public async Task Delete(Guid id)
         {
             var entidad = await GetById(id);
-            var protocolos = await _protocoloRepository.GetAllAsQueryable().Where(x => x.UpaId == ((EUpa)entidad.Data).Id).ToListAsync();
-            if (protocolos.Count > 0)
-            {
-                await _protocoloRepository.DeleteByRange(protocolos);
-            }
-
-            await _upaRepository.Delete((EUpa)entidad.Data);
+            await _upaRepository.DeleteInCascade((EUpa)entidad.Data);
         }
 
         public async Task<IEnumerable<NameDTO>> GetUpasJustNames()

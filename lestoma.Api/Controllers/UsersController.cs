@@ -24,11 +24,19 @@ namespace lestoma.Api.Controllers
             _service = usuarioService;
         }
 
-        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
-        [HttpGet("activos")]
-        public IActionResult GetUsuarios()
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        [HttpGet("activos-sin-upa")]
+        public async Task<IActionResult> GetUserswithoutUpa()
         {
-            var listado = _service.GetUsersJustNames(IsSuperAdmin());
+            var listado = await _service.GetUserswithoutUpa();
+            return Ok(listado);
+        }
+
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        [HttpGet("listar")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var listado = await _service.GetUsers();
             return Ok(listado);
         }
 
@@ -49,7 +57,6 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
 
-
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpGet("listado-estados")]
         public async Task<IActionResult> GetEstados()
@@ -62,7 +69,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("listado-roles")]
         public async Task<IActionResult> GetRoles()
         {
-            var listado = await _service.GetUserRoles();
+            var listado = await _service.GetRoles();
             return Ok(listado);
         }
 

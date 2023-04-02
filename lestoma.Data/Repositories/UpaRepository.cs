@@ -1,5 +1,4 @@
 ﻿using lestoma.CommonUtils.DTOs;
-using lestoma.CommonUtils.Enums;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,6 +15,15 @@ namespace lestoma.Data.Repositories
         {
             _db = db;
         }
+
+        public async Task DeleteInCascade(EUpa entidad)
+        {
+            var protocolos = await _db.TablaProtocoloCOM.Where(x => x.UpaId == entidad.Id).ToListAsync();
+            if (protocolos.Any())
+                _db.RemoveRange(protocolos);
+            await Delete(entidad);
+        }
+
         public async Task<bool> ExisteUpa(string nombre, Guid id, bool insertOrUpdate = false)
         {
             if (!insertOrUpdate)

@@ -14,9 +14,8 @@ namespace lestoma.Logica.Interfaces
         Task<ResponseDTO> ChangePassword(ChangePasswordRequest usuario);
         Task<ResponseDTO> ForgotPassword(ForgotPasswordRequest email);
         Task<ResponseDTO> RecoverPassword(RecoverPasswordRequest recover);
-        Task<ResponseDTO> ChangeProfile(ChangeProfileRequest change);
         Task<EUsuario> RefreshToken(string refreshToken, string ipAddress);
-        List<UserDTO> GetUsersJustNames(bool isSuperAdmin);
+        Task<IEnumerable<UserDTO>> GetUserswithoutUpa();
         short GetExpirationToken(int aplicacionId);
         Task<string> GetApplicationType(int tipoAplicacion);
         Task<ResponseDTO> EditRol(RolRequest user);
@@ -24,10 +23,11 @@ namespace lestoma.Logica.Interfaces
         Task<ResponseDTO> GetByIdAsync(int id);
         Task<IEnumerable<InfoUserDTO>> GetInfoUsers();
         Task<IEnumerable<EstadoDTO>> GetUserStatuses();
-        Task<IEnumerable<RolDTO>> GetUserRoles();
+        Task<IEnumerable<RolDTO>> GetRoles();
         Task<ResponseDTO> ActivateNotificationsMail(string email);
         Task<ResponseDTO> DesactivateNotificationsMail(string email);
         Task<ResponseDTO> UserIsActiveWithNotificationsMail(string email);
         Task<ResponseDTO> GetUpaUserId(int idUser);
+        Task<IEnumerable<UserDTO>> GetUsers();
     }
 }

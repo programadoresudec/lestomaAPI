@@ -22,52 +22,35 @@ namespace lestoma.Data.Repositories
         {
             _db = db;
         }
-        public async Task<EUsuario> Logeo(LoginRequest login)
-        {
-            return await _dbSet.Include(o => o.EstadoUsuario).
-                Include(e => e.Rol).Where(x => x.Email.Equals(login.Email)).FirstOrDefaultAsync();
-        }
+        public async Task<EUsuario> Logeo(LoginRequest login) =>
+            await _dbSet.Include(o => o.EstadoUsuario).Include(e => e.Rol).Where(x => x.Email.Equals(login.Email)).FirstOrDefaultAsync();
+
+        public async Task<EUsuario> GetByEmail(string email) => await _dbSet.FirstOrDefaultAsync(x => x.Email.Equals(email));
 
 
+        public async Task<bool> ExisteCodigoVerificacion(string codigoRecuperacion) =>
+            await _dbSet.AnyAsync(x => x.CodigoRecuperacion.Equals(codigoRecuperacion));
 
-        public async Task<EUsuario> GetByEmail(string email)
-        {
-            return await _dbSet.FirstOrDefaultAsync(x => x.Email.Equals(email));
-        }
 
-        public async Task<bool> ExisteCodigoVerificacion(string codigoRecuperacion)
-        {
-            return await _dbSet.AnyAsync(x => x.CodigoRecuperacion.Equals(codigoRecuperacion));
-        }
-
-        public async Task<EUsuario> UsuarioByCodigoVerificacion(string codigo) =>
+        public async Task<EUsuario> VerifyCodeByRecover(string codigo) =>
             await _dbSet.Where(x => x.CodigoRecuperacion.Equals(codigo))
             .FirstOrDefaultAsync();
 
-        public EUsuario UsuarioByToken(string token)
-        {
-            return _db.TablaUsuarios.Include(o => o.Rol).SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
-        }
+        public EUsuario UsuarioByToken(string token) =>
+            _db.TablaUsuarios.Include(o => o.Rol).SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
+
 
         public short ExpiracionToken(int aplicacionId) =>
             _db.TablaAplicaciones.FirstOrDefault(x => x.Id == aplicacionId).TiempoExpiracionToken;
 
-        public List<UserDTO> GetUsersJustNames(bool isSuperAdmin)
+        public async Task<IEnumerable<UserDTO>> GetUserswithoutUpa()
         {
             try
             {
-                int rolsuperId = (int)TipoRol.SuperAdministrador;
-                int roladminId = (int)TipoRol.Administrador;
-                List<int> Ids = new();
-                if (isSuperAdmin)
-                {
-                    Ids.Add(rolsuperId);
-                }
-                else
-                {
-                    Ids.Add(rolsuperId);
-                    Ids.Add(roladminId);
-                }
+                List<int> Ids = await (from detalle in _db.TablaUpasConActividades
+                                       group detalle by new { detalle.UsuarioId } into grupo
+                                       select grupo.Key.UsuarioId).ToListAsync();
+
                 var parameters = new string[Ids.Count];
                 var sqlParameters = new List<NpgsqlParameter>();
                 for (var i = 0; i < Ids.Count; i++)
@@ -77,22 +60,22 @@ namespace lestoma.Data.Repositories
                 }
 
                 var estadoId = new NpgsqlParameter("estadoId", (int)TipoEstadoUsuario.Activado);
+                var rolSuperId = new NpgsqlParameter("rolSuperId", (int)TipoRol.SuperAdministrador);
                 sqlParameters.Add(estadoId);
+                sqlParameters.Add(rolSuperId);
                 string consulta = $@"SELECT usuario.id, usuario.nombre, usuario.apellido, usuario.rol_id, rol.nombre_rol
                     FROM usuarios.usuario usuario INNER JOIN usuarios.rol rol on usuario.rol_id = rol.id
                     INNER JOIN usuarios.estado_usuario estado on estado.id = usuario.estado_id 
-                    WHERE usuario.rol_id NOT IN ({string.Join(", ", parameters)}) AND usuario.estado_id = @estadoId";
+                    WHERE usuario.id NOT IN ({string.Join(", ", parameters)}) AND usuario.estado_id = @estadoId AND usuario.rol_id <> @rolSuperId";
                 var users = _db.TablaUsuarios.FromSqlRaw(consulta, sqlParameters.ToArray()).OrderBy(x => x.Nombre);
-                var query = users.Select(x => new UserDTO
+                return await users.Select(x => new UserDTO
                 {
                     Id = x.Id,
                     Nombre = x.Nombre,
                     Apellido = x.Apellido,
                     RolId = x.RolId,
                     NombreRol = x.Rol.NombreRol
-                }).ToList();
-
-                return query;
+                }).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -129,7 +112,7 @@ namespace lestoma.Data.Repositories
                  Ip = x.Ip,
                  Session = x.Session,
                  TipoDeAplicacion = x.TipoDeAplicacion,
-                 FechaCreacionServer = x.FechaCreacionServer, 
+                 FechaCreacionServer = x.FechaCreacionServer,
                  FechaActualizacionServer = x.FechaActualizacionServer
              }).ToListAsync();
         }
@@ -144,13 +127,25 @@ namespace lestoma.Data.Repositories
              }).ToListAsync();
         }
 
-        public async Task<IEnumerable<RolDTO>> GetUserRoles()
+        public async Task<IEnumerable<RolDTO>> GetRoles()
         {
             return await _db.TablaRoles.Where(x => x.Id != (int)TipoRol.SuperAdministrador)
             .Select(x => new RolDTO
             {
                 Id = x.Id,
                 NombreRol = x.NombreRol
+            }).ToListAsync();
+        }
+
+        public async Task<IEnumerable<UserDTO>> GetUsers()
+        {
+            return await _dbSet.Select(x => new UserDTO
+            {
+                Id = x.Id,
+                Nombre = x.Nombre,
+                Apellido = x.Apellido,
+                RolId = x.RolId,
+                NombreRol = x.Rol.NombreRol
             }).ToListAsync();
         }
     }

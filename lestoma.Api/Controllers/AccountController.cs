@@ -197,16 +197,6 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
-        #region cambiar el perfil
-        [HttpPut("changeprofile")]
-        [Authorize]
-        public async Task<IActionResult> ChangeProfile(ChangeProfileRequest change)
-        {
-            Respuesta = await _usuarioService.ChangeProfile(change);
-            return Ok(Respuesta);
-        }
-        #endregion
-
         #region Activar Notificaciones por correo
         [HttpPost("enable-notifications-by-mail")]
         [Authorize]

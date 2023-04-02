@@ -35,7 +35,7 @@ namespace lestoma.Api.Controllers
             return Ok(paginador);
         }
 
-        [HttpPost("crear")]
+        [HttpPost("assign-to-a-user")]
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> CrearDetalle(CrearDetalleUpaActividadRequest entidad)
         {
@@ -53,7 +53,7 @@ namespace lestoma.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet("listar-actividades-upa-usuario")]
+        [HttpGet("listar-por-usuario")]
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> GetActividadesByUpaUser([FromQuery] UpaUserFilterRequest filtro)
         {
@@ -65,7 +65,7 @@ namespace lestoma.Api.Controllers
             return Ok(query);
         }
 
-        [HttpGet("listar-actividades-by-upa/{id}")]
+        [HttpGet("listar-por-upa/{id}")]
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> GetActividadesByUpa(Guid id)
         {
