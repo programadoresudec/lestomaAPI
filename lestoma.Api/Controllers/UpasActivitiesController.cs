@@ -7,6 +7,7 @@ using lestoma.CommonUtils.Requests;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,8 +20,9 @@ namespace lestoma.Api.Controllers
     public class UpasActivitiesController : BaseController
     {
         private readonly IDetalleUpaActividadService _detalleService;
-        public UpasActivitiesController(IMapper mapper, IDetalleUpaActividadService upasActividadesService)
-            : base(mapper)
+        public UpasActivitiesController(IMapper mapper, IDataProtectionProvider protectorProvider,
+            IDetalleUpaActividadService upasActividadesService)
+            : base(mapper, protectorProvider)
         {
             _detalleService = upasActividadesService;
         }
@@ -57,9 +59,10 @@ namespace lestoma.Api.Controllers
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         public async Task<IActionResult> GetActividadesByUpaUser([FromQuery] UpaUserFilterRequest filtro)
         {
-            if (!IsSuperAdmin() && filtro.UpaId == Guid.Empty)
+            if (!IsSuperAdmin() && filtro.UpaId == Guid.Empty && filtro.UsuarioId == 0)
             { 
                 filtro.UpaId = UpaId();
+                filtro.UsuarioId = UserIdDesencrypted();
             }
             var query = await _detalleService.GetActivitiesByUpaUserId(filtro);
             return Ok(query);
