@@ -35,7 +35,6 @@ namespace lestoma.CommonUtils.Helpers
                 {
                     codigo += NumeroAleatorio.ToString();
                 }
-
             }
             return codigo;
         }

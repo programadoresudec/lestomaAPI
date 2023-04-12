@@ -3,7 +3,6 @@ using lestoma.CommonUtils.Listados;
 using lestoma.CommonUtils.Requests.Filters;
 using System.Collections.Generic;
 using System.Net;
-using System.Reflection;
 using Xunit;
 
 namespace Lestoma.Tests.Common.Helpers
@@ -41,6 +40,33 @@ namespace Lestoma.Tests.Common.Helpers
         }
 
         [Theory]
+        [InlineData("43CC8000434800007082", 200)]
+        [InlineData("43CC8000424800008C83", 50)]
+        [InlineData("43CC800041F00000ED03", 30)]
+        [InlineData("43CC800043CC800099A3", 409)]
+        [InlineData("43CC8000417000000502", 15)]
+        public void SetPoint_Return_CorrectFormat(string trama, float setPoint)
+        {
+            float result = Reutilizables.ConvertReceivedTramaToResult(trama);
+            Assert.Equal(setPoint, result);
+        }
+
+        [Theory]
+        [InlineData(200)]
+        [InlineData(52.1)]
+        [InlineData(26.4)]
+        [InlineData(409)]
+        [InlineData(15.3)]
+        [InlineData(17.23)]
+        public void ByteToIEEEFloatingPoint_AndReverse_Return_CorrectFormat(float setPoint)
+        {
+            var resultByte = Reutilizables.IEEEFloatingPointToByte(setPoint);
+            Assert.NotNull(resultByte);
+            float result = Reutilizables.ByteToIEEEFloatingPoint(resultByte);
+            Assert.Equal(setPoint, result);
+        }
+
+        [Theory]
         [InlineData(20, "41A00000")]
         [InlineData(48, "42400000")]
         [InlineData(35, "420C0000")]
@@ -52,6 +78,19 @@ namespace Lestoma.Tests.Common.Helpers
             Assert.NotNull(resultIEEE);
             string resultHexa = Reutilizables.ByteArrayToHexString(resultIEEE);
             Assert.Equal(salida, resultHexa);
+        }
+
+        [Theory]
+
+        [InlineData("420C0000")]
+        [InlineData("41D80000")]
+        [InlineData("41900000")]
+        public void ByteArrayToHexString_AndReverse_Return_CorrectFormat(string hexa)
+        {
+            var resultByte = Reutilizables.StringToByteArray(hexa);
+            Assert.NotNull(resultByte);
+            string resultHexa = Reutilizables.ByteArrayToHexString(resultByte);
+            Assert.Equal(hexa, resultHexa);
         }
 
         [Theory]

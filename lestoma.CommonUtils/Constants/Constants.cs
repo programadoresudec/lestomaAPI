@@ -26,5 +26,10 @@ namespace lestoma.CommonUtils.Constants
         public const string CACHE_REPORTE_KEY = "KEYREPORTE";
         public const string KEY_REPORT_DAILY = "Enviar-reporte-diario";
         #endregion
+
+        #region Variables de tramas http_error
+        public const string TRAMA_SUCESS = "C8C8C8C8C8C8C8C8611C";
+        public const string TRAMA_ERROR = " 43CC800043CC800099A3";
+        #endregion
     }
 }
