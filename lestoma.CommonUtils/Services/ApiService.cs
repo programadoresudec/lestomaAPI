@@ -6,7 +6,6 @@ using lestoma.CommonUtils.Requests;
 using Newtonsoft.Json;
 using Plugin.Connectivity;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -18,49 +17,37 @@ namespace lestoma.CommonUtils.Services
 {
     public class ApiService : IApiService
     {
-        public HttpResponseMessage ResponseMessage { get; set; }
         private string _tokenNuevo;
         public ResponseDTO Respuesta { get; set; }
 
         #region Check conexion para consumo de servicios por internet
-
-        public bool CheckConnection()
-        {
-            if (CrossConnectivity.Current.IsConnected)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
+        public bool CheckConnection() => CrossConnectivity.Current.IsConnected;
         #endregion
 
         #region Get httpclient
 
         private static HttpClient GetHttpClient(string urlBase)
         {
-#if !DEBUG
+
+            if (urlBase.Contains("https"))
+            {
                 var httpClientHandler = new HttpClientHandler();
 
                 httpClientHandler.ServerCertificateCustomValidationCallback =
                     (message, certificate, chain, sslPolicyErrors) => true;
-                 
+
                 return new HttpClient(httpClientHandler)
                 {
                     Timeout = TimeSpan.FromSeconds(45),
                     BaseAddress = new Uri(urlBase),
                 };
-#endif
-
-#if DEBUG
+            }
 
             return new HttpClient()
             {
                 Timeout = TimeSpan.FromSeconds(45),
                 BaseAddress = new Uri(urlBase),
             };
-#endif
         }
 
         #endregion
@@ -71,55 +58,69 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                HttpClient client = GetHttpClient(urlBase);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.GetAsync(nameService);
-                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                if (!ResponseMessage.IsSuccessStatusCode)
+                using (var client = GetHttpClient(urlBase))
                 {
-                    Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                    return new ResponseDTO
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                    using (HttpResponseMessage response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, nameService)))
                     {
-                        IsExito = false,
-                        MensajeHttp =
-                            MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
-                    };
-                }
-                else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    await RefreshToken(urlBase);
-                    await GetListAsyncWithToken<T>(urlBase, nameService, _tokenNuevo);
-                }
+                        string jsonString = await response.Content.ReadAsStringAsync();
 
-                T item = JsonConvert.DeserializeObject<T>(jsonString);
-                if (item == null)
-                {
-                    return new ResponseDTO
-                    {
-                        IsExito = false,
-                        MensajeHttp = "No hay contenido."
-                    };
-                }
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                            return new ResponseDTO
+                            {
+                                IsExito = false,
+                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
+                            };
+                        }
 
-                return new ResponseDTO
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            await RefreshToken(urlBase);
+                            return await GetListAsyncWithToken<T>(urlBase, nameService, _tokenNuevo);
+                        }
+
+                        T item = JsonConvert.DeserializeObject<T>(jsonString);
+
+                        return item != null
+                            ? new ResponseDTO { IsExito = true, Data = item }
+                            : new ResponseDTO { IsExito = false, MensajeHttp = "No hay contenido." };
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
                 {
-                    IsExito = true,
-                    Data = item
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    MensajeHttp = ex.Message
                 };
+                throw new HttpRequestException(jsonError.ToString());
+            }
+            catch (JsonException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = "Se ha producido un error al deserializar la respuesta."
+                };
+                throw new JsonException(jsonError.ToString());
             }
             catch (Exception ex)
             {
-                var jsonError = JsonConvert.SerializeObject(new ResponseDTO
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null
-                        ? (int)ResponseMessage.StatusCode
-                        : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null
-                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
-                        : ex.Message
-                });
-                throw new Exception(jsonError);
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ex.Message
+                };
+                throw new Exception(jsonError.ToString());
             }
         }
 
@@ -131,42 +132,62 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                HttpClient client = GetHttpClient(urlBase);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.GetAsync(nameService);
-                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                if (!ResponseMessage.IsSuccessStatusCode)
+                using (HttpClient client = GetHttpClient(urlBase))
                 {
-                    Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                    return new ResponseDTO
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                    using (HttpResponseMessage response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, nameService)))
                     {
-                        IsExito = false,
-                        MensajeHttp =
-                          MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
-                    };
+                        string jsonString = await response.Content.ReadAsStringAsync();
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                            return new ResponseDTO
+                            {
+                                IsExito = false,
+                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
+                            };
+                        }
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            await RefreshToken(urlBase);
+                            return await GetAsyncWithToken(urlBase, nameService, _tokenNuevo);
+                        }
+                        return JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                    }
                 }
-                else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+            }
+            catch (HttpRequestException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
                 {
-                    await RefreshToken(urlBase);
-                    await GetAsyncWithToken(urlBase, nameService, _tokenNuevo);
-                }
-
-                ResponseDTO item = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                return item;
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    MensajeHttp = ex.Message
+                };
+                throw new HttpRequestException(jsonError.ToString());
+            }
+            catch (JsonException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = "Se ha producido un error al deserializar la respuesta."
+                };
+                throw new JsonException(jsonError.ToString());
             }
             catch (Exception ex)
             {
-                var jsonError = JsonConvert.SerializeObject(new ResponseDTO
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null
-                        ? (int)ResponseMessage.StatusCode
-                        : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null
-                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
-                        : ex.Message
-                });
-                throw new Exception(jsonError);
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ex.Message
+                };
+                throw new Exception(jsonError.ToString());
             }
         }
 
@@ -178,55 +199,78 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                HttpClient client = GetHttpClient(urlBase);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.GetAsync(nameService);
-                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                if (!ResponseMessage.IsSuccessStatusCode)
+                using (HttpClient client = GetHttpClient(urlBase))
                 {
-                    Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                    return new ResponseDTO
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                    using (HttpResponseMessage response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, nameService)))
                     {
-                        IsExito = false,
-                        MensajeHttp =
-                            MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
-                    };
+                        string jsonString = await response.Content.ReadAsStringAsync();
+                        if (response.IsSuccessStatusCode)
+                        {
+                            Paginador<T> item = JsonConvert.DeserializeObject<Paginador<T>>(jsonString);
+                            if (item == null)
+                            {
+                                return new ResponseDTO
+                                {
+                                    IsExito = false,
+                                    MensajeHttp = "No hay contenido."
+                                };
+                            }
+                            return new ResponseDTO
+                            {
+                                IsExito = true,
+                                Data = item
+                            };
+                        }
+                        else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            await RefreshToken(urlBase);
+                            return await GetPaginadoAsyncWithToken<T>(urlBase, nameService, _tokenNuevo);
+                        }
+                        else
+                        {
+                            string errorMessage = MostrarMensajePersonalizadoStatus(response.StatusCode, jsonString);
+                            return new ResponseDTO
+                            {
+                                IsExito = false,
+                                MensajeHttp = errorMessage
+                            };
+                        }
+                    }
                 }
-                else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+            }
+            catch (HttpRequestException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
                 {
-                    await RefreshToken(urlBase);
-                    await GetListAsyncWithToken<T>(urlBase, nameService, _tokenNuevo);
-                }
-
-                Paginador<T> item = JsonConvert.DeserializeObject<Paginador<T>>(jsonString);
-                if (item == null)
-                {
-                    return new ResponseDTO
-                    {
-                        IsExito = false,
-                        MensajeHttp = "No hay contenido."
-                    };
-                }
-
-                return new ResponseDTO
-                {
-                    IsExito = true,
-                    Data = item
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    MensajeHttp = $"Se ha producido un error en la solicitud HTTP: {ex.Message}"
                 };
+                throw new HttpRequestException(jsonError.ToString());
+            }
+            catch (JsonException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = "Se ha producido un error al deserializar la respuesta JSON."
+                };
+                throw new JsonException(jsonError.ToString());
             }
             catch (Exception ex)
             {
-                var jsonError = JsonConvert.SerializeObject(new ResponseDTO
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null
-                        ? (int)ResponseMessage.StatusCode
-                        : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null
-                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
-                        : ex.Message
-                });
-                throw new Exception(jsonError);
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ex.Message
+                };
+                throw new Exception(jsonError.ToString());
             }
         }
 
@@ -238,46 +282,68 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                HttpClient client = GetHttpClient(urlBase);
-                string json = JsonConvert.SerializeObject(model);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                ResponseMessage = await client.PostAsync(nameService, content);
-                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                if (!ResponseMessage.IsSuccessStatusCode)
+                using (HttpClient client = GetHttpClient(urlBase))
                 {
-                    if (Respuesta.ErrorsEntries != null)
+                    string json = JsonConvert.SerializeObject(model);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    using (HttpResponseMessage response = await client.PostAsync(nameService, content))
                     {
-                        return new ResponseDTO
+                        string jsonString = await response.Content.ReadAsStringAsync();
+                        Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                        if (!response.IsSuccessStatusCode)
                         {
-                            IsExito = false,
-                            StatusCode = (int)ResponseMessage.StatusCode,
-                            MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
-                        };
+                            if (Respuesta.ErrorsEntries != null)
+                            {
+                                return new ResponseDTO
+                                {
+                                    IsExito = false,
+                                    StatusCode = (int)response.StatusCode,
+                                    MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
+                                };
+                            }
+                            return new ResponseDTO
+                            {
+                                IsExito = false,
+                                StatusCode = (int)response.StatusCode,
+                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
+                            };
+                        }
+                        return Respuesta;
                     }
-                    return new ResponseDTO
-                    {
-                        IsExito = false,
-                        StatusCode = (int)ResponseMessage.StatusCode,
-                        MensajeHttp = MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
-                    };
                 }
-
-                return Respuesta;
+            }
+            catch (HttpRequestException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    MensajeHttp = $"Se ha producido un error en la solicitud HTTP: {ex.Message}"
+                };
+                throw new HttpRequestException(jsonError.ToString());
+            }
+            catch (JsonException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = "Se ha producido un error al deserializar la respuesta JSON."
+                };
+                throw new JsonException(jsonError.ToString());
             }
             catch (Exception ex)
             {
-                var jsonError = JsonConvert.SerializeObject(new ResponseDTO
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null
-                        ? (int)ResponseMessage.StatusCode
-                        : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null
-                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
-                        : ex.Message
-                });
-                throw new Exception(jsonError);
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ex.Message
+                };
+                throw new Exception(jsonError.ToString());
             }
         }
 
@@ -288,50 +354,72 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                HttpClient client = GetHttpClient(urlBase);
-                string json = JsonConvert.SerializeObject(model);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.PostAsync(nameService, content);
-                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                if (!ResponseMessage.IsSuccessStatusCode)
+                using (HttpClient client = GetHttpClient(urlBase))
                 {
-                    if (Respuesta.ErrorsEntries != null)
+                    string json = JsonConvert.SerializeObject(model);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                    using (HttpResponseMessage response = await client.PostAsync(nameService, content))
                     {
-                        return new ResponseDTO
+                        string jsonString = await response.Content.ReadAsStringAsync();
+                        Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                        if (!response.IsSuccessStatusCode)
                         {
-                            IsExito = false,
-                            StatusCode = (int)ResponseMessage.StatusCode,
-                            MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
-                        };
+                            if (Respuesta.ErrorsEntries != null)
+                            {
+                                return new ResponseDTO
+                                {
+                                    IsExito = false,
+                                    StatusCode = (int)response.StatusCode,
+                                    MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
+                                };
+                            }
+                            return new ResponseDTO
+                            {
+                                IsExito = false,
+                                StatusCode = (int)response.StatusCode,
+                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
+                            };
+                        }
+                        else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            await RefreshToken(urlBase);
+                            await PostAsyncWithToken(urlBase, nameService, model, _tokenNuevo);
+                        }
+                        return Respuesta;
                     }
-                    return new ResponseDTO
-                    {
-                        IsExito = false,
-                        StatusCode = (int)ResponseMessage.StatusCode,
-                        MensajeHttp = MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
-                    };
-                }
-                else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    await RefreshToken(urlBase);
-                    await PostAsyncWithToken(urlBase, nameService, model, _tokenNuevo);
-                }
-
-                return Respuesta;
+                }         
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
+                LestomaLog.Error(ex.Message);
                 var jsonError = new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null
-                         ? (int)ResponseMessage.StatusCode
-                         : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null
-                         ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
-                         : ex.Message
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    MensajeHttp = $"Se ha producido un error en la solicitud HTTP: {ex.Message}"
+                };
+                throw new HttpRequestException(jsonError.ToString());
+            }
+            catch (JsonException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = "Se ha producido un error al deserializar la respuesta JSON."
+                };
+                throw new JsonException(jsonError.ToString());
+            }
+            catch (Exception ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ex.Message
                 };
                 throw new Exception(jsonError.ToString());
             }
@@ -344,41 +432,64 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                HttpClient client = GetHttpClient(urlBase);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.PostAsync(nameService, null);
-                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                if (!ResponseMessage.IsSuccessStatusCode)
+                using (HttpClient client = GetHttpClient(urlBase))
                 {
-                    return new ResponseDTO
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                    using (HttpResponseMessage response = await client.PostAsync(nameService, null))
                     {
-                        IsExito = false,
-                        StatusCode = (int)ResponseMessage.StatusCode,
-                        MensajeHttp = MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
-                    };
-                }
-                else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    await RefreshToken(urlBase);
-                    await PostWithoutBodyAsyncWithToken(urlBase, nameService, _tokenNuevo);
-                }
+                        string jsonString = await response.Content.ReadAsStringAsync();
+                        Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            return new ResponseDTO
+                            {
+                                IsExito = false,
+                                StatusCode = (int)response.StatusCode,
+                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
+                            };
+                        }
+                        else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            await RefreshToken(urlBase);
+                            await PostWithoutBodyAsyncWithToken(urlBase, nameService, _tokenNuevo);
+                        }
 
-                return Respuesta;
+                        return Respuesta;
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    MensajeHttp = $"Se ha producido un error en la solicitud HTTP: {ex.Message}"
+                };
+                throw new HttpRequestException(jsonError.ToString());
+            }
+            catch (JsonException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = "Se ha producido un error al deserializar la respuesta JSON."
+                };
+                throw new JsonException(jsonError.ToString());
             }
             catch (Exception ex)
             {
-                var jsonError = JsonConvert.SerializeObject(new ResponseDTO
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null
-                        ? (int)ResponseMessage.StatusCode
-                        : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null
-                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
-                        : ex.Message
-                });
-                throw new Exception(jsonError);
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ex.Message
+                };
+                throw new Exception(jsonError.ToString());
             }
         }
 
@@ -390,47 +501,69 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                HttpClient client = GetHttpClient(urlBase);
-                string json = JsonConvert.SerializeObject(model);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                ResponseMessage = await client.PutAsync(nameService, content);
-                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                if (!ResponseMessage.IsSuccessStatusCode)
+                using (HttpClient client = GetHttpClient(urlBase))
                 {
-
-                    if (Respuesta.ErrorsEntries != null)
+                    string json = JsonConvert.SerializeObject(model);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    using (HttpResponseMessage response = await client.PutAsync(nameService, content))
                     {
-                        return new ResponseDTO
+                        string jsonString = await response.Content.ReadAsStringAsync();
+                        Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                        if (!response.IsSuccessStatusCode)
                         {
-                            IsExito = false,
-                            StatusCode = (int)ResponseMessage.StatusCode,
-                            MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
-                        };
-                    }
-                    return new ResponseDTO
-                    {
-                        IsExito = false,
-                        StatusCode = (int)ResponseMessage.StatusCode,
-                        MensajeHttp = MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
-                    };
-                }
 
-                return Respuesta;
+                            if (Respuesta.ErrorsEntries != null)
+                            {
+                                return new ResponseDTO
+                                {
+                                    IsExito = false,
+                                    StatusCode = (int)response.StatusCode,
+                                    MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
+                                };
+                            }
+                            return new ResponseDTO
+                            {
+                                IsExito = false,
+                                StatusCode = (int)response.StatusCode,
+                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
+                            };
+                        }
+                        return Respuesta;
+                    }
+                }   
+            }
+            catch (HttpRequestException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    MensajeHttp = $"Se ha producido un error en la solicitud HTTP: {ex.Message}"
+                };
+                throw new HttpRequestException(jsonError.ToString());
+            }
+            catch (JsonException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = "Se ha producido un error al deserializar la respuesta JSON."
+                };
+                throw new JsonException(jsonError.ToString());
             }
             catch (Exception ex)
             {
-                var jsonError = JsonConvert.SerializeObject(new ResponseDTO
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null
-                        ? (int)ResponseMessage.StatusCode
-                        : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null
-                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
-                        : ex.Message
-                });
-                throw new Exception(jsonError);
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ex.Message
+                };
+                throw new Exception(jsonError.ToString());
             }
         }
 
@@ -442,46 +575,68 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                HttpClient client = GetHttpClient(urlBase);
-                string json = JsonConvert.SerializeObject(model);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.PutAsync(nameService, content);
-                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                if (!ResponseMessage.IsSuccessStatusCode)
+                using (HttpClient client = GetHttpClient(urlBase))
                 {
-                    if (Respuesta.ErrorsEntries != null)
+                    string json = JsonConvert.SerializeObject(model);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                    using (HttpResponseMessage response = await client.PutAsync(nameService, content))
                     {
-                        return new ResponseDTO
+                        string jsonString = await response.Content.ReadAsStringAsync();
+                        Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                        if (!response.IsSuccessStatusCode)
                         {
-                            IsExito = false,
-                            StatusCode = (int)ResponseMessage.StatusCode,
-                            MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
-                        };
+                            if (Respuesta.ErrorsEntries != null)
+                            {
+                                return new ResponseDTO
+                                {
+                                    IsExito = false,
+                                    StatusCode = (int)response.StatusCode,
+                                    MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
+                                };
+                            }
+                            return new ResponseDTO
+                            {
+                                IsExito = false,
+                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
+                            };
+                        }
+                        return Respuesta;
                     }
-                    return new ResponseDTO
-                    {
-                        IsExito = false,
-                        MensajeHttp = MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
-                    };
-                }
-
-                return Respuesta;
+                }          
+            }
+            catch (HttpRequestException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    MensajeHttp = $"Se ha producido un error en la solicitud HTTP: {ex.Message}"
+                };
+                throw new HttpRequestException(jsonError.ToString());
+            }
+            catch (JsonException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = "Se ha producido un error al deserializar la respuesta JSON."
+                };
+                throw new JsonException(jsonError.ToString());
             }
             catch (Exception ex)
             {
-                var jsonError = JsonConvert.SerializeObject(new ResponseDTO
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null
-                        ? (int)ResponseMessage.StatusCode
-                        : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null
-                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
-                        : ex.Message
-                });
-                throw new Exception(jsonError);
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ex.Message
+                };
+                throw new Exception(jsonError.ToString());
             }
         }
 
@@ -493,50 +648,81 @@ namespace lestoma.CommonUtils.Services
         {
             try
             {
-                HttpClient client = GetHttpClient(urlBase);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                ResponseMessage = await client.DeleteAsync($"{nameService}/{id}");
-                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(jsonString))
+                using (HttpClient client = GetHttpClient(urlBase))
                 {
-                    Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                }
-
-                if (!ResponseMessage.IsSuccessStatusCode)
-                {
-                    return new ResponseDTO
+                    // Asignar token de autenticación
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                    // Realizar solicitud HTTP DELETE
+                    using (HttpResponseMessage response = await client.DeleteAsync($"{nameService}/{id}"))
                     {
-                        IsExito = false,
-                        StatusCode = (int)ResponseMessage.StatusCode,
-                        MensajeHttp =
-                            MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, Respuesta.MensajeHttp)
-                    };
+                        string jsonString = await response.Content.ReadAsStringAsync();
+                        if (!string.IsNullOrWhiteSpace(jsonString))
+                        {
+                            Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                        }
+                        if (response.IsSuccessStatusCode)
+                        {
+                            // Retornar respuesta exitosa
+                            return new ResponseDTO
+                            {
+                                IsExito = true,
+                                MensajeHttp = "se ha eliminado correctamente."
+                            };
+                        }
+                        else
+                        {
+                            // Procesar respuesta de error
+                            switch (response.StatusCode)
+                            {
+                                case HttpStatusCode.Unauthorized:
+                                    // Actualizar token y reintentar solicitud
+                                    await RefreshToken(urlBase);
+                                    return await DeleteAsyncWithToken(urlBase, nameService, id, _tokenNuevo);
+                                default:
+                                    // Retornar respuesta de error
+                                    return new ResponseDTO
+                                    {
+                                        IsExito = false,
+                                        StatusCode = (int)response.StatusCode,
+                                        MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp ?? "")
+                                    };
+                            }
+                        }
+                    }
                 }
-                else if (ResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+            }
+            catch (HttpRequestException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
                 {
-                    await RefreshToken(urlBase);
-                    await DeleteAsyncWithToken(urlBase, nameService, id, _tokenNuevo);
-                }
-
-                return new ResponseDTO
-                {
-                    IsExito = true,
-                    MensajeHttp = "se ha eliminado correctamente."
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    MensajeHttp = $"Se ha producido un error en la solicitud HTTP: {ex.Message}"
                 };
+                throw new HttpRequestException(jsonError.ToString());
+            }
+            catch (JsonException ex)
+            {
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = "Se ha producido un error al deserializar la respuesta JSON."
+                };
+                throw new JsonException(jsonError.ToString());
             }
             catch (Exception ex)
             {
-                var jsonError = JsonConvert.SerializeObject(new ResponseDTO
+                LestomaLog.Error(ex.Message);
+                var jsonError = new ResponseDTO
                 {
                     IsExito = false,
-                    StatusCode = ResponseMessage != null
-                        ? (int)ResponseMessage.StatusCode
-                        : (int)HttpStatusCode.InternalServerError,
-                    MensajeHttp = ResponseMessage != null
-                        ? MostrarMensajePersonalizadoStatus(ResponseMessage.StatusCode, string.Empty)
-                        : ex.Message
-                });
-                throw new Exception(jsonError);
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    MensajeHttp = ex.Message
+                };
+                throw new Exception(jsonError.ToString());
             }
         }
 
@@ -546,26 +732,23 @@ namespace lestoma.CommonUtils.Services
 
         private async Task RefreshToken(string urlBase)
         {
-            try
+            using (HttpClient client = GetHttpClient(urlBase))
             {
-                HttpClient client = GetHttpClient(urlBase);
                 TipoAplicacionRequest tipoAplicacionRequest = new TipoAplicacionRequest
                 {
                     TipoAplicacion = (int)TipoAplicacion.AppMovil
                 };
                 var json = JsonConvert.SerializeObject(tipoAplicacionRequest);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                ResponseMessage = await client.PostAsync("Account/refresh-token", content);
-                ResponseMessage.EnsureSuccessStatusCode();
-                string jsonString = await ResponseMessage.Content.ReadAsStringAsync();
-                Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                TokenDTO tokenNuevo = (TokenDTO)Respuesta.Data;
-                MovilSettings.Token = JsonConvert.SerializeObject(tokenNuevo);
-                _tokenNuevo = tokenNuevo.Token;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
+                using (HttpResponseMessage response = await client.PostAsync("Account/refresh-token", content))
+                {
+                    response.EnsureSuccessStatusCode();
+                    string jsonString = await response.Content.ReadAsStringAsync();
+                    Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                    TokenDTO tokenNuevo = (TokenDTO)Respuesta.Data;
+                    MovilSettings.Token = JsonConvert.SerializeObject(tokenNuevo);
+                    _tokenNuevo = tokenNuevo.Token;
+                }
             }
         }
 
