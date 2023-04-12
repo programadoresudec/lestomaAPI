@@ -8,7 +8,9 @@ using lestoma.Logica.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -68,6 +70,14 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> GetComponentesByUpaAndModuloId([FromQuery] UpaModuleFilterRequest filtro)
         {
             var data = await _laboratorioService.GetComponentsByUpaAndModuleId(filtro);
+            return Ok(data);
+        }
+
+
+        [HttpGet("ultimo-registro-componente/{id}")]
+        public async Task<IActionResult> GetComponentesByUpaAndModuloId(Guid id)
+        {
+            var data = await _laboratorioService.GetComponentRecentTrama(id);
             return Ok(data);
         }
 

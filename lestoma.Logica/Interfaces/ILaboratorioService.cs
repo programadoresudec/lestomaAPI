@@ -16,5 +16,6 @@ namespace lestoma.Logica.Interfaces
         Task<IEnumerable<DataOnlineSyncDTO>> GetDataOfUserToSyncDeviceDatabase(UpaActivitiesFilterRequest filtro, bool isSuperAdmin);
         Task<IEnumerable<NameDTO>> GetModulesByUpaActivitiesUserId(UpaActivitiesFilterRequest filtro);
         Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByUpaAndModuleId(UpaModuleFilterRequest filtro);
+        Task<ResponseDTO> GetComponentRecentTrama(Guid id);
     }
 }

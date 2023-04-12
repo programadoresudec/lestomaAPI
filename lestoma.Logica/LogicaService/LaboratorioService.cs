@@ -97,5 +97,15 @@ namespace lestoma.Logica.LogicaService
         {
             return await _laboratorioRepository.GetComponentsByUpaAndModuleId(filtro);
         }
+
+        public async Task<ResponseDTO> GetComponentRecentTrama(Guid id)
+        {
+            var existe = await _componenteRepository.AnyWithCondition(x => x.Id == id);
+            if (!existe)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encontro el componente.");
+            var data = await _laboratorioRepository.GetComponentRecentTrama(id);
+
+            return Responses.SetOkResponse(data);
+        }
     }
 }

@@ -136,6 +136,18 @@ namespace lestoma.Data.Repositories
                                }).ToListAsync();
             return query;
         }
+
+        public async Task<TramaComponenteDTO> GetComponentRecentTrama(Guid id)
+        {
+            return await _db.TablaDetalleLaboratorio.Where(x => x.ComponenteLaboratorioId == id).OrderByDescending(d => d.FechaCreacionDispositivo)
+                          .Select(x => new TramaComponenteDTO
+                          {
+                              TramaInPut = x.TramaEnviada,
+                              TramaOutPut = x.TramaRecibida,
+                              SetPointIn = x.ValorCalculadoTramaEnviada,
+                              SetPointOut = x.ValorCalculadoTramaRecibida
+                          }).FirstOrDefaultAsync();
+        }
     }
 }
 
