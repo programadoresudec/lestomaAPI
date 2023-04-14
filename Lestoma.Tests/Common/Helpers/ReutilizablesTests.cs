@@ -12,7 +12,7 @@ namespace Lestoma.Tests.Common.Helpers
         [Fact]
         public void Desencrypt_ShouldBe_Equals()
         {
-            string valueEncrypt = "BVD45PKGn6zFuRa/2nc9N49sYf5mxBRFCVbphfB8v8Y=";
+            string valueEncrypt = "Kzl4WuN0TDHsaft4nGlCwOMNOBs/nKXln6lC0YkeOgGw3HoZNKNgc8FFJiPPrBLwliJLfDzSfHpPWYiWQa5kpSK8XzO8i/WDV6WAFkb9+bBH1OkrBsZz2fX6v/S/FYZb6cN4piDndaYsNZPsp9hpm49O8hXwQrBpRztw4vjFqv3CN0RpVUyKFqXQ0zaVf8b6MqYrBAZO2KPLTDbJldN3yb1R6hqFb+J24KQ/fiUj3XwZuTn5spdDRfGysV7wD1ZLtaljHhqcZqAD6rBxyuMvAjPcf+zwhSj91gPcn3jpfIU9rloHo0h9eRrISN0jrd6fUYawyGzcmPXCFi4W8dOsVg==";
             string decript = Reutilizables.Decrypt(valueEncrypt);
             string encript = Reutilizables.Encrypt(decript);
             Assert.Equal(valueEncrypt, encript);

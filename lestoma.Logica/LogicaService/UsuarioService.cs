@@ -49,7 +49,7 @@ namespace lestoma.Logica.LogicaService
             var user = await _usuarioRepository.GetById(id);
             if (user == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "usuario no encontrado");
             return Responses.SetOkResponse(user);
-        } 
+        }
         #endregion
 
         #region Iniciar sesión
@@ -201,20 +201,21 @@ namespace lestoma.Logica.LogicaService
         public async Task<ResponseDTO> ChangePassword(ChangePasswordRequest cambiar)
         {
             var user = await _usuarioRepository.GetById(cambiar.IdUser);
-            if (user == null || !HashHelper.CheckHash(cambiar.OldPassword, user.Clave, user.Salt))
+            if (user == null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Verifique la contraseña actual.");
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Te han eliminado.");
             }
-            else
+            if (!HashHelper.CheckHash(cambiar.OldPassword, user.Clave, user.Salt))
             {
-                var hash = HashHelper.Hash(cambiar.NewPassword);
-                user.Clave = hash.Password;
-                user.Salt = hash.Salt;
-                await _usuarioRepository.Update(user);
-                _respuesta.MensajeHttp = "Se actualizo satisfactoriamente.";
-                _respuesta.IsExito = true;
-                _respuesta.StatusCode = (int)HttpStatusCode.OK;
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, "Verifique su contraseña actual.");
             }
+            var hash = HashHelper.Hash(cambiar.NewPassword);
+            user.Clave = hash.Password;
+            user.Salt = hash.Salt;
+            await _usuarioRepository.Update(user);
+            _respuesta.MensajeHttp = "Se actualizo satisfactoriamente.";
+            _respuesta.IsExito = true;
+            _respuesta.StatusCode = (int)HttpStatusCode.OK;
             return _respuesta;
         }
         #endregion
@@ -259,7 +260,7 @@ namespace lestoma.Logica.LogicaService
 
             var user = await _usuarioRepository.VerifyCodeByRecover(recover.Codigo);
             if (user == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "codigo no valido.");
-            
+
 
             var hash = HashHelper.Hash(recover.Password);
             user.CodigoRecuperacion = null;
@@ -441,6 +442,6 @@ namespace lestoma.Logica.LogicaService
         }
 
         #endregion
-       
+
     }
 }

@@ -192,7 +192,6 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest change)
         {
             Respuesta = await _usuarioService.ChangePassword(change);
-            Respuesta.StatusCode = (int)HttpStatusCode.OK;
             return Ok(Respuesta);
         }
         #endregion
