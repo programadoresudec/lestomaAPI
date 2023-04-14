@@ -4,7 +4,6 @@ using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.Requests;
 using Newtonsoft.Json;
-using Plugin.Connectivity;
 using System;
 using System.Linq;
 using System.Net;
@@ -12,6 +11,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace lestoma.CommonUtils.Services
 {
@@ -21,7 +21,7 @@ namespace lestoma.CommonUtils.Services
         public ResponseDTO Respuesta { get; set; }
 
         #region Check conexion para consumo de servicios por internet
-        public bool CheckConnection() => CrossConnectivity.Current.IsConnected;
+        public bool CheckConnection() => Connectivity.NetworkAccess == NetworkAccess.Internet;
         #endregion
 
         #region Get httpclient
@@ -388,7 +388,7 @@ namespace lestoma.CommonUtils.Services
                         }
                         return Respuesta;
                     }
-                }         
+                }
             }
             catch (HttpRequestException ex)
             {
@@ -530,7 +530,7 @@ namespace lestoma.CommonUtils.Services
                         }
                         return Respuesta;
                     }
-                }   
+                }
             }
             catch (HttpRequestException ex)
             {
@@ -603,7 +603,7 @@ namespace lestoma.CommonUtils.Services
                         }
                         return Respuesta;
                     }
-                }          
+                }
             }
             catch (HttpRequestException ex)
             {
