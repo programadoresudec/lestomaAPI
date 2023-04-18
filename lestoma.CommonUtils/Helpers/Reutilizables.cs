@@ -106,7 +106,8 @@ namespace lestoma.CommonUtils.Helpers
                     valor.Add(byteTemperatura.ElementAt(0));
                 }
             }
-            return ByteToIEEEFloatingPoint(valor.ToArray());
+            var result = ByteToIEEEFloatingPoint(valor.ToArray());
+            return result;
         }
 
         public static Byte[] RandomByteDireccionEsclavoAndRegistro()

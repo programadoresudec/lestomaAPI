@@ -18,8 +18,5 @@ namespace lestoma.CommonUtils.DTOs
         public byte DireccionRegistro { get; set; }
 
         public EstadoComponenteDTO EstadoComponente { get; set; }
-
-
-
     }
 }
