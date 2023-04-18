@@ -11,6 +11,7 @@ namespace lestoma.CommonUtils.Helpers
         private const string _isLogin = "isLogin";
         private const string _isOnNotificationsEmail = "isOn";
         private const string _isOnMigrationSucess= "isOnSyncToDevice";
+        private const string _connectionString = "ConnectionStringBD";
         private static readonly string _stringDefault = string.Empty;
         private static readonly bool _boolDefault = false;
 
@@ -20,6 +21,11 @@ namespace lestoma.CommonUtils.Helpers
         {
             get => AppSettings.GetValueOrDefault(_token, _stringDefault);
             set => AppSettings.AddOrUpdateValue(_token, value);
+        }
+        public static string GetConnectionString
+        {
+            get => AppSettings.GetValueOrDefault(_connectionString, _stringDefault);
+            set => AppSettings.AddOrUpdateValue(_connectionString, value);
         }
 
         public static string MacBluetooth
