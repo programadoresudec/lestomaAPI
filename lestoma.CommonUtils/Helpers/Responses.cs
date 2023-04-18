@@ -19,11 +19,11 @@ namespace lestoma.CommonUtils.Helpers
             return pResponse;
         }
 
-        public static ResponseDTO SetCreatedResponse(Object pData = null)
+        public static ResponseDTO SetCreatedResponse(Object pData = null, string Mensaje = "Se ha creado satisfactoriamente.")
         {
             ResponseDTO pResponse = new ResponseDTO();
             pResponse.StatusCode = (int)HttpStatusCode.Accepted;
-            pResponse.MensajeHttp = "Se ha creado satisfactoriamente.";
+            pResponse.MensajeHttp = Mensaje;
             if (pData != null && !String.IsNullOrEmpty(pData.ToString()))
             {
                 pResponse.Data = pData;
@@ -64,6 +64,15 @@ namespace lestoma.CommonUtils.Helpers
                 pResponse.Data = pData;
             }
             pResponse.IsExito = true;
+            return pResponse;
+        }
+
+        public static ResponseDTO SetInternalErrorResponse(Exception exception, string Error)
+        {
+            ResponseDTO pResponse = new ResponseDTO();
+            pResponse.StatusCode = (int)HttpStatusCode.InternalServerError;
+            pResponse.MensajeHttp = $"[Error] {exception.Message}";
+            pResponse.IsExito = false;
             return pResponse;
         }
     }

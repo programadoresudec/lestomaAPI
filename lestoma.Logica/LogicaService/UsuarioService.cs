@@ -20,20 +20,27 @@ using System.Threading.Tasks;
 
 namespace lestoma.Logica.LogicaService
 {
+    /// <summary>
+    /// Clase usuario service
+    /// </summary>
     public class UsuarioService : IUsuarioService
     {
-
-        //ENVIAR CORREOS CON ARCHIVOS 
-        //    await _mailHelper.SendMailWithOneArchive("diegop177@hotmail.com", "", "cedula.pdf", "activar cuenta",
-        //MediaTypeNames.Application.Pdf, null, "cedula.pdf");
-        private readonly ResponseDTO _respuesta = new();
         private readonly UsuarioRepository _usuarioRepository;
         private readonly AplicacionRepository _aplicacionRepository;
         private readonly UpaActividadRepository _upaActividadRepository;
         private readonly IMailHelper _mailHelper;
         private readonly IAmazonSimpleEmailService _amazonSimpleEmailService;
+        #region Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="usuarioRepository"> repositorio del usuario</param>
+        /// <param name="mailHelper"> helper para envio de correos</param>
+        /// <param name="amazonSimpleEmailService">servicio para notificaciones por correo a partir de amazon web services</param>
+        /// <param name="aplicacionRepository"> repositorio aplicacion</param>
+        /// <param name="upaActividadRepository">repositorio que contiene el detalle de la asiganacion de upa y actividades al usuarios</param>
         public UsuarioService(UsuarioRepository usuarioRepository, IMailHelper mailHelper, IAmazonSimpleEmailService amazonSimpleEmailService,
-            AplicacionRepository aplicacionRepository, UpaActividadRepository upaActividadRepository)
+           AplicacionRepository aplicacionRepository, UpaActividadRepository upaActividadRepository)
         {
             _usuarioRepository = usuarioRepository;
             _mailHelper = mailHelper;
@@ -42,6 +49,7 @@ namespace lestoma.Logica.LogicaService
             _amazonSimpleEmailService = amazonSimpleEmailService;
 
         }
+        #endregion
 
         #region Get user
         public async Task<ResponseDTO> GetByIdAsync(int id)
@@ -57,36 +65,20 @@ namespace lestoma.Logica.LogicaService
         {
             var aplication = await _aplicacionRepository.AnyWithCondition(x => x.Id == login.TipoAplicacion);
             if (!aplication)
-            {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la aplicación registrada.");
 
-            }
-            var user = await _usuarioRepository.Logeo(login);
-            if (user == null)
-            {
+            var user = await _usuarioRepository.Logeo(login) ?? throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "correo y/o contraseña incorrectos.");
+            var upaId = await ValidateUser(user.Id, user.EstadoId, user.Rol.Id);
+            if (!HashHelper.CheckHash(login.Clave, user.Clave, user.Salt))
                 throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "correo y/o contraseña incorrectos.");
-            }
-            else
-            {
-                var upaId = await ValidateUser(user.Id, user.EstadoId, user.Rol.Id);
-                if (HashHelper.CheckHash(login.Clave, user.Clave, user.Salt))
-                {
-                    _respuesta.MensajeHttp = "Ha iniciado satisfactoriamente.";
-                    var refreshToken = generateRefreshToken(login.TipoAplicacion, user.Id, login.Ip);
-                    user.RefreshToken = refreshToken.Token;
-                    user.UpaId = upaId;
-                    _respuesta.Data = user;
-                    user.RefreshTokens.Add(refreshToken);
-                    await _usuarioRepository.Update(user);
-                    _respuesta.IsExito = true;
-                    _respuesta.StatusCode = (int)HttpStatusCode.OK;
-                }
-                else
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "correo y/o contraseña incorrectos.");
-                }
-            }
-            return _respuesta;
+
+            var refreshToken = generateRefreshToken(login.TipoAplicacion, user.Id, login.Ip);
+            user.RefreshToken = refreshToken.Token;
+            user.UpaId = upaId;
+            user.RefreshTokens.Add(refreshToken);
+            await _usuarioRepository.Update(user);
+            return Responses.SetOkResponse(user, "Inicio Satisfactorio");
+
         }
         #endregion
 
@@ -94,23 +86,18 @@ namespace lestoma.Logica.LogicaService
         private async Task<Guid> ValidateUser(int userId, int estadoId, int rolId)
         {
             if (estadoId == (int)TipoEstadoUsuario.CheckCuenta)
-            {
                 throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta esta en proceso de activación.");
-            }
+
             else if (estadoId == (int)TipoEstadoUsuario.Inactivo)
-            {
                 throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta esta Inactiva, debe comunicarse con el Super Administrador.");
-            }
+
             else if (estadoId == (int)TipoEstadoUsuario.Bloqueado)
-            {
                 throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta esta bloqueada, debe comunicarse con el Super Administrador.");
-            }
+
             var tieneUpa = await _upaActividadRepository.GetUpaByUserId(userId);
             if (tieneUpa == Guid.Empty && rolId != (int)TipoRol.SuperAdministrador)
-            {
                 throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Su cuenta no cuenta con ninguna upa asociada comunicarse con el Super Administrador.");
 
-            }
             return tieneUpa;
         }
         #endregion
@@ -160,10 +147,7 @@ namespace lestoma.Logica.LogicaService
                     usuario.EstadoId = usuario.RolId == (int)TipoRol.Auxiliar ? (int)TipoEstadoUsuario.CheckCuenta : (int)TipoEstadoUsuario.Activado;
                 }
                 await _usuarioRepository.Create(usuario);
-                _respuesta.IsExito = true;
-                _respuesta.StatusCode = (int)HttpStatusCode.Created;
-                _respuesta.MensajeHttp = ownRegister ? "Se ha registrado satisfactoriamente."
-                    : "creado el usuario con exito.";
+
                 if (usuario.RolId == (int)TipoRol.Auxiliar && ownRegister)
                 {
                     //await _mailHelper.SendMail(usuario.Email, "Activación de Cuenta", String.Empty,
@@ -193,30 +177,23 @@ namespace lestoma.Logica.LogicaService
                       string.Empty, $"LESTOMA APP", true);
                 }
             }
-            return _respuesta;
+            return Responses.SetCreatedResponse(null, ownRegister ? "Se ha registrado satisfactoriamente." : "creado el usuario con exito.");
         }
         #endregion
 
         #region Cambiar la contraseña
         public async Task<ResponseDTO> ChangePassword(ChangePasswordRequest cambiar)
         {
-            var user = await _usuarioRepository.GetById(cambiar.IdUser);
-            if (user == null)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Te han eliminado.");
-            }
+            var user = await _usuarioRepository.GetById(cambiar.IdUser) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Te han eliminado.");
+
             if (!HashHelper.CheckHash(cambiar.OldPassword, user.Clave, user.Salt))
-            {
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict, "Verifique su contraseña actual.");
-            }
+
             var hash = HashHelper.Hash(cambiar.NewPassword);
             user.Clave = hash.Password;
             user.Salt = hash.Salt;
             await _usuarioRepository.Update(user);
-            _respuesta.MensajeHttp = "Se actualizo satisfactoriamente.";
-            _respuesta.IsExito = true;
-            _respuesta.StatusCode = (int)HttpStatusCode.OK;
-            return _respuesta;
+            return Responses.SetOkMessageEditResponse();
         }
         #endregion
 
@@ -224,32 +201,21 @@ namespace lestoma.Logica.LogicaService
         public async Task<ResponseDTO> ForgotPassword(ForgotPasswordRequest email)
         {
 
-            var user = await _usuarioRepository.GetByEmail(email.Email);
-            if (user == null)
+            var user = await _usuarioRepository.GetByEmail(email.Email) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "El correo no esta registrado.");
+            bool validar;
+            do
             {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "El correo no esta registrado.");
-            }
-            else
-            {
-                bool validar;
-                do
-                {
-                    user.CodigoRecuperacion = Reutilizables.GenerarCodigoVerificacion();
-                    validar = await _usuarioRepository.ExisteCodigoVerificacion(user.CodigoRecuperacion);
-                } while (validar != false);
-                user.FechaVencimientoCodigo = DateTime.Now.AddHours(2);
-                await _usuarioRepository.Update(user);
-                _respuesta.Data = new ForgotPasswordDTO { Email = user.Email, CodigoVerificacion = user.CodigoRecuperacion };
-                _respuesta.IsExito = true;
-                _respuesta.MensajeHttp = "Revise su correo eléctronico.";
-                await _mailHelper.SendMail(user.Email, $"{user.CodigoRecuperacion} es tu código de recuperación de contraseña", user.CodigoRecuperacion,
-                    "Hola: ¡Cambia Tu Contraseña!",
-                    "Verifica con el codigo tu cuenta para reestablecer la contraseña. el codigo tiene una duración de 2 horas.",
-                    string.Empty, "Si no has intentado cambiar la contraseña con esta dirección de email recientemente," +
-                    " puedes ignorar este mensaje.");
-                _respuesta.StatusCode = (int)HttpStatusCode.OK;
-            }
-            return _respuesta;
+                user.CodigoRecuperacion = Reutilizables.GenerarCodigoVerificacion();
+                validar = await _usuarioRepository.ExisteCodigoVerificacion(user.CodigoRecuperacion);
+            } while (validar != false);
+            user.FechaVencimientoCodigo = DateTime.Now.AddHours(2);
+            await _usuarioRepository.Update(user);
+            await _mailHelper.SendMail(user.Email, $"{user.CodigoRecuperacion} es tu código de recuperación de contraseña", user.CodigoRecuperacion,
+                "Hola: ¡Cambia Tu Contraseña!",
+                "Verifica con el codigo tu cuenta para reestablecer la contraseña. el codigo tiene una duración de 2 horas.",
+                string.Empty, "Si no has intentado cambiar la contraseña con esta dirección de email recientemente," +
+                " puedes ignorar este mensaje.");
+            return Responses.SetOkResponse(new ForgotPasswordDTO { Email = user.Email, CodigoVerificacion = user.CodigoRecuperacion }, "Revise su correo eléctronico.");
         }
 
         #endregion
@@ -257,22 +223,14 @@ namespace lestoma.Logica.LogicaService
         #region Recuperar contraseña verifica el codigo que sea valido
         public async Task<ResponseDTO> RecoverPassword(RecoverPasswordRequest recover)
         {
-
-            var user = await _usuarioRepository.VerifyCodeByRecover(recover.Codigo);
-            if (user == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "codigo no valido.");
-
-
+            var user = await _usuarioRepository.VerifyCodeByRecover(recover.Codigo) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "codigo no valido.");
             var hash = HashHelper.Hash(recover.Password);
             user.CodigoRecuperacion = null;
             user.Clave = hash.Password;
             user.Salt = hash.Salt;
             user.FechaVencimientoCodigo = null;
             await _usuarioRepository.Update(user);
-            _respuesta.IsExito = true;
-            _respuesta.MensajeHttp = "la contraseña ha sido restablecida.";
-            _respuesta.StatusCode = (int)HttpStatusCode.OK;
-
-            return _respuesta;
+            return Responses.SetOkResponse(default, "la contraseña ha sido restablecida.");
         }
         #endregion
 
@@ -294,12 +252,7 @@ namespace lestoma.Logica.LogicaService
             refreshToken.Revoked = DateTime.UtcNow;
             refreshToken.RevokedByIp = ipAddress;
             await _usuarioRepository.Update(user);
-            return new ResponseDTO
-            {
-                MensajeHttp = "Token Revoked",
-                IsExito = true,
-                StatusCode = (int)HttpStatusCode.OK,
-            };
+            return Responses.SetOkResponse(default, "Token Revoked");
         }
 
         #endregion
@@ -331,34 +284,49 @@ namespace lestoma.Logica.LogicaService
         }
         #endregion
 
+        #region Get usuarios que no tienen asignada una upa
         public async Task<IEnumerable<UserDTO>> GetUserswithoutUpa()
         {
             return await _usuarioRepository.GetUserswithoutUpa();
         }
+        #endregion
 
+        #region Obtener la expiración del token dependiendo aplicación id
         public short GetExpirationToken(int aplicacionId)
         {
             return _usuarioRepository.ExpiracionToken(aplicacionId);
         }
+        #endregion
 
+        #region Get nombre aplicacion Movil, o WEB
         public async Task<string> GetApplicationType(int tipoAplicacion)
         {
             return await _usuarioRepository.GetApplicationType(tipoAplicacion);
         }
+        #endregion
+
+        #region Get users con información rol email nombre estado
         public async Task<IEnumerable<InfoUserDTO>> GetInfoUsers()
         {
             return await _usuarioRepository.GetInfoUsers();
         }
+        #endregion
 
+        #region Get estados de un usuario
         public async Task<IEnumerable<EstadoDTO>> GetUserStatuses()
         {
             return await _usuarioRepository.GetUserStatuses();
         }
+        #endregion
 
+        #region Get roles
         public async Task<IEnumerable<RolDTO>> GetRoles()
         {
             return await _usuarioRepository.GetRoles();
         }
+        #endregion
+
+        #region Obtener upa de un usuario especifico por id
         public async Task<ResponseDTO> GetUpaUserId(int idUser)
         {
             var obj = await _upaActividadRepository.WhereWithCondition(x => x.UsuarioId == idUser).Include(y => y.Upa).FirstOrDefaultAsync();
@@ -366,27 +334,27 @@ namespace lestoma.Logica.LogicaService
                 ? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "El usuario no cuenta con una upa asignada.")
                 : Responses.SetOkResponse(new NameDTO { Id = obj.Upa.Id, Nombre = obj.Upa.Nombre });
         }
+        #endregion
 
+        #region Get usuarios con los campos Id, RolId,FullName y NombreRol 
         public async Task<IEnumerable<UserDTO>> GetUsers()
         {
             return await _usuarioRepository.GetUsers();
         }
+        #endregion
+
+        #region Editar rol del usuario
         public async Task<ResponseDTO> EditRol(RolRequest usuarioDTO)
         {
-            var existe = await _usuarioRepository.GetById(usuarioDTO.IdUser);
-            if (existe == null)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "usuario no encontrado");
-            }
+            var existe = await _usuarioRepository.GetById(usuarioDTO.IdUser) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "usuario no encontrado");
             existe.RolId = usuarioDTO.RolUser;
             await _usuarioRepository.Update(existe);
-            _respuesta.IsExito = true;
-            _respuesta.MensajeHttp = "El rol ha sido editado.";
-            _respuesta.StatusCode = (int)HttpStatusCode.OK;
-            return _respuesta;
+            return Responses.SetOkMessageEditResponse(existe);
 
         }
+        #endregion
 
+        #region Actualizar usuario
         public async Task<ResponseDTO> UpdateUser(EUsuario usuario)
         {
             var respuesta = await GetByIdAsync(usuario.Id);
@@ -396,12 +364,10 @@ namespace lestoma.Logica.LogicaService
             userActual.Apellido = usuario.Apellido;
             userActual.EstadoId = usuario.EstadoId;
             await _usuarioRepository.Update(userActual);
-            _respuesta.IsExito = true;
-            _respuesta.MensajeHttp = "Usuario actualizado.";
-            _respuesta.StatusCode = (int)HttpStatusCode.OK;
-            return _respuesta;
+            return Responses.SetOkMessageEditResponse(userActual);
 
         }
+        #endregion
 
         #region Servicios AWS (tiene notificaciones activas, se pueden activar y desactivar notificaciones via email )
         public async Task<ResponseDTO> ActivateNotificationsMail(string email)

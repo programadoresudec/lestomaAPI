@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
 
 namespace lestoma.CommonUtils.Enums
 {
     public enum TipoSincronizacion
     {
-        [Description("Migrar data online al dispositivo movil")]
+        [Description("Migrar datos online al dispositivo móvil.")]
         MigrateDataOnlineToDevice = 1,
-        [Description("Migrar data offline al servidor")]
+        [Description("Migrar datos del dispositivo móvil al servidor de la nube.")]
         MigrateDataOfflineToServer = 2
     }
 }
