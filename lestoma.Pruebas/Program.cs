@@ -23,11 +23,11 @@ namespace lestoma.Pruebas
 
 
             var tercerByte = Reutilizables.ByteArrayToHexString(new byte[] { 15 });
-            var primerByte = Reutilizables.StringToByteArray("49 F0");
+            var primerByte = Reutilizables.StringToByteArray("49 F0 ");
 
             List<byte> byteArray = new List<byte>() { 67, 204, 128, 0, 0, 0, 0, 0 };
 
-            var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(30);
+            var bytesFlotante = Reutilizables.IEEEFloatingPointToByte(12.5f);
 
             byteArray[4] = bytesFlotante[0];
             byteArray[5] = bytesFlotante[1];
@@ -45,13 +45,11 @@ namespace lestoma.Pruebas
             string tramaCompleta = Reutilizables.ByteArrayToHexString(byteArray.ToArray());
 
             byte[] bytesTramaCompleta = Reutilizables.StringToByteArray(tramaCompleta);
-            foreach (var item in bytesTramaCompleta)
-            {
-                var currentElement = bytesTramaCompleta.Select((value, index) => (value, index))
-                        .Where(s => s.value == item).FirstOrDefault().index;
-                Console.WriteLine($"byte [{currentElement}] {item}");
-            }
 
+            for (int i = 0; i < bytesTramaCompleta.Length; i++)
+            {
+                Console.WriteLine($"byte [{i}] {bytesTramaCompleta[i]}");
+            }
             Console.WriteLine($"TRAMA COMPLETA: {tramaCompleta} CRC: {tramaCompleta[16]}{tramaCompleta[17]}" +
                 $"{tramaCompleta[18]}{tramaCompleta[19]}");
         }
