@@ -30,6 +30,7 @@ namespace lestoma.Data.Repositories
                               select new DataOnlineSyncDTO
                               {
                                   Id = componente.Id,
+                                  NombreComponente = componente.NombreComponente,
                                   DescripcionEstadoJson = componente.JsonEstadoComponente,
                                   Actividad = new NameDTO
                                   {
