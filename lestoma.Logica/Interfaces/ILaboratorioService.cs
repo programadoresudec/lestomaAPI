@@ -17,5 +17,6 @@ namespace lestoma.Logica.Interfaces
         Task<IEnumerable<NameDTO>> GetModulesByUpaActivitiesUserId(UpaActivitiesFilterRequest filtro);
         Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByUpaAndModuleId(UpaModuleFilterRequest filtro);
         Task<ResponseDTO> GetComponentRecentTrama(Guid id);
+        Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByActivitiesOfUpaUserId(UpaActivitiesModuleFilterRequest filtro);
     }
 }

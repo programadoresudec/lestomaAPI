@@ -7,7 +7,8 @@ namespace lestoma.CommonUtils.Requests.Filters
 {
     public class ComponentFilterRequest
     {
-        public Paginacion Paginacion { get; set; } = new Paginacion();
+        public int Page { get; set; }
+        public int PageSize { get; set; }
         public Guid UpaId { get; set; }
     }
 }

@@ -54,10 +54,10 @@ namespace lestoma.Api.Controllers
             }
 
             var queryable = _componentService.GetAllFilter(UpaActivitiesfilter);
-            var listado = await queryable.Paginar(filtro.Paginacion).ToListAsync();
+            var listado = await queryable.Paginar(new Paginacion { Page = filtro.Page, PageSize = filtro.PageSize }).ToListAsync();
             bool isSuper = IsSuperAdmin();
             listado.ForEach(x => x.IsVisible = isSuper);
-            var paginador = Paginador<ListadoComponenteDTO>.CrearPaginador(queryable.Count(), listado, filtro.Paginacion);
+            var paginador = Paginador<ListadoComponenteDTO>.CrearPaginador(queryable.Count(), listado, new Paginacion { Page = filtro.Page, PageSize = filtro.PageSize });
             return Ok(paginador);
         }
 

@@ -149,6 +149,23 @@ namespace lestoma.Data.Repositories
                               SetPointOut = x.ValorCalculadoTramaRecibida
                           }).FirstOrDefaultAsync();
         }
+
+        public async Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByActivitiesOfUpaUserId(UpaActivitiesModuleFilterRequest filtro)
+        {
+            var query = await (from componente in _db.TablaComponentesLaboratorio
+                               join actividad in _db.TablaActividades on componente.ActividadId equals actividad.Id
+                               where componente.ModuloComponenteId == filtro.ModuloId && componente.UpaId == filtro.UpaId
+                               && filtro.ActividadesId.Contains(componente.ActividadId)
+                               select new LaboratorioComponenteDTO
+                               {
+                                   Actividad = actividad.Nombre,
+                                   Id = componente.Id,
+                                   Nombre = componente.NombreComponente,
+                                   DireccionRegistro = componente.DireccionRegistro,
+                                   JsonEstado = componente.JsonEstadoComponente
+                               }).ToListAsync();
+            return query;
+        }
     }
 }
 

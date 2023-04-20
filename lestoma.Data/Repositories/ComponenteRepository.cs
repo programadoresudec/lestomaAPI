@@ -72,6 +72,7 @@ namespace lestoma.Data.Repositories
                 Actividad = x.Actividad.Nombre,
                 Nombre = x.NombreComponente,
                 FechaCreacionServer = x.FechaCreacionServer,
+                FechaActualizacionServer = x.FechaActualizacionServer,
                 Modulo = x.ModuloComponente.Nombre,
                 Ip = x.Ip,
                 Session = x.Session,
