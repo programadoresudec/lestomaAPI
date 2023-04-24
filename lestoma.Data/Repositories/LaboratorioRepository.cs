@@ -1,12 +1,15 @@
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.DTOs.Sync;
+using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.Repositories
@@ -90,18 +93,52 @@ namespace lestoma.Data.Repositories
                           }).ToListAsync();
         }
 
-        public async Task<IEnumerable<NameDTO>> GetModulesByUpaActivitiesUserId(UpaActivitiesFilterRequest filtro)
+        public async Task<IEnumerable<NameDTO>> GetModulesByUpaActivitiesUserId(UpaActivitiesFilterRequest filtro, bool IsAuxiliar)
         {
-            var query = await (from componente in _db.TablaComponentesLaboratorio
-                               join modulo in _db.TablaModuloComponentes on componente.ModuloComponenteId equals modulo.Id
-                               where componente.UpaId == filtro.UpaId && filtro.ActividadesId.Contains(componente.ActividadId)
-                               group modulo by new { modulo.Id, modulo.Nombre } into grupo
-                               select new NameDTO
-                               {
-                                   Id = grupo.Key.Id,
-                                   Nombre = grupo.Key.Nombre
-                               }).ToListAsync();
-            return query;
+            if (IsAuxiliar)
+            {
+                try
+                {
+                    var parameters = new string[filtro.ActividadesId.Count()];
+                    var sqlParameters = new List<NpgsqlParameter>();
+                    for (var i = 0; i < filtro.ActividadesId.Count(); i++)
+                    {
+                        parameters[i] = string.Format("@p{0}", i);
+                        sqlParameters.Add(new NpgsqlParameter(parameters[i], filtro.ActividadesId.ToList()[i]));
+                    }
+
+                    var upaId = new NpgsqlParameter("upaId", filtro.UpaId);
+                    var estadoComponente = new NpgsqlParameter("estadoComponente", "AJUSTE");
+                    sqlParameters.Add(upaId);
+                    sqlParameters.Add(estadoComponente);
+
+                    string consulta = $@"SELECT  modulo.id, modulo.nombre_modulo
+                                    FROM laboratorio_lestoma.componente_laboratorio comp
+                                    INNER JOIN laboratorio_lestoma.modulo_componente modulo ON comp.modulo_componente_id = modulo.id
+                                    WHERE comp.actividad_id IN ({string.Join("", "", parameters)}) comp.descripcion_estado::JSONB->>'TipoEstado' <> @estadoComponente 
+                                    && comp.upa_id = @upaId GROUP BY modulo.id, modulo.nombre_modulo";
+
+                    var modulos = _db.TablaComponentesLaboratorio.FromSqlRaw(consulta, sqlParameters.ToArray());
+                    return await modulos.Select(x => new NameDTO
+                    {
+                        Id = x.Id,
+                        Nombre = x.ModuloComponente.Nombre,
+                    }).ToListAsync();
+                }
+                catch (Exception ex)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, @$"Error: {ex.Message}");
+                }
+            }
+            return await (from componente in _db.TablaComponentesLaboratorio
+                          join modulo in _db.TablaModuloComponentes on componente.ModuloComponenteId equals modulo.Id
+                          where componente.UpaId == filtro.UpaId && filtro.ActividadesId.Contains(componente.ActividadId)
+                          group modulo by new { modulo.Id, modulo.Nombre } into grupo
+                          select new NameDTO
+                          {
+                              Id = grupo.Key.Id,
+                              Nombre = grupo.Key.Nombre
+                          }).ToListAsync();
         }
 
         public async Task MergeDetails(IEnumerable<ELaboratorio> datosOffline)

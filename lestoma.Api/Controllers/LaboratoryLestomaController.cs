@@ -58,7 +58,9 @@ namespace lestoma.Api.Controllers
                 ActividadesId = activities.Select(x => x.Id),
                 UpaId = UpaUserFilter.UpaId
             };
-            data = await _laboratorioService.GetModulesByUpaActivitiesUserId(filtro);
+
+
+            data = await _laboratorioService.GetModulesByUpaActivitiesUserId(filtro, IsAuxiliar());
 
             return Ok(data);
         }

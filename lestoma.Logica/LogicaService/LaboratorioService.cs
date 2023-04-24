@@ -88,9 +88,9 @@ namespace lestoma.Logica.LogicaService
             return await _laboratorioRepository.GetDataBySyncToMobileByUpaId(filtro, isSuperAdmin);
         }
 
-        public async Task<IEnumerable<NameDTO>> GetModulesByUpaActivitiesUserId(UpaActivitiesFilterRequest filtro)
+        public async Task<IEnumerable<NameDTO>> GetModulesByUpaActivitiesUserId(UpaActivitiesFilterRequest filtro, bool IsAuxiliar)
         {
-            return await _laboratorioRepository.GetModulesByUpaActivitiesUserId(filtro);
+            return await _laboratorioRepository.GetModulesByUpaActivitiesUserId(filtro, IsAuxiliar);
         }
 
         public async Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByUpaAndModuleId(UpaModuleFilterRequest filtro)

@@ -12,14 +12,14 @@ namespace lestoma.Api.Core
 {
     public class HangfireDashboardJwtAuthorizationFilter : IDashboardAuthorizationFilter
     {
-        private void SetCookie(string jwtToken, DashboardContext context)
+        private static void SetCookie(string jwtToken, DashboardContext context)
         {
             var httpContext = context.GetHttpContext();
             httpContext.Response.Cookies.Append("_hangfireCookie",
                     jwtToken,
                     new CookieOptions()
                     {
-                        Expires = DateTime.Now.AddMinutes(30)
+                        Expires = DateTime.Now.AddHours(1)
                     });
         }
 
@@ -43,11 +43,14 @@ namespace lestoma.Api.Core
                 return false;
             }
 
-            var handler = new JwtSecurityTokenHandler();
-            var jwtSecurityToken = handler.ReadJwtToken(jwtToken);
-
+            JwtSecurityTokenHandler handler = new();
+            JwtSecurityToken jwtSecurityToken = handler.ReadJwtToken(jwtToken);
             try
             {
+                if (jwtSecurityToken.ValidTo < DateTime.UtcNow)
+                {
+                    return false;
+                }
                 int IdRol = 0;
                 var rolId = jwtSecurityToken.Claims.Where(x => x.Type == ClaimsConfig.ROL_ID)
                     .Select(x => x.Value).FirstOrDefault();

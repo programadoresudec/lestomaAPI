@@ -44,7 +44,7 @@ namespace lestoma.Api.Controllers
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador, TipoRol.Auxiliar)]
         public async Task<IActionResult> SyncDeviceDatabase()
         {
-            UpaActivitiesFilterRequest filtro = new UpaActivitiesFilterRequest();
+            UpaActivitiesFilterRequest filtro = new();
             if (!IsSuperAdmin())
             {
                 var UpaUserFilter = new UpaUserFilterRequest
@@ -70,6 +70,7 @@ namespace lestoma.Api.Controllers
 
 
         [HttpPost("bulk-sync-data-offline")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador, TipoRol.Auxiliar)]
         public IActionResult SyncLabDataOffline(IEnumerable<LaboratorioRequest> datosOfOffline)
         {
             var EmailDesencryptedUser = EmailDesencrypted();

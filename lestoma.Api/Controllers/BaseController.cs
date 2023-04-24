@@ -134,6 +134,19 @@ namespace lestoma.Api.Controllers
             }
             return IsSuperAdmin;
         }
+
+        protected bool IsAuxiliar()
+        {
+            bool IsAuxiliar = false;
+            int sIdRol = 0;
+            var rolId = ClaimsToken().Where(x => x.Type == ClaimsConfig.ROL_ID).Select(c => c.Value).SingleOrDefault();
+            if (int.TryParse(rolId, out int RolId))
+            {
+                sIdRol = RolId;
+                IsAuxiliar = sIdRol == (int)TipoRol.Auxiliar;
+            }
+            return IsAuxiliar;
+        }
         #endregion
 
         #region Automapper generic

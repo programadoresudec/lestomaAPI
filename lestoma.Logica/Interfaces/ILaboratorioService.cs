@@ -14,7 +14,7 @@ namespace lestoma.Logica.Interfaces
         Task<ResponseDTO> BulkSyncDataOffline(IEnumerable<ELaboratorio> datosOffline);
         Task SendEmailFinishMerge(string email);
         Task<IEnumerable<DataOnlineSyncDTO>> GetDataOfUserToSyncDeviceDatabase(UpaActivitiesFilterRequest filtro, bool isSuperAdmin);
-        Task<IEnumerable<NameDTO>> GetModulesByUpaActivitiesUserId(UpaActivitiesFilterRequest filtro);
+        Task<IEnumerable<NameDTO>> GetModulesByUpaActivitiesUserId(UpaActivitiesFilterRequest filtro, bool IsAuxiliar);
         Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByUpaAndModuleId(UpaModuleFilterRequest filtro);
         Task<ResponseDTO> GetComponentRecentTrama(Guid id);
         Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByActivitiesOfUpaUserId(UpaActivitiesModuleFilterRequest filtro);
