@@ -113,16 +113,18 @@ namespace lestoma.Data.Repositories
                     sqlParameters.Add(estadoComponente);
 
                     string consulta = $@"SELECT  modulo.id, modulo.nombre_modulo
-                                    FROM laboratorio_lestoma.componente_laboratorio comp
-                                    INNER JOIN laboratorio_lestoma.modulo_componente modulo ON comp.modulo_componente_id = modulo.id
-                                    WHERE comp.actividad_id IN ({string.Join("", "", parameters)}) comp.descripcion_estado::JSONB->>'TipoEstado' <> @estadoComponente 
-                                    && comp.upa_id = @upaId GROUP BY modulo.id, modulo.nombre_modulo";
+                                         FROM laboratorio_lestoma.componente_laboratorio comp
+                                               INNER JOIN laboratorio_lestoma.modulo_componente modulo ON comp.modulo_componente_id = modulo.id
+                                         WHERE comp.actividad_id IN ({string.Join(", ", parameters)})
+                                               AND comp.descripcion_estado::JSONB->>'TipoEstado' <> @estadoComponente 
+                                               AND comp.upa_id = @upaId 
+                                         GROUP BY modulo.id, modulo.nombre_modulo";
 
-                    var modulos = _db.TablaComponentesLaboratorio.FromSqlRaw(consulta, sqlParameters.ToArray());
+                    var modulos = _db.TablaModuloComponentes.FromSqlRaw(consulta, sqlParameters.ToArray());
                     return await modulos.Select(x => new NameDTO
                     {
                         Id = x.Id,
-                        Nombre = x.ModuloComponente.Nombre,
+                        Nombre = x.Nombre,
                     }).ToListAsync();
                 }
                 catch (Exception ex)
@@ -147,6 +149,7 @@ namespace lestoma.Data.Repositories
             {
                 try
                 {
+
                     await _db.AddRangeAsync(datosOffline);
                     await _db.SaveChangesAsync();
                     transaction.Commit();

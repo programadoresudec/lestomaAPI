@@ -14,7 +14,7 @@ namespace lestoma.CommonUtils.Requests
         public string Ip { get; set; }
         public string Session { get; set; }
         public string TipoDeAplicacion { get; set; }
-        public DateTime FechaCreacionServer { get; set; }
+        public DateTime FechaCreacionServer => DateTime.Now;
         public DateTime? FechaCreacionDispositivo { get; set; }
     }
 }

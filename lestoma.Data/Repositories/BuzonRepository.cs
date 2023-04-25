@@ -49,7 +49,7 @@ namespace lestoma.Data.Repositories
                 Ip = m.buzon.Ip,
                 Session = m.buzon.Session,
                 TipoDeAplicacion = m.buzon.TipoDeAplicacion,
-                Titulo = _db.TablaBuzonReportes.FromSqlRaw(@$"SELECT buzon.id, buzon.descripcion::JSONB->>'Titulo' as descripcion FROM reportes.buzon buzon")
+                Titulo = _db.TablaBuzonReportes.FromSqlRaw(@"SELECT buzon.id, buzon.descripcion::JSONB->>'Titulo' as descripcion FROM reportes.buzon buzon")
                 .Where(x => x.Id == m.buzon.Id).Select(x => x.Descripcion).FirstOrDefault(),
                 Upa = (from upa in _db.TablaUpas
                        join detalle in _db.TablaUpasConActividades on upa.Id equals detalle.UpaId
