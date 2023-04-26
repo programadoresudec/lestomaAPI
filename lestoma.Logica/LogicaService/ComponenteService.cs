@@ -139,10 +139,11 @@ namespace lestoma.Logica.LogicaService
                 if (entidad.ObjetoJsonEstado.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.Lectura)
                          || entidad.ObjetoJsonEstado.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.Ajuste))
                 {
-                    var count = await _componenteRepository.WhereWithCondition(x => x.DireccionRegistro == entidad.DireccionRegistro).CountAsync();
+                    var count = await _componenteRepository.WhereWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
+                                                                            && x.ModuloComponenteId == entidad.ModuloComponenteId && x.DireccionRegistro == entidad.DireccionRegistro).CountAsync();
                     if (count >= 2)
                     {
-                        throw new HttpStatusCodeException(HttpStatusCode.Conflict, "Ya existen los dos componentes(LECTURA-SETPOINT) con la dirección de registro.");
+                        throw new HttpStatusCodeException(HttpStatusCode.Conflict, $"Ya existe la dirección de registro {entidad.DireccionRegistro}");
                     }
                 }
                 else
@@ -152,7 +153,7 @@ namespace lestoma.Logica.LogicaService
                                                                             && x.DireccionRegistro == entidad.DireccionRegistro);
                     if (existeDireccionRegistro)
                     {
-                        throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Ya se encuentra registrado un componente con la misma dirección de registro en la upa.");
+                        throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Existe un componente con la misma dirección de registro en la upa.");
                     }
                 }
             }
