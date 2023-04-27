@@ -35,8 +35,8 @@ namespace lestoma.Api.Controllers
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         [HttpGet("paginar")]
         public async Task<IActionResult> GetReportesBuzonPaginado([FromQuery] Paginacion paginacion)
-        {
-            var queryable = _buzonService.GetAllForPagination();
+        {    
+            var queryable = _buzonService.GetAllForPagination(UpaId());
             var listado = await queryable.Paginar(paginacion).ToListAsync();
             var paginador = Paginador<BuzonDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
             return Ok(paginador);

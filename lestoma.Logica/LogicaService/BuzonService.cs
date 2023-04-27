@@ -24,9 +24,9 @@ namespace lestoma.Logica.LogicaService
             _buzonRepository = buzonRepository;
             _camposAuditoria = auditoriaHelper;
         }
-        public IQueryable<BuzonDTO> GetAllForPagination()
+        public IQueryable<BuzonDTO> GetAllForPagination(Guid UpaId)
         {
-            return _buzonRepository.ListarBuzonConUsuario();
+            return _buzonRepository.ListarBuzonConUsuario(UpaId);
         }
 
         public async Task<ResponseDTO> CreateMailBox(BuzonCreacionRequest buzonCreacion)

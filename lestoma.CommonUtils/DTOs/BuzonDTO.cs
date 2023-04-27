@@ -7,7 +7,7 @@ namespace lestoma.CommonUtils.DTOs
     {
         public int Id { get; set; }
         public string Titulo { get; set; }
-        public string Upa { get; set; }
+        public NameDTO Upa { get; set; }
         public UserDTO User { get; set; } = new UserDTO();
     }
 }
