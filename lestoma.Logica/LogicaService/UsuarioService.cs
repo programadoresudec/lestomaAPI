@@ -212,7 +212,7 @@ namespace lestoma.Logica.LogicaService
             await _usuarioRepository.Update(user);
             await _mailHelper.SendMail(user.Email, $"{user.CodigoRecuperacion} es tu código de recuperación de contraseña", user.CodigoRecuperacion,
                 "Hola: ¡Cambia Tu Contraseña!",
-                "Verifica con el codigo tu cuenta para reestablecer la contraseña. el codigo tiene una duración de 2 horas.",
+                "Verifica con el código tu cuenta para reestablecer la contraseña. el codigo tiene una duración de 2 horas.",
                 string.Empty, "Si no has intentado cambiar la contraseña con esta dirección de email recientemente," +
                 " puedes ignorar este mensaje.");
             return Responses.SetOkResponse(new ForgotPasswordDTO { Email = user.Email, CodigoVerificacion = user.CodigoRecuperacion }, "Revise su correo eléctronico.");
@@ -223,7 +223,7 @@ namespace lestoma.Logica.LogicaService
         #region Recuperar contraseña verifica el codigo que sea valido
         public async Task<ResponseDTO> RecoverPassword(RecoverPasswordRequest recover)
         {
-            var user = await _usuarioRepository.VerifyCodeByRecover(recover.Codigo) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "codigo no valido.");
+            var user = await _usuarioRepository.VerifyCodeByRecover(recover.Codigo) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Código no valido.");
             var hash = HashHelper.Hash(recover.Password);
             user.CodigoRecuperacion = null;
             user.Clave = hash.Password;
