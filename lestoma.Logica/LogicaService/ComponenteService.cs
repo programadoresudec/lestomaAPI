@@ -66,6 +66,7 @@ namespace lestoma.Logica.LogicaService
             componente.NombreComponente = entidad.NombreComponente;
             componente.ActividadId = entidad.ActividadId;
             componente.UpaId = entidad.UpaId;
+            componente.DireccionRegistro = entidad.DireccionRegistro;
             componente.ModuloComponenteId = entidad.ModuloComponenteId;
             if (!string.IsNullOrWhiteSpace(entidad.JsonEstadoComponente))
             {
@@ -178,6 +179,12 @@ namespace lestoma.Logica.LogicaService
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict, $"Ya existe un componente con el mismo nombre {entidad.NombreComponente} de la upa y modulo escogido.");
             }
             componente.NombreComponente = entidad.NombreComponente;
+            componente.ActividadId = entidad.ActividadId;
+            componente.ModuloComponenteId = entidad.ModuloComponenteId;
+            if (!string.IsNullOrWhiteSpace(entidad.JsonEstadoComponente))
+            {
+                componente.JsonEstadoComponente = entidad.JsonEstadoComponente;
+            }
             await _componenteRepository.Update(componente);
             return Responses.SetOkMessageEditResponse(componente);
         }
