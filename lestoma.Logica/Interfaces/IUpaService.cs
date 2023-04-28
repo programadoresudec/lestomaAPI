@@ -12,5 +12,7 @@ namespace lestoma.Logica.Interfaces
         Task<ResponseDTO> UpdateProtocol(EProtocoloCOM protocolo);
         Task<short> GetSuperAdminId(int userId);
         Task<IEnumerable<NameProtocoloDTO>> GetProtocolsByUpaId(Guid upaId);
+        Task<ResponseDTO> CreateProtocol(EProtocoloCOM protocolo);
+        Task DeleteProtocol(int id);
     }
 }

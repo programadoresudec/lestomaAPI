@@ -31,7 +31,7 @@ namespace lestoma.Logica.LogicaService
 
         public IQueryable<EUpa> GetAllForPagination()
         {
-            var listado = _upaRepository.GetAllAsQueryable().Include(x => x.ProtocolosCOM);
+            var listado = _upaRepository.GetAllAsQueryable().OrderBy(y => y.Nombre).Include(x => x.ProtocolosCOM);
             return !listado.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.") : (IQueryable<EUpa>)listado;
         }
 
@@ -103,6 +103,21 @@ namespace lestoma.Logica.LogicaService
             return !existeUpa
                 ? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No existe la upa.")
                 : await _protocoloRepository.GetProtocolsByUpaId(upaId);
+        }
+
+        public async Task<ResponseDTO> CreateProtocol(EProtocoloCOM protocolo)
+        {
+            var upa = await _upaRepository.AnyWithCondition(x => x.Id == protocolo.UpaId);
+            if (!upa)
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No existe la upa.");
+            await _protocoloRepository.Create(protocolo);
+            return Responses.SetCreatedResponse(protocolo);
+        }
+
+        public async Task DeleteProtocol(int id)
+        {
+            var protocol = await _protocoloRepository.GetById(id) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No existe el protocolo.");
+            await _protocoloRepository.Delete(protocol);
         }
     }
 }

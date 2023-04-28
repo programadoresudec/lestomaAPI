@@ -1,12 +1,16 @@
 ﻿using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
+using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.Repositories
@@ -67,7 +71,7 @@ namespace lestoma.Data.Repositories
                     query = query.Where(x => upaActivitiesFilter.ActividadesId.Contains(x.ActividadId));
                 }
             }
-            var listado = query.Select(x => new ListadoComponenteDTO
+            var listado = query.OrderBy(y => y.NombreComponente).Select(x => new ListadoComponenteDTO
             {
                 Actividad = x.Actividad.Nombre,
                 Nombre = x.NombreComponente,
@@ -130,14 +134,14 @@ namespace lestoma.Data.Repositories
                 {
                     Id = x.Id,
                     Nombre = x.NombreComponente
-                }).ToListAsync();
+                }).OrderBy(y => y.Nombre).ToListAsync();
             }
             return await _dbSet.Where(x => x.UpaId == upaActivitiesfilter.UpaId
             && upaActivitiesfilter.ActividadesId.Contains(x.ActividadId)).Select(x => new NameDTO
             {
                 Id = x.Id,
                 Nombre = x.NombreComponente
-            }).ToListAsync();
+            }).OrderBy(y => y.Nombre).ToListAsync();
         }
 
         public async Task CreateMultiple(List<EComponenteLaboratorio> entidades)
@@ -160,19 +164,70 @@ namespace lestoma.Data.Repositories
 
         public async Task<List<int>> GetRegistrationAddressesByUpaModulo(UpaModuleActivityFilterRequest filterRequest, List<int> direccionesRegistro)
         {
-            var direccionesUtilizadas = await _dbSet.Where(x => x.UpaId == filterRequest.UpaId && x.ActividadId == filterRequest.ActividadId
-                                        && x.ModuloComponenteId == filterRequest.ModuloId).Select(y => y.DireccionRegistro).ToListAsync();
-
-            var direccionesNoUtilizadas = new List<int>();
-
-            foreach (var direccionRegistro in direccionesRegistro)
+            try
             {
-                if (!direccionesUtilizadas.Contains((byte)direccionRegistro))
+                List<byte> direccionesUtilizadas = new List<byte>();
+                var estado = await _dbSet.Where(y => y.ModuloComponenteId == filterRequest.ModuloId).Select(y => y.JsonEstadoComponente).FirstOrDefaultAsync();
+                if (!string.IsNullOrWhiteSpace(estado))
                 {
-                    direccionesNoUtilizadas.Add(direccionRegistro);
+                    EstadoComponente tipoFuncion = JsonSerializer.Deserialize<EstadoComponente>(estado);
+
+                    if (tipoFuncion.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.OnOff))
+                    {
+                        direccionesUtilizadas = await _dbSet.Where(x => x.UpaId == filterRequest.UpaId).Select(y => y.DireccionRegistro).ToListAsync();
+                    }
+                    else
+                    {
+                        direccionesUtilizadas = await _dbSet.Where(x => x.UpaId == filterRequest.UpaId && x.ModuloComponenteId == filterRequest.ModuloId)
+                            .Select(y => y.DireccionRegistro).ToListAsync();
+                    }
                 }
+                else
+                {
+                    direccionesUtilizadas = await _dbSet.Where(x => x.UpaId == filterRequest.UpaId).Select(y => y.DireccionRegistro).ToListAsync();
+                }
+                var sqlParameters = new List<NpgsqlParameter>();
+                var upaId = new NpgsqlParameter("upaId", filterRequest.UpaId);
+                var estadoComponente = new NpgsqlParameter("Funcion", EnumConfig.GetDescription(TipoEstadoComponente.OnOff));
+                sqlParameters.Add(upaId);
+                sqlParameters.Add(estadoComponente);
+
+                string consulta = @"SELECT comp.direccion_registro, comp.upa_id, comp.modulo_componente_id
+                                FROM laboratorio_lestoma.componente_laboratorio comp
+                                WHERE comp.upa_id = @upaId      
+                                  AND comp.descripcion_estado::JSONB ->> 'TipoEstado' = @Funcion";
+
+                var direccionesActuadores = await _dbSet.FromSqlRaw(consulta, sqlParameters.ToArray()).Select(y => y.DireccionRegistro).ToListAsync();
+
+                var direccionesNoUtilizadas = new List<int>();
+
+                if (direccionesActuadores.Any())
+                {
+                    foreach (var direccionRegistro in direccionesRegistro)
+                    {
+                        if (!direccionesUtilizadas.Contains((byte)direccionRegistro) && !direccionesActuadores.Contains((byte)direccionRegistro))
+                        {
+                            direccionesNoUtilizadas.Add(direccionRegistro);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var direccionRegistro in direccionesRegistro)
+                    {
+                        if (!direccionesUtilizadas.Contains((byte)direccionRegistro))
+                        {
+                            direccionesNoUtilizadas.Add(direccionRegistro);
+                        }
+                    }
+                }
+                return direccionesNoUtilizadas;
             }
-            return direccionesNoUtilizadas;
+            catch (Exception ex)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, @$"Error: {ex.Message}");
+            }
+
         }
     }
 }

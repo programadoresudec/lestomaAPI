@@ -47,6 +47,8 @@ namespace lestoma.CommonUtils.Requests
         [Required(ErrorMessage = "El id de la actividad es requerida")]
         public Guid ActividadId { get; set; }
         public Guid UpaId { get; set; }
+        [Required(ErrorMessage = "la dirección de registro del componente es requerido.")]
+        public byte DireccionRegistro { get; set; }
         public Guid ModuloComponenteId { get; set; }
         public string ConvertirJson()
         {

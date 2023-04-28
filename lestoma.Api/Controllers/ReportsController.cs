@@ -30,8 +30,6 @@ namespace lestoma.Api.Controllers
         }
         #endregion
 
-
-
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpGet("get-daily-time")]
         public async Task<IActionResult> GetDailyReportTime()

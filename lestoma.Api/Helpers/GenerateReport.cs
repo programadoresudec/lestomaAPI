@@ -50,9 +50,9 @@ namespace lestoma.Api.Helpers
                      <th align='center'>Fecha de Dispositivo</th>
                      <th align='center'>Modulo</th>
                      <th align='center'>Componente</th>
-                     <th align='center'>SetPointIn</th>
-                     <th align='center'>SetPointOut</th>
-                     <th align='center'>Estado</th>
+                     <th align='center'>Estado inicial</th>
+                     <th align='center'>Estado final</th>
+                     <th align='center'>Tipo de función</th>
                    </tr>";
 
         private static readonly string VISTA_HTML_ADMIN = @$"<html>
@@ -85,9 +85,9 @@ namespace lestoma.Api.Helpers
                      <th align='center'>Fecha del Dispositivo</th>      
                      <th align='center'>Modulo</th>
                      <th align='center'>Componente</th>
-                     <th align='center'>SetPointIn</th>
-                     <th align='center'>SetPointOut</th>
-                     <th align='center'>Estado</th>
+                     <th align='center'>Estado inicial</th>
+                     <th align='center'>Estado final</th>
+                     <th align='center'>Tipo de función</th>
                    </tr>";
 
         #endregion
@@ -115,9 +115,9 @@ namespace lestoma.Api.Helpers
                     worksheet.Cell(currentRow, 4).Value = "Fecha del Dispositivo";
                     worksheet.Cell(currentRow, 5).Value = "Modulo";
                     worksheet.Cell(currentRow, 6).Value = "Componente";
-                    worksheet.Cell(currentRow, 7).Value = "Set-Point De Entrada";
-                    worksheet.Cell(currentRow, 8).Value = "SetPoint De Salida";
-                    worksheet.Cell(currentRow, 9).Value = "Estado";
+                    worksheet.Cell(currentRow, 7).Value = "Estado inicial";
+                    worksheet.Cell(currentRow, 8).Value = "Estado final";
+                    worksheet.Cell(currentRow, 9).Value = "Tipo de función";
                     // Data
                     foreach (var item in reporte.Reporte)
                     {

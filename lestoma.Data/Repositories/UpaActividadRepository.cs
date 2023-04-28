@@ -85,19 +85,20 @@ namespace lestoma.Data.Repositories
         public IQueryable<DetalleUpaActividadDTO> GetAllRelation()
         {
             string consulta = $@"SELECT detalle.upa_id,
-                                 detalle.usuario_id,
-                                 upa.nombre_upa,
-                                 us.nombre,
-                                 us.apellido,
-                                 max(detalle.fecha_creacion_server)      as fecha_creacion_server,
-                                 max(detalle.fecha_actualizacion_server) as fecha_actualizacion_server,
-                                 max(detalle.session)                    as session,
-                                 max(detalle.ip)                         as ip,
-                                 max(detalle.tipo_de_aplicacion)         as tipo_de_aplicacion
-                          FROM superadmin.upa_actividad detalle 
-                                   INNER JOIN superadmin.upa upa on upa.id = detalle.upa_id
-                                   INNER JOIN usuarios.usuario us on us.id = detalle.usuario_id
-                          group by detalle.upa_id, detalle.usuario_id, upa.nombre_upa, us.nombre, us.apellido";
+                                        detalle.usuario_id,
+                                        upa.nombre_upa,
+                                        us.nombre,
+                                        us.apellido,
+                                        MAX(detalle.fecha_creacion_server)      as fecha_creacion_server,
+                                        MAX(detalle.fecha_actualizacion_server) as fecha_actualizacion_server,
+                                        MAX(detalle.session)                    as session,
+                                        MAX(detalle.ip)                         as ip,
+                                        MAX(detalle.tipo_de_aplicacion)         as tipo_de_aplicacion
+                                 FROM superadmin.upa_actividad detalle
+                                          INNER JOIN superadmin.upa upa on upa.id = detalle.upa_id
+                                          INNER JOIN usuarios.usuario us on us.id = detalle.usuario_id
+                                 GROUP BY detalle.upa_id, detalle.usuario_id, upa.nombre_upa, us.nombre, us.apellido
+                                 ORDER BY upa.nombre_upa";
 
             var listado = _db.TablaUpasConActividades.FromSqlRaw(consulta);
 

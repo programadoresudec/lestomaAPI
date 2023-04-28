@@ -120,19 +120,18 @@ namespace lestoma.Logica.LogicaService
             bool existeRepetido;
             if (IsCreated)
             {
-                existeRepetido = await _componenteRepository.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
-                                                                      && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente
+                existeRepetido = await _componenteRepository.AnyWithCondition(x => x.UpaId == entidad.UpaId && x.NombreComponente
                                                                       == entidad.NombreComponente);
             }
             else
             {
-                existeRepetido = await _componenteRepository.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
-                                                               && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente
-                                                               == entidad.NombreComponente && x.Id != entidad.Id);
+                existeRepetido = await _componenteRepository.AnyWithCondition(x => x.UpaId == entidad.UpaId && x.NombreComponente
+                                                                      == entidad.NombreComponente && x.Id != entidad.Id);
             }
+
             if (existeRepetido)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.Conflict, $"Ya existe un componente con el mismo nombre {entidad.NombreComponente} de la upa y modulo escogido.");
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, $"Ya existe un componente {entidad.NombreComponente} de la upa.");
             }
 
             if (IsCreated)
@@ -140,8 +139,9 @@ namespace lestoma.Logica.LogicaService
                 if (entidad.ObjetoJsonEstado.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.Lectura)
                          || entidad.ObjetoJsonEstado.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.Ajuste))
                 {
-                    var count = await _componenteRepository.WhereWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
-                                                                            && x.ModuloComponenteId == entidad.ModuloComponenteId && x.DireccionRegistro == entidad.DireccionRegistro).CountAsync();
+                    var count = await _componenteRepository.WhereWithCondition(x => x.UpaId == entidad.UpaId
+                                                                            && x.ModuloComponenteId == entidad.ModuloComponenteId 
+                                                                            && x.DireccionRegistro == entidad.DireccionRegistro).CountAsync();
                     if (count >= 2)
                     {
                         throw new HttpStatusCodeException(HttpStatusCode.Conflict, $"Ya existe la dirección de registro {entidad.DireccionRegistro}");
@@ -149,8 +149,8 @@ namespace lestoma.Logica.LogicaService
                 }
                 else
                 {
-                    bool existeDireccionRegistro = await _componenteRepository.AnyWithCondition(x => x.ActividadId == entidad.ActividadId && x.UpaId == entidad.UpaId
-                                                                            && x.ModuloComponenteId == entidad.ModuloComponenteId && x.NombreComponente == entidad.NombreComponente
+                    bool existeDireccionRegistro = await _componenteRepository.AnyWithCondition(x => x.UpaId == entidad.UpaId 
+                                                                            && x.NombreComponente == entidad.NombreComponente
                                                                             && x.DireccionRegistro == entidad.DireccionRegistro);
                     if (existeDireccionRegistro)
                     {

@@ -4,6 +4,7 @@ using lestoma.CommonUtils.MyException;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,13 +23,13 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<IEnumerable<EModuloComponente>> GetAll()
         {
-            var listado = await _moduloRepository.GetAll();
+            var listado = await _moduloRepository.GetAllAsQueryable().OrderBy(x => x.Nombre).ToListAsync();
             return !listado.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.") : listado;
         }
 
         public IQueryable<EModuloComponente> GetAllForPagination()
         {
-            var listado = _moduloRepository.GetAllAsQueryable();
+            var listado = _moduloRepository.GetAllAsQueryable().OrderBy(x => x.Nombre);
             return !listado.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay contenido.") : listado;
         }
 

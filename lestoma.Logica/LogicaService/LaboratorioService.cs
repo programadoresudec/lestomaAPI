@@ -52,6 +52,10 @@ namespace lestoma.Logica.LogicaService
         {
             try
             {
+                foreach (var item in datosOffline)
+                {
+                    item.FechaCreacionServer = DateTime.Now;
+                }
                 await _laboratorioRepository.MergeDetails(datosOffline);
                 return Responses.SetOkResponse("Los datos offline fueron cargados con exito al servidor.");
             }

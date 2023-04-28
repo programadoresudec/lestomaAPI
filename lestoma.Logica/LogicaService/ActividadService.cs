@@ -4,6 +4,7 @@ using lestoma.CommonUtils.MyException;
 using lestoma.Data.Repositories;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,13 +22,13 @@ namespace lestoma.Logica.LogicaService
         }
         public async Task<IEnumerable<EActividad>> GetAll()
         {
-            var query = await _actividadRepository.GetAll();
+            var query = await _actividadRepository.GetAllAsQueryable().OrderBy(y => y.Nombre).ToListAsync();
             return !query.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay actividades.") : query;
         }
 
         public IQueryable<EActividad> GetAllForPagination()
         {
-            var query = _actividadRepository.GetAllAsQueryable();
+            var query = _actividadRepository.GetAllAsQueryable().OrderBy(y => y.Nombre);
             return !query.Any() ? throw new HttpStatusCodeException(HttpStatusCode.NoContent, "No hay actividades.") : query;
         }
         public async Task<ResponseDTO> GetById(Guid id)

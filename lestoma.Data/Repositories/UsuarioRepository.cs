@@ -145,7 +145,7 @@ namespace lestoma.Data.Repositories
                 Apellido = x.Apellido,
                 RolId = x.RolId,
                 NombreRol = x.Rol.NombreRol
-            }).ToListAsync();
+            }).OrderBy(y => y.Nombre).ToListAsync();
         }
     }
 }

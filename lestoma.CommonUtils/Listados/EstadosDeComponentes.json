@@ -13,10 +13,5 @@
     "id": "C781773B-7D7C-47F7-B5D0-34A4943BA907",
     "tipoEstado": "AJUSTE",
     "ByteHexaFuncion": "F0"
-  },
-  {
-    "id": "77ECDA56-C345-48DE-9F74-9BA5C134DA80",
-    "tipoEstado": "REINICIO SOFTWARE",
-    "ByteHexaFuncion": "DE"
   }
 ]

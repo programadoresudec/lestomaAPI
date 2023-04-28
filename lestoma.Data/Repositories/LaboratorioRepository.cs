@@ -1,5 +1,6 @@
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.DTOs.Sync;
+using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
@@ -108,7 +109,7 @@ namespace lestoma.Data.Repositories
                     }
 
                     var upaId = new NpgsqlParameter("upaId", filtro.UpaId);
-                    var estadoComponente = new NpgsqlParameter("estadoComponente", "AJUSTE");
+                    var estadoComponente = new NpgsqlParameter("estadoComponente", EnumConfig.GetDescription(TipoEstadoComponente.Ajuste));
                     sqlParameters.Add(upaId);
                     sqlParameters.Add(estadoComponente);
 

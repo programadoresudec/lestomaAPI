@@ -98,7 +98,16 @@ namespace lestoma.Api.Controllers
             response.Data = upaDTOSalida;
             return Ok(response);
         }
-
+        [HttpPost("agregar-protocolo")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        public async Task<IActionResult> CrearProtocolo(ProtocoloRequest request)
+        {
+            var protocolo = Mapear<ProtocoloRequest, EProtocoloCOM>(request);
+            var response = await _upaService.CreateProtocol(protocolo);
+            var upaDTOSalida = Mapear<EProtocoloCOM, ProtocoloRequest>((EProtocoloCOM)response.Data);
+            response.Data = upaDTOSalida;
+            return Created(string.Empty, response);
+        }
         [HttpPut("editar-protocolo")]
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         public async Task<IActionResult> EditarProtocolo(ProtocoloRequest request)
@@ -115,6 +124,14 @@ namespace lestoma.Api.Controllers
         public async Task<IActionResult> EliminarUpa(Guid id)
         {
             await _upaService.Delete(id);
+            return NoContent();
+        }
+
+        [HttpDelete("eliminar-protocolo/{id}")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador)]
+        public async Task<IActionResult> EliminarProtocolo(int id)
+        {
+            await _upaService.DeleteProtocol(id);
             return NoContent();
         }
     }
