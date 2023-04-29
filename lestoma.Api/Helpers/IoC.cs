@@ -3,7 +3,6 @@ using DinkToPdf;
 using DinkToPdf.Contracts;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.Data;
-using lestoma.Data.Auditoria;
 using lestoma.Data.Repositories;
 using lestoma.Logica.Interfaces;
 using lestoma.Logica.LogicaService;

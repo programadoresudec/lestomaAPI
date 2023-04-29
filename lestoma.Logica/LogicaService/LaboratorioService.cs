@@ -34,6 +34,7 @@ namespace lestoma.Logica.LogicaService
             _logger = logger;
             _componenteRepository = componenteRepository;
         }
+
         public async Task<ResponseDTO> CreateDetail(ELaboratorio detalle)
         {
             var existeComponent = await _componenteRepository.AnyWithCondition(x => x.Id == detalle.ComponenteLaboratorioId);

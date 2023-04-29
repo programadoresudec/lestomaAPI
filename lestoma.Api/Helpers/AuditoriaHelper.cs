@@ -1,5 +1,4 @@
-﻿using lestoma.Api.Helpers;
-using lestoma.CommonUtils.Constants;
+﻿using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.Core;
 using lestoma.CommonUtils.Interfaces;
 using Microsoft.AspNetCore.DataProtection;
@@ -7,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Security.Claims;
 
-namespace lestoma.Data.Auditoria
+namespace lestoma.Api.Helpers
 {
     public class AuditoriaHelper : IAuditoriaHelper, IClaimsTransformation
     {

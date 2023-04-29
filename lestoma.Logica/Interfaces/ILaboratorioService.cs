@@ -10,6 +10,7 @@ namespace lestoma.Logica.Interfaces
 {
     public interface ILaboratorioService
     {
+
         Task<ResponseDTO> CreateDetail(ELaboratorio detalle);
         Task<ResponseDTO> BulkSyncDataOffline(IEnumerable<ELaboratorio> datosOffline);
         Task SendEmailFinishMerge(string email);

@@ -20,6 +20,7 @@ namespace lestoma.Logica.LogicaService
         {
             _actividadRepository = actividadRepository;
         }
+
         public async Task<IEnumerable<EActividad>> GetAll()
         {
             var query = await _actividadRepository.GetAllAsQueryable().OrderBy(y => y.Nombre).ToListAsync();

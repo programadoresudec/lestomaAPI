@@ -30,6 +30,7 @@ namespace lestoma.Logica.LogicaService
             _upaRepository = upaRepository;
             _moduloRepository = moduloRepository;
         }
+
         public async Task<IEnumerable<EComponenteLaboratorio>> GetAll()
         {
             var listado = await _componenteRepository.GetAll();

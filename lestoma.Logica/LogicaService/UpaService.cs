@@ -22,7 +22,6 @@ namespace lestoma.Logica.LogicaService
             _protocoloRepository = protocoloRepository;
             _upaRepository = upaRepository;
         }
-
         public async Task<IEnumerable<EUpa>> GetAll()
         {
             var listado = await _upaRepository.GetAll();
@@ -110,6 +109,10 @@ namespace lestoma.Logica.LogicaService
             var upa = await _upaRepository.AnyWithCondition(x => x.Id == protocolo.UpaId);
             if (!upa)
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No existe la upa.");
+
+            var existe = await _protocoloRepository.AnyWithCondition(x => x.Nombre == protocolo.Nombre && x.UpaId == protocolo.UpaId);
+            if (existe)
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, $"El {protocolo.Nombre} ya esta en uso.");
             await _protocoloRepository.Create(protocolo);
             return Responses.SetCreatedResponse(protocolo);
         }

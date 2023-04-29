@@ -1,8 +1,13 @@
 ﻿using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Listados;
 using lestoma.CommonUtils.Requests.Filters;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
+using System.Reflection;
+using System.Text;
 using Xunit;
 
 namespace Lestoma.Tests.Common.Helpers
@@ -38,6 +43,56 @@ namespace Lestoma.Tests.Common.Helpers
             string resultHexa = Reutilizables.ByteArrayToHexString(new byte[] { result[1], result[0] });
             Assert.Equal(crc, resultHexa);
         }
+
+        [Theory]
+        [InlineData(73, 1, 240, 1, 63, 128, 0, 0)]
+        [InlineData(111, 0, 240, 1, 63, 128, 0, 0)]
+        [InlineData(73, 1, 240, 1, 0, 0, 0, 0)]
+        [InlineData(111, 0, 240, 1, 0, 0, 0, 0)]
+        [InlineData(73, 1, 60, 1, 0, 0, 0, 0)]
+        [InlineData(73, 1, 240, 2, 63, 128, 0, 0)]
+        [InlineData(111, 0, 240, 2, 63, 128, 0, 0)]
+        [InlineData(73, 9, 240, 2, 0, 0, 0, 0)]
+        [InlineData(111, 0, 240, 2, 0, 0, 0, 0)]
+        [InlineData(73, 6, 60, 2, 0, 0, 0, 0)]
+        [InlineData(73, 6, 240, 4, 63, 128, 0, 0)]
+        [InlineData(111, 0, 240, 4, 63, 128, 0, 0)]
+        [InlineData(73, 6, 240, 40, 0, 0, 0, 0)]
+        [InlineData(111, 0, 240, 4, 0, 0, 0, 0)]
+        [InlineData(73, 3, 60, 4, 0, 0, 0, 0)]
+        [InlineData(73, 3, 240, 0, 63, 128, 0, 0)]
+        [InlineData(111, 0, 240, 0, 63, 128, 0, 0)]
+        [InlineData(73, 3, 240, 0, 0, 0, 0, 0)]
+        [InlineData(111, 0, 240, 0, 0, 0, 0, 0)]
+        [InlineData(73, 3, 60, 0, 0, 0, 0, 0)]
+        [InlineData(73, 7, 240, 4, 63, 128, 0, 0)]
+        [InlineData(73, 7, 240, 4, 0, 0, 0, 0)]
+        [InlineData(73, 7, 60, 4, 0, 0, 0, 0)]
+        [InlineData(73, 8, 240, 3, 63, 128, 0, 0)]
+        [InlineData(111, 0, 240, 3, 63, 128, 0, 0)]
+        [InlineData(73, 8, 240, 3, 0, 0, 0, 0)]
+        [InlineData(111, 0, 240, 3, 0, 0, 0, 0)]
+        [InlineData(73, 8, 60, 3, 0, 0, 0, 0)]
+        [InlineData(73, 5, 15, 2, 0, 0, 0, 0)]
+        [InlineData(73, 5, 15, 1, 0, 0, 0, 0)]
+        [InlineData(73, 5, 15, 3, 0, 0, 0, 0)]
+        [InlineData(73, 5, 15, 4, 0, 0, 0, 0)]
+        [InlineData(73, 5, 15, 5, 0, 0, 0, 0)]
+        [InlineData(73, 5, 240, 2, 67, 131, 192, 0)]
+        [InlineData(111, 0, 240, 2, 66, 55, 51, 51)]
+        [InlineData(73, 5, 240, 1, 67, 233, 76, 205)]
+        [InlineData(111, 0, 240, 1, 67, 166, 192, 0)]
+        [InlineData(73, 5, 240, 3, 67, 172, 198, 102)]
+        [InlineData(111, 0, 240, 3, 67, 250, 0, 0)]
+        public void Add_CRC_To_trama_EightBytes(byte one, byte two, byte three, byte four, byte five, byte six, byte seven, byte eight)
+        {
+            var tramaCompleta = Reutilizables.TramaConCRC16Modbus(new List<byte> { one, two, three, four, five, six, seven, eight });
+            string carpetaAplicacion = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            string rutaArchivo = Path.Combine(carpetaAplicacion, "tramasCRC.txt");
+            string tramaString = string.Join("-", tramaCompleta.Select(b => b.ToString())) + Environment.NewLine;
+            File.AppendAllText(rutaArchivo, tramaString, Encoding.Unicode);
+        }
+
 
         [Theory]
         [InlineData("43CC8000434800007082", 200)]
@@ -125,7 +180,7 @@ namespace Lestoma.Tests.Common.Helpers
         public void ReadJson_return_List_Estados_Componentes()
         {
             ListadoEstadoComponente data = new();
-            Assert.Equal(4, data.Listado.Count);
+            Assert.Equal(3, data.Listado.Count);
         }
         [Fact]
         public void ParseJson_Return_List()

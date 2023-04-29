@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="lestoma.Logica.LogicaService.ActividadService" BaseTypeListCollapsed="true">
+    <Position X="49.25" Y="9" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAQACAAAAAAAAAAAAAAAAAAAAAECIEAAAgAAAAAAAIA=</HashCode>
+      <FileName>LogicaService\ActividadService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="lestoma.Logica.LogicaService.BuzonService" BaseTypeListCollapsed="true">
+    <Position X="45" Y="9.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAACAAAABAAgACAAAAA=</HashCode>
+      <FileName>LogicaService\BuzonService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="lestoma.Logica.LogicaService.ComponenteService" BaseTypeListCollapsed="true">
+    <Position X="34.25" Y="14.5" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAQASCAAQAgAAAAAAAAAAAAAAUECAEAAAgCCAAAAAIA=</HashCode>
+      <FileName>LogicaService\ComponenteService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="lestoma.Logica.LogicaService.DetalleUpaActividadService" BaseTypeListCollapsed="true">
+    <Position X="40.25" Y="9.25" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAABAAAAAAACAAEAAgCAAAgAACA=</HashCode>
+      <FileName>LogicaService\DetalleUpaActividadService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="lestoma.Logica.LogicaService.LaboratorioService" BaseTypeListCollapsed="true">
+    <Position X="33.25" Y="9.25" Width="6" />
+    <TypeIdentifier>
+      <HashCode>EAAIACAAAAAAAQAAAAgICRAEIAAAAAAACBAgAAAAAAA=</HashCode>
+      <FileName>LogicaService\LaboratorioService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="lestoma.Logica.LogicaService.ModuloService" BaseTypeListCollapsed="true">
+    <Position X="28" Y="9.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAgAAAAAAAAAAAAAAAECAEAAAgAAAAAAAIE=</HashCode>
+      <FileName>LogicaService\ModuloService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="lestoma.Logica.LogicaService.ReporteService" BaseTypeListCollapsed="true">
+    <Position X="46" Y="13.75" Width="5" />
+    <TypeIdentifier>
+      <HashCode>AACgACAAAIAAAAEBAAAAQAAAYQAAAAJgCACkAAAAAAA=</HashCode>
+      <FileName>LogicaService\ReporteService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="lestoma.Logica.LogicaService.UpaService" BaseTypeListCollapsed="true">
+    <Position X="27.5" Y="14.25" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>ADQAAAAAAAEAAAAEAAAAAQAAQQECAEAAAhAAAAAAAIA=</HashCode>
+      <FileName>LogicaService\UpaService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="lestoma.Logica.LogicaService.UsuarioService" BaseTypeListCollapsed="true">
+    <Position X="40.5" Y="13.5" Width="4" />
+    <TypeIdentifier>
+      <HashCode>NACAAABDUEAAggAIAAIgiYAACQAAAAABCAAwAAAAIAI=</HashCode>
+      <FileName>LogicaService\UsuarioService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="lestoma.Data.GenericRepository&lt;T&gt;">
+    <Position X="18.75" Y="21" Width="3.25" />
+    <TypeIdentifier />
+    <Lollipop Position="0.21" />
+  </Class>
+  <Class Name="lestoma.Data.Repositories.ActividadRepository">
+    <Position X="23.5" Y="22.5" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Data.Repositories.AplicacionRepository">
+    <Position X="13.5" Y="28.5" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Data.Repositories.BuzonRepository">
+    <Position X="23" Y="28.25" Width="2.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Data.Repositories.ComponenteRepository">
+    <Position X="32.75" Y="28.25" Width="3.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Data.Repositories.LaboratorioRepository">
+    <Position X="11.75" Y="23" Width="3.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Data.Repositories.ModuloRepository">
+    <Position X="16.25" Y="28.5" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Data.Repositories.ProtocoloRepository">
+    <Position X="26.5" Y="28.25" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Data.Repositories.ReporteRepository">
+    <Position X="27" Y="22.5" Width="2.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Data.Repositories.UpaActividadRepository">
+    <Position X="9.75" Y="28.25" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Data.Repositories.UpaRepository">
+    <Position X="20.25" Y="28.5" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Data.Repositories.UsuarioRepository">
+    <Position X="29.5" Y="28.25" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.EActividad">
+    <Position X="1" Y="10.75" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.EAplicacion">
+    <Position X="5.75" Y="1.75" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.EAuditoria">
+    <Position X="3" Y="1.5" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.EBuzon">
+    <Position X="17.5" Y="4.5" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.ECamposAuditoria">
+    <Position X="0.5" Y="6.25" Width="2.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.EComponenteLaboratorio">
+    <Position X="4.75" Y="10.25" Width="3.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.EEstadoUsuario">
+    <Position X="15.25" Y="4.5" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.ELaboratorio">
+    <Position X="19.75" Y="10" Width="3.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.EModuloComponente">
+    <Position X="11.25" Y="10.25" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.EProtocoloCOM">
+    <Position X="8.5" Y="4.5" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.ERol">
+    <Position X="10.75" Y="4.5" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.ESuperAdministrador">
+    <Position X="12" Y="7" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.ETokensUsuarioByAplicacion">
+    <Position X="6" Y="4.5" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.EUpa">
+    <Position X="16.5" Y="10.25" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.EUpaActividad">
+    <Position X="13.5" Y="10.25" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.EUsuario">
+    <Position X="8.25" Y="10.25" Width="2.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="lestoma.Entidades.Models.EstadoComponente">
+    <Position X="13" Y="4.5" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="lestoma.Logica.Interfaces.IActividadService">
+    <Position X="26.75" Y="1.5" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IActividadService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="lestoma.Logica.Interfaces.IBuzonService">
+    <Position X="47.25" Y="5.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAACAAAABAAgAAAAAAA=</HashCode>
+      <FileName>Interfaces\IBuzonService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="lestoma.Logica.Interfaces.IComponenteService">
+    <Position X="33" Y="4" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAEAAAAAAAACCAAAAAAA=</HashCode>
+      <FileName>Interfaces\IComponenteService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="lestoma.Logica.Interfaces.IDetalleUpaActividadService">
+    <Position X="42" Y="2" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAABAAAAAAACAAEAAgAAAAgAACA=</HashCode>
+      <FileName>Interfaces\IDetalleUpaActividadService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="lestoma.Logica.Interfaces.IGenericCRUD&lt;T, TID&gt;">
+    <Position X="32.25" Y="1" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAECAEAAAgAAAAAAAIA=</HashCode>
+      <FileName>Interfaces\IGenericCRUD.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="lestoma.Logica.Interfaces.ILaboratorioService">
+    <Position X="39.25" Y="5.25" Width="6" />
+    <TypeIdentifier>
+      <HashCode>EAAIAAAAAAAAAQAAAAgIABAAAAAAAAAACBAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\ILaboratorioService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="lestoma.Logica.Interfaces.IModuloService">
+    <Position X="36.75" Y="1.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Interfaces\IModuloService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="lestoma.Logica.Interfaces.IReporteService">
+    <Position X="46.75" Y="2" Width="5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAEBAAAAQAAAAAAAAABgCACAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IReporteService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="lestoma.Logica.Interfaces.IUpaService">
+    <Position X="26.75" Y="3.75" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>ADAAAAAAAAAAAAAEAAAAAQAAQAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IUpaService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="lestoma.Logica.Interfaces.IUsuarioService">
+    <Position X="52.75" Y="1.5" Width="4" />
+    <TypeIdentifier>
+      <HashCode>NACAAABDUEAAggAAAAIgiIAAAQAAAAAAAAAQAAAAIAI=</HashCode>
+      <FileName>Interfaces\IUsuarioService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="lestoma.Data.IGenericRepository&lt;T&gt;">
+    <Position X="19.25" Y="18.5" Width="2" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
