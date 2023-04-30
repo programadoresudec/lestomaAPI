@@ -191,21 +191,59 @@ namespace lestoma.Data.Repositories
                           }).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByActivitiesOfUpaUserId(UpaActivitiesModuleFilterRequest filtro)
+        public async Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByActivitiesOfUpaUserId(UpaActivitiesModuleFilterRequest filtro, bool IsAuxiliar)
         {
-            var query = await (from componente in _db.TablaComponentesLaboratorio
-                               join actividad in _db.TablaActividades on componente.ActividadId equals actividad.Id
-                               where componente.ModuloComponenteId == filtro.ModuloId && componente.UpaId == filtro.UpaId
-                               && filtro.ActividadesId.Contains(componente.ActividadId)
-                               select new LaboratorioComponenteDTO
-                               {
-                                   Actividad = actividad.Nombre,
-                                   Id = componente.Id,
-                                   Nombre = componente.NombreComponente,
-                                   DireccionRegistro = componente.DireccionRegistro,
-                                   JsonEstado = componente.JsonEstadoComponente
-                               }).ToListAsync();
-            return query;
+            if (!IsAuxiliar)
+            {
+                return await (from componente in _db.TablaComponentesLaboratorio
+                              join actividad in _db.TablaActividades on componente.ActividadId equals actividad.Id
+                              where componente.ModuloComponenteId == filtro.ModuloId && componente.UpaId == filtro.UpaId
+                              && filtro.ActividadesId.Contains(componente.ActividadId)
+                              select new LaboratorioComponenteDTO
+                              {
+                                  Actividad = actividad.Nombre,
+                                  Id = componente.Id,
+                                  Nombre = componente.NombreComponente,
+                                  DireccionRegistro = componente.DireccionRegistro,
+                                  JsonEstado = componente.JsonEstadoComponente
+                              }).ToListAsync();
+            }
+            else
+            {
+                var parameters = new string[filtro.ActividadesId.Count()];
+                var sqlParameters = new List<NpgsqlParameter>();
+                for (var i = 0; i < filtro.ActividadesId.Count(); i++)
+                {
+                    parameters[i] = string.Format("@p{0}", i);
+                    sqlParameters.Add(new NpgsqlParameter(parameters[i], filtro.ActividadesId.ToList()[i]));
+                }
+
+                var upaId = new NpgsqlParameter("upaId", filtro.UpaId);
+                var moduloId = new NpgsqlParameter("moduloId", filtro.ModuloId);
+                var estadoComponente = new NpgsqlParameter("estadoComponente", EnumConfig.GetDescription(TipoEstadoComponente.Ajuste));
+                sqlParameters.Add(upaId);
+                sqlParameters.Add(moduloId);
+                sqlParameters.Add(estadoComponente);
+
+                string consulta = $@"SELECT comp.*
+                                        FROM laboratorio_lestoma.componente_laboratorio comp
+                                               INNER JOIN superadmin.actividad actividad ON comp.actividad_id = actividad.id
+                                         WHERE actividad.id IN ({string.Join(", ", parameters)})
+                                               AND comp.descripcion_estado::JSONB->>'TipoEstado' <> @estadoComponente 
+                                               AND comp.upa_id = @upaId 
+                                               AND comp.modulo_componente_id = @moduloId";
+
+                var componentes = _db.TablaComponentesLaboratorio.FromSqlRaw(consulta, sqlParameters.ToArray()).Include(y => y.Actividad);
+                return await componentes.Select(x => new LaboratorioComponenteDTO
+                {
+                    Id = x.Id,
+                    Actividad = x.Actividad.Nombre,
+                    Nombre = x.NombreComponente,
+                    DireccionRegistro = x.DireccionRegistro,
+                    JsonEstado = x.JsonEstadoComponente
+                }).ToListAsync();
+            }
+
         }
     }
 }

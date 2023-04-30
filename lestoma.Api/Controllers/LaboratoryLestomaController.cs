@@ -68,7 +68,7 @@ namespace lestoma.Api.Controllers
         [HttpGet("listar-componentes-upa-modulo")]
         public async Task<IActionResult> GetComponentesByUpaAndModuloId([FromQuery] UpaModuleFilterRequest filtro)
         {
-            IEnumerable<LaboratorioComponenteDTO> data;
+            IEnumerable<LaboratorioComponenteDTO> data;    
             if (IsSuperAdmin())
             {
                 data = await _laboratorioService.GetComponentsByUpaAndModuleId(filtro);
@@ -92,7 +92,7 @@ namespace lestoma.Api.Controllers
                 UpaId = UpaUserFilter.UpaId
             };
 
-            data = await _laboratorioService.GetComponentsByActivitiesOfUpaUserId(upaActivitiesModuleFilterRequest);
+            data = await _laboratorioService.GetComponentsByActivitiesOfUpaUserId(upaActivitiesModuleFilterRequest, IsAuxiliar());
             return Ok(data);
 
         }

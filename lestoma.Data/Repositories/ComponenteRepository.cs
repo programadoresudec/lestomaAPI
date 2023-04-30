@@ -162,51 +162,69 @@ namespace lestoma.Data.Repositories
         public async Task<List<int>> GetRegistrationAddressesByUpaModulo(UpaModuleActivityFilterRequest filterRequest, List<int> direccionesRegistro)
         {
 
-            List<byte> direccionesUtilizadas = new();
-            var estado = await _dbSet.Where(y => y.ModuloComponenteId == filterRequest.ModuloId).Select(y => y.JsonEstadoComponente).FirstOrDefaultAsync();
-            if (string.IsNullOrWhiteSpace(estado))
+            try
             {
-                direccionesUtilizadas = await _dbSet.Where(x => x.UpaId == filterRequest.UpaId).Select(y => y.DireccionRegistro).ToListAsync();
-            }
-            else
-            {
-                EstadoComponente tipoFuncion = JsonSerializer.Deserialize<EstadoComponente>(estado);
-
-                if (tipoFuncion.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.OnOff))
+                List<byte> direccionesUtilizadas = new List<byte>();
+                var estado = await _dbSet.Where(y => y.ModuloComponenteId == filterRequest.ModuloId).Select(y => y.JsonEstadoComponente).FirstOrDefaultAsync();
+                if (!string.IsNullOrWhiteSpace(estado))
                 {
-                    direccionesUtilizadas = await _dbSet.Where(x => x.UpaId == filterRequest.UpaId).Select(y => y.DireccionRegistro).ToListAsync();
+                    EstadoComponente tipoFuncion = JsonSerializer.Deserialize<EstadoComponente>(estado);
+
+                    if (tipoFuncion.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.OnOff))
+                    {
+                        direccionesUtilizadas = await _dbSet.Where(x => x.UpaId == filterRequest.UpaId).Select(y => y.DireccionRegistro).ToListAsync();
+                    }
+                    else
+                    {
+                        direccionesUtilizadas = await _dbSet.Where(x => x.UpaId == filterRequest.UpaId && x.ModuloComponenteId == filterRequest.ModuloId)
+                            .Select(y => y.DireccionRegistro).ToListAsync();
+                    }
                 }
                 else
                 {
-                    direccionesUtilizadas = await _dbSet.Where(x => x.UpaId == filterRequest.UpaId && x.ModuloComponenteId == filterRequest.ModuloId)
-                        .Select(y => y.DireccionRegistro).ToListAsync();
+                    direccionesUtilizadas = await _dbSet.Where(x => x.UpaId == filterRequest.UpaId).Select(y => y.DireccionRegistro).ToListAsync();
                 }
-            }
-            var sqlParameters = new List<NpgsqlParameter>();
-            var upaId = new NpgsqlParameter("upaId", filterRequest.UpaId);
-            var estadoComponente = new NpgsqlParameter("Funcion", EnumConfig.GetDescription(TipoEstadoComponente.OnOff));
-            sqlParameters.Add(upaId);
-            sqlParameters.Add(estadoComponente);
+                var sqlParameters = new List<NpgsqlParameter>();
+                var upaId = new NpgsqlParameter("upaId", filterRequest.UpaId);
+                var estadoComponente = new NpgsqlParameter("Funcion", EnumConfig.GetDescription(TipoEstadoComponente.OnOff));
+                sqlParameters.Add(upaId);
+                sqlParameters.Add(estadoComponente);
 
-            string consulta = @"SELECT comp.direccion_registro, comp.upa_id, comp.modulo_componente_id
+                string consulta = @"SELECT comp.direccion_registro, comp.upa_id, comp.modulo_componente_id
                                 FROM laboratorio_lestoma.componente_laboratorio comp
                                 WHERE comp.upa_id = @upaId      
                                   AND comp.descripcion_estado::JSONB ->> 'TipoEstado' = @Funcion";
 
-            var direccionesActuadores = await _dbSet.FromSqlRaw(consulta, sqlParameters.ToArray()).Select(y => y.DireccionRegistro).ToListAsync();
+                var direccionesActuadores = await _dbSet.FromSqlRaw(consulta, sqlParameters.ToArray()).Select(y => y.DireccionRegistro).ToListAsync();
 
-            var direccionesNoUtilizadas = new List<int>();
+                var direccionesNoUtilizadas = new List<int>();
 
-            foreach (var direccionRegistro in direccionesRegistro)
-            {
-                bool isDireccionUtilizada = direccionesUtilizadas.Contains((byte)direccionRegistro);
-                bool isDireccionActuador = direccionesActuadores.Contains((byte)direccionRegistro);
-                if (!isDireccionUtilizada && (!direccionesActuadores.Any() || !isDireccionActuador))
+                if (direccionesActuadores.Any())
                 {
-                    direccionesNoUtilizadas.Add(direccionRegistro);
+                    foreach (var direccionRegistro in direccionesRegistro)
+                    {
+                        if (!direccionesUtilizadas.Contains((byte)direccionRegistro) && !direccionesActuadores.Contains((byte)direccionRegistro))
+                        {
+                            direccionesNoUtilizadas.Add(direccionRegistro);
+                        }
+                    }
                 }
+                else
+                {
+                    foreach (var direccionRegistro in direccionesRegistro)
+                    {
+                        if (!direccionesUtilizadas.Contains((byte)direccionRegistro))
+                        {
+                            direccionesNoUtilizadas.Add(direccionRegistro);
+                        }
+                    }
+                }
+                return direccionesNoUtilizadas;
             }
-            return direccionesNoUtilizadas;
+            catch (Exception ex)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, @$"Error: {ex.Message}");
+            }
         }
     }
 }
