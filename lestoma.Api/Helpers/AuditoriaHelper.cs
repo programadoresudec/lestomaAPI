@@ -11,7 +11,7 @@ namespace lestoma.Api.Helpers
     public class AuditoriaHelper : IAuditoriaHelper, IClaimsTransformation
     {
         private readonly ILoggerManager _logger;
-        private HttpContext _hcontext;
+        private readonly HttpContext _hcontext;
         protected readonly IDataProtector _protector;
 
         public AuditoriaHelper(IHttpContextAccessor hacess, ILoggerManager logger, IDataProtectionProvider protectorProvider)
@@ -24,7 +24,6 @@ namespace lestoma.Api.Helpers
         {
             try
             {
-                string IP4Address = String.Empty;
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity();
                 if (_hcontext != null)
                 {

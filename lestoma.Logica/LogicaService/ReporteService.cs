@@ -24,7 +24,7 @@ namespace lestoma.Logica.LogicaService
     public class ReporteService : IReporteService
     {
         private readonly ILoggerManager _logger;
-        private IMemoryCache _cache;
+        private readonly IMemoryCache _cache;
         private readonly ReporteRepository _repositorio;
         private readonly IMailHelper _mailHelper;
         private readonly UpaRepository _upaRepository;

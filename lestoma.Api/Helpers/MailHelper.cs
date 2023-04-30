@@ -101,7 +101,6 @@ namespace lestoma.Api.Helpers
                 var strBody = string.Format(Emailtemplate.ReadToEnd());
                 Emailtemplate.Close();
                 Emailtemplate.Dispose();
-                Emailtemplate = null;
                 var mailMessage = new MimeMessage();
                 mailMessage.From.Add(new MailboxAddress("Lestoma-APP", _emailFrom));
                 mailMessage.To.Add(new MailboxAddress(String.Empty, correoDestino));
@@ -168,7 +167,6 @@ namespace lestoma.Api.Helpers
                 var strBody = string.Format(Emailtemplate.ReadToEnd());
                 Emailtemplate.Close();
                 Emailtemplate.Dispose();
-                Emailtemplate = null;
                 var mailMessage = new MimeMessage();
                 mailMessage.From.Add(new MailboxAddress("Lestoma-APP", _emailFrom));
                 mailMessage.To.Add(new MailboxAddress(String.Empty, correoDestino));

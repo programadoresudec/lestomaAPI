@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -33,8 +34,12 @@ namespace lestoma.CommonUtils.Services
             {
                 var httpClientHandler = new HttpClientHandler();
 
-                httpClientHandler.ServerCertificateCustomValidationCallback =
-                    (message, certificate, chain, sslPolicyErrors) => true;
+                ServicePointManager.ServerCertificateValidationCallback +=
+                    (sender, certificate, chain, errors) =>
+                {
+                    if (!urlBase.Contains("https")) return true; // for development, trust all certificates
+                    return errors == SslPolicyErrors.None;
+                };
 
                 return new HttpClient(httpClientHandler)
                 {

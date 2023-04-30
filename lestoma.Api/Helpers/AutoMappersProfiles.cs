@@ -50,10 +50,5 @@ namespace lestoma.Api.Helpers
                 .ForMember(d => d.NombreRol, o => o.MapFrom(s => s.Rol.NombreRol));
             #endregion
         }
-
-        //private T DeserializarObject<T>(string descripcion)
-        //{
-        //    return JsonSerializer.Deserialize<T>(descripcion);
-        //}
     }
 }

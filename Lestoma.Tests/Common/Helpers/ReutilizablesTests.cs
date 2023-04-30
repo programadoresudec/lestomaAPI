@@ -117,6 +117,7 @@ namespace Lestoma.Tests.Common.Helpers
         public void ParseJson_Return_List()
         {
             var parse = new Reutilizables().ReadJSON<List<ItemColor>>("JsonTest.json");
+            Assert.NotNull(parse);
         }
     }
     public class ItemColor

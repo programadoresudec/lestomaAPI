@@ -17,16 +17,16 @@ namespace lestoma.Logica.LogicaService
 {
     public class ComponenteService : IComponenteService
     {
-        private ComponenteRepository _componenteRepository;
-        private ActividadRepository _actividadRepository;
-        private UpaRepository _upaRepository;
-        private ModuloRepository _moduloRepository;
+        private readonly ComponenteRepository _componenteRepository;
+        private readonly ActividadRepository _actividadRepository;
+        private readonly UpaRepository _upaRepository;
+        private readonly ModuloRepository _moduloRepository;
 
-        public ComponenteService(ComponenteRepository componente, ActividadRepository _actividadRepository,
+        public ComponenteService(ComponenteRepository componenteRepository, ActividadRepository actividadRepository,
             UpaRepository upaRepository, ModuloRepository moduloRepository)
         {
-            _componenteRepository = componente;
-            this._actividadRepository = _actividadRepository;
+            _componenteRepository = componenteRepository;
+            _actividadRepository = actividadRepository;
             _upaRepository = upaRepository;
             _moduloRepository = moduloRepository;
         }
@@ -141,7 +141,7 @@ namespace lestoma.Logica.LogicaService
                          || entidad.ObjetoJsonEstado.TipoEstado == EnumConfig.GetDescription(TipoEstadoComponente.Ajuste))
                 {
                     var count = await _componenteRepository.WhereWithCondition(x => x.UpaId == entidad.UpaId
-                                                                            && x.ModuloComponenteId == entidad.ModuloComponenteId 
+                                                                            && x.ModuloComponenteId == entidad.ModuloComponenteId
                                                                             && x.DireccionRegistro == entidad.DireccionRegistro).CountAsync();
                     if (count >= 2)
                     {
@@ -150,7 +150,7 @@ namespace lestoma.Logica.LogicaService
                 }
                 else
                 {
-                    bool existeDireccionRegistro = await _componenteRepository.AnyWithCondition(x => x.UpaId == entidad.UpaId 
+                    bool existeDireccionRegistro = await _componenteRepository.AnyWithCondition(x => x.UpaId == entidad.UpaId
                                                                             && x.NombreComponente == entidad.NombreComponente
                                                                             && x.DireccionRegistro == entidad.DireccionRegistro);
                     if (existeDireccionRegistro)

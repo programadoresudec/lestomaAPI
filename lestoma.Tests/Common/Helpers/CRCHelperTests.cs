@@ -1,4 +1,5 @@
-﻿using lestoma.Tests.Global;
+﻿using lestoma.CommonUtils.Helpers;
+using lestoma.Tests.Global;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -59,6 +60,8 @@ namespace lestoma.Tests.Common.Helpers
         public void Add_CRC_To_trama_EightBytes(byte one, byte two, byte three, byte four, byte five, byte six, byte seven, byte eight)
         {
             var tramaCompleta = _fixture.CrcHelper.TramaConCRC16Modbus(new List<byte> { one, two, three, four, five, six, seven, eight });
+            Assert.NotNull(tramaCompleta);
+            Assert.Equal(10, tramaCompleta.Count);
             string tramaString = string.Join("-", tramaCompleta.Select(b => b.ToString())) + Environment.NewLine;
             File.AppendAllText(_fixture.RutaArchivo, tramaString, Encoding.Unicode);
         }

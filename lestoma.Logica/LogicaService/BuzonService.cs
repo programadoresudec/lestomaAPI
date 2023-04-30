@@ -17,7 +17,7 @@ namespace lestoma.Logica.LogicaService
     public class BuzonService : IBuzonService
     {
         private readonly IAuditoriaHelper _camposAuditoria;
-        private BuzonRepository _buzonRepository;
+        private readonly BuzonRepository _buzonRepository;
 
         public BuzonService(BuzonRepository buzonRepository, IAuditoriaHelper auditoriaHelper)
         {
