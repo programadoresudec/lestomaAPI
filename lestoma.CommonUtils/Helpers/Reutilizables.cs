@@ -1,11 +1,9 @@
-﻿using lestoma.CommonUtils.DTOs;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -73,25 +71,6 @@ namespace lestoma.CommonUtils.Helpers
             return BitConverter.ToSingle(Bytes, 0);
         }
 
-
-        public static ResponseDTO VerifyCRCOfReceivedTrama(string tramaRecibida)
-        {
-            string primerosOchoBytes = tramaRecibida.Substring(0, 16);
-            string crcCurrent = tramaRecibida.Substring(tramaRecibida.Length - 4, 4);
-            var crcResult = new CRCHelper().CalculateCrc16Modbus(primerosOchoBytes);
-            var hexaCrcResult = ByteArrayToHexString(new byte[] { crcResult[1], crcResult[0] });
-            if (!hexaCrcResult.Equals(crcCurrent))
-            {
-                return new ResponseDTO
-                {
-                    IsExito = false,
-                    MensajeHttp = "Datos Invalidos en la trama recibida.",
-                    StatusCode = (int)HttpStatusCode.Conflict
-                };
-            }
-            return Responses.SetOkResponse();
-        }
-
         public static float ConvertReceivedTramaToResult(string tramaRecibida)
         {
             List<string> tramaDividida = Split(tramaRecibida, 2).ToList();
@@ -157,15 +136,6 @@ namespace lestoma.CommonUtils.Helpers
         public static string Encrypt(string param)
         {
             return Encryption.EncryptDecrypt.Encrypt(param);
-        }
-
-        public static List<byte> TramaConCRC16Modbus(List<byte> tramaOchoBytes)
-        {
-            var trama = ByteArrayToHexString(tramaOchoBytes.ToArray());
-            var crc = new CRCHelper().CalculateCrc16Modbus(trama);
-            tramaOchoBytes.Add(crc[1]);
-            tramaOchoBytes.Add(crc[0]);
-            return tramaOchoBytes;
         }
 
         public static string GenerateQueryString<T>(T obj)

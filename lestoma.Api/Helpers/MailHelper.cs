@@ -3,7 +3,6 @@ using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
 using MailKit.Net.Smtp;
-using MailKit.Security;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
@@ -72,8 +71,7 @@ namespace lestoma.Api.Helpers
 
                 using (var client = new SmtpClient())
                 {
-                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                    await client.ConnectAsync(_smtp, int.Parse(_port), SecureSocketOptions.Auto);
+                    await client.ConnectAsync(_smtp, int.Parse(_port));
                     await client.AuthenticateAsync(_from, _password);
                     await client.SendAsync(mailMessage);
                     await client.DisconnectAsync(true);
@@ -141,8 +139,7 @@ namespace lestoma.Api.Helpers
 
                 using (var client = new SmtpClient())
                 {
-                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                    await client.ConnectAsync(_smtp, int.Parse(_port), SecureSocketOptions.Auto);
+                    await client.ConnectAsync(_smtp, int.Parse(_port));
                     await client.AuthenticateAsync(_from, _password);
                     await client.SendAsync(mailMessage);
                     await client.DisconnectAsync(true);
@@ -197,8 +194,7 @@ namespace lestoma.Api.Helpers
                 mailMessage.Body = bodyBuilder.ToMessageBody();
                 using (var client = new SmtpClient())
                 {
-                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                    await client.ConnectAsync(_smtp, int.Parse(_port), SecureSocketOptions.Auto);
+                    await client.ConnectAsync(_smtp, int.Parse(_port));
                     await client.AuthenticateAsync(_from, _password);
                     await client.SendAsync(mailMessage);
                     await client.DisconnectAsync(true);

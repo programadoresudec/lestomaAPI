@@ -39,8 +39,14 @@ namespace lestoma.Data.Repositories
             _db.TablaUsuarios.Include(o => o.Rol).SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
 
 
-        public short ExpiracionToken(int aplicacionId) =>
-            _db.TablaAplicaciones.FirstOrDefault(x => x.Id == aplicacionId).TiempoExpiracionToken;
+        public short ExpiracionToken(int aplicacionId)
+        {
+            var expiracion = _db.TablaAplicaciones.FirstOrDefault(x => x.Id == aplicacionId);
+            if (expiracion == null)
+                return 15;
+            return expiracion.TiempoExpiracionToken;
+        }
+
 
         public async Task<IEnumerable<UserDTO>> GetUserswithoutUpa()
         {

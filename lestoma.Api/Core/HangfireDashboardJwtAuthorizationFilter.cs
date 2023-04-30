@@ -19,6 +19,7 @@ namespace lestoma.Api.Core
                     jwtToken,
                     new CookieOptions()
                     {
+                        Secure = true,
                         Expires = DateTime.Now.AddHours(1)
                     });
         }

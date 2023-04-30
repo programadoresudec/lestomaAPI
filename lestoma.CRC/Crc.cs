@@ -43,10 +43,22 @@ namespace lestoma.CRC
             Array.Copy(_table, res, _table.Length);
             return res;
         }
+        public static ulong ReverseBits(ulong ul, int valueLength)
+        {
+            ulong newValue = 0;
+
+            for (int i = valueLength - 1; i >= 0; i--)
+            {
+                newValue |= (ul & 1) << i;
+                ul >>= 1;
+            }
+
+            return newValue;
+        }
 
         public override void Initialize()
         {
-            _currentValue = Parameters.RefOut ? CrcHelper.ReverseBits(Parameters.Init, HashSize) : Parameters.Init;
+            _currentValue = Parameters.RefOut ? ReverseBits(Parameters.Init, HashSize) : Parameters.Init;
         }
 
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
@@ -104,7 +116,7 @@ namespace lestoma.CRC
             ulong r = (ulong)index;
 
             if (Parameters.RefIn)
-                r = CrcHelper.ReverseBits(r, HashSize);
+                r = ReverseBits(r, HashSize);
             else if (HashSize > 8)
                 r <<= (HashSize - 8);
 
@@ -119,7 +131,7 @@ namespace lestoma.CRC
             }
 
             if (Parameters.RefIn)
-                r = CrcHelper.ReverseBits(r, HashSize);
+                r = ReverseBits(r, HashSize);
 
             return r & _mask;
         }
@@ -161,7 +173,7 @@ namespace lestoma.CRC
             return hash == Parameters.Check;
         }
 
-        
+
         public class CheckResult
         {
             public bool IsRight { get; set; }

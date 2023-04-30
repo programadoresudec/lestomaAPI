@@ -69,8 +69,7 @@ namespace lestoma.CRC
 
     public static class CrcStdParams
     {
-        public static readonly Dictionary<CrcAlgorithms, Parameters> StandartParameters = new Dictionary
-            <CrcAlgorithms, Parameters>()
+        public static readonly Dictionary<CrcAlgorithms, Parameters> StandartParameters = new Dictionary<CrcAlgorithms, Parameters>()
         {
             //CRC-8
             {CrcAlgorithms.Crc8           , new Parameters("CRC-8", 8, 0x7, 0x0, false, false, 0x0, 0xF4)},
