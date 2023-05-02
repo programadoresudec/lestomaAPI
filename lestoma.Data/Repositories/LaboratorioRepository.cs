@@ -1,7 +1,6 @@
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.DTOs.Sync;
 using lestoma.CommonUtils.Enums;
-using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +9,6 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace lestoma.Data.Repositories
@@ -23,43 +21,108 @@ namespace lestoma.Data.Repositories
             _db = db;
         }
 
-        public async Task<IEnumerable<DataOnlineSyncDTO>> GetDataBySyncToMobileByUpaId(UpaActivitiesFilterRequest filtro, bool isSuperAdmin)
+        public async Task<IEnumerable<DataOnlineSyncDTO>> GetDataBySyncToMobileByUpaId(UpaActivitiesFilterRequest filtro, bool isSuperAdmin, bool isAuxiliar)
         {
+            if (isAuxiliar)
+                return await GetDataOfflineAuxiliar(filtro);
 
-            if (!isSuperAdmin)
-                return await (from componente in _db.TablaComponentesLaboratorio
-                              join modulo in _db.TablaModuloComponentes on componente.ModuloComponenteId equals modulo.Id
-                              join actividad in _db.TablaActividades on componente.ActividadId equals actividad.Id
-                              join upa in _db.TablaUpas on componente.UpaId equals upa.Id
-                              select new DataOnlineSyncDTO
+            else if (isSuperAdmin)
+                return await GetDataOfflineSuperAdmin(filtro);
+
+            else
+                return await GetDataOfflineAdmin();
+        }
+
+        private async Task<IEnumerable<DataOnlineSyncDTO>> GetDataOfflineAuxiliar(UpaActivitiesFilterRequest filtro)
+        {
+            var parameters = new string[filtro.ActividadesId.Count()];
+            var sqlParameters = new List<NpgsqlParameter>();
+            for (var i = 0; i < filtro.ActividadesId.Count(); i++)
+            {
+                parameters[i] = string.Format("@p{0}", i);
+                sqlParameters.Add(new NpgsqlParameter(parameters[i], filtro.ActividadesId.ToList()[i]));
+            }
+
+            var upaId = new NpgsqlParameter("upaId", filtro.UpaId);
+            var estadoComponente = new NpgsqlParameter("estadoComponente", EnumConfig.GetDescription(TipoEstadoComponente.Ajuste));
+            sqlParameters.Add(upaId);
+            sqlParameters.Add(estadoComponente);
+
+            string consulta = $@"SELECT  comp.*
+                                         FROM laboratorio_lestoma.componente_laboratorio comp
+                                               INNER JOIN laboratorio_lestoma.modulo_componente modulo ON comp.modulo_componente_id = modulo.id
+                                         WHERE comp.actividad_id IN ({string.Join(", ", parameters)})
+                                               AND comp.descripcion_estado::JSONB->>'TipoEstado' <> @estadoComponente 
+                                               AND comp.upa_id = @upaId";
+
+            var data = _db.TablaComponentesLaboratorio.FromSqlRaw(consulta, sqlParameters.ToArray())
+                .Include(m => m.ModuloComponente).Include(a => a.Actividad).Include(u => u.Upa);
+            return await data.Select(x => new DataOnlineSyncDTO
+            {
+                Id = x.Id,
+                NombreComponente = x.NombreComponente,
+                DescripcionEstadoJson = x.JsonEstadoComponente,
+                Actividad = new NameDTO
+                {
+                    Id = x.Actividad.Id,
+                    Nombre = x.Actividad.Nombre
+                },
+                DireccionRegistro = x.DireccionRegistro,
+                Modulo = new NameDTO
+                {
+                    Id = x.ModuloComponente.Id,
+                    Nombre = x.ModuloComponente.Nombre,
+                },
+                Upa = new NameDTO
+                {
+                    Id = x.Upa.Id,
+                    Nombre = x.Upa.Nombre,
+                },
+                Protocolos = _db.TablaProtocoloCOM.Where(x => x.UpaId == x.Upa.Id).Select(y => new ProtocoloSyncDTO
+                {
+                    Nombre = y.Nombre,
+                    PrimerByteTrama = y.PrimerByteTrama
+                }).ToList(),
+            }).ToListAsync();
+        }
+
+        private async Task<IEnumerable<DataOnlineSyncDTO>> GetDataOfflineAdmin()
+        {
+            return await (from componente in _db.TablaComponentesLaboratorio
+                          join modulo in _db.TablaModuloComponentes on componente.ModuloComponenteId equals modulo.Id
+                          join actividad in _db.TablaActividades on componente.ActividadId equals actividad.Id
+                          join upa in _db.TablaUpas on componente.UpaId equals upa.Id
+                          select new DataOnlineSyncDTO
+                          {
+                              Id = componente.Id,
+                              NombreComponente = componente.NombreComponente,
+                              DescripcionEstadoJson = componente.JsonEstadoComponente,
+                              Actividad = new NameDTO
                               {
-                                  Id = componente.Id,
-                                  NombreComponente = componente.NombreComponente,
-                                  DescripcionEstadoJson = componente.JsonEstadoComponente,
-                                  Actividad = new NameDTO
-                                  {
-                                      Id = actividad.Id,
-                                      Nombre = actividad.Nombre
-                                  },
-                                  DireccionRegistro = componente.DireccionRegistro,
-                                  Modulo = new NameDTO
-                                  {
-                                      Id = modulo.Id,
-                                      Nombre = modulo.Nombre,
-                                  },
-                                  Upa = new NameDTO
-                                  {
-                                      Id = upa.Id,
-                                      Nombre = upa.Nombre,
-                                  },
-                                  Protocolos = _db.TablaProtocoloCOM.Where(x => x.UpaId == upa.Id).Select(y => new ProtocoloSyncDTO
-                                  {
-                                      Nombre = y.Nombre,
-                                      PrimerByteTrama = y.PrimerByteTrama
-                                  }).ToList(),
-                              }).ToListAsync();
+                                  Id = actividad.Id,
+                                  Nombre = actividad.Nombre
+                              },
+                              DireccionRegistro = componente.DireccionRegistro,
+                              Modulo = new NameDTO
+                              {
+                                  Id = modulo.Id,
+                                  Nombre = modulo.Nombre,
+                              },
+                              Upa = new NameDTO
+                              {
+                                  Id = upa.Id,
+                                  Nombre = upa.Nombre,
+                              },
+                              Protocolos = _db.TablaProtocoloCOM.Where(x => x.UpaId == upa.Id).Select(y => new ProtocoloSyncDTO
+                              {
+                                  Nombre = y.Nombre,
+                                  PrimerByteTrama = y.PrimerByteTrama
+                              }).ToList(),
+                          }).ToListAsync();
+        }
 
-
+        private async Task<IEnumerable<DataOnlineSyncDTO>> GetDataOfflineSuperAdmin(UpaActivitiesFilterRequest filtro)
+        {
             return await (from componente in _db.TablaComponentesLaboratorio
                           join modulo in _db.TablaModuloComponentes on componente.ModuloComponenteId equals modulo.Id
                           join actividad in _db.TablaActividades on componente.ActividadId equals actividad.Id
@@ -98,22 +161,20 @@ namespace lestoma.Data.Repositories
         {
             if (IsAuxiliar)
             {
-                try
+                var parameters = new string[filtro.ActividadesId.Count()];
+                var sqlParameters = new List<NpgsqlParameter>();
+                for (var i = 0; i < filtro.ActividadesId.Count(); i++)
                 {
-                    var parameters = new string[filtro.ActividadesId.Count()];
-                    var sqlParameters = new List<NpgsqlParameter>();
-                    for (var i = 0; i < filtro.ActividadesId.Count(); i++)
-                    {
-                        parameters[i] = string.Format("@p{0}", i);
-                        sqlParameters.Add(new NpgsqlParameter(parameters[i], filtro.ActividadesId.ToList()[i]));
-                    }
+                    parameters[i] = string.Format("@p{0}", i);
+                    sqlParameters.Add(new NpgsqlParameter(parameters[i], filtro.ActividadesId.ToList()[i]));
+                }
 
-                    var upaId = new NpgsqlParameter("upaId", filtro.UpaId);
-                    var estadoComponente = new NpgsqlParameter("estadoComponente", EnumConfig.GetDescription(TipoEstadoComponente.Ajuste));
-                    sqlParameters.Add(upaId);
-                    sqlParameters.Add(estadoComponente);
+                var upaId = new NpgsqlParameter("upaId", filtro.UpaId);
+                var estadoComponente = new NpgsqlParameter("estadoComponente", EnumConfig.GetDescription(TipoEstadoComponente.Ajuste));
+                sqlParameters.Add(upaId);
+                sqlParameters.Add(estadoComponente);
 
-                    string consulta = $@"SELECT  modulo.id, modulo.nombre_modulo
+                string consulta = $@"SELECT  modulo.id, modulo.nombre_modulo
                                          FROM laboratorio_lestoma.componente_laboratorio comp
                                                INNER JOIN laboratorio_lestoma.modulo_componente modulo ON comp.modulo_componente_id = modulo.id
                                          WHERE comp.actividad_id IN ({string.Join(", ", parameters)})
@@ -121,17 +182,12 @@ namespace lestoma.Data.Repositories
                                                AND comp.upa_id = @upaId 
                                          GROUP BY modulo.id, modulo.nombre_modulo";
 
-                    var modulos = _db.TablaModuloComponentes.FromSqlRaw(consulta, sqlParameters.ToArray());
-                    return await modulos.Select(x => new NameDTO
-                    {
-                        Id = x.Id,
-                        Nombre = x.Nombre,
-                    }).ToListAsync();
-                }
-                catch (Exception ex)
+                var modulos = _db.TablaModuloComponentes.FromSqlRaw(consulta, sqlParameters.ToArray());
+                return await modulos.Select(x => new NameDTO
                 {
-                    throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, @$"Error: {ex.Message}");
-                }
+                    Id = x.Id,
+                    Nombre = x.Nombre,
+                }).ToListAsync();
             }
             return await (from componente in _db.TablaComponentesLaboratorio
                           join modulo in _db.TablaModuloComponentes on componente.ModuloComponenteId equals modulo.Id

@@ -15,9 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.Entidades", "lestom
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.CRC", "lestoma.CRC\lestoma.CRC.csproj", "{3CE9E339-1378-4CB0-B94C-3D7D18292E13}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.Pruebas", "lestoma.Pruebas\lestoma.Pruebas.csproj", "{B24902AE-7A27-4370-911A-92980469956B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lestoma.Tests", "lestoma.Tests\lestoma.Tests.csproj", "{F17F5E2C-E6B6-4695-84C9-377B3454EFC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lestoma.Tests", "lestoma.Tests\lestoma.Tests.csproj", "{F17F5E2C-E6B6-4695-84C9-377B3454EFC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,18 +99,6 @@ Global
 		{3CE9E339-1378-4CB0-B94C-3D7D18292E13}.Release|x64.Build.0 = Release|Any CPU
 		{3CE9E339-1378-4CB0-B94C-3D7D18292E13}.Release|x86.ActiveCfg = Release|Any CPU
 		{3CE9E339-1378-4CB0-B94C-3D7D18292E13}.Release|x86.Build.0 = Release|Any CPU
-		{B24902AE-7A27-4370-911A-92980469956B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B24902AE-7A27-4370-911A-92980469956B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B24902AE-7A27-4370-911A-92980469956B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B24902AE-7A27-4370-911A-92980469956B}.Debug|x64.Build.0 = Debug|Any CPU
-		{B24902AE-7A27-4370-911A-92980469956B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B24902AE-7A27-4370-911A-92980469956B}.Debug|x86.Build.0 = Debug|Any CPU
-		{B24902AE-7A27-4370-911A-92980469956B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B24902AE-7A27-4370-911A-92980469956B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B24902AE-7A27-4370-911A-92980469956B}.Release|x64.ActiveCfg = Release|Any CPU
-		{B24902AE-7A27-4370-911A-92980469956B}.Release|x64.Build.0 = Release|Any CPU
-		{B24902AE-7A27-4370-911A-92980469956B}.Release|x86.ActiveCfg = Release|Any CPU
-		{B24902AE-7A27-4370-911A-92980469956B}.Release|x86.Build.0 = Release|Any CPU
 		{F17F5E2C-E6B6-4695-84C9-377B3454EFC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F17F5E2C-E6B6-4695-84C9-377B3454EFC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F17F5E2C-E6B6-4695-84C9-377B3454EFC1}.Debug|x64.ActiveCfg = Debug|Any CPU

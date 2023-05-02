@@ -33,7 +33,7 @@ namespace lestoma.Data.Repositories
 
         public async Task<ReporteDTO> DailyReport(DateFilterRequest filtro)
         {
-            ReporteDTO reporteDTO = new ReporteDTO();
+            ReporteDTO reporteDTO = new();
             try
             {
                 var query = await _db.TablaDetalleLaboratorio.Include(componente => componente.ComponenteLaboratorio)
@@ -65,7 +65,7 @@ namespace lestoma.Data.Repositories
 
         public async Task<ReporteDTO> ReportByDate(ReportFilterRequest reporte)
         {
-            ReporteDTO reporteDTO = new ReporteDTO();
+            ReporteDTO reporteDTO = new();
             try
             {
                 var query = _db.TablaDetalleLaboratorio.Include(componente => componente.ComponenteLaboratorio)
@@ -98,7 +98,7 @@ namespace lestoma.Data.Repositories
 
         public async Task<ReporteDTO> ReportByComponents(ReportComponentFilterRequest reporte)
         {
-            ReporteDTO reporteDTO = new ReporteDTO();
+            ReporteDTO reporteDTO = new();
             try
             {
                 var query = _db.TablaDetalleLaboratorio.Include(componente => componente.ComponenteLaboratorio)
@@ -160,7 +160,7 @@ namespace lestoma.Data.Repositories
         private static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             // Unix timestamp is seconds past epoch
-            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            DateTime dateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
             return dateTime;
         }

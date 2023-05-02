@@ -64,7 +64,7 @@ namespace lestoma.Api.Controllers
                     UpaId = UpaId()
                 };
             }
-            var data = await _laboratorioService.GetDataOfUserToSyncDeviceDatabase(filtro, !IsSuperAdmin());
+            var data = await _laboratorioService.GetDataOfUserToSyncDeviceDatabase(filtro, IsSuperAdmin(), IsAuxiliar());
             return Ok(data);
         }
 
