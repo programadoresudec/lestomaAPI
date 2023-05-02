@@ -27,10 +27,10 @@ namespace lestoma.Data.Repositories
                 return await GetDataOfflineAuxiliar(filtro);
 
             else if (isSuperAdmin)
-                return await GetDataOfflineSuperAdmin(filtro);
+                return await GetDataOfflineSuperAdmin();
 
             else
-                return await GetDataOfflineAdmin();
+                return await GetDataOfflineAdmin(filtro);
         }
 
         private async Task<IEnumerable<DataOnlineSyncDTO>> GetDataOfflineAuxiliar(UpaActivitiesFilterRequest filtro)
@@ -86,7 +86,7 @@ namespace lestoma.Data.Repositories
             }).ToListAsync();
         }
 
-        private async Task<IEnumerable<DataOnlineSyncDTO>> GetDataOfflineAdmin()
+        private async Task<IEnumerable<DataOnlineSyncDTO>> GetDataOfflineSuperAdmin()
         {
             return await (from componente in _db.TablaComponentesLaboratorio
                           join modulo in _db.TablaModuloComponentes on componente.ModuloComponenteId equals modulo.Id
@@ -121,7 +121,7 @@ namespace lestoma.Data.Repositories
                           }).ToListAsync();
         }
 
-        private async Task<IEnumerable<DataOnlineSyncDTO>> GetDataOfflineSuperAdmin(UpaActivitiesFilterRequest filtro)
+        private async Task<IEnumerable<DataOnlineSyncDTO>> GetDataOfflineAdmin(UpaActivitiesFilterRequest filtro)
         {
             return await (from componente in _db.TablaComponentesLaboratorio
                           join modulo in _db.TablaModuloComponentes on componente.ModuloComponenteId equals modulo.Id
