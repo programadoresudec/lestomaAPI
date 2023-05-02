@@ -119,7 +119,7 @@ namespace lestoma.Data.Repositories
                  TipoDeAplicacion = x.TipoDeAplicacion,
                  FechaCreacionServer = x.FechaCreacionServer,
                  FechaActualizacionServer = x.FechaActualizacionServer
-             }).ToListAsync();
+             }).OrderBy(x => x.Nombre).ToListAsync();
         }
 
         public async Task<IEnumerable<EstadoDTO>> GetUserStatuses()
@@ -129,7 +129,7 @@ namespace lestoma.Data.Repositories
              {
                  Id = x.Id,
                  NombreEstado = x.DescripcionEstado
-             }).ToListAsync();
+             }).OrderBy(y => y.NombreEstado).ToListAsync();
         }
 
         public async Task<IEnumerable<RolDTO>> GetRoles()
@@ -139,7 +139,7 @@ namespace lestoma.Data.Repositories
             {
                 Id = x.Id,
                 NombreRol = x.NombreRol
-            }).ToListAsync();
+            }).OrderBy(y => y.NombreRol).ToListAsync();
         }
 
         public async Task<IEnumerable<UserDTO>> GetUsers()
