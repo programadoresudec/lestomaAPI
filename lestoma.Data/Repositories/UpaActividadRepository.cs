@@ -97,8 +97,7 @@ namespace lestoma.Data.Repositories
                                  FROM superadmin.upa_actividad detalle
                                           INNER JOIN superadmin.upa upa on upa.id = detalle.upa_id
                                           INNER JOIN usuarios.usuario us on us.id = detalle.usuario_id
-                                 GROUP BY detalle.upa_id, detalle.usuario_id, upa.nombre_upa, us.nombre, us.apellido
-                                 ORDER BY us.nombre";
+                                 GROUP BY detalle.upa_id, detalle.usuario_id, upa.nombre_upa, us.nombre, us.apellido";
 
             var listado = _db.TablaUpasConActividades.FromSqlRaw(consulta);
 
@@ -127,7 +126,7 @@ namespace lestoma.Data.Repositories
                 Ip = x.Ip,
                 Session = x.Session
             });
-            return query;
+            return query.OrderBy(y => y.User.Nombre);
         }
 
 
