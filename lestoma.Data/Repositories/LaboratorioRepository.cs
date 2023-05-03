@@ -265,8 +265,7 @@ namespace lestoma.Data.Repositories
                                                      ON detalleLaboratorio.componente_laboratorio_id = comp.id
                                  WHERE comp.descripcion_estado::JSONB ->> 'TipoEstado' = @estadoComponente
                                    AND comp.direccion_registro = @direccionRegistro
-                                   AND comp.upa_id = @upaId
-                                 ORDER BY detalleLaboratorio.fecha_creacion_dispositivo desc";
+                                   AND comp.upa_id = @upaId";
 
             var componentSetpoint = _db.TablaDetalleLaboratorio.FromSqlRaw(consulta, sqlParameters.ToArray()).Include(y => y.ComponenteLaboratorio);
             var dataComponentSetPoint = await componentSetpoint.Select(x => new TramaComponenteDTO
@@ -275,13 +274,12 @@ namespace lestoma.Data.Repositories
                 SetPointOut = x.ValorCalculadoTramaEnviada,
                 DireccionDeRegistro = x.ComponenteLaboratorio.DireccionRegistro,
                 FechaDispositivo = x.FechaCreacionDispositivo
-            }).FirstOrDefaultAsync();
-
-            if (componente.FechaDispositivo > dataComponentSetPoint.FechaDispositivo)
+            }).OrderByDescending(y => y.FechaDispositivo).FirstOrDefaultAsync();
+            if (dataComponentSetPoint != null && dataComponentSetPoint.FechaDispositivo > componente.FechaDispositivo)
             {
-                return componente;
+                return dataComponentSetPoint;
             }
-            return dataComponentSetPoint;
+            return componente;
         }
 
         public async Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByActivitiesOfUpaUserId(UpaActivitiesModuleFilterRequest filtro, bool IsAuxiliar)
