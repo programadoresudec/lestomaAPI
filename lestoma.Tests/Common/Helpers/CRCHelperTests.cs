@@ -76,5 +76,19 @@ namespace lestoma.Tests.Common.Helpers
             var response = _fixture.CrcHelper.VerifyCRCOfReceivedTrama(crcRecibido);
             Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
         }
+
+        [Theory]
+        [InlineData("498BF01A40C00000", "97E7")]
+        [InlineData("4961F08540C00000", "4538")]
+        [InlineData("498BF0D940C00000", "86A3")]
+        [InlineData("49C8F05C420C0000", "1BDD")]
+        [InlineData("6F03F0C4420C0000", "3904")]
+        public void CRC_Returns_Equals(string trama, string crc)
+        {
+            var result = _fixture.CrcHelper.CalculateCrc16Modbus(trama);
+            Assert.NotNull(result);
+            string resultHexa = Reutilizables.ByteArrayToHexString(new byte[] { result[1], result[0] });
+            Assert.Equal(crc, resultHexa);
+        }
     }
 }

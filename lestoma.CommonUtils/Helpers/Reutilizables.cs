@@ -36,6 +36,7 @@ namespace lestoma.CommonUtils.Helpers
             }
             return codigo;
         }
+
         public static IEnumerable<string> Split(string str, int chunkSize)
         {
             return Enumerable.Range(0, str.Length / chunkSize)
@@ -137,7 +138,11 @@ namespace lestoma.CommonUtils.Helpers
         {
             return Encryption.EncryptDecrypt.Encrypt(param);
         }
-
+        public static double TruncateDouble(double value, int decimales)
+        {
+            double aux_value = Math.Pow(10, decimales);
+            return (Math.Truncate(value * aux_value) / aux_value);
+        }
         public static string GenerateQueryString<T>(T obj)
         {
             var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);

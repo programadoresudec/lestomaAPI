@@ -44,6 +44,10 @@ namespace lestoma.Logica.LogicaService
             detalle.Session = _camposAuditoria.GetSession();
             detalle.Ip = string.IsNullOrWhiteSpace(detalle.Ip) ? _camposAuditoria.GetDesencrytedIp() : detalle.Ip;
             detalle.FechaCreacionServer = DateTime.Now;
+            detalle.ValorCalculadoTramaEnviada = detalle.ValorCalculadoTramaEnviada.HasValue ? 
+                Reutilizables.TruncateDouble(detalle.ValorCalculadoTramaEnviada.Value, 2) : null;
+            detalle.ValorCalculadoTramaRecibida = detalle.ValorCalculadoTramaRecibida.HasValue ?
+               Reutilizables.TruncateDouble(detalle.ValorCalculadoTramaRecibida.Value, 2) : null;
             detalle.TipoDeAplicacion = _camposAuditoria.GetTipoDeAplicacion();
             await _laboratorioRepository.Create(detalle);
             return Responses.SetCreatedResponse(detalle);

@@ -2,6 +2,7 @@ using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.DTOs.Sync;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Requests.Filters;
+using lestoma.CRC;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -237,14 +238,50 @@ namespace lestoma.Data.Repositories
 
         public async Task<TramaComponenteDTO> GetComponentRecentTrama(Guid id)
         {
-            return await _db.TablaDetalleLaboratorio.Where(x => x.ComponenteLaboratorioId == id).OrderByDescending(d => d.FechaCreacionDispositivo)
-                          .Select(x => new TramaComponenteDTO
-                          {
-                              TramaInPut = x.TramaEnviada,
-                              TramaOutPut = x.TramaRecibida,
-                              SetPointIn = x.ValorCalculadoTramaEnviada,
-                              SetPointOut = x.ValorCalculadoTramaRecibida
-                          }).FirstOrDefaultAsync();
+            var componente = await _db.TablaDetalleLaboratorio.Where(x => x.ComponenteLaboratorioId == id).Include(y => y.ComponenteLaboratorio)
+                 .OrderByDescending(d => d.FechaCreacionDispositivo)
+                           .Select(x => new TramaComponenteDTO
+                           {
+                               TramaInPut = x.TramaEnviada,
+                               TramaOutPut = x.TramaRecibida,
+                               SetPointIn = x.ValorCalculadoTramaEnviada,
+                               SetPointOut = x.ValorCalculadoTramaRecibida,
+                               DireccionDeRegistro = x.ComponenteLaboratorio.DireccionRegistro,
+                               FechaDispositivo = x.FechaCreacionDispositivo,
+                               UpaId = x.ComponenteLaboratorio.UpaId
+                           }).FirstOrDefaultAsync();
+
+            var sqlParameters = new List<NpgsqlParameter>();
+            var upaId = new NpgsqlParameter("upaId", componente.UpaId);
+            var direccionRegistro = new NpgsqlParameter("direccionRegistro", componente.DireccionDeRegistro);
+            var estadoComponente = new NpgsqlParameter("estadoComponente", EnumConfig.GetDescription(TipoEstadoComponente.Ajuste));
+            sqlParameters.Add(upaId);
+            sqlParameters.Add(direccionRegistro);
+            sqlParameters.Add(estadoComponente);
+
+            string consulta = $@"SELECT detalleLaboratorio.*
+                                 FROM laboratorio_lestoma.detalle_laboratorio detalleLaboratorio
+                                          INNER JOIN laboratorio_lestoma.componente_laboratorio comp
+                                                     ON detalleLaboratorio.componente_laboratorio_id = comp.id
+                                 WHERE comp.descripcion_estado::JSONB ->> 'TipoEstado' = @estadoComponente
+                                   AND comp.direccion_registro = @direccionRegistro
+                                   AND comp.upa_id = @upaId
+                                 ORDER BY detalleLaboratorio.fecha_creacion_dispositivo desc";
+
+            var componentSetpoint = _db.TablaDetalleLaboratorio.FromSqlRaw(consulta, sqlParameters.ToArray()).Include(y => y.ComponenteLaboratorio);
+            var dataComponentSetPoint = await componentSetpoint.Select(x => new TramaComponenteDTO
+            {
+                SetPointIn = x.ValorCalculadoTramaEnviada,
+                SetPointOut = x.ValorCalculadoTramaEnviada,
+                DireccionDeRegistro = x.ComponenteLaboratorio.DireccionRegistro,
+                FechaDispositivo = x.FechaCreacionDispositivo
+            }).FirstOrDefaultAsync();
+
+            if (componente.FechaDispositivo > dataComponentSetPoint.FechaDispositivo)
+            {
+                return componente;
+            }
+            return dataComponentSetPoint;
         }
 
         public async Task<IEnumerable<LaboratorioComponenteDTO>> GetComponentsByActivitiesOfUpaUserId(UpaActivitiesModuleFilterRequest filtro, bool IsAuxiliar)

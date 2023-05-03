@@ -25,18 +25,19 @@ namespace Lestoma.Tests.Common.Helpers
             string decript = Reutilizables.Decrypt(encript);
             Assert.Equal(valuedesencrypt, decript);
         }
+
+
         [Theory]
-        [InlineData("498BF01A40C00000", "97E7")]
-        [InlineData("4961F08540C00000", "4538")]
-        [InlineData("498BF0D940C00000", "86A3")]
-        [InlineData("49C8F05C420C0000", "1BDD")]
-        [InlineData("6F03F0C4420C0000", "3904")]
-        public void CRC_Returns_Equals(string trama, string crc)
+        [InlineData(25.200000762939453, 25.20, 2)]
+        [InlineData(66.69999694824219, 66.69, 2)]
+        [InlineData(58.71000076293945, 58.71, 2)]
+        [InlineData(25.2532, 25.25, 2)]
+        [InlineData(1.0, 1, 2)]
+        [InlineData(0.000, 0, 2)]
+        public void TruncateDouble_To_Two_Decimals_Returns_Equals(double value, double truncateValue, int numeroDecimales)
         {
-            var result = new CRCHelper().CalculateCrc16Modbus(trama);
-            Assert.NotNull(result);
-            string resultHexa = Reutilizables.ByteArrayToHexString(new byte[] { result[1], result[0] });
-            Assert.Equal(crc, resultHexa);
+            double valueOut = Reutilizables.TruncateDouble(value, numeroDecimales);
+            Assert.Equal(valueOut, truncateValue);
         }
 
         [Theory]

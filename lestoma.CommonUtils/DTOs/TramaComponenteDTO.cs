@@ -10,5 +10,8 @@ namespace lestoma.CommonUtils.DTOs
         public string TramaInPut { get; set; }
         public double? SetPointIn { get; set; }
         public double? SetPointOut { get; set; }
+        public byte DireccionDeRegistro { get; set; }
+        public DateTime FechaDispositivo { get; set; }
+        public Guid UpaId { get; set; }
     }
 }
