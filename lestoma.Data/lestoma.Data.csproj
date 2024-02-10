@@ -6,8 +6,11 @@
 
   <ItemGroup>
     <Compile Remove="Auditoria\**" />
+    <Compile Remove="BD\**" />
     <EmbeddedResource Remove="Auditoria\**" />
+    <EmbeddedResource Remove="BD\**" />
     <None Remove="Auditoria\**" />
+    <None Remove="BD\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,10 +28,6 @@
   <ItemGroup>
     <ProjectReference Include="..\lestoma.CommonUtils\lestoma.CommonUtils.csproj" />
     <ProjectReference Include="..\lestoma.Entidades\lestoma.Entidades.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="BD\" />
   </ItemGroup>
 
 </Project>

@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\BackEnd\src\lestoma.CommonUtils\lestoma.CommonUtils.csproj" />
+    <ProjectReference Include="..\lestoma.CommonUtils\lestoma.CommonUtils.csproj" />
   </ItemGroup>
 
 </Project>
