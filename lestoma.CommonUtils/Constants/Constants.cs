@@ -27,9 +27,13 @@ namespace lestoma.CommonUtils.Constants
         public const string KEY_REPORT_DAILY = "Enviar-reporte-diario";
         #endregion
 
-        #region Variables de tramas http_error
+        #region Variables de tramas http success y error
         public const string TRAMA_SUCESS = "C8C8C8C8C8C8C8C8611C";
         public const string TRAMA_ERROR = " 43CC800043CC800099A3";
         #endregion
+        public const int HEXADECIMAL_TRAMA_LENGTH = 20;
+        public const int BYTE_TRAMA_LENGTH = 10;
+        public const string ENCENDIDO = "Encendido";
+        public const string APAGADO = "Apagado";
     }
 }

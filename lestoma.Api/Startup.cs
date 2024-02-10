@@ -4,7 +4,6 @@ using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
 using lestoma.Api.Core;
-using lestoma.Api.Helpers;
 using lestoma.Api.Middleware;
 using lestoma.CommonUtils.Core;
 using lestoma.CommonUtils.DTOs;
@@ -72,6 +71,7 @@ namespace lestoma.Api
                     options.UseNpgsql(connectionString);
                 });
 
+                //generar los pdfs
                 var context = new CustomAssemblyLoadContext();
                 context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox.dll"));
 

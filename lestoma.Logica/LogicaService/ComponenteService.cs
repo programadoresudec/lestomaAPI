@@ -163,7 +163,7 @@ namespace lestoma.Logica.LogicaService
 
         public async Task<IEnumerable<NameDTO>> GetComponentsJustNamesById(UpaActivitiesFilterRequest upaActivitiesfilter, bool IsAdmin)
         {
-            return await _componenteRepository.GetComponentesPorUpaId(upaActivitiesfilter, IsAdmin);
+            return await _componenteRepository.GetComponentesPorUpaModuloId(upaActivitiesfilter, IsAdmin);
         }
 
         public async Task<ResponseDTO> UpdateByAdmin(EComponenteLaboratorio entidad)
@@ -211,7 +211,7 @@ namespace lestoma.Logica.LogicaService
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No se encuentra la actividad.");
             }
-            return await _componenteRepository.GetRegistrationAddressesByUpaModulo(FilterRequest, direccionesRegistro);
+            return await _componenteRepository.GetDireccionesRegistroDisponibles(FilterRequest, direccionesRegistro);
         }
     }
 }

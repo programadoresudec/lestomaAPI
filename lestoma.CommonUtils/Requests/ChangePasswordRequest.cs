@@ -8,10 +8,7 @@ namespace lestoma.CommonUtils.Requests
         public int IdUser { get; set; }
         [Required(ErrorMessage = "la contraseña antigua es requerida")]
         public string OldPassword { get; set; }
-
         [Required(ErrorMessage = "la contraseña nueva es requerida")]
         public string NewPassword { get; set; }
-
-
     }
 }

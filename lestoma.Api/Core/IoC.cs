@@ -1,6 +1,8 @@
 ﻿using Amazon.SimpleEmail;
 using DinkToPdf;
 using DinkToPdf.Contracts;
+using lestoma.Api.Helpers;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.Data;
 using lestoma.Data.Repositories;
@@ -8,8 +10,11 @@ using lestoma.Logica.Interfaces;
 using lestoma.Logica.LogicaService;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace lestoma.Api.Helpers
+namespace lestoma.Api.Core
 {
+    /// <summary>
+    /// Inversion de control para la inyección de dependencias es un contenedor
+    /// </summary>
     public static class IoC
     {
         public static IServiceCollection AddDependency(this IServiceCollection services)
@@ -19,6 +24,7 @@ namespace lestoma.Api.Helpers
             services.AddScoped<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
             services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IJWT, JWT>();
+            services.AddScoped<IWriteToCSVFile, WriteToCSVFile>();
             services.AddScoped<IAuditoriaHelper, AuditoriaHelper>();
             services.AddScoped<IGenerateReport, GenerateReport>();
             services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));

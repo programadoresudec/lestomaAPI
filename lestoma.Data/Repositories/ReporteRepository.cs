@@ -25,12 +25,6 @@ namespace lestoma.Data.Repositories
             return await _db.TablaUsuarios.AnyAsync(x => x.Email.Equals(email));
         }
 
-        public async Task<List<string>> GetCorreosRolSuperAdmin()
-        {
-            return await _db.TablaUsuarios.Where(x => x.RolId == (int)TipoRol.SuperAdministrador
-                    && x.EstadoId == (int)TipoEstadoUsuario.Activado).Select(x => x.Email).ToListAsync();
-        }
-
         public async Task<ReporteDTO> DailyReport(DateFilterRequest filtro)
         {
             ReporteDTO reporteDTO = new();
@@ -44,8 +38,10 @@ namespace lestoma.Data.Repositories
                {
                    Usuario = x.Session,
                    Componente = x.ComponenteLaboratorio.NombreComponente,
-                   SetPointIn = x.ValorCalculadoTramaEnviada == null ? "N/A" : x.ValorCalculadoTramaEnviada.ToString(),
-                   ResultSetPointOut = x.ValorCalculadoTramaRecibida,
+                   TramaIn = x.TramaEnviada,
+                   TramaOut = x.TramaRecibida,
+                   ResultTramaIn = x.ValorCalculadoTramaEnviada,
+                   ResultTramaOut = x.ValorCalculadoTramaRecibida,
                    Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                    FechaDispositivo = x.FechaCreacionDispositivo,
                    FechaServidor = x.FechaCreacionServer,
@@ -80,8 +76,10 @@ namespace lestoma.Data.Repositories
                 {
                     Usuario = x.Session,
                     Componente = x.ComponenteLaboratorio.NombreComponente,
-                    SetPointIn = x.ValorCalculadoTramaEnviada == null ? "N/A" : x.ValorCalculadoTramaEnviada.ToString(),
-                    ResultSetPointOut = x.ValorCalculadoTramaRecibida,
+                    TramaIn = x.TramaEnviada,
+                    TramaOut = x.TramaRecibida,
+                    ResultTramaIn = x.ValorCalculadoTramaEnviada,
+                    ResultTramaOut = x.ValorCalculadoTramaRecibida,
                     Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                     FechaDispositivo = x.FechaCreacionDispositivo,
                     FechaServidor = x.FechaCreacionServer,
@@ -120,8 +118,10 @@ namespace lestoma.Data.Repositories
                 {
                     Usuario = x.Session,
                     Componente = x.ComponenteLaboratorio.NombreComponente,
-                    SetPointIn = x.ValorCalculadoTramaEnviada == null ? "N/A" : x.ValorCalculadoTramaEnviada.ToString(),
-                    ResultSetPointOut = x.ValorCalculadoTramaRecibida,
+                    TramaIn = x.TramaEnviada,
+                    TramaOut = x.TramaRecibida,
+                    ResultTramaIn = x.ValorCalculadoTramaEnviada,
+                    ResultTramaOut = x.ValorCalculadoTramaRecibida,
                     Modulo = x.ComponenteLaboratorio.ModuloComponente.Nombre,
                     FechaDispositivo = x.FechaCreacionDispositivo,
                     FechaServidor = x.FechaCreacionServer,
@@ -138,7 +138,7 @@ namespace lestoma.Data.Repositories
 
         public async Task<TimeSpan?> GetDailyReportTime(string kEY_REPORT_DAILY)
         {
-            await using (NpgsqlConnection connection = new NpgsqlConnection(_db.Database.GetConnectionString()))
+            await using (NpgsqlConnection connection = new(_db.Database.GetConnectionString()))
             {
                 connection.Open();
                 var sql = "SELECT hg.score as fecha FROM hangfire_lestoma.set hg WHERE value = @key";

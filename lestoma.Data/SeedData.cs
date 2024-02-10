@@ -1,7 +1,7 @@
 ﻿using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
-using lestoma.CommonUtils.Listados;
+using lestoma.CommonUtils.ListadosJson;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -229,11 +229,11 @@ namespace lestoma.Data
             #endregion
 
             #region data protocolo
-            var peerToPeerUpa1 = new EProtocoloCOM() { Id = 1, UpaId = upa1.Id, Nombre = "Peer to Peer", Sigla = "PP", PrimerByteTrama = Reutilizables.StringToByteArray("49")[0] };
-            var broadCastUpa1 = new EProtocoloCOM() { Id = 2, UpaId = upa1.Id, Nombre = "Broad Cast", Sigla = "BS", PrimerByteTrama = Reutilizables.StringToByteArray("6F")[0] };
+            var peerToPeerUpa1 = new EProtocoloCOM() { Id = 1, UpaId = upa1.Id, Nombre = EnumConfig.GetDescription(TipoComunicacion.P2P), Sigla = TipoComunicacion.P2P.ToString(), PrimerByteTrama = (byte)TipoComunicacion.P2P };
+            var broadCastUpa1 = new EProtocoloCOM() { Id = 2, UpaId = upa1.Id, Nombre = EnumConfig.GetDescription(TipoComunicacion.P2MP), Sigla = TipoComunicacion.P2MP.ToString(), PrimerByteTrama = (byte)TipoComunicacion.P2MP };
 
-            var peerToPeerUpa2 = new EProtocoloCOM() { Id = 3, UpaId = upa2.Id, Nombre = "Peer to Peer", Sigla = "PP", PrimerByteTrama = Reutilizables.StringToByteArray("49")[0] };
-            var broadCastUpa2 = new EProtocoloCOM() { Id = 4, UpaId = upa2.Id, Nombre = "Broad Cast", Sigla = "BS", PrimerByteTrama = Reutilizables.StringToByteArray("6F")[0] };
+            var peerToPeerUpa2 = new EProtocoloCOM() { Id = 3, UpaId = upa2.Id, Nombre = EnumConfig.GetDescription(TipoComunicacion.P2P), Sigla = TipoComunicacion.P2P.ToString(), PrimerByteTrama = (byte)TipoComunicacion.P2P };
+            var broadCastUpa2 = new EProtocoloCOM() { Id = 4, UpaId = upa2.Id, Nombre = EnumConfig.GetDescription(TipoComunicacion.P2MP), Sigla = TipoComunicacion.P2MP.ToString(), PrimerByteTrama = (byte)TipoComunicacion.P2MP };
 
             modelBuilder.Entity<EProtocoloCOM>()
                 .HasData(new List<EProtocoloCOM>

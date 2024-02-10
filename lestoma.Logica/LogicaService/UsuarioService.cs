@@ -1,6 +1,5 @@
 ﻿using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
-using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Helpers;
@@ -146,25 +145,37 @@ namespace lestoma.Logica.LogicaService
                 {
                     usuario.EstadoId = usuario.RolId == (int)TipoRol.Auxiliar ? (int)TipoEstadoUsuario.CheckCuenta : (int)TipoEstadoUsuario.Activado;
                 }
+
+                var correosSuperAdmin = await _usuarioRepository.GetCorreosRolSuperAdmin();
+                if (!correosSuperAdmin.Any())
+                    throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se pudo encontrar correos destinatarios para super 
+                                                                              administradores.");
+
                 await _usuarioRepository.Create(usuario);
 
                 if (usuario.RolId == (int)TipoRol.Auxiliar && ownRegister)
                 {
-                   await _mailHelper.SendMail(Constants.EMAIL_SUPER_ADMIN, $"Activación de cuenta: de {usuario.Email}", String.Empty,
-                       "Hola: ¡Super Administrador!",
-                       $"Debe activar la cuenta del auxiliar con correo: {usuario.Email} que se registro el dia: " +
-                       $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
-                       string.Empty, $"LESTOMA APP", true);
+                    foreach (var itemEmail in correosSuperAdmin)
+                    {
+                        await _mailHelper.SendMail(itemEmail, $"Activación de cuenta: de {usuario.Email}", String.Empty,
+                     "Hola: ¡Super Administrador!",
+                     $"Debe activar la cuenta del auxiliar con correo: {usuario.Email} que se registro el dia: " +
+                     $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
+                     string.Empty, $"LESTOMA APP", true);
+                    }
+
                 }
                 else if (!ownRegister)
                 {
                     string rol = usuario.RolId == (int)TipoRol.Auxiliar ? TipoRol.Auxiliar.ToString() : TipoRol.Administrador.ToString();
-
-                   await _mailHelper.SendMail(Constants.EMAIL_SUPER_ADMIN, $"Registraste la cuenta: de {usuario.Email}", String.Empty,
-                      "Hola: ¡Super Administrador!",
-                      $"registraste el usuario con correo {usuario.Email} y rol {rol} el dia: " +
-                      $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
-                      string.Empty, $"LESTOMA APP", true);
+                    foreach (var itemEmail in correosSuperAdmin)
+                    {
+                        await _mailHelper.SendMail(itemEmail, $"Registraste la cuenta: de {usuario.Email}", String.Empty,
+                            "Hola: ¡Super Administrador!",
+                            $"registraste el usuario con correo {usuario.Email} y rol {rol} el dia: " +
+                            $"{DateTime.Now.ToShortDateString()} a la hora: {DateTime.Now.ToShortTimeString()}",
+                            string.Empty, $"LESTOMA APP", true);
+                    }
                 }
             }
             return Responses.SetCreatedResponse(null, ownRegister ? "Se ha registrado satisfactoriamente." : "creado el usuario con exito.");

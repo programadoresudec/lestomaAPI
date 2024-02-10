@@ -10,5 +10,6 @@ namespace lestoma.CommonUtils.Requests.Filters
         public int Page { get; set; }
         public int PageSize { get; set; }
         public Guid UpaId { get; set; }
+        public Guid ModuloId { get; set; }
     }
 }

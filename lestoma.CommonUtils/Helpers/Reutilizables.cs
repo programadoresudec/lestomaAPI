@@ -36,13 +36,16 @@ namespace lestoma.CommonUtils.Helpers
             }
             return codigo;
         }
-
         public static IEnumerable<string> Split(string str, int chunkSize)
         {
             return Enumerable.Range(0, str.Length / chunkSize)
                 .Select(i => str.Substring(i * chunkSize, chunkSize));
         }
-
+        public static double TruncateDouble(double value, int decimales)
+        {
+            double aux_value = Math.Pow(10, decimales);
+            return (Math.Truncate(value * aux_value) / aux_value);
+        }
         public static byte[] StringToByteArray(string hex)
         {
             hex = hex.Replace(" ", "");
@@ -67,8 +70,8 @@ namespace lestoma.CommonUtils.Helpers
 
         public static float ByteToIEEEFloatingPoint(byte[] Bytes)
         {
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(Bytes); // We have to reverse
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(Bytes); // We have to reverse
             return BitConverter.ToSingle(Bytes, 0);
         }
 
@@ -102,8 +105,8 @@ namespace lestoma.CommonUtils.Helpers
         public static byte[] IEEEFloatingPointToByte(float floatingPoint)
         {
             byte[] bytes = BitConverter.GetBytes(floatingPoint);
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(bytes);
             return bytes;
         }
         public T ReadJSON<T>(string filePath)
@@ -138,11 +141,7 @@ namespace lestoma.CommonUtils.Helpers
         {
             return Encryption.EncryptDecrypt.Encrypt(param);
         }
-        public static double TruncateDouble(double value, int decimales)
-        {
-            double aux_value = Math.Pow(10, decimales);
-            return (Math.Truncate(value * aux_value) / aux_value);
-        }
+
         public static string GenerateQueryString<T>(T obj)
         {
             var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);

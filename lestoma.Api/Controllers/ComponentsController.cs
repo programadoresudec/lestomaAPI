@@ -37,6 +37,7 @@ namespace lestoma.Api.Controllers
         {
             IEnumerable<NameDTO> actividades = null;
             UpaActivitiesFilterRequest UpaActivitiesfilter = new();
+            UpaActivitiesfilter.ModuloId = filtro.ModuloId;
             if (!IsSuperAdmin() && filtro.UpaId == Guid.Empty)
             {
                 filtro.UpaId = UpaId();
@@ -70,12 +71,15 @@ namespace lestoma.Api.Controllers
             return Ok(query);
         }
 
-        [HttpGet("listar-nombres-por-upa/{upaId}")]
+        [HttpGet("listar-nombres-por-upa-modulo")]
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
-        public async Task<IActionResult> GetComponentesByUpa(Guid upaId)
+        public async Task<IActionResult> GetComponentesByUpa([FromQuery] UpaModuleFilterRequest upaModuleFilter)
         {
             IEnumerable<NameDTO> actividades = null;
-            UpaActivitiesFilterRequest UpaActivitiesfilter = new UpaActivitiesFilterRequest();
+            UpaActivitiesFilterRequest UpaActivitiesfilter = new()
+            {
+                ModuloId = upaModuleFilter.ModuloId
+            };
             if (!IsSuperAdmin())
             {
                 actividades = await _detalleUpaActividadService.GetActivitiesByUpaUserId(new UpaUserFilterRequest
@@ -88,8 +92,10 @@ namespace lestoma.Api.Controllers
             }
             else
             {
-                UpaActivitiesfilter.UpaId = upaId;
+                UpaActivitiesfilter.UpaId = upaModuleFilter.UpaId;
+
             }
+
             var query = await _componentService.GetComponentsJustNamesById(UpaActivitiesfilter, IsSuperAdmin());
             return Ok(query);
         }

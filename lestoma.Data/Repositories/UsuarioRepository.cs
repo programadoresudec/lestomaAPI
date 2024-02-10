@@ -30,6 +30,8 @@ namespace lestoma.Data.Repositories
         public async Task<bool> ExisteCodigoVerificacion(string codigoRecuperacion) =>
             await _dbSet.AnyAsync(x => x.CodigoRecuperacion.Equals(codigoRecuperacion));
 
+        public async Task<List<string>> GetCorreosRolSuperAdmin() => await _db.TablaUsuarios.Where(x => x.RolId == (int)TipoRol.SuperAdministrador
+                    && x.EstadoId == (int)TipoEstadoUsuario.Activado).Select(x => x.Email).ToListAsync();
 
         public async Task<EUsuario> VerifyCodeByRecover(string codigo) =>
             await _dbSet.Where(x => x.CodigoRecuperacion.Equals(codigo))

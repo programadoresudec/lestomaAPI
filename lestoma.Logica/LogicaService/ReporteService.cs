@@ -1,5 +1,4 @@
-﻿using Hangfire;
-using lestoma.CommonUtils.Constants;
+﻿using lestoma.CommonUtils.Constants;
 using lestoma.CommonUtils.Core;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
@@ -8,7 +7,6 @@ using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Data.Repositories;
-using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -25,20 +23,26 @@ namespace lestoma.Logica.LogicaService
     {
         private readonly ILoggerManager _logger;
         private readonly IMemoryCache _cache;
-        private readonly ReporteRepository _repositorio;
         private readonly IMailHelper _mailHelper;
+        private readonly IGenerateReport _generateReports;
+
+        #region repositories
+        private readonly UsuarioRepository _usuarioRepository;
+        private readonly ReporteRepository _reporteRepository;
         private readonly UpaRepository _upaRepository;
         private readonly ComponenteRepository _componenteRepository;
-        private readonly IGenerateReport _generateReports;
-        public ReporteService(ReporteRepository reporteRepository, IMailHelper mailHelper, ILoggerManager logger, IMemoryCache memoryCache,
-            IGenerateReport generateReports, UpaRepository upaRepository, ComponenteRepository componenteRepository)
+        #endregion
+        public ReporteService(IMailHelper mailHelper, ILoggerManager logger, IMemoryCache memoryCache,
+            IGenerateReport generateReports, ReporteRepository reporteRepository, UpaRepository upaRepository, ComponenteRepository componenteRepository,
+            UsuarioRepository usuarioRepository)
         {
             _cache = memoryCache;
             _logger = logger;
-            _upaRepository = upaRepository;
-            _repositorio = reporteRepository;
             _mailHelper = mailHelper;
             _generateReports = generateReports;
+            _upaRepository = upaRepository;
+            _reporteRepository = reporteRepository;
+            _usuarioRepository = usuarioRepository;
             _componenteRepository = componenteRepository;
         }
 
@@ -50,7 +54,7 @@ namespace lestoma.Logica.LogicaService
                 FechaInicial = DateTime.Now.Date
             };
             filtro.FechaFinal = filtro.FechaInicial.AddDays(1).AddSeconds(-1);
-            var listado = await _repositorio.DailyReport(filtro);
+            var listado = await _reporteRepository.DailyReport(filtro);
             if (listado.Reporte.Count == 0)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @"No hay datos para generar el reporte diario.");
@@ -63,7 +67,7 @@ namespace lestoma.Logica.LogicaService
         #region Obtener tiempo de informe diario
         public async Task<ResponseDTO> GetDailyReportTime()
         {
-            var time = await _repositorio.GetDailyReportTime(Constants.KEY_REPORT_DAILY);
+            var time = await _reporteRepository.GetDailyReportTime(Constants.KEY_REPORT_DAILY);
             if (time == null)
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se pudo encontrar la hora del job.");
 
@@ -74,8 +78,8 @@ namespace lestoma.Logica.LogicaService
         #region Generar el documento PDF y Excel diariamente
         public async Task<ResponseDTO> GenerateDailyReport(ReporteDTO reporte)
         {
-            List<ArchivoDTO> archivos = new List<ArchivoDTO>();
-            ResponseDTO response = new ResponseDTO();
+            List<ArchivoDTO> archivos = new();
+            ResponseDTO response = new();
             var pdf = _generateReports.GeneratePdf(reporte, true);
             var filePdf = GetFile(GrupoTipoArchivo.PDF);
             if (pdf != null)
@@ -87,31 +91,30 @@ namespace lestoma.Logica.LogicaService
                     MIME = filePdf.MIME
                 });
             }
-            var excel = _generateReports.GenerateExcel(reporte, true);
-            var fileExcel = GetFile(GrupoTipoArchivo.EXCEL);
-            if (excel != null)
+            var CSV = await _generateReports.GenerateCSV(reporte);
+            var fileCSV = GetFile(GrupoTipoArchivo.CSV);
+            if (CSV != null)
             {
                 archivos.Add(new ArchivoDTO()
                 {
-                    ArchivoBytes = excel,
-                    FileName = fileExcel.FILENAME,
-                    MIME = fileExcel.MIME
+                    ArchivoBytes = CSV,
+                    FileName = fileCSV.FILENAME,
+                    MIME = fileCSV.MIME
                 });
             }
-            var correosSuperAdmin = await _repositorio.GetCorreosRolSuperAdmin();
-            if (correosSuperAdmin.Count == 0)
-            {
+            var correosSuperAdmin = await _usuarioRepository.GetCorreosRolSuperAdmin();
+            if (!correosSuperAdmin.Any())
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, @$"Error: No se pudo encontrar correos destinatarios para super 
                                                                               administradores.");
-            }
+           
             foreach (var item in correosSuperAdmin)
             {
                 await _mailHelper.SendMailWithMultipleFile(item, $"Reporte diario día {DateTime.Now:dd/MM/yyyy}", archivos, string.Empty,
-                     "Hola Super Administrador", $"Se anexa el reporte del día {DateTime.Now:dd/MM/yyyy}, en Pdf y Excel", string.Empty,
+                     "Hola Super Administrador", $"Se anexa el reporte del día {DateTime.Now:dd/MM/yyyy}, en Pdf y csv", string.Empty,
                      @"Has recibido este e-mail porque eres usuario registrado en Lestoma-APP.<br>
                       <strong>Nota:</strong> Este correo se genera automáticamente, por favor no lo responda.");
-                _logger.LogInformation($"Enviado el pdf  y excel a {item}");
-                response.MensajeHttp = $"Enviado el pdf  y excel a {item}";
+                response.MensajeHttp += $"Enviado el pdf  y csv a {item}";
+                _logger.LogInformation($"Enviado el pdf  y csv a {item}");
             }
             return response;
         }
@@ -137,8 +140,8 @@ namespace lestoma.Logica.LogicaService
                     }
                 }
             }
-           
-            var listado = await _repositorio.ReportByComponents(requestFilter);
+
+            var listado = await _reporteRepository.ReportByComponents(requestFilter);
             if (listado.Reporte.Count == 0)
             {
                 string mensaje = requestFilter.Filtro.UpaId == Guid.Empty ? "de las upas." : $"de la upa {upa}";
@@ -165,7 +168,7 @@ namespace lestoma.Logica.LogicaService
             if (filtro.UpaId != Guid.Empty)
                 upa = await ExistUpa(filtro.UpaId);
 
-            var listado = await _repositorio.ReportByDate(filtro);
+            var listado = await _reporteRepository.ReportByDate(filtro);
             if (listado.Reporte.Count == 0)
             {
                 string mensaje = filtro.UpaId == Guid.Empty ? "de las upas." : $"de la upa {upa}";
@@ -194,7 +197,7 @@ namespace lestoma.Logica.LogicaService
                 FechaFinal = filtro.FechaFinal
             };
             reporte.UserGenerator = email;
-            archivo.ArchivoBytes = _generateReports.GenerateReportByFormat(filtro.TipoFormato, reporte, isSuper);
+            archivo.ArchivoBytes = await _generateReports.GenerateReportByFormat(filtro.TipoFormato, reporte, isSuper);
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromSeconds(60))
                     .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
@@ -214,7 +217,7 @@ namespace lestoma.Logica.LogicaService
                 FechaFinal = obj.Filtro.FechaFinal
             };
             reporte.UserGenerator = email;
-            archivo.ArchivoBytes = _generateReports.GenerateReportByFormat(obj.Filtro.TipoFormato, reporte, isSuper);
+            archivo.ArchivoBytes = await _generateReports.GenerateReportByFormat(obj.Filtro.TipoFormato, reporte, isSuper);
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromSeconds(60))
                     .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
@@ -268,15 +271,19 @@ namespace lestoma.Logica.LogicaService
             string FileName = string.Empty;
             switch (grupoTipoArchivo)
             {
-                case GrupoTipoArchivo.Imagen:
+                case GrupoTipoArchivo.IMAGEN:
                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest, @"Formato invalido, solo se puede PDF y EXCEL");
                 case GrupoTipoArchivo.PDF:
-                    Mime = MediaTypeNames.Application.Octet;
+                    Mime = MediaTypeNames.Application.Pdf;
                     FileName = $"Reporte_{dateString}.pdf";
                     break;
                 case GrupoTipoArchivo.EXCEL:
                     Mime = MediaTypeNames.Application.Octet;
                     FileName = $"Reporte_{dateString}.xlsx";
+                    break;
+                case GrupoTipoArchivo.CSV:
+                    Mime = MediaTypeNames.Application.Octet;
+                    FileName = $"Reporte_{dateString}.csv";
                     break;
             }
             return (Mime, FileName);

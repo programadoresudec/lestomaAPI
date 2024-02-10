@@ -2,7 +2,6 @@ using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.DTOs.Sync;
 using lestoma.CommonUtils.Enums;
 using lestoma.CommonUtils.Requests.Filters;
-using lestoma.CRC;
 using lestoma.Entidades.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -79,7 +78,8 @@ namespace lestoma.Data.Repositories
                     Id = x.Upa.Id,
                     Nombre = x.Upa.Nombre,
                 },
-                Protocolos = _db.TablaProtocoloCOM.Where(x => x.UpaId == x.Upa.Id).Select(y => new ProtocoloSyncDTO
+                Protocolos = _db.TablaProtocoloCOM.Where(x => x.UpaId == filtro.UpaId)
+                .Select(y => new ProtocoloSyncDTO
                 {
                     Nombre = y.Nombre,
                     PrimerByteTrama = y.PrimerByteTrama

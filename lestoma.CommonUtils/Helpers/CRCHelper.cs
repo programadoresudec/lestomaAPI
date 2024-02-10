@@ -35,7 +35,7 @@ namespace lestoma.CommonUtils.Helpers
                 return new ResponseDTO
                 {
                     IsExito = false,
-                    MensajeHttp = "Datos Invalidos en la trama recibida.",
+                    MensajeHttp = "Error en la trama.",
                     StatusCode = (int)HttpStatusCode.Conflict
                 };
             }

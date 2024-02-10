@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace lestoma.CommonUtils.Listados
+namespace lestoma.CommonUtils.ListadosJson
 {
     public class ListadoEstadoComponente
     {

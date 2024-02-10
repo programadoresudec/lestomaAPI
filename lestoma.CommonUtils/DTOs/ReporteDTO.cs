@@ -1,4 +1,6 @@
-﻿using lestoma.CommonUtils.Requests.Filters;
+﻿using CsvHelper.Configuration.Attributes;
+using lestoma.CommonUtils.Enums;
+using lestoma.CommonUtils.Requests.Filters;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -14,40 +16,82 @@ namespace lestoma.CommonUtils.DTOs
 
     public class ReportInfo
     {
+        [Name("Nombre UPA")]
         public string NombreUpa { get; set; }
+        [Name("Generado por")]
         public string Usuario { get; set; }
+        [Name("Fecha de servidor")]
         public DateTime? FechaServidor { get; set; }
+        [Name("Fecha de dispositivo")]
         public DateTime FechaDispositivo { get; set; }
+        [Name("Componente")]
         public string Componente { get; set; }
+        [Name("Módulo")]
         public string Modulo { get; set; }
-        public string Estado { get; set; }
-        public string SetPointIn { get; set; }
-        public double? ResultSetPointOut { get; set; }
-        public string SetPointOut => GetSetPointOut(this.ResultSetPointOut);
 
-        private string GetSetPointOut(double? valorCalculadoTramaRecibida)
+        [Ignore]
+        [Name("Trama de Entrada")]
+        public string TramaIn { get; set; }
+
+        [Ignore]
+        [Name("Resultado Trama de Entrada")]
+        public double? ResultTramaIn { get; set; }
+
+        [Ignore]
+        [Name("Trama de Salida")]
+        public string TramaOut { get; set; }
+
+        [Ignore]
+        [Name("Resultado Trama de Salida")]
+        public double? ResultTramaOut { get; set; }
+
+        [Name("Estado Inicial")]
+        public string ResultStatusInitial => GetStatusInitial(ResultTramaIn);
+        [Name("Estado Final")]
+        public string ResultStatusFinal => GetStatusFinal(ResultTramaOut, TramaOut);
+        [Name("Set Point")]
+        public string ResultSetPoint => GetSetPointOut(ResultTramaIn, TramaOut);
+        [Name("Tipo de función")]
+        public string Estado { get; set; }
+        private string GetStatusInitial(double? resultTramaIn)
         {
-            string valor;
-            switch (valorCalculadoTramaRecibida)
+            if (resultTramaIn.HasValue && Estado != EnumConfig.GetDescription(TipoEstadoComponente.Ajuste))
             {
-                case 0:
-                    valor = "Actuador Apagado.";
-                    break;
-                case 1:
-                    valor = "Actuador Encendido.";
-                    break;
-                case 200:
-                    valor = HttpStatusCode.OK.ToString();
-                    break;
-                case 409:
-                    valor = $"{HttpStatusCode.Conflict} en la trama.";
-                    break;
-                case null:
-                    valor = "N/A";
-                    break;
-                default:
-                    valor = valorCalculadoTramaRecibida.ToString();
-                    break;
+                return resultTramaIn.Value switch
+                {
+                    0 => Constants.Constants.APAGADO,
+                    1 => Constants.Constants.ENCENDIDO,
+                    _ => "N/A",
+                };
+            }
+            else
+            {
+                return "N/A";
+            }
+        }
+        private string GetStatusFinal(double? resultTramaOut, string tramaOut)
+        {
+            if (tramaOut.Equals(Constants.Constants.TRAMA_SUCESS))
+            {
+                return HttpStatusCode.OK.ToString();
+            }
+            else if (resultTramaOut.HasValue)
+            {
+                return resultTramaOut.Value switch
+                {
+                    0 => Constants.Constants.APAGADO,
+                    1 => Constants.Constants.ENCENDIDO,
+                    _ => resultTramaOut.Value.ToString(),
+                };
+            }
+            else { return "N/A"; }
+        }
+        private string GetSetPointOut(double? valorSetPointEnviado, string tramaRecibida)
+        {
+            string valor = "N/A";
+            if (tramaRecibida.Equals(Constants.Constants.TRAMA_SUCESS))
+            {
+                valor = valorSetPointEnviado.ToString();
             }
             return valor;
         }

@@ -10,9 +10,10 @@ namespace lestoma.CommonUtils.Helpers
         private const string _macBluetooth = "mac";
         private const string _isLogin = "isLogin";
         private const string _isOnNotificationsEmail = "isOn";
-        private const string _isOnMigrationSucess= "isOnSyncToDevice";
-        private const string _connectionString = "ConnectionStringBD";
+        private const string _isOnMigrationSucess = "isOnSyncToDevice";
+        private const string _isCountModeOnline = "isCountModeOnline";
         private static readonly string _stringDefault = string.Empty;
+        private static readonly string _intDefault = "0";
         private static readonly bool _boolDefault = false;
 
         private static ISettings AppSettings => CrossSettings.Current;
@@ -21,11 +22,6 @@ namespace lestoma.CommonUtils.Helpers
         {
             get => AppSettings.GetValueOrDefault(_token, _stringDefault);
             set => AppSettings.AddOrUpdateValue(_token, value);
-        }
-        public static string GetConnectionString
-        {
-            get => AppSettings.GetValueOrDefault(_connectionString, _stringDefault);
-            set => AppSettings.AddOrUpdateValue(_connectionString, value);
         }
 
         public static string MacBluetooth
@@ -44,6 +40,12 @@ namespace lestoma.CommonUtils.Helpers
         {
             get => AppSettings.GetValueOrDefault(_isOnMigrationSucess, _boolDefault);
             set => AppSettings.AddOrUpdateValue(_isOnMigrationSucess, value);
+        }
+
+        public static string CountModeOnline
+        {
+            get => AppSettings.GetValueOrDefault(_isCountModeOnline, _intDefault);
+            set => AppSettings.AddOrUpdateValue(_isCountModeOnline, value);
         }
 
         public static string EstadoComponente

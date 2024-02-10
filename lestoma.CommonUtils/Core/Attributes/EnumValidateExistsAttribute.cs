@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace lestoma.CommonUtils.Core.Attributes
 {
     public sealed class EnumValidateExistsAttribute : ValidationAttribute
     {
         public EnumValidateExistsAttribute(Type enumType)
-            : base("Enumeración incorrecta, PDF: 2, EXCEL: 3")
+            : base("Enumeración incorrecta, PDF: 2, EXCEL: 3, CSV: 4")
         {
             this.EnumType = enumType;
         }

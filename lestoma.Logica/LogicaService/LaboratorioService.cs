@@ -44,7 +44,7 @@ namespace lestoma.Logica.LogicaService
             detalle.Session = _camposAuditoria.GetSession();
             detalle.Ip = string.IsNullOrWhiteSpace(detalle.Ip) ? _camposAuditoria.GetDesencrytedIp() : detalle.Ip;
             detalle.FechaCreacionServer = DateTime.Now;
-            detalle.ValorCalculadoTramaEnviada = detalle.ValorCalculadoTramaEnviada.HasValue ? 
+            detalle.ValorCalculadoTramaEnviada = detalle.ValorCalculadoTramaEnviada.HasValue ?
                 Reutilizables.TruncateDouble(detalle.ValorCalculadoTramaEnviada.Value, 2) : null;
             detalle.ValorCalculadoTramaRecibida = detalle.ValorCalculadoTramaRecibida.HasValue ?
                Reutilizables.TruncateDouble(detalle.ValorCalculadoTramaRecibida.Value, 2) : null;
@@ -60,6 +60,10 @@ namespace lestoma.Logica.LogicaService
                 foreach (var item in datosOffline)
                 {
                     item.FechaCreacionServer = DateTime.Now;
+                    item.ValorCalculadoTramaEnviada = item.ValorCalculadoTramaEnviada.HasValue ?
+                Reutilizables.TruncateDouble(item.ValorCalculadoTramaEnviada.Value, 2) : null;
+                    item.ValorCalculadoTramaRecibida = item.ValorCalculadoTramaRecibida.HasValue ?
+             Reutilizables.TruncateDouble(item.ValorCalculadoTramaRecibida.Value, 2) : null;
                 }
                 await _laboratorioRepository.MergeDetails(datosOffline);
                 return Responses.SetOkResponse("Los datos offline fueron cargados con exito al servidor.");

@@ -11,7 +11,7 @@
   <Class Name="lestoma.Logica.LogicaService.BuzonService" BaseTypeListCollapsed="true">
     <Position X="45" Y="9.25" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAACAAAABAAgACAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAAAACAAAABAAgACAAAAg=</HashCode>
       <FileName>LogicaService\BuzonService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -51,7 +51,7 @@
   <Class Name="lestoma.Logica.LogicaService.ReporteService" BaseTypeListCollapsed="true">
     <Position X="46" Y="13.75" Width="5" />
     <TypeIdentifier>
-      <HashCode>AACgACAAAIAAAAEBAAAAQAAAYQAAAAJgCACkAAAAAAA=</HashCode>
+      <HashCode>AACgACAAAIAAAAEBAAAAQQAAIQAAAAJgCACkAAAIAAA=</HashCode>
       <FileName>LogicaService\ReporteService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -106,7 +106,7 @@
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Data.Repositories.ReporteRepository">
-    <Position X="27" Y="22.5" Width="2.75" />
+    <Position X="27" Y="22.5" Width="2.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Data.Repositories.UpaActividadRepository">
@@ -118,11 +118,11 @@
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Data.Repositories.UsuarioRepository">
-    <Position X="29.5" Y="28.25" Width="2.5" />
+    <Position X="29.5" Y="28.25" Width="2.75" />
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Entidades.Models.EActividad">
-    <Position X="1" Y="10.75" Width="1.75" />
+    <Position X="1" Y="10.75" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Entidades.Models.EAplicacion">
@@ -134,7 +134,7 @@
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Entidades.Models.EBuzon">
-    <Position X="17.5" Y="4.5" Width="2.5" />
+    <Position X="5.25" Y="6.25" Width="1.75" />
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Entidades.Models.ECamposAuditoria">
@@ -146,7 +146,7 @@
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Entidades.Models.EEstadoUsuario">
-    <Position X="15.25" Y="4.5" Width="2" />
+    <Position X="18.5" Y="4.5" Width="2" />
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Entidades.Models.ELaboratorio">
@@ -158,19 +158,19 @@
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Entidades.Models.EProtocoloCOM">
-    <Position X="8.5" Y="4.5" Width="2" />
+    <Position X="11.75" Y="4.5" Width="2" />
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Entidades.Models.ERol">
-    <Position X="10.75" Y="4.5" Width="2" />
+    <Position X="14" Y="4.5" Width="2" />
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Entidades.Models.ESuperAdministrador">
-    <Position X="12" Y="7" Width="2" />
+    <Position X="15.25" Y="7" Width="2" />
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Entidades.Models.ETokensUsuarioByAplicacion">
-    <Position X="6" Y="4.5" Width="2.25" />
+    <Position X="9.25" Y="4.5" Width="2.25" />
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Entidades.Models.EUpa">
@@ -186,7 +186,7 @@
     <TypeIdentifier />
   </Class>
   <Class Name="lestoma.Entidades.Models.EstadoComponente">
-    <Position X="13" Y="4.5" Width="2" />
+    <Position X="16.25" Y="4.5" Width="2" />
     <TypeIdentifier />
   </Class>
   <Interface Name="lestoma.Logica.Interfaces.IActividadService">
@@ -199,7 +199,7 @@
   <Interface Name="lestoma.Logica.Interfaces.IBuzonService">
     <Position X="47.25" Y="5.5" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAACAAAABAAgAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAACAAAABAAgAAAAAAg=</HashCode>
       <FileName>Interfaces\IBuzonService.cs</FileName>
     </TypeIdentifier>
   </Interface>

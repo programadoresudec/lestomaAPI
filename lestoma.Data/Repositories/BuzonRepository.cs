@@ -47,11 +47,15 @@ namespace lestoma.Data.Repositories
                     Apellido = m.user.Apellido
                 },
                 FechaCreacionServer = m.buzon.FechaCreacionServer,
+                FechaActualizacionServer = m.buzon.FechaActualizacionServer,
                 Ip = m.buzon.Ip,
                 Session = m.buzon.Session,
                 TipoDeAplicacion = m.buzon.TipoDeAplicacion,
                 Titulo = _db.TablaBuzonReportes.FromSqlRaw(@"SELECT buzon.id, buzon.descripcion::JSONB->>'Titulo' as descripcion FROM reportes.buzon buzon")
                 .Where(x => x.Id == m.buzon.Id).Select(x => x.Descripcion).FirstOrDefault(),
+                EstadoId = Convert.ToInt32(_db.TablaBuzonReportes.
+                                            FromSqlRaw(@"SELECT buzon.id, buzon.descripcion::JSONB->'Estado'->>'Id' AS descripcion FROM reportes.buzon buzon")
+                .Where(x => x.Id == m.buzon.Id).Select(x => x.Descripcion).FirstOrDefault()),
                 Upa = (from upa in _db.TablaUpas
                        join detalle in _db.TablaUpasConActividades on upa.Id equals detalle.UpaId
                        where m.user.Id == detalle.UsuarioId
@@ -63,7 +67,7 @@ namespace lestoma.Data.Repositories
                 query = query.Where(x => x.Upa.Id == UpaId);
             }
 
-            return query.AsNoTracking();
+            return query.OrderByDescending(x => x.FechaActualizacionServer).AsNoTracking();
         }
     }
 }

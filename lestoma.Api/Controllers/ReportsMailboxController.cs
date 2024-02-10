@@ -7,7 +7,6 @@ using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests;
 using lestoma.Logica.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -35,7 +34,7 @@ namespace lestoma.Api.Controllers
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
         [HttpGet("paginar")]
         public async Task<IActionResult> GetReportesBuzonPaginado([FromQuery] Paginacion paginacion)
-        {    
+        {
             var queryable = _buzonService.GetAllForPagination(UpaId());
             var listado = await queryable.Paginar(paginacion).ToListAsync();
             var paginador = Paginador<BuzonDTO>.CrearPaginador(queryable.Count(), listado, paginacion);
@@ -52,7 +51,7 @@ namespace lestoma.Api.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador, TipoRol.Auxiliar)]
         public async Task<IActionResult> CrearReporteDelBuzon(BuzonCreacionRequest buzon)
         {
             try
@@ -71,6 +70,13 @@ namespace lestoma.Api.Controllers
                 throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, ex);
             }
 
+        }
+        [HttpPut("edit-status")]
+        [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador)]
+        public async Task<IActionResult> EditStatus(EditarEstadoBuzonRequest buzon)
+        {
+            Respuesta = await _buzonService.EditStatusMailBox(buzon);
+            return Ok(Respuesta);
         }
     }
 }

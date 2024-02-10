@@ -7,9 +7,6 @@ using lestoma.CommonUtils.MyException;
 using lestoma.CommonUtils.Requests.Filters;
 using lestoma.Entidades.Models;
 using lestoma.Logica.Interfaces;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -21,7 +18,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace lestoma.Api.Helpers
+namespace lestoma.Api.Core
 {
     public interface IJWT
     {
@@ -33,8 +30,7 @@ namespace lestoma.Api.Helpers
         private readonly AppSettings _appSettings;
         private readonly IUsuarioService _usuarioService;
         private readonly IDetalleUpaActividadService _detalleUpaActividadService;
-        public JWT(IUsuarioService usuarioService,
-            IOptions<AppSettings> appSettings, IMapper mapper, IDetalleUpaActividadService detalleUpaActividadService)
+        public JWT(IUsuarioService usuarioService, IOptions<AppSettings> appSettings, IMapper mapper, IDetalleUpaActividadService detalleUpaActividadService)
         {
             _appSettings = appSettings.Value;
             _usuarioService = usuarioService;

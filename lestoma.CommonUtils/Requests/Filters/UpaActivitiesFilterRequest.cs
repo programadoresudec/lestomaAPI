@@ -11,5 +11,6 @@ namespace lestoma.CommonUtils.Requests.Filters
         public IEnumerable<Guid> ActividadesId { get; set; }
         [Required(ErrorMessage = "Requerida la upa")]
         public Guid UpaId { get; set; }
+        public Guid ModuloId { get; set; }
     }
 }

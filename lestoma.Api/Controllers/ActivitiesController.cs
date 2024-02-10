@@ -43,8 +43,8 @@ namespace lestoma.Api.Controllers
             return Ok(actividades);
         }
 
-        [HttpGet("listar-nombres")]
         [AuthorizeRoles(TipoRol.SuperAdministrador, TipoRol.Administrador, TipoRol.Auxiliar)]
+        [HttpGet("listar-nombres")]
         public async Task<IActionResult> GetActividadesNombres()
         {
             var query = await _actividadService.GetActividadesJustNames();
@@ -53,7 +53,7 @@ namespace lestoma.Api.Controllers
 
         [AuthorizeRoles(TipoRol.SuperAdministrador)]
         [HttpGet("{id}")]
-        public async Task<IActionResult> getActividad(Guid id)
+        public async Task<IActionResult> GetActividad(Guid id)
         {
             var response = await _actividadService.GetById(id);
             var actividadDTOSalida = Mapear<EActividad, ActividadRequest>((EActividad)response.Data);

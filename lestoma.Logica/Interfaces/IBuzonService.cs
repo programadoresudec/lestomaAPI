@@ -11,5 +11,6 @@ namespace lestoma.Logica.Interfaces
         IQueryable<BuzonDTO> GetAllForPagination(Guid UpaId);
         Task<ResponseDTO> CreateMailBox(BuzonCreacionRequest buzonCreacion);
         Task<ResponseDTO> GetMailBoxById(int id);
+        Task<ResponseDTO> EditStatusMailBox(EditarEstadoBuzonRequest buzonEdit);
     }
 }

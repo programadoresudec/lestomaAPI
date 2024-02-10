@@ -62,7 +62,7 @@ namespace lestoma.Api.Controllers
             //var reporte = await _reporteService.GenerateReportByDate(filtro, isSuper);
             //await _reporteService.SendReportByFilter(EmailDesencryptedUser);
             var jobId = _backgroundJobClient.Schedule<IReporteService>(service =>
-            service.GenerateReportByDate(filtro, isSuper, EmailDesencryptedUser), TimeSpan.FromSeconds(2));
+            service.GenerateReportByDate(filtro, isSuper, EmailDesencryptedUser), TimeSpan.FromSeconds(5));
 
             _backgroundJobClient.ContinueJobWith<IReporteService>(jobId, service => service.SendReportByFilter(EmailDesencryptedUser));
 
@@ -80,7 +80,7 @@ namespace lestoma.Api.Controllers
 
             var EmailDesencryptedUser = EmailDesencrypted();
             var jobId = _backgroundJobClient.Schedule<IReporteService>(service =>
-            service.GenerateReportByComponents(filtro, isSuper, EmailDesencryptedUser), TimeSpan.FromSeconds(2));
+            service.GenerateReportByComponents(filtro, isSuper, EmailDesencryptedUser), TimeSpan.FromSeconds(5));
 
             _backgroundJobClient.ContinueJobWith<IReporteService>(jobId, service => service.SendReportByFilter(EmailDesencryptedUser));
 

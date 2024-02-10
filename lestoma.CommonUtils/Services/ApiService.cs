@@ -70,21 +70,15 @@ namespace lestoma.CommonUtils.Services
                     {
                         string jsonString = await response.Content.ReadAsStringAsync();
 
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                            return new ResponseDTO
-                            {
-                                IsExito = false,
-                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
-                            };
-                        }
-
                         if (response.StatusCode == HttpStatusCode.Unauthorized)
                         {
                             await RefreshToken(urlBase);
-                            return await GetListAsyncWithToken<T>(urlBase, nameService, _tokenNuevo);
+                            await GetAsyncWithToken(urlBase, nameService, _tokenNuevo);
                         }
+                        else if (!response.IsSuccessStatusCode)
+                            return GetResponseError(response);
+
+                        response.EnsureSuccessStatusCode();
 
                         T item = JsonConvert.DeserializeObject<T>(jsonString);
 
@@ -143,20 +137,16 @@ namespace lestoma.CommonUtils.Services
                     using (HttpResponseMessage response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, nameService)))
                     {
                         string jsonString = await response.Content.ReadAsStringAsync();
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                            return new ResponseDTO
-                            {
-                                IsExito = false,
-                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
-                            };
-                        }
                         if (response.StatusCode == HttpStatusCode.Unauthorized)
                         {
                             await RefreshToken(urlBase);
-                            return await GetAsyncWithToken(urlBase, nameService, _tokenNuevo);
+                            await GetAsyncWithToken(urlBase, nameService, _tokenNuevo);
                         }
+                        else if (!response.IsSuccessStatusCode)
+                            return GetResponseError(response);
+
+                        response.EnsureSuccessStatusCode();
+
                         return JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
                     }
                 }
@@ -210,37 +200,32 @@ namespace lestoma.CommonUtils.Services
                     using (HttpResponseMessage response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, nameService)))
                     {
                         string jsonString = await response.Content.ReadAsStringAsync();
-                        if (response.IsSuccessStatusCode)
-                        {
-                            Paginador<T> item = JsonConvert.DeserializeObject<Paginador<T>>(jsonString);
-                            if (item == null)
-                            {
-                                return new ResponseDTO
-                                {
-                                    IsExito = false,
-                                    MensajeHttp = "No hay contenido."
-                                };
-                            }
-                            return new ResponseDTO
-                            {
-                                IsExito = true,
-                                Data = item
-                            };
-                        }
-                        else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
                         {
                             await RefreshToken(urlBase);
-                            return await GetPaginadoAsyncWithToken<T>(urlBase, nameService, _tokenNuevo);
+                            await GetPaginadoAsyncWithToken<T>(urlBase, nameService, _tokenNuevo);
                         }
-                        else
+                        else if (!response.IsSuccessStatusCode)
+                            return GetResponseError(response);
+
+
+                        response.EnsureSuccessStatusCode();
+
+                        Paginador<T> item = JsonConvert.DeserializeObject<Paginador<T>>(jsonString);
+                        if (item == null)
                         {
-                            string errorMessage = MostrarMensajePersonalizadoStatus(response.StatusCode, jsonString);
                             return new ResponseDTO
                             {
                                 IsExito = false,
-                                MensajeHttp = errorMessage
+                                MensajeHttp = "No hay contenido."
                             };
                         }
+                        return new ResponseDTO
+                        {
+                            IsExito = true,
+                            Data = item
+                        };
+
                     }
                 }
             }
@@ -295,24 +280,11 @@ namespace lestoma.CommonUtils.Services
                     {
                         string jsonString = await response.Content.ReadAsStringAsync();
                         Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+
                         if (!response.IsSuccessStatusCode)
-                        {
-                            if (Respuesta.ErrorsEntries != null)
-                            {
-                                return new ResponseDTO
-                                {
-                                    IsExito = false,
-                                    StatusCode = (int)response.StatusCode,
-                                    MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
-                                };
-                            }
-                            return new ResponseDTO
-                            {
-                                IsExito = false,
-                                StatusCode = (int)response.StatusCode,
-                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
-                            };
-                        }
+                            return GetResponseError(response);
+
+                        response.EnsureSuccessStatusCode();
                         return Respuesta;
                     }
                 }
@@ -368,29 +340,15 @@ namespace lestoma.CommonUtils.Services
                     {
                         string jsonString = await response.Content.ReadAsStringAsync();
                         Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            if (Respuesta.ErrorsEntries != null)
-                            {
-                                return new ResponseDTO
-                                {
-                                    IsExito = false,
-                                    StatusCode = (int)response.StatusCode,
-                                    MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
-                                };
-                            }
-                            return new ResponseDTO
-                            {
-                                IsExito = false,
-                                StatusCode = (int)response.StatusCode,
-                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
-                            };
-                        }
-                        else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
                         {
                             await RefreshToken(urlBase);
                             await PostAsyncWithToken(urlBase, nameService, model, _tokenNuevo);
                         }
+                        else if (!response.IsSuccessStatusCode)
+                            return GetResponseError(response);
+
+                        response.EnsureSuccessStatusCode();
                         return Respuesta;
                     }
                 }
@@ -444,21 +402,11 @@ namespace lestoma.CommonUtils.Services
                     {
                         string jsonString = await response.Content.ReadAsStringAsync();
                         Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            return new ResponseDTO
-                            {
-                                IsExito = false,
-                                StatusCode = (int)response.StatusCode,
-                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
-                            };
-                        }
-                        else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                        {
-                            await RefreshToken(urlBase);
-                            await PostWithoutBodyAsyncWithToken(urlBase, nameService, _tokenNuevo);
-                        }
 
+                        if (!response.IsSuccessStatusCode)
+                            return GetResponseError(response);
+
+                        response.EnsureSuccessStatusCode();
                         return Respuesta;
                     }
                 }
@@ -514,25 +462,11 @@ namespace lestoma.CommonUtils.Services
                     {
                         string jsonString = await response.Content.ReadAsStringAsync();
                         Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                        if (!response.IsSuccessStatusCode)
-                        {
 
-                            if (Respuesta.ErrorsEntries != null)
-                            {
-                                return new ResponseDTO
-                                {
-                                    IsExito = false,
-                                    StatusCode = (int)response.StatusCode,
-                                    MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
-                                };
-                            }
-                            return new ResponseDTO
-                            {
-                                IsExito = false,
-                                StatusCode = (int)response.StatusCode,
-                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
-                            };
-                        }
+                        if (!response.IsSuccessStatusCode)
+                            return GetResponseError(response);
+
+                        response.EnsureSuccessStatusCode();
                         return Respuesta;
                     }
                 }
@@ -571,7 +505,6 @@ namespace lestoma.CommonUtils.Services
                 throw new Exception(jsonError.ToString());
             }
         }
-
         #endregion
 
         #region Put Api service with token
@@ -589,23 +522,15 @@ namespace lestoma.CommonUtils.Services
                     {
                         string jsonString = await response.Content.ReadAsStringAsync();
                         Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
-                        if (!response.IsSuccessStatusCode)
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
                         {
-                            if (Respuesta.ErrorsEntries != null)
-                            {
-                                return new ResponseDTO
-                                {
-                                    IsExito = false,
-                                    StatusCode = (int)response.StatusCode,
-                                    MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
-                                };
-                            }
-                            return new ResponseDTO
-                            {
-                                IsExito = false,
-                                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
-                            };
+                            await RefreshToken(urlBase);
+                            await PutAsyncWithToken(urlBase, nameService, model, _tokenNuevo);
                         }
+                        else if (!response.IsSuccessStatusCode)
+                            return GetResponseError(response);
+
+                        response.EnsureSuccessStatusCode();
                         return Respuesta;
                     }
                 }
@@ -661,38 +586,23 @@ namespace lestoma.CommonUtils.Services
                     using (HttpResponseMessage response = await client.DeleteAsync($"{nameService}/{id}"))
                     {
                         string jsonString = await response.Content.ReadAsStringAsync();
-                        if (!string.IsNullOrWhiteSpace(jsonString))
+                        Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
                         {
-                            Respuesta = JsonConvert.DeserializeObject<ResponseDTO>(jsonString);
+                            await RefreshToken(urlBase);
+                            await DeleteAsyncWithToken(urlBase, nameService, id, _tokenNuevo);
                         }
-                        if (response.IsSuccessStatusCode)
-                        {
-                            // Retornar respuesta exitosa
+                        else if (!response.IsSuccessStatusCode)
+                            return GetResponseError(response);
+
+                        response.EnsureSuccessStatusCode();
+                        if (Respuesta == null)
                             return new ResponseDTO
                             {
                                 IsExito = true,
                                 MensajeHttp = "se ha eliminado correctamente."
                             };
-                        }
-                        else
-                        {
-                            // Procesar respuesta de error
-                            switch (response.StatusCode)
-                            {
-                                case HttpStatusCode.Unauthorized:
-                                    // Actualizar token y reintentar solicitud
-                                    await RefreshToken(urlBase);
-                                    return await DeleteAsyncWithToken(urlBase, nameService, id, _tokenNuevo);
-                                default:
-                                    // Retornar respuesta de error
-                                    return new ResponseDTO
-                                    {
-                                        IsExito = false,
-                                        StatusCode = (int)response.StatusCode,
-                                        MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp ?? "")
-                                    };
-                            }
-                        }
+                        return Respuesta;
                     }
                 }
             }
@@ -761,139 +671,171 @@ namespace lestoma.CommonUtils.Services
 
         #region mostrar Mensaje Personalizado para la solicitud del service
 
+        private ResponseDTO GetResponseError(HttpResponseMessage response)
+        {
+
+            if (Respuesta == null)
+            {
+                return new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)response.StatusCode,
+                    MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, string.Empty)
+                };
+            }
+
+            else if (Respuesta.ErrorsEntries != null)
+            {
+                return new ResponseDTO
+                {
+                    IsExito = false,
+                    StatusCode = (int)response.StatusCode,
+                    MensajeHttp = string.Join("\n\n", Respuesta.ErrorsEntries.Select(i => $"{i.Source}: {i.TitleError}").ToArray())
+                };
+            }
+            return new ResponseDTO
+            {
+                IsExito = false,
+                StatusCode = (int)response.StatusCode,
+                MensajeHttp = MostrarMensajePersonalizadoStatus(response.StatusCode, Respuesta.MensajeHttp)
+            };
+        }
         private string MostrarMensajePersonalizadoStatus(HttpStatusCode statusCode, string mensajeDeLaApi)
         {
             string mensaje = string.Empty;
             if (!string.IsNullOrWhiteSpace(mensajeDeLaApi))
                 return mensajeDeLaApi;
-            switch (statusCode)
+            switch ((int)statusCode)
             {
-                case HttpStatusCode.Accepted:
+
+                case (int)HttpStatusCode.Accepted:
                     mensaje = "La solicitud fue aceptada";
                     break;
-                case HttpStatusCode.Ambiguous:
+                case (int)HttpStatusCode.Ambiguous:
                     mensaje = "url ambiguo";
                     break;
-                case HttpStatusCode.BadGateway:
+                case (int)HttpStatusCode.BadGateway:
                     mensaje = "respuesta no valida";
                     break;
-                case HttpStatusCode.BadRequest:
+                case (int)HttpStatusCode.BadRequest:
                     mensaje = "La solicitud malformada";
                     break;
-                case HttpStatusCode.Conflict:
+                case (int)HttpStatusCode.Conflict:
                     mensaje = "conflicto con el estado actual del server";
                     break;
-                case HttpStatusCode.Continue:
+                case (int)HttpStatusCode.Continue:
                     mensaje = "todo va bien por ahora continua";
                     break;
-                case HttpStatusCode.Created:
+                case (int)HttpStatusCode.Created:
                     mensaje = "Solicitud con exito y se creo un recurso";
                     break;
-                case HttpStatusCode.ExpectationFailed:
+                case (int)HttpStatusCode.ExpectationFailed:
                     mensaje = "el expect solicitada no puede ser cumplida";
                     break;
-                case HttpStatusCode.Forbidden:
+                case (int)HttpStatusCode.Forbidden:
                     mensaje = "no posees los permisos necesarios";
                     break;
-                case HttpStatusCode.Found:
+                case (int)HttpStatusCode.Found:
                     mensaje = "url cambiado temporalmente";
                     break;
-                case HttpStatusCode.GatewayTimeout:
+                case (int)HttpStatusCode.GatewayTimeout:
                     mensaje = " tiempo de respuesta null ";
                     break;
-                case HttpStatusCode.Gone:
+                case (int)HttpStatusCode.Gone:
                     mensaje = "contenido borrado  del server";
                     break;
-                case HttpStatusCode.HttpVersionNotSupported:
+                case (int)HttpStatusCode.HttpVersionNotSupported:
                     mensaje = "el servidor no soporta la version http";
                     break;
-                case HttpStatusCode.InternalServerError:
+                case (int)HttpStatusCode.InternalServerError:
                     mensaje = "error interno del server";
                     break;
-                case HttpStatusCode.LengthRequired:
+                case (int)HttpStatusCode.LengthRequired:
                     mensaje = "rechazo del server por cabecera inadecuada";
                     break;
-                case HttpStatusCode.MethodNotAllowed:
+                case (int)HttpStatusCode.MethodNotAllowed:
                     mensaje = "metodo de solicitud no soportado";
                     break;
-                case HttpStatusCode.Moved:
+                case (int)HttpStatusCode.Moved:
                     mensaje = "peticiones movidas a la url dada";
                     break;
-                case HttpStatusCode.NoContent:
+                case (int)HttpStatusCode.NoContent:
                     mensaje = "su peticion no tiene ningun contenido";
                     break;
-                case HttpStatusCode.NonAuthoritativeInformation:
+                case (int)HttpStatusCode.NonAuthoritativeInformation:
                     mensaje = "peticion obtenida de otro server al solicitado";
                     break;
-                case HttpStatusCode.NotAcceptable:
+                case (int)HttpStatusCode.NotAcceptable:
                     mensaje = "el servidor no puede responder los datos en ningun valor aceptado";
                     break;
-                case HttpStatusCode.NotFound:
+                case (int)HttpStatusCode.NotFound:
                     mensaje = "Petición no encontrada.";
                     break;
-                case HttpStatusCode.NotImplemented:
+                case (int)HttpStatusCode.NotImplemented:
                     mensaje = "el server no soporta alguna funcionalidad";
                     break;
-                case HttpStatusCode.NotModified:
+                case (int)HttpStatusCode.NotModified:
                     mensaje = "peticion  o url modificada";
                     break;
-                case HttpStatusCode.OK:
+                case (int)HttpStatusCode.OK:
                     mensaje = "Solicitud realizada correctamente";
                     break;
-                case HttpStatusCode.PartialContent:
+                case (int)HttpStatusCode.PartialContent:
                     mensaje = "la peticion serivira parcialmente el contenido solicitado";
                     break;
-                case HttpStatusCode.PaymentRequired:
+                case (int)HttpStatusCode.PaymentRequired:
                     mensaje = "este error es ambiguo no esta en uso comuniquese con el ingeniero";
                     break;
-                case HttpStatusCode.PreconditionFailed:
-                    mensaje =
-                        "el server no puede cumplir con alguna condicion impuesta por el navegador en su peticion";
+                case (int)HttpStatusCode.PreconditionFailed:
+                    mensaje = "el server no puede cumplir con alguna condicion impuesta por el navegador en su peticion";
                     break;
-                case HttpStatusCode.ProxyAuthenticationRequired:
+                case (int)HttpStatusCode.ProxyAuthenticationRequired:
                     mensaje = "el sever acepta la peticion pero se requiere la autenticacion del proxy";
                     break;
-                case HttpStatusCode.RedirectKeepVerb:
+                case (int)HttpStatusCode.RedirectKeepVerb:
                     mensaje = "la información de la solicitud se encuentra en el URI especificado en el encabezado";
                     break;
-                case HttpStatusCode.RedirectMethod:
+                case (int)HttpStatusCode.RedirectMethod:
                     mensaje = "rediriguiendo automáticamente al cliente al URI especificado  ";
                     break;
-                case HttpStatusCode.RequestedRangeNotSatisfiable:
+                case (int)HttpStatusCode.RequestedRangeNotSatisfiable:
                     mensaje = "la parte del archivo el server no la tiene ";
                     break;
-                case HttpStatusCode.RequestEntityTooLarge:
+                case (int)HttpStatusCode.RequestEntityTooLarge:
                     mensaje = "la peticion del navegador es demasiado larga el server no lo procesa";
                     break;
-                case HttpStatusCode.RequestTimeout:
-                    mensaje = "fallo al continuar la peticion";
+                case (int)HttpStatusCode.RequestTimeout:
+                    mensaje = "fallo al continuar la petición";
                     break;
-                case HttpStatusCode.RequestUriTooLong:
+                case (int)HttpStatusCode.RequestUriTooLong:
                     mensaje = "el server no procesa la peticion por lo larga que esta";
                     break;
-                case HttpStatusCode.ResetContent:
+                case (int)HttpStatusCode.ResetContent:
                     mensaje = "el  request se proceso correctamente pero no devuelve ningun contenido";
                     break;
-                case HttpStatusCode.ServiceUnavailable:
+                case (int)HttpStatusCode.ServiceUnavailable:
                     mensaje = " el servidor no está disponible temporalmente";
                     break;
-                case HttpStatusCode.SwitchingProtocols:
+                case (int)HttpStatusCode.SwitchingProtocols:
                     mensaje = "está cambiando la versión del protocolo o el protocolo.";
                     break;
-                case HttpStatusCode.Unauthorized:
+                case (int)HttpStatusCode.Unauthorized:
                     mensaje = "el recurso solicitado requiere autenticación. ";
                     break;
-                case HttpStatusCode.UnsupportedMediaType:
+                case (int)HttpStatusCode.UnsupportedMediaType:
                     mensaje = "indica que la solicitud es de un tipo no admitido.";
                     break;
-                case HttpStatusCode.Unused:
+                case (int)HttpStatusCode.Unused:
                     mensaje = "no esta ulilizado";
                     break;
-                case HttpStatusCode.UpgradeRequired:
+                case (int)HttpStatusCode.UpgradeRequired:
                     mensaje = " el cliente debe cambiar a un protocolo diferente como TLS / 1.0";
                     break;
-                case HttpStatusCode.UseProxy:
+                case (int)HttpStatusCode.UseProxy:
                     mensaje = "recurso solicitado solo a travez de proxy";
+                    break;
+                case 522:
+                    mensaje = "Error 522 Se agotó el tiempo de espera, verifique la conexión del servidor.";
                     break;
             }
             return mensaje;

@@ -3,6 +3,7 @@ using DinkToPdf;
 using DinkToPdf.Contracts;
 using lestoma.CommonUtils.DTOs;
 using lestoma.CommonUtils.Enums;
+using lestoma.CommonUtils.Helpers;
 using lestoma.CommonUtils.Interfaces;
 using lestoma.CommonUtils.MyException;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace lestoma.Api.Helpers
 {
@@ -20,6 +22,8 @@ namespace lestoma.Api.Helpers
 
         private readonly IConverter _converter;
         private readonly IWebHostEnvironment _env;
+        private readonly IWriteToCSVFile _writeToCSVFile;
+
         #region VISTAS HTML PDF
         private static readonly string VISTA_HTML_SUPERADMIN = @$"<html>
             <head <br>
@@ -48,10 +52,11 @@ namespace lestoma.Api.Helpers
                      <th align='center'>Generado por</th>
                      <th align='center'>Fecha de Servidor</th>
                      <th align='center'>Fecha de Dispositivo</th>
-                     <th align='center'>Modulo</th>
+                     <th align='center'>Módulo</th>
                      <th align='center'>Componente</th>
                      <th align='center'>Estado inicial</th>
                      <th align='center'>Estado final</th>
+                     <th align='center'>Set Point</th>
                      <th align='center'>Tipo de función</th>
                    </tr>";
 
@@ -83,23 +88,25 @@ namespace lestoma.Api.Helpers
                      <th align='center'>Generado por</th>
                      <th align='center'>Fecha del Servidor</th>
                      <th align='center'>Fecha del Dispositivo</th>      
-                     <th align='center'>Modulo</th>
+                     <th align='center'>Módulo</th>
                      <th align='center'>Componente</th>
                      <th align='center'>Estado inicial</th>
                      <th align='center'>Estado final</th>
+                     <th align='center'>Set Point</th>
                      <th align='center'>Tipo de función</th>
                    </tr>";
 
         #endregion
 
-        public GenerateReport(IConverter converter, IWebHostEnvironment env)
+        public GenerateReport(IConverter converter, IWebHostEnvironment env, IWriteToCSVFile writeToCSVFile)
         {
             _converter = converter;
             _env = env;
+            _writeToCSVFile = writeToCSVFile;
         }
 
         #region Generar reporte en excel
-        public byte[] GenerateExcel(ReporteDTO reporte, bool IsSuperAdmin)
+        public byte[] GenerateExcel(ReporteDTO reporte)
         {
 
             using (var workbook = new XLWorkbook())
@@ -113,11 +120,12 @@ namespace lestoma.Api.Helpers
                     worksheet.Cell(currentRow, 2).Value = "Upa";
                     worksheet.Cell(currentRow, 3).Value = "Fecha del Servidor";
                     worksheet.Cell(currentRow, 4).Value = "Fecha del Dispositivo";
-                    worksheet.Cell(currentRow, 5).Value = "Modulo";
+                    worksheet.Cell(currentRow, 5).Value = "Módulo";
                     worksheet.Cell(currentRow, 6).Value = "Componente";
                     worksheet.Cell(currentRow, 7).Value = "Estado inicial";
                     worksheet.Cell(currentRow, 8).Value = "Estado final";
-                    worksheet.Cell(currentRow, 9).Value = "Tipo de función";
+                    worksheet.Cell(currentRow, 9).Value = "Set Point";
+                    worksheet.Cell(currentRow, 10).Value = "Tipo de función";
                     // Data
                     foreach (var item in reporte.Reporte)
                     {
@@ -128,19 +136,19 @@ namespace lestoma.Api.Helpers
                         worksheet.Cell(currentRow, 4).Value = item.FechaDispositivo;
                         worksheet.Cell(currentRow, 5).Value = item.Modulo;
                         worksheet.Cell(currentRow, 6).Value = item.Componente;
-                        worksheet.Cell(currentRow, 7).Value = item.SetPointIn;
-
+                        worksheet.Cell(currentRow, 7).Value = item.ResultStatusInitial;
+                        worksheet.Cell(currentRow, 8).Value = item.ResultStatusFinal;
                         double setPointOut;
-                        if (double.TryParse(item.SetPointOut, out double valor))
+                        if (double.TryParse(item.ResultSetPoint, out double valor))
                         {
                             setPointOut = valor;
-                            worksheet.Cell(currentRow, 8).Value = setPointOut;
+                            worksheet.Cell(currentRow, 9).Value = setPointOut;
                         }
                         else
                         {
-                            worksheet.Cell(currentRow, 8).Value = item.SetPointOut;
+                            worksheet.Cell(currentRow, 9).Value = item.ResultSetPoint;
                         }
-                        worksheet.Cell(currentRow, 9).Value = item.Estado;
+                        worksheet.Cell(currentRow, 10).Value = item.Estado;
                     }
                     worksheet.ColumnsUsed().AdjustToContents();
                     using (var stream = new MemoryStream())
@@ -152,8 +160,7 @@ namespace lestoma.Api.Helpers
                 }
                 catch (Exception ex)
                 {
-                    throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
-                        $"Error: No se pudo generar el reporte en Excel, {ex.Message}");
+                    throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"Error: No se pudo generar el reporte en Excel, {ex.Message}");
                 }
             }
         }
@@ -208,6 +215,20 @@ namespace lestoma.Api.Helpers
         }
         #endregion
 
+        #region Generar reporte en CSV
+        public async Task<byte[]> GenerateCSV(ReporteDTO reporte)
+        {
+            try
+            {
+                return await _writeToCSVFile.WriteNewCSV(reporte.Reporte);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, $"Error: No se pudo generar el reporte en csv, {ex.Message}");
+            }
+        }
+        #endregion
+
         #region Agregar dinamicamente al html el reporte en pdf
         public static string GetHTMLString(ReporteDTO reporte, bool IsSuperAdmin)
         {
@@ -239,8 +260,9 @@ namespace lestoma.Api.Helpers
                                     <td>{5}</td>
                                     <td>{6}</td>
                                     <td>{7}</td>
+                                    <td>{8}</td>
                                   </tr>", rep.Usuario.ToLower(), rep.FechaServidor, rep.FechaDispositivo, rep.Modulo.ToLower(),
-                        rep.Componente.ToLower(), rep.SetPointIn, rep.SetPointOut, rep.Estado.ToLower());
+                        rep.Componente.ToLower(), rep.ResultStatusInitial, rep.ResultStatusFinal, rep.ResultSetPoint, rep.Estado.ToLower());
                 }
             }
             else
@@ -257,8 +279,9 @@ namespace lestoma.Api.Helpers
                                     <td>{6}</td>
                                     <td>{7}</td>
                                     <td>{8}</td>
+                                    <td>{9}</td>
                                   </tr>", rep.NombreUpa, rep.Usuario, rep.FechaServidor, rep.FechaDispositivo, rep.Modulo.ToLower(),
-                        rep.Componente.ToLower(), rep.SetPointIn, rep.SetPointOut, rep.Estado.ToLower());
+                        rep.Componente.ToLower(), rep.ResultStatusInitial, rep.ResultStatusFinal, rep.ResultSetPoint, rep.Estado.ToLower());
                 }
             }
             sb.Append(@"        </table>
@@ -269,7 +292,7 @@ namespace lestoma.Api.Helpers
         #endregion
 
         #region Generar reporte por formato
-        public byte[] GenerateReportByFormat(GrupoTipoArchivo TipoFormato, ReporteDTO reporte, bool IsSuperAdmin)
+        public async Task<byte[]> GenerateReportByFormat(GrupoTipoArchivo TipoFormato, ReporteDTO reporte, bool IsSuperAdmin)
         {
             byte[] reporteArchivo = null;
             if (TipoFormato == GrupoTipoArchivo.PDF)
@@ -278,10 +301,16 @@ namespace lestoma.Api.Helpers
             }
             else if (TipoFormato == GrupoTipoArchivo.EXCEL)
             {
-                reporteArchivo = GenerateExcel(reporte, IsSuperAdmin);
+                reporteArchivo = GenerateExcel(reporte);
+            }
+            else if (TipoFormato == GrupoTipoArchivo.CSV)
+            {
+                reporteArchivo = await GenerateCSV(reporte);
             }
             return reporteArchivo;
         }
+
+
         #endregion
     }
 }

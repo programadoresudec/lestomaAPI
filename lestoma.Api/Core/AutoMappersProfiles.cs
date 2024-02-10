@@ -4,7 +4,7 @@ using lestoma.CommonUtils.Requests;
 using lestoma.Entidades.Models;
 using System;
 
-namespace lestoma.Api.Helpers
+namespace lestoma.Api.Core
 {
     public class AutoMappersProfiles : Profile
     {
