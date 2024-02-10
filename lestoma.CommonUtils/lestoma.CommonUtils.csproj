@@ -9,11 +9,19 @@
 
   <ItemGroup>
     <None Remove="ListadosJson\EstadosBuzon.json" />
+    <None Remove="ListadosJson\JsonTest.json" />
   </ItemGroup>
   
   <ItemGroup>
-    <EmbeddedResource Include="ListadosJson\EstadosBuzon.json" />
-    <EmbeddedResource Include="ListadosJson\EstadosDeComponentes.json" />
+    <EmbeddedResource Include="ListadosJson\EstadosBuzon.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ListadosJson\EstadosDeComponentes.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ListadosJson\JsonTest.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
